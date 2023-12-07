@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 16 16">
+    <g id="sort-btn" fill-rule="nonzero">
+        <rect id="rect" opacity="0" x="0" y="0" width="16" height="16"></rect>
+        <polygon id="arrow-up" fill="#757699" points="7.99693049 2.00077299 4.79705419 6.00077299 11.1722317 6.00077299"></polygon>
+        <polygon id="arrow-down" fill="#757699" transform="translate(7.984643, 11.999227) scale(-1, 1) rotate(-180.000000) translate(-7.984643, -11.999227) " points="7.99693049 9.999227 4.79705419 13.999227 11.1722317 13.999227"></polygon>
+    </g>
+</svg>

@@ -1,0 +1,225 @@
+.stk-table[data-v-12388195] {
+  --row-height: 28px;
+  --cell-padding-x: 8px;
+  --resize-handle-width: 4px;
+  --border-color: #e8eaec;
+  --border-width: 1px;
+  --td-bgc: #fff;
+  --th-bgc: #f8f8f9;
+  --tr-active-bgc: #e6f7ff;
+  --tr-hover-bgc: rgba(230, 247, 255, 0.7);
+  --bg-border-top: linear-gradient(180deg, var(--border-color) var(--border-width), transparent var(--border-width));
+  --bg-border-right: linear-gradient(270deg, var(--border-color) var(--border-width), transparent var(--border-width));
+  --bg-border-bottom: linear-gradient(0deg, var(--border-color) var(--border-width), transparent var(--border-width));
+  --bg-border-left: linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
+  --highlight-color: #71a2fd;
+  --sort-arrow-color: #5d5f69;
+  --sort-arrow-hover-color: #8f90b5;
+  --sort-arrow-active-color: #1b63d9;
+  --sort-arrow-active-sub-color: #cbcbe1;
+  /** 列宽拖动指示器颜色 */
+  --col-resize-indicator-color: #cbcbe1;
+  position: relative;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  /**深色模式 */
+  /** 调整列宽的时候不要触发th事件。否则会导致触发表头点击排序 */
+  /** 列宽调整指示器 */
+  /**虚拟滚动模式 */
+}
+.stk-table.dark[data-v-12388195] {
+  --th-bgc: #181c21;
+  --td-bgc: #181c21;
+  --border-color: #26292e;
+  --tr-active-bgc: #283f63;
+  --tr-hover-bgc: #1a2b46;
+  --table-bgc: #181c21;
+  --highlight-color: #1e4c99;
+  --sort-arrow-color: #5d6064;
+  --sort-arrow-hover-color: #727782;
+  --sort-arrow-active-color: #d0d1d2;
+  --sort-arrow-active-sub-color: #5d6064;
+  --col-resize-indicator-color: #5d6064;
+  color: #d0d1d2;
+}
+.stk-table.headless[data-v-12388195] {
+  border-top: 1px solid var(--border-color);
+}
+.stk-table.is-col-resizing th[data-v-12388195] {
+  pointer-events: none;
+}
+.stk-table .column-resize-indicator[data-v-12388195] {
+  width: 0;
+  height: 100%;
+  border-left: 1px dashed var(--col-resize-indicator-color);
+  position: absolute;
+  z-index: 10;
+  display: none;
+  pointer-events: none;
+}
+.stk-table .stk-table-main[data-v-12388195] {
+  border-spacing: 0;
+  border-collapse: separate;
+}
+.stk-table .stk-table-main th[data-v-12388195],
+.stk-table .stk-table-main td[data-v-12388195] {
+  z-index: 1;
+  height: var(--row-height);
+  font-size: 14px;
+  box-sizing: border-box;
+  padding: 0 var(--cell-padding-x);
+  background-image: var(--bg-border-right), var(--bg-border-bottom);
+}
+.stk-table .stk-table-main thead tr:first-child th[data-v-12388195] {
+  position: sticky;
+  top: 0;
+  background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+}
+.stk-table .stk-table-main thead tr:first-child th[data-v-12388195]:first-child {
+  background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+}
+.stk-table .stk-table-main thead tr th[data-v-12388195] {
+  background-color: var(--th-bgc);
+}
+.stk-table .stk-table-main thead tr th.sortable[data-v-12388195] {
+  cursor: pointer;
+}
+.stk-table .stk-table-main thead tr th[data-v-12388195]:first-child {
+  background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+}
+.stk-table .stk-table-main thead tr th.text-overflow .table-header-cell-wrapper[data-v-12388195] {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.stk-table .stk-table-main thead tr th.text-overflow .table-header-cell-wrapper .table-header-title[data-v-12388195] {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.stk-table .stk-table-main thead tr th:not(.sorter-desc):not(.sorter-asc):hover .table-header-cell-wrapper .table-header-sorter #arrow-up[data-v-12388195] {
+  fill: var(--sort-arrow-hover-color);
+}
+.stk-table .stk-table-main thead tr th:not(.sorter-desc):not(.sorter-asc):hover .table-header-cell-wrapper .table-header-sorter #arrow-down[data-v-12388195] {
+  fill: var(--sort-arrow-hover-color);
+}
+.stk-table .stk-table-main thead tr th.sorter-desc .table-header-cell-wrapper .table-header-sorter #arrow-up[data-v-12388195] {
+  fill: var(--sort-arrow-active-sub-color);
+}
+.stk-table .stk-table-main thead tr th.sorter-desc .table-header-cell-wrapper .table-header-sorter #arrow-down[data-v-12388195] {
+  fill: var(--sort-arrow-active-color);
+}
+.stk-table .stk-table-main thead tr th.sorter-asc .table-header-cell-wrapper .table-header-sorter #arrow-up[data-v-12388195] {
+  fill: var(--sort-arrow-active-color);
+}
+.stk-table .stk-table-main thead tr th.sorter-asc .table-header-cell-wrapper .table-header-sorter #arrow-down[data-v-12388195] {
+  fill: var(--sort-arrow-active-sub-color);
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper[data-v-12388195] {
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-title[data-v-12388195] {
+  overflow: hidden;
+  align-self: flex-start;
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-sorter[data-v-12388195] {
+  flex-shrink: 0;
+  margin-left: 4px;
+  width: 16px;
+  height: 16px;
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-sorter #arrow-up[data-v-12388195],
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-sorter #arrow-down[data-v-12388195] {
+  fill: var(--sort-arrow-color);
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-resizer[data-v-12388195] {
+  position: absolute;
+  top: 0;
+  cursor: col-resize;
+  width: var(--resize-handle-width);
+  height: var(--row-height);
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-resizer.left[data-v-12388195] {
+  left: 0;
+}
+.stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-resizer.right[data-v-12388195] {
+  right: 0;
+}
+.stk-table .stk-table-main tbody[data-v-12388195] {
+  /**高亮渐暗 */
+}
+@keyframes dim-12388195 {
+from {
+    background-color: var(--highlight-color);
+}
+}
+.stk-table .stk-table-main tbody tr[data-v-12388195] {
+  background-color: var(--td-bgc);
+}
+.stk-table .stk-table-main tbody tr.highlight-row[data-v-12388195] {
+  animation: dim-12388195 2s linear;
+}
+.stk-table .stk-table-main tbody tr.hover[data-v-12388195],
+.stk-table .stk-table-main tbody tr[data-v-12388195]:hover {
+  background-color: var(--tr-hover-bgc);
+}
+.stk-table .stk-table-main tbody tr.active[data-v-12388195] {
+  background-color: var(--tr-active-bgc);
+}
+.stk-table .stk-table-main tbody tr td.fixed-cell[data-v-12388195] {
+  background-color: inherit;
+}
+.stk-table .stk-table-main tbody tr td[data-v-12388195]:first-child {
+  background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+}
+.stk-table .stk-table-main tbody tr td.highlight-cell[data-v-12388195] {
+  animation: dim-12388195 2s linear;
+}
+.stk-table .stk-table-main tbody tr td.text-overflow .table-cell-wrapper[data-v-12388195] {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stk-table .stk-table-no-data[data-v-12388195] {
+  background-color: var(--table-bgc);
+  line-height: var(--row-height);
+  text-align: center;
+  font-size: 14px;
+  position: sticky;
+  left: 0px;
+  border-left: var(--border-width) solid var(--border-color);
+  border-right: var(--border-width) solid var(--border-color);
+  border-bottom: var(--border-width) solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.stk-table .stk-table-no-data.no-data-full[data-v-12388195] {
+  flex: 1;
+}
+.stk-table.virtual .stk-table-main thead tr th .table-header-cell-wrapper[data-v-12388195] {
+  overflow: hidden;
+  max-height: var(--row-height);
+}
+.stk-table.virtual .stk-table-main tbody[data-v-12388195] {
+  position: relative;
+}
+.stk-table.virtual .stk-table-main tbody tr td[data-v-12388195] {
+  height: var(--row-height);
+  line-height: 1;
+}
+.stk-table.virtual .stk-table-main tbody tr td .table-cell-wrapper[data-v-12388195] {
+  max-height: var(--row-height);
+  overflow: hidden;
+}
+.stk-table.virtual-x .stk-table-main .virtual-x-left[data-v-12388195] {
+  padding: 0;
+}
+.stk-table.virtual-x .stk-table-main thead tr:first-child .virtual-x-left + th[data-v-12388195] {
+  background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+}
+.stk-table.virtual-x .stk-table-main tr .virtual-x-left + th[data-v-12388195] {
+  background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+}

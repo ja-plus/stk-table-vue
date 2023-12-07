@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "strict": true,
+        "jsx": "preserve",
+        "allowJs": true,
+        "sourceMap": true,
+        "checkJs": true,
+        "baseUrl": ".",
+        "moduleResolution": "node",
+        "lib": [
+            "ESNext",
+            "DOM",
+            "DOM.Iterable",
+            "ScriptHost"
+        ],
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "vueCompilerOptions": {
+        "plugins": [
+            "@volar/vue-language-plugin-pug"
+        ]
+    },
+    "include": [
+        "./src/**/*.js",
+        "./src/**/*.ts",
+        "./src/**/*.d.ts",
+        "./src/**/*.vue",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
