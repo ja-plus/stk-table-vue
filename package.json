@@ -1,6 +1,6 @@
 {
   "name": "stk-table-vue",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.1",
   "description": "simple realtime virtual table for vue3",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/StkTable/index.d.ts",
@@ -13,7 +13,21 @@
     "dev": "vite",
     "build": "vite build"
   },
+  "keywords": [
+    "virtual table",
+    "vue",
+    "highlight",
+    "sticky"
+  ],
+  "files": [
+    "lib",
+    "src"
+  ],
   "author": "japlus",
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/japlus/stk-table-vue"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/d3-interpolate": "^3.0.4",
