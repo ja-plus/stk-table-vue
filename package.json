@@ -1,7 +1,7 @@
 {
   "name": "stk-table-vue",
   "version": "0.0.1",
-  "description": "simple virtual for vue3",
+  "description": "simple realtime virtual table for vue3",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/StkTable/index.d.ts",
   "packageManager": "pnpm@8.11.0",
@@ -14,7 +14,7 @@
     "build": "vite build"
   },
   "author": "japlus",
-  "license": "LGPL-3.0-or-later",
+  "license": "MIT",
   "devDependencies": {
     "@types/d3-interpolate": "^3.0.4",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
