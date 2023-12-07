@@ -30,7 +30,7 @@
         "./src/**/*.js",
         "./src/**/*.ts",
         "./src/**/*.d.ts",
-        "./src/**/*.vue",
+        "./src/**/*.vue", "history/StkTable.d.ts",
     ],
     "exclude": [
         "node_modules"
