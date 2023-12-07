@@ -2,7 +2,7 @@
   <StkTable row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
 <script lang="jsx" setup>
-import StkTable from '@/StkTable.vue';
+import { StkTable } from '@/StkTable/index.ts';
 import ExpandCell from './ExpandCell.jsx';
 const columns = [
   {

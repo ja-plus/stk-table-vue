@@ -83,11 +83,11 @@ div(style="width:max-content")
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
-import StkTableC from '../src/StkTableC/index.vue'; // 兼容版本 fixedLeft
+// import StkTableC from '../src/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 export default {
   name: 'StkTableTest',
-  components: { StkTable, StkTableC, StkTableInsertSort },
+  components: { StkTable, StkTableInsertSort },
   props: {},
   data() {
     return {
@@ -190,7 +190,7 @@ export default {
       // })),
       addIndex: 0,
       dataSource: [],
-      dataSource2: [],
+      // dataSource2: [],
       docTableColumns: Object.freeze([
         { title: '字段', dataIndex: 'key' },
         { title: '描述', dataIndex: 'desc' },
@@ -294,7 +294,7 @@ export default {
     }, 2000);
     setInterval(() => {
       this.$refs.stkTable?.setHighlightDimRow(['add0']);
-      this.$refs.stkTableC?.setHighlightDimRow(['add0']);
+      // this.$refs.stkTableC?.setHighlightDimRow(['add0']);
     }, 3000);
   },
   methods: {
@@ -342,11 +342,11 @@ export default {
     },
     handleClearSorter() {
       this.$refs.stkTable.resetSorter();
-      this.$refs.stkTableC.resetSorter();
+      // this.$refs.stkTableC.resetSorter();
     },
     handleClearTableData() {
       this.dataSource = [];
-      this.dataSource2 = [];
+      // this.dataSource2 = [];
     },
     handleSortChange(col, order) {
       console.log('排序改变事件触发：', col, order);
@@ -395,21 +395,21 @@ export default {
         };
         if (unshift) {
           this.dataSource.unshift(data);
-          this.dataSource2.unshift(structuredClone(data));
+          // this.dataSource2.unshift(structuredClone(data));
         } else {
           this.dataSource.push(data);
-          this.dataSource2.push(structuredClone(data));
+          // this.dataSource2.push(structuredClone(data));
         }
         tmpIndex.push(data);
         this.addIndex++;
       }
       this.dataSource = [...this.dataSource]; // 没有监听deep
-      this.dataSource2 = [...this.dataSource2]; // 没有监听deep
+      // this.dataSource2 = [...this.dataSource2]; // 没有监听deep
 
       this.$nextTick(() => {
         const rowKeys = tmpIndex.map(it => it.name);
         this.$refs.stkTable.setHighlightDimRow(rowKeys);
-        this.$refs.stkTableC.setHighlightDimRow(rowKeys);
+        // this.$refs.stkTableC.setHighlightDimRow(rowKeys);
       });
     },
     addColumn(num = 1) {

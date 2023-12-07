@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup>
-import StkTable, { insertToOrderedArray, tableSort } from '../src/StkTable.vue';
+import { StkTable, insertToOrderedArray, tableSort } from '../src/StkTable/index';
 import { nextTick, ref } from 'vue';
 
 const stkTable = ref();
