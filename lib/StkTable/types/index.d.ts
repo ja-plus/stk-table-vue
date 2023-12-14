@@ -1,5 +1,13 @@
 import { Component, VNode } from 'vue';
 type Sorter = boolean | Function;
+export type CustomCellFunc<T extends Record<string, any>> = (props: {
+    row: T;
+    col: StkTableColumn<T>;
+    cellValue: any;
+}) => VNode;
+export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: {
+    col: StkTableColumn<T>;
+}) => VNode;
 export type StkTableColumn<T extends Record<string, any>> = {
     dataIndex: keyof T & string;
     title?: string;
@@ -16,8 +24,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;
     /** private */ colSpan?: number;
-    customCell?: Component | VNode;
-    customHeaderCell?: Component | VNode;
+    customCell?: Component | VNode | CustomCellFunc<T>;
+    customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
     children?: StkTableColumn<T>[];
 };
 export type SortOption = Pick<StkTableColumn<any>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
@@ -27,7 +35,7 @@ export type SortState = {
     sortType?: 'number' | 'string';
 };
 export type UniqKey = string | ((param: any) => string);
-export type StkProps = {
+export type StkProps = Partial<{
     width: string;
     /** 最小表格宽度 */
     minWidth: string;
@@ -69,7 +77,7 @@ export type StkProps = {
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
-    rowClassName: Function;
+    rowClassName: (row: any, i: number) => string;
     /**
      * 列宽是否可拖动<br>
      * **不要设置**列minWidth，**必须**设置width<br>
@@ -78,5 +86,5 @@ export type StkProps = {
     colResizable: boolean;
     /** 可拖动至最小的列宽 */
     colMinWidth: number;
-};
+}>;
 export {};

@@ -153,7 +153,13 @@
             :style="getCellStyle(2, col)"
             @click="e => onCellClick(e, row, col)"
           >
-            <component :is="col.customCell" v-if="col.customCell" :col="col" :row="row" />
+            <component
+              :is="col.customCell"
+              v-if="col.customCell"
+              :col="col"
+              :row="row"
+              :cell-value="row[col.dataIndex]"
+            />
             <div v-else class="table-cell-wrapper" :title="row[col.dataIndex]">
               {{ row[col.dataIndex] ?? emptyCellText }}
             </div>

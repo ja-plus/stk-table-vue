@@ -79,12 +79,14 @@ div(style="width:max-content")
 
 </template>
 
-<script lang='jsx'>
+<script lang="tsx">
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
 // import StkTableC from '../src/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
+import { StkTableColumn } from '../src/StkTable/types';
+
 export default {
   name: 'StkTableTest',
   components: { StkTable, StkTableInsertSort },
@@ -112,37 +114,37 @@ export default {
         // {
         //   title: 'BasicInfo',
         //   children: [
-            {
-              title: 'Name',
-              dataIndex: 'name',
-              fixed: 'left',
-              width: '200px',
-              headerClassName: 'my-th',
-              className: 'my-td',
-              sorter: true,
-              customHeaderCell: props => {
-                // render(h) {
-                return h(
-                  'span',
-                  { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' },
-                  props.col.title + '(render) text-overflow,',
-                );
-                // },
-              },
-            },
-            {
-              title: 'Age',
-              dataIndex: 'age',
-              fixed: 'left',
-              width: '100px', // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
-              sorter(data, { order, column }) {
-                // console.log(data, order, column);
-                if (order === 'desc') return data.sort((a, b) => b.age - a.age);
-                else if (order === 'asc') return data.sort((a, b) => a.age - b.age);
-              },
-              align: 'right',
-              headerAlign: 'right',
-            },
+        {
+          title: 'Name',
+          dataIndex: 'name',
+          fixed: 'left',
+          width: '200px',
+          headerClassName: 'my-th',
+          className: 'my-td',
+          sorter: true,
+          customHeaderCell: props => {
+            // render(h) {
+            return h(
+              'span',
+              { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' },
+              props.col.title + '(render) text-overflow,',
+            );
+            // },
+          },
+        },
+        {
+          title: 'Age',
+          dataIndex: 'age',
+          fixed: 'left',
+          width: '100px', // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
+          sorter(data, { order, column }) {
+            // console.log(data, order, column);
+            if (order === 'desc') return data.sort((a, b) => b.age - a.age);
+            else if (order === 'asc') return data.sort((a, b) => a.age - b.age);
+          },
+          align: 'right',
+          headerAlign: 'right',
+        },
         //   ]
         // },
 
@@ -169,10 +171,17 @@ export default {
         { title: 'Address', dataIndex: 'address3', width: '100px' },
         { title: 'R', width: '50px', fixed: 'right' },
         {
-          title: 'Operate', dataIndex: 'Operate', width: '150px', fixed: 'right',
+          title: 'Operate',
+          dataIndex: 'Operate',
+          width: '150px',
+          fixed: 'right',
           customCell() {
-            return <button><a href="#">+add</a></button>
-          }
+            return (
+              <button>
+                <a href="#">+add</a>
+              </button>
+            );
+          },
         },
         // { title: 'Long Title Long Title LongTitle', dataIndex: 'address2', minWidth: '200px', maxWidth: '200px' },
         // { title: 'col2', dataIndex: 'address3' /* , fixed: 'right' */, minWidth: '150px', maxWidth: '150px' },
@@ -180,7 +189,7 @@ export default {
         // ...new Array(40)
         //   .fill(0)
         //   .map((it, i) => ({ title: 'col3', dataIndex: 'addCol' + i, width: '100px', minWidth: '100px' })),
-      ],
+      ] as StkTableColumn<any>[],
       // dataSource: new Array(4).fill(0).map((it, i) => ({
       //   name: 'name' + i,
       //   age: parseInt(Math.random() * 100),
@@ -278,8 +287,6 @@ export default {
       ]),
     };
   },
-  computed: {},
-  created() { },
   mounted() {
     this.stkTable = this.$refs.stkTable;
     // this.$refs.stkTable.setCurrentRow('name0');
@@ -384,11 +391,11 @@ export default {
       // this.columns = [...this.columns];
     },
     addRow(num = 1, unshift) {
-      const tmpIndex = [];
+      const tmpIndex: Record<string, any>[] = [];
       for (let i = 0; i < num; i++) {
         const data = {
           name: 'add' + this.addIndex,
-          age: parseInt(Math.random() * 100),
+          age: Math.round(Math.random() * 100),
           email: 'add@sa.com',
           gender: Number(Math.random() * 100 - 50).toFixed(2),
           address: '电力、热力、燃气',
@@ -413,7 +420,7 @@ export default {
       });
     },
     addColumn(num = 1) {
-      const temp = [];
+      const temp: any[] = [];
       for (let i = 0; i < num; i++) {
         temp.push({
           title: 'addCol',

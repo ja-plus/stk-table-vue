@@ -1,4 +1,12 @@
-import { SortOption, StkProps, StkTableColumn } from '../StkTable/types/index';
+/**
+ * @author JA+
+ * 不支持低版本浏览器非虚拟滚动表格的表头固定，列固定，因为会卡。
+ * TODO:存在的问题：
+ * [] column.dataIndex 作为唯一键，不能重复
+ * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
+ * [] highlight-row 颜色不能恢复到active的颜色
+ */
+import { SortOption, StkTableColumn } from '../StkTable/types/index';
 /**
  * 选中一行，
  * @param {string} rowKey
@@ -7,13 +15,6 @@ import { SortOption, StkProps, StkTableColumn } from '../StkTable/types/index';
 declare function setCurrentRow(rowKey: string, option?: {
     silent: boolean;
 }): void;
-/** 高亮一个单元格 */
-declare function setHighlightDimCell(rowKeyValue: string, dataIndex: string): void;
-/**
- * 高亮一行
- * @param rowKeyValues
- */
-declare function setHighlightDimRow(rowKeyValues: Array<string | number>): void;
 /**
  * 设置表头排序状态
  * @param {string} dataIndex 列字段
@@ -33,7 +34,30 @@ declare function resetSorter(): void;
 declare function scrollTo(top?: number, left?: number): void;
 /** 获取当前状态的表格数据 */
 declare function getTableData(): any[];
-declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<StkProps>, {
+declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
+    width: string;
+    minWidth: string;
+    maxWidth: string;
+    headless: boolean;
+    theme: "light" | "dark";
+    virtual: boolean;
+    virtualX: boolean;
+    columns: StkTableColumn<any>[];
+    dataSource: any[];
+    rowKey: import('../StkTable/types/index').UniqKey;
+    colKey: import('../StkTable/types/index').UniqKey;
+    emptyCellText: string; /** 当前选中的一行*/
+    noDataFull: boolean;
+    showNoData: boolean;
+    sortRemote: boolean;
+    showHeaderOverflow: boolean;
+    showOverflow: boolean; /** 表头.内容是 props.columns 的引用集合 */
+    showTrHoverClass: boolean;
+    headerDrag: boolean;
+    rowClassName: (row: any, i: number) => string;
+    colResizable: boolean;
+    colMinWidth: number;
+}>>, {
     width: string;
     minWidth: string;
     maxWidth: string;
@@ -58,27 +82,50 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colMinWidth: number;
 }>, {
     setCurrentRow: typeof setCurrentRow;
-    setHighlightDimCell: typeof setHighlightDimCell;
-    setHighlightDimRow: typeof setHighlightDimRow;
+    setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
+    setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
     setSorter: typeof setSorter;
     resetSorter: typeof resetSorter;
     scrollTo: typeof scrollTo;
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    "row-click": (...args: any[]) => void;
+    scroll: (...args: any[]) => void;
+    "th-drag-start": (...args: any[]) => void;
+    "col-order-change": (...args: any[]) => void;
+    "th-drop": (...args: any[]) => void;
+    columns: (...args: any[]) => void;
     "sort-change": (...args: any[]) => void;
+    "row-click": (...args: any[]) => void;
     "current-change": (...args: any[]) => void;
     "row-dblclick": (...args: any[]) => void;
     "header-row-menu": (...args: any[]) => void;
     "row-menu": (...args: any[]) => void;
     "cell-click": (...args: any[]) => void;
     "header-cell-click": (...args: any[]) => void;
-    "col-order-change": (...args: any[]) => void;
-    "th-drop": (...args: any[]) => void;
-    "th-drag-start": (...args: any[]) => void;
-    scroll: (...args: any[]) => void;
-    columns: (...args: any[]) => void;
-}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<StkProps>, {
+}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
+    width: string;
+    minWidth: string;
+    maxWidth: string;
+    headless: boolean;
+    theme: "light" | "dark";
+    virtual: boolean;
+    virtualX: boolean;
+    columns: StkTableColumn<any>[];
+    dataSource: any[];
+    rowKey: import('../StkTable/types/index').UniqKey;
+    colKey: import('../StkTable/types/index').UniqKey;
+    emptyCellText: string; /** 当前选中的一行*/
+    noDataFull: boolean;
+    showNoData: boolean;
+    sortRemote: boolean;
+    showHeaderOverflow: boolean;
+    showOverflow: boolean; /** 表头.内容是 props.columns 的引用集合 */
+    showTrHoverClass: boolean;
+    headerDrag: boolean;
+    rowClassName: (row: any, i: number) => string;
+    colResizable: boolean;
+    colMinWidth: number;
+}>>, {
     width: string;
     minWidth: string;
     maxWidth: string;
@@ -102,31 +149,31 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
 }>>> & {
-    "onRow-click"?: ((...args: any[]) => any) | undefined;
+    onScroll?: ((...args: any[]) => any) | undefined;
+    "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
+    "onCol-order-change"?: ((...args: any[]) => any) | undefined;
+    "onTh-drop"?: ((...args: any[]) => any) | undefined;
+    onColumns?: ((...args: any[]) => any) | undefined;
     "onSort-change"?: ((...args: any[]) => any) | undefined;
+    "onRow-click"?: ((...args: any[]) => any) | undefined;
     "onCurrent-change"?: ((...args: any[]) => any) | undefined;
     "onRow-dblclick"?: ((...args: any[]) => any) | undefined;
     "onHeader-row-menu"?: ((...args: any[]) => any) | undefined;
     "onRow-menu"?: ((...args: any[]) => any) | undefined;
     "onCell-click"?: ((...args: any[]) => any) | undefined;
     "onHeader-cell-click"?: ((...args: any[]) => any) | undefined;
-    "onCol-order-change"?: ((...args: any[]) => any) | undefined;
-    "onTh-drop"?: ((...args: any[]) => any) | undefined;
-    "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
-    onScroll?: ((...args: any[]) => any) | undefined;
-    onColumns?: ((...args: any[]) => any) | undefined;
 }, {
-    columns: StkTableColumn<any>[];
-    dataSource: any[];
     width: string;
     minWidth: string;
     maxWidth: string;
+    colKey: import('../StkTable/types/index').UniqKey;
     headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
+    columns: StkTableColumn<any>[];
+    dataSource: any[];
     rowKey: import('../StkTable/types/index').UniqKey;
-    colKey: import('../StkTable/types/index').UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -135,7 +182,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showOverflow: boolean;
     showTrHoverClass: boolean;
     headerDrag: boolean;
-    rowClassName: Function;
+    rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
 }, {}>, {

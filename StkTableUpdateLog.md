@@ -1,13 +1,16 @@
-## 1.5.0
+## 0.0.1-beta.2
+* customCell 入参增加 cellValue。
+
+## before 1.5.0
 * 转换 CompositionApi
 * webpack -> vite
 * 多级表头列宽拖动。
-## 1.4.0
+## before 1.4.0
 * 实现 fixed: 'right'.存在fixed: 'left' 列，覆盖fixed: 'right'列的问题。
-## 1.3.1
+## before 1.3.1
 * v-bind.props 有问题。移除。
 * 移除不需要的v-if判断
-## 1.3.0 
+## before 1.3.0 
 * 列宽拖动，列默认不铺满容器。
     * 移动量不小于最小列宽。指示器逻辑更新。
 

@@ -2,6 +2,13 @@ import { Component, VNode } from 'vue';
 
 type Sorter = boolean | Function;
 
+export type CustomCellFunc<T extends Record<string, any>> = (props: {
+  row: T;
+  col: StkTableColumn<T>;
+  cellValue: any;
+}) => VNode;
+export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: { col: StkTableColumn<T> }) => VNode;
+
 export type StkTableColumn<T extends Record<string, any>> = {
   dataIndex: keyof T & string;
   title?: string;
@@ -19,8 +26,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
 
   /** private */ rowSpan?: number;
   /** private */ colSpan?: number;
-  customCell?: Component | VNode;
-  customHeaderCell?: Component | VNode;
+  customCell?: Component | VNode | CustomCellFunc<T>;
+  customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
   children?: StkTableColumn<T>[];
 };
 

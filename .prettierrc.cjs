@@ -1,6 +1,6 @@
 module.exports = {
   // 一行最多字符
-  printWidth: 120,
+  printWidth: 150,
   // 使用2空格缩进
   tabWidth: 2,
   // 禁用tab缩进
