@@ -1,56 +1,56 @@
 {
-  "name": "stk-table-vue",
-  "version": "0.0.1-beta.1",
-  "description": "simple realtime virtual table for vue3",
-  "main": "./lib/stk-table-vue.js",
-  "types": "./lib/StkTable/index.d.ts",
-  "packageManager": "pnpm@8.11.0",
-  "directories": {
-    "test": "test"
-  },
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "keywords": [
-    "virtual table",
-    "vue",
-    "highlight",
-    "sticky"
-  ],
-  "files": [
-    "lib",
-    "src"
-  ],
-  "author": "japlus",
-  "repository": {
-    "type": "git",
-    "url": "https://gitee.com/japlus/stk-table-vue"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "@types/d3-interpolate": "^3.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-vue": "^4.5.0",
-    "@vitejs/plugin-vue-jsx": "^3.1.0",
-    "eslint": "^8.55.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-html": "^7.1.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-vue": "^9.19.2",
-    "less": "^4.2.0",
-    "prettier": "^3.1.1",
-    "pug": "^3.0.2",
-    "typescript": "^5.3.3",
-    "vite": "^5.0.6",
-    "vite-plugin-dts": "^3.6.4",
-    "vue": "^3.3.9",
-    "vue-eslint-parser": "^9.3.2",
-    "vue-loader": "^17.2.2"
-  },
-  "dependencies": {
-    "d3-interpolate": "^3.0.1"
-  }
+    "name": "stk-table-vue",
+    "version": "0.0.1-beta.1",
+    "description": "simple realtime virtual table for vue3",
+    "main": "./lib/stk-table-vue.js",
+    "types": "./lib/StkTable/index.d.ts",
+    "packageManager": "pnpm@8.11.0",
+    "directories": {
+        "test": "test"
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "keywords": [
+        "virtual table",
+        "vue",
+        "highlight",
+        "sticky"
+    ],
+    "files": [
+        "lib",
+        "src"
+    ],
+    "author": "japlus",
+    "repository": {
+        "type": "git",
+        "url": "https://gitee.com/japlus/stk-table-vue"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "@types/d3-interpolate": "^3.0.4",
+        "@typescript-eslint/eslint-plugin": "^6.14.0",
+        "@typescript-eslint/parser": "^6.14.0",
+        "@vitejs/plugin-vue": "^4.5.0",
+        "@vitejs/plugin-vue-jsx": "^3.1.0",
+        "eslint": "^8.55.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-html": "^7.1.0",
+        "eslint-plugin-prettier": "^5.0.1",
+        "eslint-plugin-vue": "^9.19.2",
+        "less": "^4.2.0",
+        "prettier": "^3.1.1",
+        "pug": "^3.0.2",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.6",
+        "vite-plugin-dts": "^3.6.4",
+        "vue": "^3.3.9",
+        "vue-eslint-parser": "^9.3.2",
+        "vue-loader": "^17.2.2"
+    },
+    "dependencies": {
+        "d3-interpolate": "^3.0.1"
+    }
 }

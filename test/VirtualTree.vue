@@ -32,75 +32,75 @@ div(style="display:flex;align-items:flex-start")
 <script>
 import VirtualTree from '../src/VirtualTree.vue';
 export default {
-  components: {
-    VirtualTree,
-  },
-  props: {},
-  data() {
-    let treeData = [];
-    for (let i = 0; i < 20; i++) {
-      let children = [];
-      for (let j = 0; j < 2; j++) {
-        children.push({
-          title: i + '-' + j,
-          key: i + '-' + j,
-          children: [{ title: i + '-' + j + '-' + j + 'longlonglonglong longlonglonglong', key: i + '-' + j + '-' + j }],
-        });
-      }
-      treeData.push({ key: i, title: String(i), children });
-    }
-    return {
-      treeData,
-      vScrollTree: {},
-      vScrollTreeProps: {
-        height: '300px',
-        // lineHeight: 20,
-        // multiple: true,
-        // baseIndentWidth: 8,
-        // indentWidth: 10,
-        // highlightCurrent: false,
-        // currentCancelable: true,
-        showCheckbox: true,
-        // parentSelectable: true,
-        clickItemExpand: true,
-        // emptyText: 'no Data',
-        // defaultExpandAll: true,
-        defaultExpandedKeys: [10, '10-0'],
-        defaultCurrentKey: '10-0-0',
-        defaultScrollKey: '10-0-0',
-        defaultSelectedKeys: ['0-1-1'],
-      },
-    };
-  },
-  computed: {},
-  created() {},
-  mounted() {
-    this.vScrollTree = this.$refs.vScrollTree;
-  },
-  methods: {
-    itemClick(item) {
-      console.log('itemClick', item);
+    components: {
+        VirtualTree,
     },
-    itemSelect(option) {
-      console.log('itemSelect', option);
+    props: {},
+    data() {
+        let treeData = [];
+        for (let i = 0; i < 20; i++) {
+            let children = [];
+            for (let j = 0; j < 2; j++) {
+                children.push({
+                    title: i + '-' + j,
+                    key: i + '-' + j,
+                    children: [{ title: i + '-' + j + '-' + j + 'longlonglonglong longlonglonglong', key: i + '-' + j + '-' + j }],
+                });
+            }
+            treeData.push({ key: i, title: String(i), children });
+        }
+        return {
+            treeData,
+            vScrollTree: {},
+            vScrollTreeProps: {
+                height: '300px',
+                // lineHeight: 20,
+                // multiple: true,
+                // baseIndentWidth: 8,
+                // indentWidth: 10,
+                // highlightCurrent: false,
+                // currentCancelable: true,
+                showCheckbox: true,
+                // parentSelectable: true,
+                clickItemExpand: true,
+                // emptyText: 'no Data',
+                // defaultExpandAll: true,
+                defaultExpandedKeys: [10, '10-0'],
+                defaultCurrentKey: '10-0-0',
+                defaultScrollKey: '10-0-0',
+                defaultSelectedKeys: ['0-1-1'],
+            },
+        };
     },
-    itemDblClick(item) {
-      console.log('itemDblClick', item);
+    computed: {},
+    created() {},
+    mounted() {
+        this.vScrollTree = this.$refs.vScrollTree;
     },
-    itemRightClick(item) {
-      console.log('itemRightClick', item);
+    methods: {
+        itemClick(item) {
+            console.log('itemClick', item);
+        },
+        itemSelect(option) {
+            console.log('itemSelect', option);
+        },
+        itemDblClick(item) {
+            console.log('itemDblClick', item);
+        },
+        itemRightClick(item) {
+            console.log('itemRightClick', item);
+        },
     },
-  },
 };
 </script>
 
 <style>
 body {
-  height: 100vh;
-  margin: 0;
-  display: flex;
-  /* flex-direction: column; */
-  /* align-items: center; */
-  /* justify-content: center; */
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    /* flex-direction: column; */
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 </style>
