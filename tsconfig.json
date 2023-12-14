@@ -6,7 +6,7 @@
         "jsx": "preserve",
         "allowJs": true,
         "sourceMap": true,
-        "checkJs": true,
+        "checkJs": false,
         "baseUrl": ".",
         "moduleResolution": "node",
         "lib": [

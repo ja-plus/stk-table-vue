@@ -2,7 +2,7 @@ module.exports = {
   // 一行最多字符
   printWidth: 150,
   // 使用2空格缩进
-  tabWidth: 2,
+  tabWidth: 4,
   // 禁用tab缩进
   useTabs: false,
   // 尾行分号

@@ -124,11 +124,7 @@ export default {
           sorter: true,
           customHeaderCell: props => {
             // render(h) {
-            return h(
-              'span',
-              { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' },
-              props.col.title + '(render) text-overflow,',
-            );
+            return h('span', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, props.col.title + '(render) text-overflow,');
             // },
           },
         },

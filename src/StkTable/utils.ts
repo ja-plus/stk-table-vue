@@ -10,39 +10,39 @@ import { SortOption, SortState, StkTableColumn } from './types';
  * @param {Array} targetArray 表格数据
  */
 export function insertToOrderedArray(sortState: SortState, newItem: any, targetArray: any[]) {
-  const { dataIndex, order } = sortState;
-  let { sortType } = sortState;
-  if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
-  const data = [...targetArray];
-  if (!order) {
-    data.unshift(newItem);
-    return data;
-  }
-  // 二分插入
-  let sIndex = 0;
-  let eIndex = data.length - 1;
-  const targetVal = newItem[dataIndex];
-  while (sIndex <= eIndex) {
-    // console.log(sIndex, eIndex);
-    const midIndex = Math.floor((sIndex + eIndex) / 2);
-    const midVal = data[midIndex][dataIndex];
-    const compareRes = strCompare(midVal, targetVal, sortType);
-    if (compareRes === 0) {
-      //midVal == targetVal
-      sIndex = midIndex;
-      break;
-    } else if (compareRes === -1) {
-      // midVal < targetVal
-      if (order === 'asc') sIndex = midIndex + 1;
-      else eIndex = midIndex - 1;
-    } else {
-      //midVal > targetVal
-      if (order === 'asc') eIndex = midIndex - 1;
-      else sIndex = midIndex + 1;
+    const { dataIndex, order } = sortState;
+    let { sortType } = sortState;
+    if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
+    const data = [...targetArray];
+    if (!order) {
+        data.unshift(newItem);
+        return data;
     }
-  }
-  data.splice(sIndex, 0, newItem);
-  return data;
+    // 二分插入
+    let sIndex = 0;
+    let eIndex = data.length - 1;
+    const targetVal = newItem[dataIndex];
+    while (sIndex <= eIndex) {
+        // console.log(sIndex, eIndex);
+        const midIndex = Math.floor((sIndex + eIndex) / 2);
+        const midVal = data[midIndex][dataIndex];
+        const compareRes = strCompare(midVal, targetVal, sortType);
+        if (compareRes === 0) {
+            //midVal == targetVal
+            sIndex = midIndex;
+            break;
+        } else if (compareRes === -1) {
+            // midVal < targetVal
+            if (order === 'asc') sIndex = midIndex + 1;
+            else eIndex = midIndex - 1;
+        } else {
+            //midVal > targetVal
+            if (order === 'asc') eIndex = midIndex - 1;
+            else sIndex = midIndex + 1;
+        }
+    }
+    data.splice(sIndex, 0, newItem);
+    return data;
 }
 /**
  * 字符串比较
@@ -52,14 +52,14 @@ export function insertToOrderedArray(sortState: SortState, newItem: any, targetA
  * @return {-1|0|1}
  */
 function strCompare(a: string, b: string, type: 'number' | 'string') {
-  // if (typeof a === 'number' && typeof b === 'number') type = 'number';
-  if (type === 'number') {
-    if (+a > +b) return 1;
-    if (+a === +b) return 0;
-    if (+a < +b) return -1;
-  } else {
-    return String(a).localeCompare(b);
-  }
+    // if (typeof a === 'number' && typeof b === 'number') type = 'number';
+    if (type === 'number') {
+        if (+a > +b) return 1;
+        if (+a === +b) return 0;
+        if (+a < +b) return -1;
+    } else {
+        return String(a).localeCompare(b);
+    }
 }
 
 /**
@@ -72,61 +72,56 @@ function strCompare(a: string, b: string, type: 'number' | 'string') {
  * @param {any} dataSource 排序的数组
  */
 export function tableSort(sortOption: SortOption, order: string | null, dataSource: any[]) {
-  let targetDataSource = [...dataSource];
-  if (typeof sortOption.sorter === 'function') {
-    const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
-    if (customSorterData) targetDataSource = customSorterData;
-  } else if (order) {
-    const sortField = sortOption.sortField || sortOption.dataIndex;
-    let { sortType } = sortOption;
-    if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
+    let targetDataSource = [...dataSource];
+    if (typeof sortOption.sorter === 'function') {
+        const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
+        if (customSorterData) targetDataSource = customSorterData;
+    } else if (order) {
+        const sortField = sortOption.sortField || sortOption.dataIndex;
+        let { sortType } = sortOption;
+        if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
-    if (sortType === 'number') {
-      // 按数字类型排序
-      const nanArr: any[] = []; // 非数字
-      const numArr: any[] = []; // 数字
+        if (sortType === 'number') {
+            // 按数字类型排序
+            const nanArr: any[] = []; // 非数字
+            const numArr: any[] = []; // 数字
 
-      for (let i = 0; i < targetDataSource.length; i++) {
-        const row = targetDataSource[i];
-        if (
-          row[sortField] === null ||
-          row[sortField] === '' ||
-          typeof row[sortField] === 'boolean' ||
-          Number.isNaN(+row[sortField])
-        ) {
-          nanArr.push(row);
+            for (let i = 0; i < targetDataSource.length; i++) {
+                const row = targetDataSource[i];
+                if (row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField])) {
+                    nanArr.push(row);
+                } else {
+                    numArr.push(row);
+                }
+            }
+            // 非数字当作最小值处理
+            if (order === 'asc') {
+                numArr.sort((a, b) => +a[sortField] - +b[sortField]);
+                targetDataSource = [...nanArr, ...numArr];
+            } else {
+                numArr.sort((a, b) => +b[sortField] - +a[sortField]);
+                targetDataSource = [...numArr, ...nanArr];
+            }
+            // targetDataSource = [...numArr, ...nanArr]; // 非数字不进入排序，一直排在最后
         } else {
-          numArr.push(row);
+            // 按string 排序
+            if (order === 'asc') {
+                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+            } else {
+                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+            }
         }
-      }
-      // 非数字当作最小值处理
-      if (order === 'asc') {
-        numArr.sort((a, b) => +a[sortField] - +b[sortField]);
-        targetDataSource = [...nanArr, ...numArr];
-      } else {
-        numArr.sort((a, b) => +b[sortField] - +a[sortField]);
-        targetDataSource = [...numArr, ...nanArr];
-      }
-      // targetDataSource = [...numArr, ...nanArr]; // 非数字不进入排序，一直排在最后
-    } else {
-      // 按string 排序
-      if (order === 'asc') {
-        targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
-      } else {
-        targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
-      }
     }
-  }
-  return targetDataSource;
+    return targetDataSource;
 }
 
 /** column 的层级 */
 export function howDeepTheColumn(arr: StkTableColumn<any>[], level = 1) {
-  const levels = [level];
-  arr.forEach(item => {
-    if (item.children?.length) {
-      levels.push(howDeepTheColumn(item.children, level + 1));
-    }
-  });
-  return Math.max(...levels);
+    const levels = [level];
+    arr.forEach(item => {
+        if (item.children?.length) {
+            levels.push(howDeepTheColumn(item.children, level + 1));
+        }
+    });
+    return Math.max(...levels);
 }
