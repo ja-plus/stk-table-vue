@@ -2,14 +2,14 @@ import { SortOption, SortState, StkTableColumn } from './types';
 
 /**
  * 对有序数组插入新数据
- * @param {object} sortState
- * @param {string} sortState.dataIndex 排序的列
- * @param {null|'asc'|'desc'} sortState.order 排序顺序
- * @param {'number'|'string'} [sortState.sortType] 排序方式
- * @param {object} newItem 要插入的数据
- * @param {Array} targetArray 表格数据
+ * @param sortState
+ * @param sortState.dataIndex 排序的列
+ * @param sortState.order 排序顺序
+ * @param sortState.sortType 排序方式
+ * @param newItem 要插入的数据
+ * @param targetArray 表格数据
  */
-export function insertToOrderedArray(sortState: SortState, newItem: any, targetArray: any[]) {
+export function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[]) {
     const { dataIndex, order } = sortState;
     let { sortType } = sortState;
     if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
@@ -25,7 +25,7 @@ export function insertToOrderedArray(sortState: SortState, newItem: any, targetA
     while (sIndex <= eIndex) {
         // console.log(sIndex, eIndex);
         const midIndex = Math.floor((sIndex + eIndex) / 2);
-        const midVal = data[midIndex][dataIndex];
+        const midVal: any = data[midIndex][dataIndex];
         const compareRes = strCompare(midVal, targetVal, sortType);
         if (compareRes === 0) {
             //midVal == targetVal
@@ -46,17 +46,17 @@ export function insertToOrderedArray(sortState: SortState, newItem: any, targetA
 }
 /**
  * 字符串比较
- * @param {string} a
- * @param {string} b
- * @param {'number'|'string'} [type] 类型
+ * @param  a
+ * @param  b
+ * @param  type 类型
  * @return {-1|0|1}
  */
-function strCompare(a: string, b: string, type: 'number' | 'string') {
+function strCompare(a: string, b: string, type: 'number' | 'string'): number {
     // if (typeof a === 'number' && typeof b === 'number') type = 'number';
     if (type === 'number') {
         if (+a > +b) return 1;
-        if (+a === +b) return 0;
-        if (+a < +b) return -1;
+        else if (+a === +b) return 0;
+        else return -1;
     } else {
         return String(a).localeCompare(b);
     }
