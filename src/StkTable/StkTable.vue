@@ -637,8 +637,12 @@ function resetSorter() {
     dataSourceCopy.value = [...props.dataSource];
 }
 
-/** 滚动 */
-function scrollTo(top = 0, left = 0) {
+/**
+ * 设置滚动条位置
+ * @param top 传null 则不变动位置
+ * @param left 传null 则不变动位置
+ */
+function scrollTo(top: number | null = 0, left: number | null = 0) {
     if (!tableContainer.value) return;
     if (top !== null) tableContainer.value.scrollTop = top;
     if (left !== null) tableContainer.value.scrollLeft = left;

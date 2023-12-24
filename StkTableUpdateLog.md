@@ -1,5 +1,6 @@
 ## 0.0.1-beta.2
 * customCell 入参增加 cellValue。
+* expose 方法 scrollTo 调整参数。接收null时，不设置位置，而非原来的默认为0.
 
 ## before 1.5.0
 * 转换 CompositionApi
