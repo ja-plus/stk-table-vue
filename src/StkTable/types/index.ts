@@ -29,8 +29,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
 
 export type SortOption = Pick<StkTableColumn<any>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 
-export type SortState = {
-    dataIndex: string;
+export type SortState<T> = {
+    dataIndex: T;
     order: null | 'asc' | 'desc';
     sortType?: 'number' | 'string';
 };
