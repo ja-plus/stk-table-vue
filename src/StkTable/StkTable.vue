@@ -27,7 +27,13 @@
       -->
         <div v-show="colResizable" ref="colResizeIndicator" class="column-resize-indicator"></div>
         <!-- 表格主体 -->
-        <table class="stk-table-main" :style="{ width: tableWidth, minWidth, maxWidth }">
+        <table
+            class="stk-table-main"
+            :style="{ width: tableWidth, minWidth, maxWidth }"
+            :class="{
+                'fixed-mode': props.fixedMode,
+            }"
+        >
             <!-- transform: virtualX_on ? `translateX(${virtualScrollX.offsetLeft}px)` : null, 用transform控制虚拟滚动左边距，sticky会有问题 -->
             <thead v-if="!headless">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="e => onHeaderMenu(e)">
@@ -121,7 +127,13 @@
           ></td> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
             <tbody>
-                <tr v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tr>
+                <tr v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
+                    <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
+                    <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left" style="padding: 0"></td>
+                    <template v-if="fixedMode && headless">
+                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="getCellStyle(2, col)"></td
+                    ></template>
+                </tr>
                 <tr
                     v-for="(row, i) in virtual_dataSourcePart"
                     :key="rowKey ? rowKeyGen(row) : i"
@@ -175,7 +187,7 @@
  */
 import { SortOption, StkProps, StkTableColumn } from '@/StkTable/types/index';
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { Default_Col_Width, Highlight_Color_Change_Freq, Is_Legacy_Mode } from './const';
+import { Default_Col_Width, Is_Legacy_Mode } from './const';
 import { useColResize } from './useColResize';
 import { useHighlight } from './useHighlight';
 import { useThDrag } from './useThDrag';
@@ -184,6 +196,7 @@ import { howDeepTheColumn, tableSort } from './utils';
 
 const props = withDefaults(defineProps<StkProps>(), {
     width: '',
+    fixedMode: false,
     minWidth: 'min-content',
     maxWidth: '',
     headless: false,
@@ -251,7 +264,14 @@ const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 const rowKeyGenStore = new WeakMap();
 
 const tableWidth = computed(() => {
-    return props.colResizable ? 'fit-content' : props.width;
+    if (props.colResizable) {
+        return 'fit-content';
+    }
+    if (props.fixedMode) {
+        // 固定模式一定要有宽度
+        return props.width ?? '100%';
+    }
+    return props.width;
 });
 
 const fixedColumnsPositionStore = computed(() => {
@@ -467,6 +487,24 @@ function colKeyGen(col: StkTableColumn<any>) {
     return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];
 }
 
+/** 获取列宽度样式 */
+function getColWidthStyle(col: StkTableColumn<any>) {
+    const style: CSSProperties = {
+        width: col.width,
+        minWidth: col.minWidth,
+        maxWidth: col.maxWidth,
+    };
+    if (props.colResizable) {
+        style.minWidth = col.width;
+        style.maxWidth = col.width;
+    } else {
+        style.minWidth = col.minWidth === void 0 ? col.width : col.minWidth;
+        style.maxWidth = col.maxWidth === void 0 ? col.width : col.maxWidth;
+    }
+
+    return style;
+}
+
 /**
  * 性能优化，缓存style行内样式
  *
@@ -475,12 +513,9 @@ function colKeyGen(col: StkTableColumn<any>) {
  * @param {StkTableColumn} col
  */
 function getCellStyle(tagType: 1 | 2, col: StkTableColumn<any>): CSSProperties {
-    const fixedStyle = getFixedStyle(tagType, col);
     const style: CSSProperties = {
-        width: col.width,
-        minWidth: props.colResizable ? col.width : col.minWidth || col.width,
-        maxWidth: props.colResizable ? col.width : col.maxWidth || col.width,
-        ...fixedStyle,
+        ...getColWidthStyle(col),
+        ...getFixedStyle(tagType, col),
     };
     if (tagType === 1) {
         // TH
@@ -743,6 +778,9 @@ defineExpose({
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
+        &.fixed-mode {
+            table-layout: fixed;
+        }
 
         th,
         td {
@@ -995,6 +1033,9 @@ defineExpose({
                 position: relative;
 
                 tr {
+                    &.padding-top-tr td {
+                        height: 0;
+                    }
                     td {
                         height: var(--row-height);
                         line-height: 1;

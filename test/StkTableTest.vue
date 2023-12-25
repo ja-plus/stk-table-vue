@@ -62,7 +62,10 @@ div(:style="{width: tableWidth}" style="padding:10px;")
     //-   @row-dblclick="onRowDblclick"
     //-   @col-order-change="onColOrderChange2"
     //- )
+
 div columns:{{columns}}
+
+FixedMode
 //- div dataSource:{{dataSource}}
 StkTableInsertSort
 
@@ -86,10 +89,11 @@ import { StkTable } from '../src/StkTable/index';
 // import StkTableC from '../src/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import { StkTableColumn } from '../src/StkTable/types';
+import FixedMode from './FixedMode.vue';
 
 export default {
     name: 'StkTableTest',
-    components: { StkTable, StkTableInsertSort },
+    components: { StkTable, StkTableInsertSort, FixedMode },
     props: {},
     data() {
         return {
@@ -211,8 +215,10 @@ export default {
                 { key: 'rowKey', desc: '一行的唯一键', value: 'string | (row) => string' },
                 { key: 'colKey', desc: '一列的唯一键', value: 'string | (col) => string', defaultValue: 'dataIndex' },
                 { key: 'height', desc: '高度' },
+                { key: 'width', desc: 'table宽度', value: 'string' },
                 { key: 'maxWidth', desc: '最大宽度', value: 'string', defaultValue: 'max-content' },
                 { key: 'minWidth', desc: '最小宽度', value: 'string' },
+                { key: 'fixedMode', desc: 'table-layout 切换为fixed。此模式仅生效col.width', value: 'boolean', default: 'false' },
                 { key: 'showOverflow', desc: 'td文本溢出展示...', value: 'boolean', defaultValue: 'false' },
                 { key: 'showHeaderOverflow', desc: 'th文本溢出展示...', value: 'boolean', defaultValue: 'false' },
                 {

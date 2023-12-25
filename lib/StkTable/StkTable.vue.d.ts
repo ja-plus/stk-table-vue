@@ -38,6 +38,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
+    fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
@@ -46,19 +47,21 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     dataSource: any[];
     rowKey: import('../StkTable/types/index').UniqKey;
     colKey: import('../StkTable/types/index').UniqKey;
-    emptyCellText: string; /** 当前选中的一行*/
+    emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
     sortRemote: boolean;
     showHeaderOverflow: boolean;
-    showOverflow: boolean; /** 表头.内容是 props.columns 的引用集合 */
+    showOverflow: boolean;
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
+    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
 }>>, {
     width: string;
+    fixedMode: boolean;
     minWidth: string;
     maxWidth: string;
     headless: boolean;
@@ -106,6 +109,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
+    fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
@@ -114,19 +118,21 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     dataSource: any[];
     rowKey: import('../StkTable/types/index').UniqKey;
     colKey: import('../StkTable/types/index').UniqKey;
-    emptyCellText: string; /** 当前选中的一行*/
+    emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
     sortRemote: boolean;
     showHeaderOverflow: boolean;
-    showOverflow: boolean; /** 表头.内容是 props.columns 的引用集合 */
+    showOverflow: boolean;
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
+    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
 }>>, {
     width: string;
+    fixedMode: boolean;
     minWidth: string;
     maxWidth: string;
     headless: boolean;
@@ -167,6 +173,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     colKey: import('../StkTable/types/index').UniqKey;
+    fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;

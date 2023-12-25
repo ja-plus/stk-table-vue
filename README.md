@@ -10,6 +10,8 @@ js体积(38kb)
 * [x] 表头拖动更改顺序。
 * [x] 表头列宽拖动。
 * [x] 多级表头。（不支持横向虚拟滚动）
+* [x] 支持table-layout: fixed 配置。
+* [] 鼠标点击后，键盘上下滚动表格
 
 ## Usage
 > npm install stk-table-vue
@@ -33,77 +35,80 @@ const stkTable = ref<InstanceType<typeof StkTable>>();
 ### StkTable Component Props
 ```ts
 export type StkProps = Partial<{
-  width: string;
+    width: string;
 
-  /** 最小表格宽度 */
-  minWidth: string;
+    /** 最小表格宽度 */
+    minWidth: string;
 
-  /** 表格最大宽度*/
-  maxWidth: string;
+    /** 表格最大宽度*/
+    maxWidth: string;
 
-  /** 是否隐藏表头 */
-  headless: boolean;
+    /** 是否使用 table-layout:fixed */
+    fixedMode: boolean;
 
-  /** 主题，亮、暗 */
-  theme: 'light' | 'dark';
+    /** 是否隐藏表头 */
+    headless: boolean;
 
-  /** 虚拟滚动 */
-  virtual: boolean;
+    /** 主题，亮、暗 */
+    theme: 'light' | 'dark';
 
-  /** x轴虚拟滚动 */
-  virtualX: boolean;
+    /** 虚拟滚动 */
+    virtual: boolean;
 
-  /** 表格列配置 */
-  columns: StkTableColumn<any>[];
+    /** x轴虚拟滚动 */
+    virtualX: boolean;
 
-  /** 表格数据源 */
-  dataSource: any[];
+    /** 表格列配置 */
+    columns: StkTableColumn<any>[];
 
-  /** 行唯一键 */
-  rowKey: UniqKey;
+    /** 表格数据源 */
+    dataSource: any[];
 
-  /** 列唯一键 */
-  colKey: UniqKey;
+    /** 行唯一键 */
+    rowKey: UniqKey;
 
-  /** 空值展示文字 */
-  emptyCellText: string;
+    /** 列唯一键 */
+    colKey: UniqKey;
 
-  /** 暂无数据兜底高度是否撑满 */
-  noDataFull: boolean;
+    /** 空值展示文字 */
+    emptyCellText: string;
 
-  /** 是否展示暂无数据 */
-  showNoData: boolean;
+    /** 暂无数据兜底高度是否撑满 */
+    noDataFull: boolean;
 
-  /** 是否服务端排序，true则不排序数据 */
-  sortRemote: boolean;
+    /** 是否展示暂无数据 */
+    showNoData: boolean;
 
-  /** 表头是否溢出展示... */
-  showHeaderOverflow: boolean;
+    /** 是否服务端排序，true则不排序数据 */
+    sortRemote: boolean;
 
-  /** 表体溢出是否展示... */
-  showOverflow: boolean;
+    /** 表头是否溢出展示... */
+    showHeaderOverflow: boolean;
 
-  /** 是否增加行hover class */
-  showTrHoverClass: boolean;
+    /** 表体溢出是否展示... */
+    showOverflow: boolean;
 
-  /** 表头是否可拖动 */
-  headerDrag: boolean;
+    /** 是否增加行hover class */
+    showTrHoverClass: boolean;
 
-  /**
-   * 给行附加className<br>
-   * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
-   */
-  rowClassName: (row: any, i: number) => string;
+    /** 表头是否可拖动 */
+    headerDrag: boolean;
 
-  /**
-   * 列宽是否可拖动<br>
-   * **不要设置**列minWidth，**必须**设置width<br>
-   * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
-   */
-  colResizable: boolean;
+    /**
+     * 给行附加className<br>
+     * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
+     */
+    rowClassName: (row: any, i: number) => string;
 
-  /** 可拖动至最小的列宽 */
-  colMinWidth: number;
+    /**
+     * 列宽是否可拖动<br>
+     * **不要设置**列minWidth，**必须**设置width<br>
+     * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+     */
+    colResizable: boolean;
+
+    /** 可拖动至最小的列宽 */
+    colMinWidth: number;
 }>;
 ```
 

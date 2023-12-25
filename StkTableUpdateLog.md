@@ -1,5 +1,6 @@
 ## 0.0.1-beta.2
 * customCell 入参增加 cellValue。
+* props.fixedMode 控制表格 table-layout 为fixed
 
 ## before 1.5.0
 * 转换 CompositionApi

@@ -41,6 +41,8 @@ export type StkProps = Partial<{
     minWidth: string;
     /** 表格最大宽度*/
     maxWidth: string;
+    /** 是否使用 table-layout:fixed */
+    fixedMode: boolean;
     /** 是否隐藏表头 */
     headless: boolean;
     /** 主题，亮、暗 */
