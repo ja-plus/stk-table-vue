@@ -50,18 +50,18 @@ div(:style="{width: tableWidth}" style="padding:10px;")
   )
     //- template(#table-header="{ column }")
     //-   span {{column.title}} (slot)
-    //- StkTableC(
-    //-   ref="stkTableC"
-    //-   rowKey="name"
-    //-   :noDataFull="true"
-    //-   :virtual="true"
-    //-   :style="{height:props.height}"
-    //-   :columns="columns"
-    //-   :dataSource="dataSource2"
-    //-   @current-change="onCurrentChange"
-    //-   @row-dblclick="onRowDblclick"
-    //-   @col-order-change="onColOrderChange2"
-    //- )
+StkTableC(
+    ref="stkTableC"
+    rowKey="name"
+    :noDataFull="true"
+    :virtual="true"
+    :style="{height:props.height}"
+    :columns="columns"
+    :dataSource="dataSource"
+    @current-change="onCurrentChange"
+    @row-dblclick="onRowDblclick"
+    @col-order-change="onColOrderChange2"
+)
 
 div columns:{{columns}}
 
@@ -86,14 +86,14 @@ div(style="width:max-content")
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
-// import StkTableC from '../src/StkTableC/index.vue'; // 兼容版本 fixedLeft
+import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import { StkTableColumn } from '../src/StkTable/types';
 import FixedMode from './FixedMode.vue';
 
 export default {
     name: 'StkTableTest',
-    components: { StkTable, StkTableInsertSort, FixedMode },
+    components: { StkTable, StkTableInsertSort, FixedMode, StkTableC },
     props: {},
     data() {
         return {
