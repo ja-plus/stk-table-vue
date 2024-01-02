@@ -22,6 +22,9 @@ export default defineConfig({
             '@': path.resolve('src'),
         },
     },
+    test: {
+        environment: 'happy-dom',
+    },
     plugins: [
         vue(),
         vueJsxPlugin(),
