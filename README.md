@@ -112,30 +112,106 @@ export type StkProps = Partial<{
 }>;
 ```
 
-#### StkTableColumn
+### StkTableColumn
 ``` ts
 type Sorter = boolean | Function;
-
+/** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
-  dataIndex: keyof T & string;
-  title?: string;
-  align?: 'right' | 'left' | 'center';
-  headerAlign?: 'right' | 'left' | 'center';
-  sorter?: Sorter;
-  width?: string;
-  minWidth?: string;
-  maxWidth?: string;
-  headerClassName?: string;
-  className?: string;
-  sortField?: keyof T;
-  sortType?: 'number' | 'string';
-  fixed?: 'left' | 'right' | null;
-
-  /** private */ rowSpan?: number;
-  /** private */ colSpan?: number;
-  customCell?: Component | VNode;
-  customHeaderCell?: Component | VNode;
-  children?: StkTableColumn<T>[];
+    /** 取值id */
+    dataIndex: keyof T & string;
+    /** 表头文字 */
+    title?: string;
+    /** 列内容对齐方式 */
+    align?: 'right' | 'left' | 'center';
+    /** 表头内容对齐方式 */
+    headerAlign?: 'right' | 'left' | 'center';
+    /** 筛选 */
+    sorter?: Sorter;
+    /** 列宽。横向虚拟滚动时必须设置。 */
+    width?: string;
+    /** 最小列宽。非x虚拟滚动生效。 */
+    minWidth?: string;
+    /** 最大列宽。非x虚拟滚动生效。 */
+    maxWidth?: string;
+    /**th class */
+    headerClassName?: string;
+    /** td class */
+    className?: string;
+    /** 排序字段。default: dataIndex */
+    sortField?: keyof T;
+    /** 排序方式。按数字/字符串 */
+    sortType?: 'number' | 'string';
+    /** 固定列 */
+    fixed?: 'left' | 'right' | null;
+    /** private */ rowSpan?: number;
+    /** private */ colSpan?: number;
+    /**自定义 td 渲染内容 */
+    customCell?: Component | VNode | CustomCellFunc<T>;
+    /** 自定义 th 渲染内容 */
+    customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
+    /** 二级表头 */
+    children?: StkTableColumn<T>[];
 };
 ```
 
+
+### Example
+```vue
+<template>
+ <StkTable
+    ref="stkTable"
+    row-key="name"
+    v-model:columns="columns"
+    :style="{height:props.height}"
+    theme='dark'
+    height='200px'
+    :show-overflow="false"
+    :show-header-overflow="false"
+    :sort-remote="false"
+    col-resizable
+    header-drag
+    virtual
+    virtual-x
+    no-data-full
+    :headless="false"
+    :data-source="dataSource"
+    @current-change="onCurrentChange"
+    @row-menu="onRowMenu"
+    @header-row-menu="onHeaderRowMenu"
+    @row-click="onRowClick"
+    @row-dblclick="onRowDblclick"
+    @sort-change="handleSortChange"
+    @cell-click="onCellClick"
+    @header-cell-click="onHeaderCellClick"
+    @scroll="onTableScroll"
+    @col-order-change="onColOrderChange"
+  />
+</template>
+<script setup>
+  import { h, defineComponent } from 'vue';
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      fixed: 'left',
+      width: '200px',
+      headerClassName: 'my-th',
+      className: 'my-td',
+      sorter: true,
+      customHeaderCell: function FunctionalComponent(props){
+          return h(
+              'span',
+              { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' },
+              props.col.title + '(render) text-overflow,',
+          );
+      },
+      customCell: defineComponent({
+        setup(){
+          //...
+          return () => <div></div>
+        }
+      })
+    },
+  ]
+</script>
+```
