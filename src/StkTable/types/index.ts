@@ -131,4 +131,11 @@ export type StkProps = Partial<{
 
     /** 可拖动至最小的列宽 */
     colMinWidth: number;
+
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * horizontal - 仅展示横线
+     */
+    border: boolean | 'horizontal';
 }>;

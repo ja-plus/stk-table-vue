@@ -1,5 +1,6 @@
 ## 0.0.1-beta.3
 * 优化 Order 类型
+* 增加props.border = horizontal 表示仅展示横向边框。
 
 ## 0.0.1-beta.2
 * customCell 入参增加 cellValue。

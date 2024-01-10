@@ -8,6 +8,8 @@
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,
+            border: props.border,
+            'border-horizontal': props.border === 'horizontal',
         }"
         :style="virtual && { '--row-height': virtualScroll.rowHeight + 'px' }"
         @scroll="onTableScroll"
@@ -218,6 +220,7 @@ const props = withDefaults(defineProps<StkProps>(), {
     rowClassName: () => '',
     colResizable: false,
     colMinWidth: 10,
+    border: true,
 });
 
 const emit = defineEmits([
@@ -767,6 +770,55 @@ defineExpose({
     &.is-col-resizing th {
         pointer-events: none;
     }
+    &.border-horizontal {
+        --bg-border-right: linear-gradient(transparent, transparent);
+        --bg-border-left: linear-gradient(transparent, transparent);
+    }
+
+    &.border {
+        .stk-table-main {
+            th,
+            td {
+                background-image: var(--bg-border-right), var(--bg-border-bottom);
+            }
+            thead {
+                tr {
+                    &:first-child th {
+                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+
+                        &:first-child {
+                            background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                        }
+                    }
+                    th {
+                        &:first-child {
+                            background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                        }
+                    }
+                }
+            }
+            tbody {
+                td {
+                    &:first-child {
+                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                    }
+                }
+            }
+        }
+
+        &.virtual-x {
+            .stk-table-main {
+                thead tr:first-child .virtual-x-left + th {
+                    // 横向虚拟滚动时，左侧第一个单元格加上border-left
+                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                }
+
+                tr .virtual-x-left + th {
+                    background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                }
+            }
+        }
+    }
 
     /** 列宽调整指示器 */
     .column-resize-indicator {
@@ -793,7 +845,6 @@ defineExpose({
             font-size: 14px;
             box-sizing: border-box;
             padding: 0 var(--cell-padding-x);
-            background-image: var(--bg-border-right), var(--bg-border-bottom);
         }
 
         thead {
@@ -801,12 +852,6 @@ defineExpose({
                 &:first-child th {
                     position: sticky;
                     top: 0;
-                    // border-top: 1px solid var(--border-color);
-                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-
-                    &:first-child {
-                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                    }
                 }
 
                 th {
@@ -816,15 +861,6 @@ defineExpose({
                         cursor: pointer;
                     }
 
-                    &:first-child {
-                        // border-left: 1px solid var(--border-color);
-                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                        // padding-left: 12px;
-                    }
-
-                    // &:last-child {
-                    //   padding-right: 12px;
-                    // }
                     &.text-overflow {
                         .table-header-cell-wrapper {
                             white-space: nowrap;
@@ -945,10 +981,6 @@ defineExpose({
                         background-color: inherit; // 防止横向滚动后透明
                     }
 
-                    &:first-child {
-                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                    }
-
                     &.highlight-cell {
                         animation: dim 2s linear;
                     }
@@ -1058,15 +1090,6 @@ defineExpose({
         .stk-table-main {
             .virtual-x-left {
                 padding: 0;
-            }
-
-            thead tr:first-child .virtual-x-left + th {
-                // 横向虚拟滚动时，左侧第一个单元格加上border-left
-                background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-            }
-
-            tr .virtual-x-left + th {
-                background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
             }
         }
     }
