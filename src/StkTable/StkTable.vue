@@ -185,7 +185,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { SortOption, StkProps, StkTableColumn } from '@/StkTable/types/index';
+import { Order, SortOption, StkProps, StkTableColumn } from '@/StkTable/types/index';
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Col_Width, Is_Legacy_Mode } from './const';
 import { useColResize } from './useColResize';
@@ -248,7 +248,7 @@ let sortCol = ref<string | null>();
 let sortOrderIndex = ref(0);
 
 /** 排序切换顺序 */
-const sortSwitchOrder = [null, 'desc', 'asc'];
+const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
 /** 表头.内容是 props.columns 的引用集合 */
 const tableHeaders = ref<StkTableColumn<any>[][]>([]);

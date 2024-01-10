@@ -1,6 +1,9 @@
 import { Component, VNode } from 'vue';
 
-type Sorter = boolean | Function;
+/** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
+export type Order = null | 'asc' | 'desc';
+
+type Sorter = boolean | ((data: any[], option: { order: Order; column: any }) => any[]);
 
 export type CustomCellFunc<T extends Record<string, any>> = (props: { row: T; col: StkTableColumn<T>; cellValue: any }) => VNode;
 export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: { col: StkTableColumn<T> }) => VNode;

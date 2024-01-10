@@ -1,8 +1,8 @@
 <template>
-  <!-- <VirtualTree></VirtualTree> -->
-  <!-- <VirtualTreeSelectTest></VirtualTreeSelectTest> -->
-  <StkTableTest></StkTableTest>
-  <StkTableExpandCellVue></StkTableExpandCellVue>
+    <!-- <VirtualTree></VirtualTree> -->
+    <!-- <VirtualTreeSelectTest></VirtualTreeSelectTest> -->
+    <StkTableTest></StkTableTest>
+    <StkTableExpandCellVue></StkTableExpandCellVue>
 </template>
 
 <script setup>
@@ -14,13 +14,13 @@ import StkTableExpandCellVue from './test/StkTableExpandCell/index.vue';
 
 <style>
 body {
-  height: 100vh;
-  /* margin: 0; */
-  box-sizing: border-box;
-  /* padding: 10px; */
-  display: flex;
-  /* flex-direction: column; */
-  /* align-items: center; */
-  /* justify-content: center; */
+    height: 100vh;
+    /* margin: 0; */
+    box-sizing: border-box;
+    /* padding: 10px; */
+    display: flex;
+    /* flex-direction: column; */
+    /* align-items: center; */
+    /* justify-content: center; */
 }
 </style>
