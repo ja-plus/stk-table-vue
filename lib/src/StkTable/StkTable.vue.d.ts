@@ -30,8 +30,12 @@ declare function setSorter(dataIndex: string, order: null | 'asc' | 'desc', opti
 }): any[];
 /** 重置排序 */
 declare function resetSorter(): void;
-/** 滚动 */
-declare function scrollTo(top?: number, left?: number): void;
+/**
+ * 设置滚动条位置
+ * @param top 传null 则不变动位置
+ * @param left 传null 则不变动位置
+ */
+declare function scrollTo(top?: number | null, left?: number | null): void;
 /** 获取当前状态的表格数据 */
 declare function getTableData(): any[];
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
@@ -56,9 +60,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
-    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
+    border: boolean | "horizontal";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -83,6 +87,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
+    border: boolean;
 }>, {
     setCurrentRow: typeof setCurrentRow;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
@@ -127,9 +132,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
-    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
+    border: boolean | "horizontal";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -154,6 +159,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
+    border: boolean;
 }>>> & {
     onScroll?: ((...args: any[]) => any) | undefined;
     "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
@@ -192,6 +198,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
+    border: boolean | "horizontal";
 }, {}>, {
     tableHeader?(_: {
         column: StkTableColumn<any>;
