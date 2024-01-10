@@ -151,6 +151,12 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * horizontal - 仅展示横线
+     */
+    border: boolean | 'horizontal';
 };
 ```
 
