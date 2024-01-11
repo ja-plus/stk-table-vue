@@ -140,4 +140,7 @@ export type StkProps = Partial<{
      * "body-v" - 仅表体展示竖线
      */
     bordered: boolean | 'h' | 'v' | 'body-v';
+
+    /** 自动重新计算虚拟滚动高度宽度。默认true */
+    autoResize: boolean;
 }>;

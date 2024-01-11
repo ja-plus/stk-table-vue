@@ -192,6 +192,7 @@
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Col_Width, Is_Legacy_Mode } from './const';
 import { Order, SortOption, StkProps, StkTableColumn } from './types/index';
+import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useHighlight } from './useHighlight';
 import { useThDrag } from './useThDrag';
@@ -223,6 +224,7 @@ const props = withDefaults(defineProps<StkProps>(), {
     colResizable: false,
     colMinWidth: 10,
     bordered: true,
+    autoResize: true,
 });
 
 const emit = defineEmits([
@@ -332,6 +334,8 @@ const {
  * 高亮行，高亮单元格
  */
 const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
+
+useAutoResize({ initVirtualScroll, props, debounceMs: 500 });
 
 watch(
     () => props.columns,

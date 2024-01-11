@@ -111,7 +111,7 @@ export default {
             props: {
                 rowKey: 'name',
                 theme: 'dark',
-                height: '200px',
+                height: '50vh',
                 showOverflow: false,
                 showHeaderOverflow: false,
                 sortRemote: false,
@@ -255,9 +255,15 @@ export default {
                 { key: 'colMinWidth', desc: '列拖动的最小宽度', value: 'number', defaultValue: '10' },
                 { key: 'headless', desc: '是否展示表头', value: 'boolean', defaultValue: 'false' },
                 {
-                    key: 'order',
+                    key: 'bordered',
                     desc: `边框。单元格分割线。默认横竖都有"h" - 仅展示横线"v" - 仅展示竖线"body-v" - 仅表体展示竖线`,
                     value: 'boolean|"h"|"v"|"body-v"',
+                    defaultValue: 'true',
+                },
+                {
+                    key: 'autoResize',
+                    desc: '自动重新计算虚拟滚动高度宽度。默认true',
+                    value: 'boolean',
                     defaultValue: 'true',
                 },
                 { key: '------------', desc: '---------' },
