@@ -1,3 +1,8 @@
+## 0.0.1-beta.5
+* expose initVirtualScroll
+* remove vue style scope
+* 默认不展示排序按钮。点击表头排序后显示箭头。
+
 ## 0.0.1-beta.4
 * 修改props.border 为 props.bordered 取值 "h" | "v" | "body-v"
 

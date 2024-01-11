@@ -189,9 +189,9 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { Order, SortOption, StkProps, StkTableColumn } from '@/StkTable/types/index';
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Col_Width, Is_Legacy_Mode } from './const';
+import { Order, SortOption, StkProps, StkTableColumn } from './types/index';
 import { useColResize } from './useColResize';
 import { useHighlight } from './useHighlight';
 import { useThDrag } from './useThDrag';
@@ -694,6 +694,9 @@ function getTableData() {
 }
 
 defineExpose({
+    initVirtualScroll,
+    initVirtualScrollX,
+    initVirtualScrollY,
     setCurrentRow,
     setHighlightDimCell,
     setHighlightDimRow,
@@ -704,7 +707,7 @@ defineExpose({
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .stk-table {
     // contain: strict;
     --row-height: 28px;
@@ -896,7 +899,7 @@ defineExpose({
                     }
 
                     &.sorter-desc .table-header-cell-wrapper .table-header-sorter {
-                        // display:initial;
+                        display: initial;
                         #arrow-up {
                             fill: var(--sort-arrow-active-sub-color);
                         }
@@ -907,7 +910,7 @@ defineExpose({
                     }
 
                     &.sorter-asc .table-header-cell-wrapper .table-header-sorter {
-                        // display:initial;
+                        display: initial;
                         #arrow-up {
                             fill: var(--sort-arrow-active-color);
                         }
@@ -932,8 +935,7 @@ defineExpose({
                             margin-left: 4px;
                             width: 16px;
                             height: 16px;
-
-                            // display:none;
+                            display: none;
                             #arrow-up,
                             #arrow-down {
                                 fill: var(--sort-arrow-color);
