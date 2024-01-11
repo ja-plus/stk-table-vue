@@ -109,6 +109,15 @@ export type StkProps = Partial<{
 
     /** 可拖动至最小的列宽 */
     colMinWidth: number;
+
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * "h" - 仅展示横线
+     * "v" - 仅展示竖线
+     * "body-v" - 仅表体展示竖线
+     */
+    bordered: boolean | 'h' | 'v' | 'body-v';
 }>;
 ```
 
@@ -151,12 +160,6 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
-    /**
-     * 单元格分割线。
-     * 默认横竖都有
-     * horizontal - 仅展示横线
-     */
-    border: boolean | 'horizontal';
 };
 ```
 
