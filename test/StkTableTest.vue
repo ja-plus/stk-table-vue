@@ -23,10 +23,14 @@ div(style="display:flex;")
     button(@click="props.headless = !props.headless") headless:{{props.headless}}
     button(@click="props.colResizable = !props.colResizable") colResizable:{{props.colResizable}}
     span border:
-    input(type='radio' v-model="props.border" name='border' value='true') 
+    input(type='radio' v-model="props.bordered" name='border' value='true') 
     | true
-    input(type='radio' v-model="props.border" name='border' value="horizontal")
+    input(type='radio' v-model="props.bordered" name='border' value="h")
     | horizontal
+    input(type='radio' v-model="props.bordered" name='border' value="v")
+    | vertical
+    input(type='radio' v-model="props.bordered" name='border' value="body-v")
+    | body-vertical
 div(style="margin-left:10px")
   //- div virtualScroll: {{$refs.stkTable&& $refs.stkTable.virtualScroll}}
   //- div virtual_pageSize: {{$refs.stkTable&& $refs.stkTable.virtual_pageSize}}
@@ -118,7 +122,7 @@ export default {
                 virtualX: true,
                 noDataFull: true,
                 headless: false,
-                border: true,
+                bordered: true,
             },
             columns: [
                 // {
@@ -250,7 +254,12 @@ export default {
                 },
                 { key: 'colMinWidth', desc: '列拖动的最小宽度', value: 'number', defaultValue: '10' },
                 { key: 'headless', desc: '是否展示表头', value: 'boolean', defaultValue: 'false' },
-                { key: 'order', desc: '边框。置为: horizontal 仅展示横线', value: 'boolean', defaultValue: 'true' },
+                {
+                    key: 'order',
+                    desc: `边框。单元格分割线。默认横竖都有"h" - 仅展示横线"v" - 仅展示竖线"body-v" - 仅表体展示竖线`,
+                    value: 'boolean|"h"|"v"|"body-v"',
+                    defaultValue: 'true',
+                },
                 { key: '------------', desc: '---------' },
                 { key: 'columnOption', desc: '', value: '' },
                 { key: 'title', desc: '名称' },

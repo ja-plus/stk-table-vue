@@ -62,7 +62,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
-    border: boolean | "horizontal";
+    bordered: boolean | "h" | "v" | "body-v";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -87,7 +87,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
-    border: boolean;
+    bordered: boolean;
 }>, {
     setCurrentRow: typeof setCurrentRow;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
@@ -134,7 +134,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
-    border: boolean | "horizontal";
+    bordered: boolean | "h" | "v" | "body-v";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -159,7 +159,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
-    border: boolean;
+    bordered: boolean;
 }>>> & {
     onScroll?: ((...args: any[]) => any) | undefined;
     "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
@@ -198,7 +198,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
-    border: boolean | "horizontal";
+    bordered: boolean | "h" | "v" | "body-v";
 }, {}>, {
     tableHeader?(_: {
         column: StkTableColumn<any>;

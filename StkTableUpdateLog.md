@@ -1,3 +1,6 @@
+## 0.0.1-beta.4
+* 修改props.border 为 props.bordered 取值 "h" | "v" | "body-v"
+
 ## 0.0.1-beta.3
 * 优化 Order 类型
 * 增加props.border = horizontal 表示仅展示横向边框。

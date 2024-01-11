@@ -8,8 +8,10 @@
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,
-            border: props.border,
-            'border-horizontal': props.border === 'horizontal',
+            border: props.bordered,
+            'border-h': props.bordered === 'h',
+            'border-v': props.bordered === 'v',
+            'border-body-v': props.bordered === 'body-v',
         }"
         :style="virtual && { '--row-height': virtualScroll.rowHeight + 'px' }"
         @scroll="onTableScroll"
@@ -220,7 +222,7 @@ const props = withDefaults(defineProps<StkProps>(), {
     rowClassName: () => '',
     colResizable: false,
     colMinWidth: 10,
-    border: true,
+    bordered: true,
 });
 
 const emit = defineEmits([
@@ -770,9 +772,12 @@ defineExpose({
     &.is-col-resizing th {
         pointer-events: none;
     }
-    &.border-horizontal {
+    &.border-h {
         --bg-border-right: linear-gradient(transparent, transparent);
         --bg-border-left: linear-gradient(transparent, transparent);
+    }
+    &.border-v {
+        --bg-border-bottom: linear-gradient(transparent, transparent);
     }
 
     &.border {
@@ -816,6 +821,13 @@ defineExpose({
                 tr .virtual-x-left + th {
                     background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                 }
+            }
+        }
+    }
+    &.border-body-v {
+        .stk-table-main {
+            tbody {
+                --bg-border-bottom: linear-gradient(transparent, transparent);
             }
         }
     }

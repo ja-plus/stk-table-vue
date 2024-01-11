@@ -135,7 +135,9 @@ export type StkProps = Partial<{
     /**
      * 单元格分割线。
      * 默认横竖都有
-     * horizontal - 仅展示横线
+     * "h" - 仅展示横线
+     * "v" - 仅展示竖线
+     * "body-v" - 仅表体展示竖线
      */
-    border: boolean | 'horizontal';
+    bordered: boolean | 'h' | 'v' | 'body-v';
 }>;
