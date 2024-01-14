@@ -129,11 +129,17 @@
 .stk-table .stk-table-main thead tr th:not(.sorter-desc):not(.sorter-asc):hover .table-header-cell-wrapper .table-header-sorter #arrow-down {
   fill: var(--sort-arrow-hover-color);
 }
+.stk-table .stk-table-main thead tr th.sorter-desc .table-header-cell-wrapper .table-header-sorter {
+  display: initial;
+}
 .stk-table .stk-table-main thead tr th.sorter-desc .table-header-cell-wrapper .table-header-sorter #arrow-up {
   fill: var(--sort-arrow-active-sub-color);
 }
 .stk-table .stk-table-main thead tr th.sorter-desc .table-header-cell-wrapper .table-header-sorter #arrow-down {
   fill: var(--sort-arrow-active-color);
+}
+.stk-table .stk-table-main thead tr th.sorter-asc .table-header-cell-wrapper .table-header-sorter {
+  display: initial;
 }
 .stk-table .stk-table-main thead tr th.sorter-asc .table-header-cell-wrapper .table-header-sorter #arrow-up {
   fill: var(--sort-arrow-active-color);
@@ -155,6 +161,7 @@
   margin-left: 4px;
   width: 16px;
   height: 16px;
+  display: none;
 }
 .stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-sorter #arrow-up,
 .stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-sorter #arrow-down {

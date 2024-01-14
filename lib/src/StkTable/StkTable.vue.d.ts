@@ -40,7 +40,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     fixedMode: boolean;
-    headless: boolean; /** 排序切换顺序 */
+    headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
@@ -60,6 +60,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
+    autoResize: boolean;
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -85,6 +86,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean;
+    autoResize: boolean;
 }>, {
     initVirtualScroll: typeof initVirtualScroll;
     initVirtualScrollX: () => void;
@@ -115,7 +117,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     fixedMode: boolean;
-    headless: boolean; /** 排序切换顺序 */
+    headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
@@ -135,6 +137,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
+    autoResize: boolean;
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -160,6 +163,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean;
+    autoResize: boolean;
 }>>> & {
     onScroll?: ((...args: any[]) => any) | undefined;
     "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
@@ -199,6 +203,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
+    autoResize: boolean;
 }, {}>, {
     tableHeader?(_: {
         column: StkTableColumn<any>;

@@ -1,3 +1,6 @@
+## 0.0.1-beta.6
+* 优化 StkTableColumn fixed 遍历。
+
 ## 0.0.1-beta.5
 * expose initVirtualScroll
 * remove vue style scope
