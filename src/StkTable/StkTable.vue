@@ -8,6 +8,10 @@
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,
+            border: props.bordered,
+            'border-h': props.bordered === 'h',
+            'border-v': props.bordered === 'v',
+            'border-body-v': props.bordered === 'body-v',
         }"
         :style="virtual && { '--row-height': virtualScroll.rowHeight + 'px' }"
         @scroll="onTableScroll"
@@ -191,9 +195,10 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { SortOption, StkProps, StkTableColumn } from '@/StkTable/types/index';
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Col_Width, Is_Legacy_Mode } from './const';
+import { Order, SortOption, StkProps, StkTableColumn } from './types/index';
+import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useHighlight } from './useHighlight';
 import { useThDrag } from './useThDrag';
@@ -224,6 +229,8 @@ const props = withDefaults(defineProps<StkProps>(), {
     rowClassName: () => '',
     colResizable: false,
     colMinWidth: 10,
+    bordered: true,
+    autoResize: true,
 });
 
 const emit = defineEmits([
@@ -254,7 +261,7 @@ let sortCol = ref<string | null>();
 let sortOrderIndex = ref(0);
 
 /** 排序切换顺序 */
-const sortSwitchOrder = [null, 'desc', 'asc'];
+const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
 /** 表头.内容是 props.columns 的引用集合 */
 const tableHeaders = ref<StkTableColumn<any>[][]>([]);
@@ -338,6 +345,8 @@ const {
  * 高亮行，高亮单元格
  */
 const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
+
+useAutoResize({ initVirtualScroll, props, debounceMs: 500 });
 
 watch(
     () => props.columns,
@@ -700,6 +709,9 @@ function getTableData() {
 }
 
 defineExpose({
+    initVirtualScroll,
+    initVirtualScrollX,
+    initVirtualScrollY,
     setCurrentRow,
     setHighlightDimCell,
     setHighlightDimRow,
@@ -710,7 +722,7 @@ defineExpose({
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .stk-table {
     // contain: strict;
     --row-height: 28px;
@@ -778,6 +790,65 @@ defineExpose({
     &.is-col-resizing th {
         pointer-events: none;
     }
+    &.border-h {
+        --bg-border-right: linear-gradient(transparent, transparent);
+        --bg-border-left: linear-gradient(transparent, transparent);
+    }
+    &.border-v {
+        --bg-border-bottom: linear-gradient(transparent, transparent);
+    }
+
+    &.border {
+        .stk-table-main {
+            th,
+            td {
+                background-image: var(--bg-border-right), var(--bg-border-bottom);
+            }
+            thead {
+                tr {
+                    &:first-child th {
+                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+
+                        &:first-child {
+                            background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                        }
+                    }
+                    th {
+                        &:first-child {
+                            background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                        }
+                    }
+                }
+            }
+            tbody {
+                td {
+                    &:first-child {
+                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                    }
+                }
+            }
+        }
+
+        &.virtual-x {
+            .stk-table-main {
+                thead tr:first-child .virtual-x-left + th {
+                    // 横向虚拟滚动时，左侧第一个单元格加上border-left
+                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                }
+
+                tr .virtual-x-left + th {
+                    background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+                }
+            }
+        }
+    }
+    &.border-body-v {
+        .stk-table-main {
+            tbody {
+                --bg-border-bottom: linear-gradient(transparent, transparent);
+            }
+        }
+    }
 
     /** 列宽调整指示器 */
     .column-resize-indicator {
@@ -804,7 +875,6 @@ defineExpose({
             font-size: 14px;
             box-sizing: border-box;
             padding: 0 var(--cell-padding-x);
-            background-image: var(--bg-border-right), var(--bg-border-bottom);
         }
 
         thead {
@@ -812,12 +882,6 @@ defineExpose({
                 &:first-child th {
                     position: sticky;
                     top: 0;
-                    // border-top: 1px solid var(--border-color);
-                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-
-                    &:first-child {
-                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                    }
                 }
 
                 th {
@@ -827,15 +891,6 @@ defineExpose({
                         cursor: pointer;
                     }
 
-                    &:first-child {
-                        // border-left: 1px solid var(--border-color);
-                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                        // padding-left: 12px;
-                    }
-
-                    // &:last-child {
-                    //   padding-right: 12px;
-                    // }
                     &.text-overflow {
                         .table-header-cell-wrapper {
                             white-space: nowrap;
@@ -859,7 +914,7 @@ defineExpose({
                     }
 
                     &.sorter-desc .table-header-cell-wrapper .table-header-sorter {
-                        // display:initial;
+                        display: initial;
                         #arrow-up {
                             fill: var(--sort-arrow-active-sub-color);
                         }
@@ -870,7 +925,7 @@ defineExpose({
                     }
 
                     &.sorter-asc .table-header-cell-wrapper .table-header-sorter {
-                        // display:initial;
+                        display: initial;
                         #arrow-up {
                             fill: var(--sort-arrow-active-color);
                         }
@@ -895,8 +950,7 @@ defineExpose({
                             margin-left: 4px;
                             width: 16px;
                             height: 16px;
-
-                            // display:none;
+                            display: none;
                             #arrow-up,
                             #arrow-down {
                                 fill: var(--sort-arrow-color);
@@ -954,10 +1008,6 @@ defineExpose({
                 td {
                     &.fixed-cell {
                         background-color: inherit; // 防止横向滚动后透明
-                    }
-
-                    &:first-child {
-                        background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                     }
 
                     &.highlight-cell {
@@ -1069,15 +1119,6 @@ defineExpose({
         .stk-table-main {
             .virtual-x-left {
                 padding: 0;
-            }
-
-            thead tr:first-child .virtual-x-left + th {
-                // 横向虚拟滚动时，左侧第一个单元格加上border-left
-                background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-            }
-
-            tr .virtual-x-left + th {
-                background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
             }
         }
     }

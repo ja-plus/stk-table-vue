@@ -1,4 +1,15 @@
+## 0.0.1-beta.5
+* expose initVirtualScroll
+* remove vue style scope
+* 默认不展示排序按钮。点击表头排序后显示箭头。
+* 增加 props.autoResize 当window 触发 resize 时，自动重新计算虚拟滚动。
+
+## 0.0.1-beta.4
+* 修改props.border 为 props.bordered 取值 "h" | "v" | "body-v"
+
 ## 0.0.1-beta.3
+* 优化 Order 类型
+* 增加props.border = horizontal 表示仅展示横向边框。
 
 ## 0.0.1-beta.2
 * customCell 入参增加 cellValue。

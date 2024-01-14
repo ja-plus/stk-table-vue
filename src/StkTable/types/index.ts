@@ -1,6 +1,9 @@
 import { Component, VNode } from 'vue';
 
-type Sorter = boolean | Function;
+/** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
+export type Order = null | 'asc' | 'desc';
+
+type Sorter = boolean | ((data: any[], option: { order: Order; column: any }) => any[]);
 
 export type CustomCellFunc<T extends Record<string, any>> = (props: { row: T; col: StkTableColumn<T>; cellValue: any }) => VNode;
 export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: { col: StkTableColumn<T> }) => VNode;
@@ -128,4 +131,16 @@ export type StkProps = Partial<{
 
     /** 可拖动至最小的列宽 */
     colMinWidth: number;
+
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * "h" - 仅展示横线
+     * "v" - 仅展示竖线
+     * "body-v" - 仅表体展示竖线
+     */
+    bordered: boolean | 'h' | 'v' | 'body-v';
+
+    /** 自动重新计算虚拟滚动高度宽度。默认true */
+    autoResize: boolean;
 }>;

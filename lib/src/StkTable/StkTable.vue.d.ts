@@ -1,12 +1,9 @@
+import { SortOption, StkTableColumn } from './types/index';
 /**
- * @author JA+
- * 不支持低版本浏览器非虚拟滚动表格的表头固定，列固定，因为会卡。
- * TODO:存在的问题：
- * [] column.dataIndex 作为唯一键，不能重复
- * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
- * [] highlight-row 颜色不能恢复到active的颜色
+ * 初始化虚拟滚动参数
+ * @param {number} [height] 虚拟滚动的高度
  */
-import { SortOption, StkTableColumn } from '../StkTable/types/index';
+declare function initVirtualScroll(height?: number): void;
 /**
  * 选中一行，
  * @param {string} rowKey
@@ -30,8 +27,12 @@ declare function setSorter(dataIndex: string, order: null | 'asc' | 'desc', opti
 }): any[];
 /** 重置排序 */
 declare function resetSorter(): void;
-/** 滚动 */
-declare function scrollTo(top?: number, left?: number): void;
+/**
+ * 设置滚动条位置
+ * @param top 传null 则不变动位置
+ * @param left 传null 则不变动位置
+ */
+declare function scrollTo(top?: number | null, left?: number | null): void;
 /** 获取当前状态的表格数据 */
 declare function getTableData(): any[];
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
@@ -39,14 +40,14 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     fixedMode: boolean;
-    headless: boolean;
+    headless: boolean; /** 排序切换顺序 */
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: import('../StkTable/types/index').UniqKey;
-    colKey: import('../StkTable/types/index').UniqKey;
+    rowKey: import("./types/index").UniqKey;
+    colKey: import("./types/index").UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -56,9 +57,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
-    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
+    bordered: boolean | "h" | "v" | "body-v";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -83,7 +84,11 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
+    bordered: boolean;
 }>, {
+    initVirtualScroll: typeof initVirtualScroll;
+    initVirtualScrollX: () => void;
+    initVirtualScrollY: (height?: number | undefined) => void;
     setCurrentRow: typeof setCurrentRow;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
     setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
@@ -110,14 +115,14 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     fixedMode: boolean;
-    headless: boolean;
+    headless: boolean; /** 排序切换顺序 */
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: import('../StkTable/types/index').UniqKey;
-    colKey: import('../StkTable/types/index').UniqKey;
+    rowKey: import("./types/index").UniqKey;
+    colKey: import("./types/index").UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -127,9 +132,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showTrHoverClass: boolean;
     headerDrag: boolean;
     rowClassName: (row: any, i: number) => string;
-    /** rowKey缓存 */
     colResizable: boolean;
     colMinWidth: number;
+    bordered: boolean | "h" | "v" | "body-v";
 }>>, {
     width: string;
     fixedMode: boolean;
@@ -154,6 +159,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: () => "";
     colResizable: boolean;
     colMinWidth: number;
+    bordered: boolean;
 }>>> & {
     onScroll?: ((...args: any[]) => any) | undefined;
     "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
@@ -172,7 +178,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
-    colKey: import('../StkTable/types/index').UniqKey;
+    colKey: import("./types/index").UniqKey;
     fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";
@@ -180,7 +186,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: import('../StkTable/types/index').UniqKey;
+    rowKey: import("./types/index").UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -192,6 +198,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
+    bordered: boolean | "h" | "v" | "body-v";
 }, {}>, {
     tableHeader?(_: {
         column: StkTableColumn<any>;
