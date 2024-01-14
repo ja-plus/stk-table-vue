@@ -56,6 +56,7 @@
                             showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
                             col.fixed ? 'fixed-cell' : '',
+                            col.fixed ? 'fixed-cell-' + col.fixed : '',
                         ]"
                         @click="
                             e => {

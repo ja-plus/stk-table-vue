@@ -62,6 +62,7 @@
                             showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
                             col.fixed ? 'fixed-cell' : '',
+                            col.fixed ? 'fixed-cell--' + col.fixed : '',
                         ]"
                         @click="
                             e => {
@@ -157,7 +158,12 @@
                         v-for="col in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
-                        :class="[col.className, showOverflow ? 'text-overflow' : '', col.fixed ? 'fixed-cell' : '']"
+                        :class="[
+                            col.className,
+                            showOverflow ? 'text-overflow' : '',
+                            col.fixed ? 'fixed-cell' : '',
+                            col.fixed ? 'fixed-cell--' + col.fixed : '',
+                        ]"
                         :style="getCellStyle(2, col)"
                         @click="e => onCellClick(e, row, col)"
                     >
@@ -278,15 +284,20 @@ const fixedColumnsPositionStore = computed(() => {
     const store: Record<string, number> = {};
     const cols = [...tableHeaderLast.value];
     let left = 0;
+    /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
+    let rightStartIndex = 0;
     for (let i = 0; i < cols.length; i++) {
         const item = cols[i];
         if (item.fixed === 'left') {
             store[item.dataIndex] = left;
             left += parseInt(item.width || Default_Col_Width);
         }
+        if (!rightStartIndex && item.fixed === 'right') {
+            rightStartIndex = i;
+        }
     }
     let right = 0;
-    for (let i = cols.length - 1; i >= 0; i--) {
+    for (let i = cols.length - 1; i >= rightStartIndex; i--) {
         const item = cols[i];
         if (item.fixed === 'right') {
             store[item.dataIndex] = right;
