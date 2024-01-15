@@ -1,6 +1,7 @@
-import { onBeforeUnmount, onMounted } from 'vue';
+import { Ref, onBeforeUnmount, onMounted, watch } from 'vue';
 
 type Options = {
+    tableContainer: Ref<HTMLElement | undefined>;
     initVirtualScroll: () => void;
     scrollTo: () => void;
     props: any;
@@ -11,20 +12,51 @@ type Options = {
  * 窗口变化自动重置虚拟滚动
  * @param param0
  */
-export function useAutoResize({ initVirtualScroll, scrollTo, props, debounceMs }: Options) {
+export function useAutoResize({ tableContainer, initVirtualScroll, scrollTo, props, debounceMs }: Options) {
+    let resizeObserver: ResizeObserver | null = null;
+
     onMounted(() => {
-        window.addEventListener('resize', resizeCallback);
+        initResizeObserver();
     });
+
     onBeforeUnmount(() => {
-        window.removeEventListener('resize', resizeCallback);
+        removeResizeObserver();
     });
+
+    function initResizeObserver() {
+        if (window.ResizeObserver) {
+            if (!tableContainer.value) {
+                const watchDom = watch(
+                    () => tableContainer,
+                    () => {
+                        initResizeObserver();
+                        watchDom();
+                    },
+                );
+                return;
+            }
+            resizeObserver = new ResizeObserver(resizeCallback);
+            resizeObserver.observe(tableContainer.value);
+        } else {
+            window.addEventListener('resize', resizeCallback);
+        }
+    }
+
+    function removeResizeObserver() {
+        if (resizeObserver) {
+            resizeObserver.disconnect();
+            resizeObserver = null;
+        } else {
+            window.removeEventListener('resize', resizeCallback);
+        }
+    }
+
     let debounceTime = 0;
     function resizeCallback() {
         if (debounceTime) {
             window.clearTimeout(debounceTime);
         }
         debounceTime = window.setTimeout(() => {
-            // TODO: 使用ResizeObserver 监听。
             if (props.autoResize) {
                 scrollTo();
                 initVirtualScroll();

@@ -346,7 +346,9 @@ const {
  */
 const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
 
-useAutoResize({ initVirtualScroll, scrollTo, props, debounceMs: 500 });
+if (props.autoResize) {
+    useAutoResize({ tableContainer, initVirtualScroll, scrollTo, props, debounceMs: 500 });
+}
 
 watch(
     () => props.columns,
@@ -361,6 +363,10 @@ dealColumns();
 watch(
     () => props.dataSource,
     val => {
+        if (!val) {
+            console.warn('invalid dataSource');
+            return;
+        }
         // dealColumns(val);
         let needInitVirtualScrollY = false;
         if (dataSourceCopy.value.length !== val.length) {

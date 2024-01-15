@@ -141,6 +141,9 @@ export type StkProps = Partial<{
      */
     bordered: boolean | 'h' | 'v' | 'body-v';
 
-    /** 自动重新计算虚拟滚动高度宽度。默认true */
+    /**
+     * 自动重新计算虚拟滚动高度宽度。默认true
+     * [非响应式]
+     */
     autoResize: boolean;
 }>;

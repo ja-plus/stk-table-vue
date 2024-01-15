@@ -91,29 +91,18 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
      * @param {number} [height] 虚拟滚动的高度
      */
     function initVirtualScrollY(height?: number) {
-        if (virtual_on.value) {
-            virtualScroll.value.containerHeight = typeof height === 'number' ? height : tableContainer.value?.offsetHeight || Default_Table_Height;
-            updateVirtualScrollY(tableContainer.value?.scrollTop);
-            // const { offsetTop, containerHeight, rowHeight } = virtualScroll.value;
-            // const tableAllHeight = dataSourceCopy.value.length * rowHeight;
-            // const overflowHeight = tableAllHeight - containerHeight;
-            // if (overflowHeight < offsetTop && overflowHeight > 0) {
-            //   virtualScroll.value.offsetTop = overflowHeight;
-            //   virtualScroll.value.startIndex = Math.ceil(overflowHeight / rowHeight);
-            // } else if (overflowHeight <= 0) {
-            //   virtualScroll.value.offsetTop = 0;
-            //   virtualScroll.value.startIndex = 0;
-            // }
-        }
+        if (!virtual_on.value) return;
+        // FIXME: 可能多次获取offsetHeight 会导致浏览器频繁重排
+        virtualScroll.value.containerHeight = typeof height === 'number' ? height : tableContainer.value?.offsetHeight || Default_Table_Height;
+        updateVirtualScrollY(tableContainer.value?.scrollTop);
     }
 
     function initVirtualScrollX() {
-        if (props.virtualX) {
-            const { offsetWidth, scrollLeft } = tableContainer.value || {};
-            // scrollTo(null, 0);
-            virtualScrollX.value.containerWidth = offsetWidth || Default_Table_Width;
-            updateVirtualScrollX(scrollLeft);
-        }
+        if (!props.virtualX) return;
+        const { offsetWidth, scrollLeft } = tableContainer.value || {};
+        // scrollTo(null, 0);
+        virtualScrollX.value.containerWidth = offsetWidth || Default_Table_Width;
+        updateVirtualScrollX(scrollLeft);
     }
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */

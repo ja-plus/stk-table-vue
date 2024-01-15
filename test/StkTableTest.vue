@@ -1,11 +1,5 @@
 <template lang="pug">
 div
-  div height:
-    input(type="range" min="100" max="1000" :value="parseInt(props.height)" @input="handleHeightInput")
-    | {{props.height}}
-  div width:
-    input(type="range" min="100" max="2000" :value="parseInt(tableWidth)"  @input="handleWidthInput")
-    | {{tableWidth}}
 
 div(style="display:flex;")
   div
@@ -38,11 +32,10 @@ div(style="margin-left:10px")
   //- div virtualX_offsetRight: {{$refs.stkTable&& $refs.stkTable.virtualX_offsetRight}}
   //- div virtualX_start/end:{{$refs.stkTable && $refs.stkTable.virtualScrollX.startIndex}}/{{$refs.stkTable && $refs.stkTable.virtualScrollX.endIndex}}
 
-div(:style="{width: tableWidth}" style="padding:10px;")
+div(style="padding:10px;" class='stk-table-parent' ref='stkTableParent')
   StkTable(
     ref="stkTable"
     row-key="name"
-    :style="{height:props.height}"
     v-bind="props"
     v-model:columns="columns"
     :data-source="dataSource"
@@ -99,6 +92,7 @@ import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLef
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import { StkTableColumn } from '../src/StkTable/types';
 import FixedMode from './FixedMode.vue';
+import DragResize from './utils/DragResize';
 
 export default {
     name: 'StkTableTest',
@@ -107,11 +101,9 @@ export default {
     data() {
         return {
             stkTable: {},
-            tableWidth: '700px',
             props: {
                 rowKey: 'name',
                 theme: 'dark',
-                height: '50vh',
                 showOverflow: false,
                 showHeaderOverflow: false,
                 sortRemote: false,
@@ -262,7 +254,7 @@ export default {
                 },
                 {
                     key: 'autoResize',
-                    desc: '自动重新计算虚拟滚动高度宽度。默认true',
+                    desc: '自动重新计算虚拟滚动高度宽度。默认true。[非响应式]',
                     value: 'boolean',
                     defaultValue: 'true',
                 },
@@ -317,6 +309,7 @@ export default {
     },
     mounted() {
         this.stkTable = this.$refs.stkTable;
+        new DragResize(this.$refs.stkTableParent);
         // this.$refs.stkTable.setCurrentRow('name0');
         // this.$refs.stkTable.setHighlightDimCell('add1', 'age');
         setInterval(() => {
@@ -338,9 +331,6 @@ export default {
             this.$nextTick(() => {
                 this.$refs.stkTable?.initVirtualScroll();
             });
-        },
-        handleWidthInput(e) {
-            this.tableWidth = e.target.value + 'px';
         },
         onCurrentChange(e, row) {
             console.log('current-change', e, row);
@@ -466,4 +456,15 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.stk-table-parent {
+    width: 700px;
+    height: 400px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    .stk-table {
+        flex: 1;
+    }
+}
+</style>
