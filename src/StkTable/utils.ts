@@ -72,6 +72,7 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
  * @param dataSource 排序的数组
  */
 export function tableSort(sortOption: SortOption, order: Order, dataSource: any[]): any[] {
+    if (!dataSource?.length) return dataSource || [];
     let targetDataSource = [...dataSource];
     if (typeof sortOption.sorter === 'function') {
         const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });

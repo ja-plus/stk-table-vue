@@ -1,5 +1,8 @@
 ## 0.0.1-beta.6
 * 优化 StkTableColumn fixed 遍历。
+* expose sortCol 用于判断表格是否在排序状态。
+* fix `tableSort` 入参dataSource 为空时报错的问题。
+* fix `autoResize` scrollTo 问题。
 
 ## 0.0.1-beta.5
 * expose initVirtualScroll

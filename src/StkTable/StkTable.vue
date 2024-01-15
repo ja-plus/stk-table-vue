@@ -346,7 +346,7 @@ const {
  */
 const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
 
-useAutoResize({ initVirtualScroll, props, debounceMs: 500 });
+useAutoResize({ initVirtualScroll, scrollTo, props, debounceMs: 500 });
 
 watch(
     () => props.columns,
@@ -715,6 +715,7 @@ defineExpose({
     setCurrentRow,
     setHighlightDimCell,
     setHighlightDimRow,
+    sortCol,
     setSorter,
     resetSorter,
     scrollTo,

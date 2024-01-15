@@ -94,6 +94,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     setCurrentRow: typeof setCurrentRow;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
     setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
+    sortCol: import("vue").Ref<string | null | undefined>;
     setSorter: typeof setSorter;
     resetSorter: typeof resetSorter;
     scrollTo: typeof scrollTo;
