@@ -32,7 +32,7 @@ div(style="margin-left:10px")
   //- div virtualX_offsetRight: {{$refs.stkTable&& $refs.stkTable.virtualX_offsetRight}}
   //- div virtualX_start/end:{{$refs.stkTable && $refs.stkTable.virtualScrollX.startIndex}}/{{$refs.stkTable && $refs.stkTable.virtualScrollX.endIndex}}
 
-div(style="padding:10px;" class='stk-table-parent' ref='stkTableParent')
+div(class='stk-table-parent' ref='stkTableParent')
   StkTable(
     ref="stkTable"
     row-key="name"
