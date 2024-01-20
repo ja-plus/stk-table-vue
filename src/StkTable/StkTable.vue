@@ -729,9 +729,9 @@ defineExpose({
 });
 </script>
 
-<style lang="less">
+<style type="css">
 .stk-table {
-    // contain: strict;
+    /* contain: strict;*/
     --row-height: 28px;
     --cell-padding-x: 8px;
     --resize-handle-width: 4px;
@@ -767,7 +767,7 @@ defineExpose({
         --tr-active-bgc: #283f63;
         --tr-hover-bgc: #1a2b46;
         --table-bgc: #181c21;
-        --highlight-color: #1e4c99; // 不能用rgba，因为固定列时，会变成半透明
+        --highlight-color: #1e4c99; /* 不能用rgba，因为固定列时，会变成半透明*/
 
         --sort-arrow-color: #5d6064;
         --sort-arrow-hover-color: #727782;
@@ -776,19 +776,19 @@ defineExpose({
 
         --col-resize-indicator-color: #5d6064;
 
-        // background-color: var(--table-bgc); // ⭐这里加background-color会导致表格出滚动白屏
+        /* background-color: var(--table-bgc); */ /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d0d1d2;
     }
 
-    // .stk-table-fixed-left-col-box-shadow {
-    //   position: sticky;
-    //   left: 0;
-    //   top: 0;
-    //   height: 100%;
-    //   box-shadow: 0 0 10px;
-    //   z-index: 1;
-    //   pointer-events: none;
-    // }
+    /*.stk-table-fixed-left-col-box-shadow {
+       position: sticky;
+       left: 0;
+       top: 0;
+       height: 100%;
+       box-shadow: 0 0 10px;
+       z-index: 1;
+       pointer-events: none;
+     }*/
     &.headless {
         border-top: 1px solid var(--border-color);
     }
@@ -839,7 +839,7 @@ defineExpose({
         &.virtual-x {
             .stk-table-main {
                 thead tr:first-child .virtual-x-left + th {
-                    // 横向虚拟滚动时，左侧第一个单元格加上border-left
+                    /* 横向虚拟滚动时，左侧第一个单元格加上border-left*/
                     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                 }
 
@@ -871,8 +871,8 @@ defineExpose({
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
-        width: fit-content; // 用于兼容低版本，低版本width超过100%的时候还是100%，导致sticky错误。
-        min-width: 100%; // 用于兼容低版本chrome。低版本min-width 是min-content;
+        width: fit-content; /* 用于兼容低版本，低版本width超过100%的时候还是100%，导致sticky错误。*/
+        min-width: 100%; /* 用于兼容低版本chrome。低版本min-width 是min-content;*/
         &.fixed-mode {
             table-layout: fixed;
         }
@@ -945,7 +945,7 @@ defineExpose({
                     }
 
                     .table-header-cell-wrapper {
-                        max-width: 100%; //最大宽度不超过列宽
+                        max-width: 100%; /*最大宽度不超过列宽*/
                         display: inline-flex;
                         align-items: center;
 
@@ -995,15 +995,15 @@ defineExpose({
             }
 
             tr {
-                background-color: var(--td-bgc); // td inherit tr bgc
+                background-color: var(--td-bgc); /* td inherit tr bgc*/
 
                 &.highlight-row {
                     animation: dim 2s linear;
                 }
 
-                // &.highlight-row-transition {
-                //   transition: background-color v-bind(highlightStepDuration) linear;
-                // }
+                /* &.highlight-row-transition {
+                   transition: background-color v-bind(highlightStepDuration) linear;
+                 }*/
 
                 &.hover,
                 &:hover {
@@ -1016,7 +1016,7 @@ defineExpose({
 
                 td {
                     &.fixed-cell {
-                        background-color: inherit; // 防止横向滚动后透明
+                        background-color: inherit; /* 防止横向滚动后透明*/
                     }
 
                     &.highlight-cell {
@@ -1031,40 +1031,40 @@ defineExpose({
                         }
                     }
 
-                    //   &.perch-td {
-                    //     padding: 0;
-                    //     height: 0;
-                    //     &.top {
-                    //       background-image: repeating-linear-gradient(
-                    //           180deg,
-                    //           transparent 0,
-                    //           transparent var(--row-height),
-                    //           var(--border-color) var(--row-height),
-                    //           var(--border-color) calc(var(--row-height) + 1px)
-                    //         ),
-                    //         var(--bg-border-right);
-                    //     }
-                    //     &.bottom {
-                    //       background-image: repeating-linear-gradient(
-                    //           0deg,
-                    //           transparent 0,
-                    //           transparent var(--row-height),
-                    //           var(--border-color) var(--row-height),
-                    //           var(--border-color) calc(var(--row-height) + 1px)
-                    //         ),
-                    //         var(--bg-border-right);
-                    //     }
-                    //   }
+                    /*   &.perch-td {
+                            padding: 0;
+                            height: 0;
+                            &.top {
+                            background-image: repeating-linear-gradient(
+                                180deg,
+                                transparent 0,
+                                transparent var(--row-height),
+                                var(--border-color) var(--row-height),
+                                var(--border-color) calc(var(--row-height) + 1px)
+                                ),
+                                var(--bg-border-right);
+                            }
+                            &.bottom {
+                            background-image: repeating-linear-gradient(
+                                0deg,
+                                transparent 0,
+                                transparent var(--row-height),
+                                var(--border-color) var(--row-height),
+                                var(--border-color) calc(var(--row-height) + 1px)
+                                ),
+                                var(--bg-border-right);
+                            }
+                        }*/
                 }
             }
 
-            // 斑马纹
-            // tr:nth-child(2n) td {
-            //   background-color: #fafafc;
-            // }
-            // tr:hover {
-            //   background-color: #ebf3ff;
-            // }
+            /* 斑马纹
+             tr:nth-child(2n) td {
+               background-color: #fafafc;
+             }
+             tr:hover {
+               background-color: #ebf3ff;
+             }*/
         }
     }
 
@@ -1094,7 +1094,7 @@ defineExpose({
             thead {
                 tr {
                     th {
-                        // 为不影响布局，表头行高要定死
+                        /* 为不影响布局，表头行高要定死*/
                         .table-header-cell-wrapper {
                             overflow: hidden;
                             max-height: var(--row-height);

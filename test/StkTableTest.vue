@@ -88,7 +88,7 @@ div(style="width:max-content")
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
-import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
+//import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import { StkTableColumn } from '../src/StkTable/types';
 import FixedMode from './FixedMode.vue';
@@ -96,7 +96,7 @@ import DragResize from './utils/DragResize';
 
 export default {
     name: 'StkTableTest',
-    components: { StkTable, StkTableInsertSort, FixedMode, StkTableC },
+    components: { StkTable, StkTableInsertSort, FixedMode },
     props: {},
     data() {
         return {
@@ -456,7 +456,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style scoped>
 .stk-table-parent {
     width: 700px;
     height: 400px;

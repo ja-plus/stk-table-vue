@@ -43,7 +43,8 @@
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-vue": "^9.19.2",
         "happy-dom": "^12.10.3",
-        "less": "^4.2.0",
+        "postcss-discard-comments": "^6.0.1",
+        "postcss-preset-env": "^9.3.0",
         "prettier": "^3.1.1",
         "pug": "^3.0.2",
         "typescript": "^5.3.3",
@@ -51,8 +52,7 @@
         "vite-plugin-dts": "^3.6.4",
         "vitest": "^1.1.0",
         "vue": "^3.3.9",
-        "vue-eslint-parser": "^9.3.2",
-        "vue-loader": "^17.2.2"
+        "vue-eslint-parser": "^9.3.2"
     },
     "dependencies": {
         "d3-interpolate": "^3.0.1"

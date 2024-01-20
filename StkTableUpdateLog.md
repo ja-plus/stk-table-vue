@@ -1,3 +1,6 @@
+## 0.0.1-beta.7
+* remove less, use css + postcss instead
+
 ## 0.0.1-beta.6
 * 优化 StkTableColumn fixed 遍历。
 * expose sortCol 用于判断表格是否在排序状态。
