@@ -52,18 +52,18 @@ div(style="padding:10px;" class='stk-table-parent' ref='stkTableParent')
   )
     //- template(#table-header="{ column }")
     //-   span {{column.title}} (slot)
-StkTableC(
-    ref="stkTableC"
-    rowKey="name"
-    :noDataFull="true"
-    :virtual="true"
-    :style="{height:props.height}"
-    :columns="columns"
-    :dataSource="dataSource"
-    @current-change="onCurrentChange"
-    @row-dblclick="onRowDblclick"
-    @col-order-change="onColOrderChange2"
-)
+//- StkTableC(
+//-     ref="stkTableC"
+//-     rowKey="name"
+//-     :noDataFull="true"
+//-     :virtual="true"
+//-     :style="{height:props.height}"
+//-     :columns="columns"
+//-     :dataSource="dataSource"
+//-     @current-change="onCurrentChange"
+//-     @row-dblclick="onRowDblclick"
+//-     @col-order-change="onColOrderChange2"
+//- )
 
 div columns:{{columns}}
 

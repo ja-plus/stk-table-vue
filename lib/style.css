@@ -93,6 +93,8 @@
 .stk-table .stk-table-main {
   border-spacing: 0;
   border-collapse: separate;
+  width: fit-content;
+  min-width: 100%;
 }
 .stk-table .stk-table-main.fixed-mode {
   table-layout: fixed;

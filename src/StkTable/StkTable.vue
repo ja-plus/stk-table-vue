@@ -871,6 +871,8 @@ defineExpose({
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
+        width: fit-content; // 用于兼容低版本，低版本width超过100%的时候还是100%，导致sticky错误。
+        min-width: 100%; // 用于兼容低版本chrome。低版本min-width 是min-content;
         &.fixed-mode {
             table-layout: fixed;
         }

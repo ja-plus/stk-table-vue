@@ -4,6 +4,7 @@
 * fix: `tableSort` 入参dataSource 为空时报错的问题。
 * fix: `autoResize` scrollTo 问题。
 * feature: `autoResize` 使用 `ResizeObserver` 
+* fix: `stk-table-main` 样式兼容 min-width: 100%, width: fit-content;
 
 ## 0.0.1-beta.5
 * expose initVirtualScroll
