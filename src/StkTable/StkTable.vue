@@ -335,6 +335,7 @@ const {
     virtualX_on,
     virtualX_columnPart,
     virtualX_offsetRight,
+    initVirtualScroll,
     initVirtualScrollY,
     initVirtualScrollX,
     updateVirtualScrollY,
@@ -389,15 +390,6 @@ watch(
 onMounted(() => {
     initVirtualScroll();
 });
-
-/**
- * 初始化虚拟滚动参数
- * @param {number} [height] 虚拟滚动的高度
- */
-function initVirtualScroll(height?: number) {
-    initVirtualScrollY(height);
-    initVirtualScrollX();
-}
 
 /**
  * 固定列的style

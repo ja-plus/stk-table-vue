@@ -1,6 +1,6 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
-import { StkTableColumn } from './types';
 import { Default_Col_Width, Default_Table_Height, Default_Table_Width } from './const';
+import { StkTableColumn } from './types';
 
 type Option = {
     tableContainer: Ref<HTMLElement | undefined>;
@@ -92,9 +92,14 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
      */
     function initVirtualScrollY(height?: number) {
         if (!virtual_on.value) return;
+        const { offsetHeight, scrollTop } = tableContainer.value || {};
         // FIXME: 可能多次获取offsetHeight 会导致浏览器频繁重排
-        virtualScroll.value.containerHeight = typeof height === 'number' ? height : tableContainer.value?.offsetHeight || Default_Table_Height;
-        updateVirtualScrollY(tableContainer.value?.scrollTop);
+        if (typeof height === 'number') {
+            virtualScroll.value.containerHeight = height;
+        } else {
+            virtualScroll.value.containerHeight = offsetHeight || Default_Table_Height;
+        }
+        updateVirtualScrollY(scrollTop);
     }
 
     function initVirtualScrollX() {
@@ -103,6 +108,14 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
         // scrollTo(null, 0);
         virtualScrollX.value.containerWidth = offsetWidth || Default_Table_Width;
         updateVirtualScrollX(scrollLeft);
+    }
+    /**
+     * 初始化虚拟滚动参数
+     * @param {number} [height] 虚拟滚动的高度
+     */
+    function initVirtualScroll(height?: number) {
+        initVirtualScrollY(height);
+        initVirtualScrollX();
     }
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
@@ -160,6 +173,7 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
         virtualX_on,
         virtualX_columnPart,
         virtualX_offsetRight,
+        initVirtualScroll,
         initVirtualScrollY,
         initVirtualScrollX,
         updateVirtualScrollY,

@@ -65,7 +65,8 @@ div(class='stk-table-parent' ref='stkTableParent')
 //-     @col-order-change="onColOrderChange2"
 //- )
 
-div columns:{{columns}}
+div columns:
+    div(v-for="col in columns") {{ col }}
 
 FixedMode
 //- div dataSource:{{dataSource}}
