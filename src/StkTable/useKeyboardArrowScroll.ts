@@ -34,8 +34,8 @@ export function useKeyboardArrowScroll(targetElement: Ref<HTMLElement | undefine
     /** 键盘按下事件 */
     function handleKeydown(e: KeyboardEvent) {
         if (!ARROW_CODES.includes(e.code)) return;
+        if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
-        if (!isMouseOver) return;
 
         const { scrollTop, rowHeight } = virtualScroll.value;
         const { scrollLeft } = virtualScrollX.value;
