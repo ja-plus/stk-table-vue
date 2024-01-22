@@ -36,7 +36,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     fixedMode: boolean;
     headless: boolean;
-    theme: "light" | "dark"; /** 排序的列dataIndex*/
+    theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
     /** 排序切换顺序 */
@@ -115,7 +115,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     fixedMode: boolean;
     headless: boolean;
-    theme: "light" | "dark"; /** 排序的列dataIndex*/
+    theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
     /** 排序切换顺序 */

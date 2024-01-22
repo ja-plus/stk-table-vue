@@ -1,6 +1,7 @@
 ## 0.0.1-beta.7
 * remove less, use css + postcss instead
 * add: 鼠标悬浮在表格上时，键盘按下箭头滚动虚拟滚动列表
+* 增强 StkTableColumns["sorter"] 的类型
 
 ## 0.0.1-beta.6
 * 优化 StkTableColumn fixed 遍历。

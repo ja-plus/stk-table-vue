@@ -3,7 +3,7 @@ import { Component, VNode } from 'vue';
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';
 
-type Sorter = boolean | ((data: any[], option: { order: Order; column: any }) => any[]);
+type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
 
 export type CustomCellFunc<T extends Record<string, any>> = (props: { row: T; col: StkTableColumn<T>; cellValue: any }) => VNode;
 export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: { col: StkTableColumn<T> }) => VNode;
@@ -19,7 +19,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 表头内容对齐方式 */
     headerAlign?: 'right' | 'left' | 'center';
     /** 筛选 */
-    sorter?: Sorter;
+    sorter?: Sorter<T>;
     /** 列宽。横向虚拟滚动时必须设置。 */
     width?: string;
     /** 最小列宽。非x虚拟滚动生效。 */
