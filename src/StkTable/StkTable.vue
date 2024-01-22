@@ -201,6 +201,7 @@ import { Order, SortOption, StkProps, StkTableColumn } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useHighlight } from './useHighlight';
+import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { howDeepTheColumn, tableSort } from './utils';
@@ -350,6 +351,13 @@ const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableC
 if (props.autoResize) {
     useAutoResize({ tableContainer, initVirtualScroll, scrollTo, props, debounceMs: 500 });
 }
+
+/** 键盘箭头滚动 */
+useKeyboardArrowScroll(tableContainer, {
+    scrollTo,
+    virtualScroll,
+    virtualScrollX,
+});
 
 watch(
     () => props.columns,

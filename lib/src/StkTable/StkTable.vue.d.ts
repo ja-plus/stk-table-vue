@@ -1,10 +1,5 @@
 import { SortOption, StkTableColumn } from './types/index';
 /**
- * 初始化虚拟滚动参数
- * @param {number} [height] 虚拟滚动的高度
- */
-declare function initVirtualScroll(height?: number): void;
-/**
  * 选中一行，
  * @param {string} rowKey
  * @param {boolean} option.silent 是否触发回调
@@ -41,9 +36,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     fixedMode: boolean;
     headless: boolean;
-    theme: "light" | "dark";
+    theme: "light" | "dark"; /** 排序的列dataIndex*/
     virtual: boolean;
     virtualX: boolean;
+    /** 排序切换顺序 */
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: import("./types/index").UniqKey;
@@ -88,7 +84,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     bordered: boolean;
     autoResize: boolean;
 }>, {
-    initVirtualScroll: typeof initVirtualScroll;
+    initVirtualScroll: (height?: number | undefined) => void;
     initVirtualScrollX: () => void;
     initVirtualScrollY: (height?: number | undefined) => void;
     setCurrentRow: typeof setCurrentRow;
@@ -119,9 +115,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     fixedMode: boolean;
     headless: boolean;
-    theme: "light" | "dark";
+    theme: "light" | "dark"; /** 排序的列dataIndex*/
     virtual: boolean;
     virtualX: boolean;
+    /** 排序切换顺序 */
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: import("./types/index").UniqKey;
