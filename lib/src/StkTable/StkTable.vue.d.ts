@@ -42,7 +42,6 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: import("./types/index").UniqKey;
-    /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
     colKey: import("./types/index").UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
@@ -121,7 +120,6 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: import("./types/index").UniqKey;
-    /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
     colKey: import("./types/index").UniqKey;
     emptyCellText: string;
     noDataFull: boolean;

@@ -4,6 +4,7 @@
         background-color: var(--highlight-color);
     }
 }
+
 .stk-table {
     /* contain: strict;*/
     --row-height: 28px;
@@ -41,7 +42,8 @@
         --tr-active-bgc: #283f63;
         --tr-hover-bgc: #1a2b46;
         --table-bgc: #181c21;
-        --highlight-color: #1e4c99; /* 不能用rgba，因为固定列时，会变成半透明*/
+        --highlight-color: #1e4c99;
+        /* 不能用rgba，因为固定列时，会变成半透明*/
 
         --sort-arrow-color: #5d6064;
         --sort-arrow-hover-color: #727782;
@@ -50,7 +52,8 @@
 
         --col-resize-indicator-color: #5d6064;
 
-        /* background-color: var(--table-bgc); */ /* ⭐这里加background-color会导致表格出滚动白屏*/
+        /* background-color: var(--table-bgc); */
+        /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d0d1d2;
     }
 
@@ -74,26 +77,31 @@
             min-width: min-content !important;
         }
     }
+
     /** 调整列宽的时候不要触发th事件。否则会导致触发表头点击排序 */
-    &.is-col-resizing  {
+    &.is-col-resizing {
         th {
-           pointer-events: none;
+            pointer-events: none;
         }
     }
+
     &.border-h {
         --bg-border-right: linear-gradient(transparent, transparent);
         --bg-border-left: linear-gradient(transparent, transparent);
     }
+
     &.border-v {
         --bg-border-bottom: linear-gradient(transparent, transparent);
     }
 
     &.border {
         .stk-table-main {
+
             th,
             td {
                 background-image: var(--bg-border-right), var(--bg-border-bottom);
             }
+
             thead {
                 tr {
                     &:first-child th {
@@ -103,6 +111,7 @@
                             background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                         }
                     }
+
                     th {
                         &:first-child {
                             background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
@@ -110,6 +119,7 @@
                     }
                 }
             }
+
             tbody {
                 td {
                     &:first-child {
@@ -121,17 +131,18 @@
 
         &.virtual-x {
             .stk-table-main {
-                thead tr:first-child .virtual-x-left + th {
+                thead tr:first-child .virtual-x-left+th {
                     /* 横向虚拟滚动时，左侧第一个单元格加上border-left*/
                     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                 }
 
-                tr .virtual-x-left + th {
+                tr .virtual-x-left+th {
                     background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                 }
             }
         }
     }
+
     &.border-body-v {
         .stk-table-main {
             tbody {
@@ -154,8 +165,13 @@
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
+        width: fit-content;
+        /* 不加会导致width 超过100%时为100%，行hover高亮会断开*/
+        min-width: 100%;
+
         &.fixed-mode {
             table-layout: fixed;
+            min-width: min-content;
         }
 
         th,
@@ -205,6 +221,7 @@
 
                     &.sorter-desc .table-header-cell-wrapper .table-header-sorter {
                         display: initial;
+
                         #arrow-up {
                             fill: var(--sort-arrow-active-sub-color);
                         }
@@ -216,6 +233,7 @@
 
                     &.sorter-asc .table-header-cell-wrapper .table-header-sorter {
                         display: initial;
+
                         #arrow-up {
                             fill: var(--sort-arrow-active-color);
                         }
@@ -226,7 +244,8 @@
                     }
 
                     .table-header-cell-wrapper {
-                        max-width: 100%; /*最大宽度不超过列宽*/
+                        max-width: 100%;
+                        /*最大宽度不超过列宽*/
                         display: inline-flex;
                         align-items: center;
 
@@ -241,6 +260,7 @@
                             width: 16px;
                             height: 16px;
                             display: none;
+
                             #arrow-up,
                             #arrow-down {
                                 fill: var(--sort-arrow-color);
@@ -270,7 +290,8 @@
         tbody {
 
             tr {
-                background-color: var(--td-bgc); /* td inherit tr bgc*/
+                background-color: var(--td-bgc);
+                /* td inherit tr bgc*/
 
                 &.highlight-row {
                     animation: stkTableDim 2s linear;
@@ -291,7 +312,8 @@
 
                 td {
                     &.fixed-cell {
-                        background-color: inherit; /* 防止横向滚动后透明*/
+                        background-color: inherit;
+                        /* 防止横向滚动后透明*/
                     }
 
                     &.highlight-cell {
@@ -381,6 +403,7 @@
             thead {
                 tr {
                     th {
+
                         /* 为不影响布局，表头行高要定死*/
                         .table-header-cell-wrapper {
                             overflow: hidden;
@@ -397,6 +420,7 @@
                     &.padding-top-tr td {
                         height: 0;
                     }
+
                     td {
                         height: var(--row-height);
                         line-height: 1;

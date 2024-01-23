@@ -1,5 +1,9 @@
+## 0.0.1-beta.9
+* revert: 添加.stk-table-main width相关的默认值。
+
+
 ## 0.0.1-beta.8
-* revert .stk-table-main width相关的默认值。
+* revert: 取消.stk-table-main width相关的默认值。
 * fix: col resizable
 
 ## 0.0.1-beta.7

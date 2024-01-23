@@ -196,7 +196,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Order, SortOption, StkProps, StkTableColumn } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -564,7 +564,7 @@ function onTableScroll(e: Event) {
 }
 
 /** tr hover事件 */
-function onTrMouseOver(e: MouseEvent, row: any) {
+function onTrMouseOver(_e: MouseEvent, row: any) {
     if (props.showTrHoverClass) {
         currentHover.value = rowKeyGen(row);
     }
