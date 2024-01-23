@@ -1,3 +1,9 @@
+/**高亮渐暗 */
+@keyframes stkTableDim {
+    from {
+        background-color: var(--highlight-color);
+    }
+}
 .stk-table {
     /* contain: strict;*/
     --row-height: 28px;
@@ -61,9 +67,18 @@
         border-top: 1px solid var(--border-color);
     }
 
+    /* 调整列宽的话，表格宽度应当自适应 */
+    &.col-resizable {
+        .stk-table-main {
+            width: fit-content !important;
+            min-width: min-content !important;
+        }
+    }
     /** 调整列宽的时候不要触发th事件。否则会导致触发表头点击排序 */
-    &.is-col-resizing th {
-        pointer-events: none;
+    &.is-col-resizing  {
+        th {
+           pointer-events: none;
+        }
     }
     &.border-h {
         --bg-border-right: linear-gradient(transparent, transparent);
@@ -139,8 +154,6 @@
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
-        width: fit-content; /* 用于兼容低版本，低版本width超过100%的时候还是100%，导致sticky错误。*/
-        min-width: 100%; /* 用于兼容低版本chrome。低版本min-width 是min-content;*/
         &.fixed-mode {
             table-layout: fixed;
         }
@@ -255,18 +268,12 @@
         }
 
         tbody {
-            /**高亮渐暗 */
-            @keyframes dim {
-                from {
-                    background-color: var(--highlight-color);
-                }
-            }
 
             tr {
                 background-color: var(--td-bgc); /* td inherit tr bgc*/
 
                 &.highlight-row {
-                    animation: dim 2s linear;
+                    animation: stkTableDim 2s linear;
                 }
 
                 /* &.highlight-row-transition {
@@ -288,7 +295,7 @@
                     }
 
                     &.highlight-cell {
-                        animation: dim 2s linear;
+                        animation: stkTableDim 2s linear;
                     }
 
                     &.text-overflow {
@@ -334,6 +341,18 @@
                background-color: #ebf3ff;
              }*/
         }
+
+        /* tr .fixed-cell--left{
+            border: 1px solid red;
+            &::after{
+                content: '';
+                width: 20px;
+                position: absolute;
+                right: -20px;
+                top: 0px;
+                background: rgba(255,255,255,0.5);
+            }
+        } */
     }
 
     .stk-table-no-data {

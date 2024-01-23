@@ -8,6 +8,7 @@
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,
+            'col-resizable': props.colResizable,
             border: props.bordered,
             'border-h': props.bordered === 'h',
             'border-v': props.bordered === 'v',
@@ -33,7 +34,7 @@
         <!-- 表格主体 -->
         <table
             class="stk-table-main"
-            :style="{ width: tableWidth, minWidth, maxWidth }"
+            :style="{ width, minWidth, maxWidth }"
             :class="{
                 'fixed-mode': props.fixedMode,
             }"
@@ -54,7 +55,7 @@
                     <th
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="col.dataIndex"
-                        :data-col-key="col.dataIndex"
+                        :data-col-key="colKeyGen(col)"
                         :draggable="headerDrag ? 'true' : 'false'"
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
                         :colspan="col.colSpan"
@@ -209,7 +210,7 @@ import { howDeepTheColumn, tableSort } from './utils';
 const props = withDefaults(defineProps<StkProps>(), {
     width: '',
     fixedMode: false,
-    minWidth: 'min-content',
+    minWidth: '',
     maxWidth: '',
     headless: false,
     theme: 'light',
@@ -276,17 +277,6 @@ const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
 /** rowKey缓存 */
 const rowKeyGenStore = new WeakMap();
-
-const tableWidth = computed(() => {
-    if (props.colResizable) {
-        return 'fit-content';
-    }
-    if (props.fixedMode) {
-        // 固定模式一定要有宽度
-        return props.width ?? '100%';
-    }
-    return props.width;
-});
 
 const { isColResizing, onThResizeMouseDown } = useColResize({
     props,
@@ -431,7 +421,7 @@ function rowKeyGen(row: any) {
 
 /**
  * 列唯一键
- * @param {StkTableColumn} col
+ * @param col
  */
 function colKeyGen(col: StkTableColumn<any>) {
     return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];

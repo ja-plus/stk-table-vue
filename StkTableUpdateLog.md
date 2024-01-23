@@ -1,3 +1,7 @@
+## 0.0.1-beta.8
+* revert .stk-table-main width相关的默认值。
+* fix: col resizable
+
 ## 0.0.1-beta.7
 * remove less, use css + postcss instead
 * add: 鼠标悬浮在表格上时，键盘按下箭头滚动虚拟滚动列表
