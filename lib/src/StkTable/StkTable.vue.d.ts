@@ -1,4 +1,4 @@
-import { SortOption, StkTableColumn } from './types/index';
+import { SortOption, StkTableColumn, UniqKey } from './types/index';
 /**
  * 选中一行，
  * @param {string} rowKey
@@ -30,33 +30,73 @@ declare function resetSorter(): void;
 declare function scrollTo(top?: number | null, left?: number | null): void;
 /** 获取当前状态的表格数据 */
 declare function getTableData(): any[];
-declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
-    width: string;
-    minWidth: string;
-    maxWidth: string;
-    fixedMode: boolean;
-    headless: boolean;
-    theme: "light" | "dark";
-    virtual: boolean;
-    virtualX: boolean;
-    columns: StkTableColumn<any>[];
-    dataSource: any[];
-    rowKey: import("./types/index").UniqKey;
-    colKey: import("./types/index").UniqKey;
-    emptyCellText: string;
-    noDataFull: boolean;
-    showNoData: boolean;
-    sortRemote: boolean;
-    showHeaderOverflow: boolean;
-    showOverflow: boolean;
-    showTrHoverClass: boolean;
-    headerDrag: boolean;
-    rowClassName: (row: any, i: number) => string;
-    colResizable: boolean;
-    colMinWidth: number;
-    bordered: boolean | "h" | "v" | "body-v";
-    autoResize: boolean;
-}>>, {
+declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    width?: string | undefined;
+    /** 最小表格宽度 */
+    minWidth?: string | undefined;
+    /** 表格最大宽度*/
+    maxWidth?: string | undefined;
+    /** 是否使用 table-layout:fixed */
+    fixedMode?: boolean | undefined;
+    /** 是否隐藏表头 */
+    headless?: boolean | undefined;
+    /** 主题，亮、暗 */
+    theme?: "light" | "dark" | undefined;
+    /** 虚拟滚动 */
+    virtual?: boolean | undefined;
+    /** x轴虚拟滚动 */
+    virtualX?: boolean | undefined;
+    /** 表格列配置 */
+    columns?: StkTableColumn<any>[] | undefined;
+    /** 表格数据源 */
+    dataSource?: any[] | undefined;
+    /** 行唯一键 */
+    rowKey?: UniqKey | undefined;
+    /** 列唯一键 */
+    colKey?: UniqKey | undefined;
+    /** 空值展示文字 */
+    emptyCellText?: string | undefined;
+    /** 暂无数据兜底高度是否撑满 */
+    noDataFull?: boolean | undefined;
+    /** 是否展示暂无数据 */
+    showNoData?: boolean | undefined;
+    /** 是否服务端排序，true则不排序数据 */
+    sortRemote?: boolean | undefined;
+    /** 表头是否溢出展示... */
+    showHeaderOverflow?: boolean | undefined;
+    /** 表体溢出是否展示... */
+    showOverflow?: boolean | undefined;
+    /** 是否增加行hover class */
+    showTrHoverClass?: boolean | undefined;
+    /** 表头是否可拖动 */
+    headerDrag?: boolean | undefined;
+    /**
+     * 给行附加className<br>
+     * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
+     */
+    rowClassName?: ((row: any, i: number) => string) | undefined;
+    /**
+     * 列宽是否可拖动<br>
+     * **不要设置**列minWidth，**必须**设置width<br>
+     * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+     */
+    colResizable?: boolean | undefined;
+    /** 可拖动至最小的列宽 */
+    colMinWidth?: number | undefined;
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * "h" - 仅展示横线
+     * "v" - 仅展示竖线
+     * "body-v" - 仅表体展示竖线
+     */
+    bordered?: boolean | "h" | "v" | "body-v" | undefined;
+    /**
+     * 自动重新计算虚拟滚动高度宽度。默认true
+     * [非响应式]
+     */
+    autoResize?: boolean | undefined;
+}>, {
     width: string;
     fixedMode: boolean;
     minWidth: string;
@@ -108,33 +148,73 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "row-menu": (...args: any[]) => void;
     "cell-click": (...args: any[]) => void;
     "header-cell-click": (...args: any[]) => void;
-}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<Partial<{
-    width: string;
-    minWidth: string;
-    maxWidth: string;
-    fixedMode: boolean;
-    headless: boolean;
-    theme: "light" | "dark";
-    virtual: boolean;
-    virtualX: boolean;
-    columns: StkTableColumn<any>[];
-    dataSource: any[];
-    rowKey: import("./types/index").UniqKey;
-    colKey: import("./types/index").UniqKey;
-    emptyCellText: string;
-    noDataFull: boolean;
-    showNoData: boolean;
-    sortRemote: boolean;
-    showHeaderOverflow: boolean;
-    showOverflow: boolean;
-    showTrHoverClass: boolean;
-    headerDrag: boolean;
-    rowClassName: (row: any, i: number) => string;
-    colResizable: boolean;
-    colMinWidth: number;
-    bordered: boolean | "h" | "v" | "body-v";
-    autoResize: boolean;
-}>>, {
+}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    width?: string | undefined;
+    /** 最小表格宽度 */
+    minWidth?: string | undefined;
+    /** 表格最大宽度*/
+    maxWidth?: string | undefined;
+    /** 是否使用 table-layout:fixed */
+    fixedMode?: boolean | undefined;
+    /** 是否隐藏表头 */
+    headless?: boolean | undefined;
+    /** 主题，亮、暗 */
+    theme?: "light" | "dark" | undefined;
+    /** 虚拟滚动 */
+    virtual?: boolean | undefined;
+    /** x轴虚拟滚动 */
+    virtualX?: boolean | undefined;
+    /** 表格列配置 */
+    columns?: StkTableColumn<any>[] | undefined;
+    /** 表格数据源 */
+    dataSource?: any[] | undefined;
+    /** 行唯一键 */
+    rowKey?: UniqKey | undefined;
+    /** 列唯一键 */
+    colKey?: UniqKey | undefined;
+    /** 空值展示文字 */
+    emptyCellText?: string | undefined;
+    /** 暂无数据兜底高度是否撑满 */
+    noDataFull?: boolean | undefined;
+    /** 是否展示暂无数据 */
+    showNoData?: boolean | undefined;
+    /** 是否服务端排序，true则不排序数据 */
+    sortRemote?: boolean | undefined;
+    /** 表头是否溢出展示... */
+    showHeaderOverflow?: boolean | undefined;
+    /** 表体溢出是否展示... */
+    showOverflow?: boolean | undefined;
+    /** 是否增加行hover class */
+    showTrHoverClass?: boolean | undefined;
+    /** 表头是否可拖动 */
+    headerDrag?: boolean | undefined;
+    /**
+     * 给行附加className<br>
+     * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
+     */
+    rowClassName?: ((row: any, i: number) => string) | undefined;
+    /**
+     * 列宽是否可拖动<br>
+     * **不要设置**列minWidth，**必须**设置width<br>
+     * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+     */
+    colResizable?: boolean | undefined;
+    /** 可拖动至最小的列宽 */
+    colMinWidth?: number | undefined;
+    /**
+     * 单元格分割线。
+     * 默认横竖都有
+     * "h" - 仅展示横线
+     * "v" - 仅展示竖线
+     * "body-v" - 仅表体展示竖线
+     */
+    bordered?: boolean | "h" | "v" | "body-v" | undefined;
+    /**
+     * 自动重新计算虚拟滚动高度宽度。默认true
+     * [非响应式]
+     */
+    autoResize?: boolean | undefined;
+}>, {
     width: string;
     fixedMode: boolean;
     minWidth: string;
@@ -178,7 +258,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
-    colKey: import("./types/index").UniqKey;
+    colKey: UniqKey;
     fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";
@@ -186,7 +266,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: import("./types/index").UniqKey;
+    rowKey: UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;

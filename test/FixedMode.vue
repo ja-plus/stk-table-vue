@@ -28,8 +28,17 @@ const data = new Array(200).fill(0).map((it, index) => {
         <h2>table layout fixed</h2>
         <p>用于一列宽度固定，其余列平分的场景。此模式仅生效col.width</p>
         <input v-model="width" type="range" min="0" max="100" /> <span>width: {{ width }}%</span>
-        <StkTable :width="width + '%'" style="height: 200px" fixed-mode :columns="columns" :data-source="data"></StkTable>
+        <StkTable row-key="id" :width="width + '%'" style="height: 200px" fixed-mode :columns="columns" :data-source="data"></StkTable>
         <h3>headless</h3>
-        <StkTable :width="width + '%'" style="height: 200px" virtual fixed-mode headless :columns="columns" :data-source="data"></StkTable>
+        <StkTable
+            row-key="id"
+            :width="width + '%'"
+            style="height: 200px"
+            virtual
+            fixed-mode
+            headless
+            :columns="columns"
+            :data-source="data"
+        ></StkTable>
     </div>
 </template>

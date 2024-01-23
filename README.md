@@ -3,7 +3,7 @@
 Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
 js体积(未压缩41kb)
 
-## 功能
+## Feature TODO:
 * [x] 高亮行，单元格。
 * [x] 横向虚拟滚动。
 * [x] 列固定。
@@ -13,6 +13,7 @@ js体积(未压缩41kb)
 * [x] 支持table-layout: fixed 配置。
 * [x] 鼠标悬浮在表格上，键盘上下左右滚动虚拟表格
 * [] 列固定阴影
+* [] 不传row-key 时，自动按序号生成id
 
 ## Usage
 > npm install stk-table-vue

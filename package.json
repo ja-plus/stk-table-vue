@@ -4,7 +4,7 @@
     "description": "simple realtime virtual table for vue3",
     "main": "./lib/stk-table-vue.js",
     "types": "./lib/StkTable/index.d.ts",
-    "packageManager": "pnpm@8.11.0",
+    "packageManager": "pnpm@8.14.3",
     "directories": {
         "test": "test"
     },
@@ -43,6 +43,7 @@
         "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-vue": "^9.19.2",
         "happy-dom": "^12.10.3",
+        "less": "^4.2.0",
         "postcss-discard-comments": "^6.0.1",
         "postcss-preset-env": "^9.3.0",
         "prettier": "^3.1.1",

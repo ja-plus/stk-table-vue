@@ -1,5 +1,7 @@
 ## 0.0.1-beta.9
 * revert: 添加.stk-table-main width相关的默认值。
+* fix: 为兼容vue2.7，不能将props放在单独文件。只能放在.vue中。
+* revert: 为方便直接引用src的源码使用，style.css要求用户环境安装postcss，现替换为style.less。
 
 
 ## 0.0.1-beta.8
