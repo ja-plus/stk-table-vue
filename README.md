@@ -8,12 +8,13 @@ js体积(未压缩41kb)
 * [x] 横向虚拟滚动。
 * [x] 列固定。
 * [x] 表头拖动更改顺序。
-* [x] 表头列宽拖动。
+* [x] 表头列宽拖动调整宽度。
 * [x] 多级表头。（不支持横向虚拟滚动）
 * [x] 支持table-layout: fixed 配置。
 * [x] 鼠标悬浮在表格上，键盘上下左右滚动虚拟表格
 * [] 列固定阴影
 * [] 不传row-key 时，自动按序号生成id
+* [] 列筛选
 
 ## Usage
 > npm install stk-table-vue
@@ -24,8 +25,8 @@ import { StkTable } from 'stk-table-vue'
 import { ref } from 'vue'
 const stkTable = ref<InstanceType<typeof StkTable>>();
 // highlight
-// stkTable.value.setHighlightDimRow([rowId])
-// stkTable.value.setHighlightDimCell(rowId,colId)
+stkTable.value.setHighlightDimRow([rowId]);// highlight row
+stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
 </script>
 
 <template>
@@ -155,6 +156,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     :style="{height:props.height}"
     theme='dark'
     height='200px'
+    bordered="h"
     :show-overflow="false"
     :show-header-overflow="false"
     :sort-remote="false"
@@ -163,6 +165,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
     virtual
     virtual-x
     no-data-full
+    col-resizable
+    auto-resize
+    :col-min-width="10"
     :headless="false"
     :data-source="dataSource"
     @current-change="onCurrentChange"
