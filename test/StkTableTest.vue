@@ -1,88 +1,69 @@
-<template lang="pug">
-div
+<template>
+    <div>
+        <button @click="handleClearSorter">clearSorter</button>
+        <button @click="handleClearTableData">clearTableData</button>
+        <button @click="addRow()">pushRow</button>
+        <button @click="addRow(100)">push100Row</button>
+        <button @click="addRow(1, true)">unshiftRow</button>
+        <button @click="addColumn()">addColumn</button>
+        <button @click="deleteColumn()">deleteColumn</button>
+        <button @click="props.showOverflow = !props.showOverflow">showOverflow:{{ props.showOverflow }}</button>
+        <button @click="props.showHeaderOverflow = !props.showHeaderOverflow">showHeaderOverflow:{{ props.showHeaderOverflow }}</button>
+        <button @click="props.sortRemote = !props.sortRemote">sortRemote:{{ props.sortRemote }}</button>
+        <button @click="props.theme === 'light' ? (props.theme = 'dark') : (props.theme = 'light')">theme:{{ props.theme }}</button>
+        <button @click="props.headless = !props.headless">headless:{{ props.headless }}</button>
+        <button @click="props.colResizable = !props.colResizable">colResizable:{{ props.colResizable }}</button>
+        <span> border: </span>
+        <input v-model="props.bordered" type="radio" name="border" value="true" /> true
+        <input v-model="props.bordered" type="radio" name="border" value="h" />horizontal
+        <input v-model="props.bordered" type="radio" name="border" value="v" /> vertical
+        <input v-model="props.bordered" type="radio" name="border" value="body-v" />body-vertical
+    </div>
+    <div ref="stkTableParent" class="stk-table-parent">
+        <StkTable
+            ref="stkTable"
+            v-bind="props"
+            v-model:columns="columns"
+            row-key="name"
+            :data-source="dataSource"
+            @current-change="onCurrentChange"
+            @row-menu="onRowMenu"
+            @header-row-menu="onHeaderRowMenu"
+            @row-click="onRowClick"
+            @row-dblclick="onRowDblclick"
+            @sort-change="handleSortChange"
+            @cell-click="onCellClick"
+            @header-cell-click="onHeaderCellClick"
+            @scroll="onTableScroll"
+            @col-order-change="onColOrderChange"
+        ></StkTable>
+    </div>
+    <!-- <StkTableC
+        ref="stkTableC"
+        row-key="name"
+        :no-data-full="true"
+        :virtual="true"
+        :style="{ height: props.height }"
+        :columns="columns"
+        :data-source="dataSource"
+        @current-change="onCurrentChange"
+        @row-dblclick="onRowDblclick"
+        @col-order-change="onColOrderChange2"
+    ></StkTableC> -->
 
-div(style="display:flex;")
-  div
-    button(@click="handleClearSorter") clearSorter
-    button(@click="handleClearTableData") clearTableData
-    button(@click="addRow()") pushRow
-    button(@click="addRow(100)") push100Row
-    button(@click="addRow(1,true)") unshiftRow
-    button(@click="addColumn()") addColumn
-    button(@click="deleteColumn()") deleteColumn
-    button(@click="props.showOverflow=!props.showOverflow") showOverflow:{{props.showOverflow}}
-    button(@click="props.showHeaderOverflow=!props.showHeaderOverflow") showHeaderOverflow:{{props.showHeaderOverflow}}
-    button(@click="props.sortRemote=!props.sortRemote") sortRemote:{{props.sortRemote}}
-    button(@click="props.theme==='light'?props.theme='dark':props.theme='light'") theme:{{props.theme}}
-    button(@click="props.headless = !props.headless") headless:{{props.headless}}
-    button(@click="props.colResizable = !props.colResizable") colResizable:{{props.colResizable}}
-    span border:
-    input(type='radio' v-model="props.bordered" name='border' value='true') 
-    | true
-    input(type='radio' v-model="props.bordered" name='border' value="h")
-    | horizontal
-    input(type='radio' v-model="props.bordered" name='border' value="v")
-    | vertical
-    input(type='radio' v-model="props.bordered" name='border' value="body-v")
-    | body-vertical
-div(style="margin-left:10px")
-  //- div virtualScroll: {{$refs.stkTable&& $refs.stkTable.virtualScroll}}
-  //- div virtual_pageSize: {{$refs.stkTable&& $refs.stkTable.virtual_pageSize}}
-  //- div virtualScrollX: {{$refs.stkTable&& $refs.stkTable.virtualScrollX}}
-  //- div virtualX_offsetRight: {{$refs.stkTable&& $refs.stkTable.virtualX_offsetRight}}
-  //- div virtualX_start/end:{{$refs.stkTable && $refs.stkTable.virtualScrollX.startIndex}}/{{$refs.stkTable && $refs.stkTable.virtualScrollX.endIndex}}
+    <div>
+        columns:
+        <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
+    </div>
 
-div(class='stk-table-parent' ref='stkTableParent')
-  StkTable(
-    ref="stkTable"
-    row-key="name"
-    v-bind="props"
-    v-model:columns="columns"
-    :data-source="dataSource"
-    @current-change="onCurrentChange"
-    @row-menu="onRowMenu"
-    @header-row-menu="onHeaderRowMenu"
-    @row-click="onRowClick"
-    @row-dblclick="onRowDblclick"
-    @sort-change="handleSortChange"
-    @cell-click="onCellClick"
-    @header-cell-click="onHeaderCellClick"
-    @scroll="onTableScroll"
-    @col-order-change="onColOrderChange"
-  )
-    //- template(#table-header="{ column }")
-    //-   span {{column.title}} (slot)
-//- StkTableC(
-//-     ref="stkTableC"
-//-     rowKey="name"
-//-     :noDataFull="true"
-//-     :virtual="true"
-//-     :style="{height:props.height}"
-//-     :columns="columns"
-//-     :dataSource="dataSource"
-//-     @current-change="onCurrentChange"
-//-     @row-dblclick="onRowDblclick"
-//-     @col-order-change="onColOrderChange2"
-//- )
+    <FixedMode></FixedMode>
+    <StkTableInsertSort />
 
-div columns:
-    div(v-for="col in columns") {{ col }}
-
-FixedMode
-//- div dataSource:{{dataSource}}
-StkTableInsertSort
-
-hr
-//- div tableHeaders:{{stkTable.tableHeaders}}
-//- div tableProps:{{stkTable.tableProps}}
-div(style="width:max-content")
-  h2 API
-  StkTable(
-    theme="dark"
-    :columns="docTableColumns"
-    :dataSource="docTableData"
-  )
-
+    <hr />
+    <div style="width: max-content">
+        <h2>API</h2>
+        <StkTable theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
+    </div>
 </template>
 
 <script lang="tsx">
@@ -91,17 +72,14 @@ import { StkTable } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
-import { StkTableColumn } from '../src/StkTable/types';
 import FixedMode from './FixedMode.vue';
 import DragResize from './utils/DragResize';
 
 export default {
     name: 'StkTableTest',
     components: { StkTable, StkTableInsertSort, FixedMode },
-    props: {},
     data() {
         return {
-            stkTable: {},
             props: {
                 rowKey: 'name',
                 theme: 'dark',
@@ -182,38 +160,33 @@ export default {
                     dataIndex: 'Operate',
                     width: '150px',
                     fixed: 'right',
-                    customCell() {
-                        return (
-                            <button>
-                                <a href="#">+add</a>
-                            </button>
-                        );
-                    },
+                    // customCell() {
+                    //     return (
+                    //         <button>
+                    //             <a href="#">+add</a>
+                    //         </button>
+                    //     );
+                    // },
                 },
-                // { title: 'Long Title Long Title LongTitle', dataIndex: 'address2', minWidth: '200px', maxWidth: '200px' },
-                // { title: 'col2', dataIndex: 'address3' /* , fixed: 'right' */, minWidth: '150px', maxWidth: '150px' },
-                // { title: 'col3', dataIndex: 'address' },
-                // ...new Array(40)
-                //   .fill(0)
-                //   .map((it, i) => ({ title: 'col3', dataIndex: 'addCol' + i, width: '100px', minWidth: '100px' })),
-            ] as StkTableColumn<any>[],
-            // dataSource: new Array(4).fill(0).map((it, i) => ({
-            //   name: 'name' + i,
-            //   age: parseInt(Math.random() * 100),
-            //   email: 'add@sa.com',
-            //   gender: Number(Math.random() * 100 - 50).toFixed(2),
-            //   address: 'ahshshsshshhs',
-            // })),
+            ],
+            dataSource: new Array(150)
+                .fill(0)
+                .map((it, i) => ({
+                    name: 'name' + i,
+                    age: Math.ceil(Math.random() * 100),
+                    email: 'add@sa.com',
+                    gender: Number(Math.random() * 100 - 50).toFixed(2),
+                    address: 'ahshshsshshhs',
+                }))
+                .concat(new Array(20000).fill({})),
             addIndex: 0,
-            dataSource: [],
-            // dataSource2: [],
-            docTableColumns: Object.freeze([
+            docTableColumns: [
                 { title: '字段', dataIndex: 'key' },
                 { title: '描述', dataIndex: 'desc' },
                 { title: '取值', dataIndex: 'value' },
                 { title: '默认', dataIndex: 'defaultValue' },
-            ]),
-            docTableData: Object.freeze([
+            ],
+            docTableData: [
                 { key: 'tableProps', desc: '', value: '' },
                 { key: 'rowKey', desc: '一行的唯一键', value: 'string | (row) => string' },
                 { key: 'colKey', desc: '一列的唯一键', value: 'string | (col) => string', defaultValue: 'dataIndex' },
@@ -305,25 +278,19 @@ export default {
                     desc: '表头拖动改变列顺序时',
                     value: '(sourceDataIndex:string,targetDataIndex:string):void',
                 },
-            ]),
+            ],
         };
     },
     mounted() {
-        this.stkTable = this.$refs.stkTable;
         new DragResize(this.$refs.stkTableParent);
-        // this.$refs.stkTable.setCurrentRow('name0');
-        // this.$refs.stkTable.setHighlightDimCell('add1', 'age');
         setInterval(() => {
             this.$refs.stkTable?.setHighlightDimCell('add1', 'age');
-            // this.$refs.stkTableC?.setHighlightDimCell('add1', 'age');
         }, 2500);
         setInterval(() => {
             this.$refs.stkTable?.setHighlightDimCell('add2', 'gender');
-            // this.$refs.stkTableC?.setHighlightDimCell('add2', 'gender');
         }, 2000);
         setInterval(() => {
             this.$refs.stkTable?.setHighlightDimRow(['add0']);
-            // this.$refs.stkTableC?.setHighlightDimRow(['add0']);
         }, 3000);
     },
     methods: {
@@ -339,8 +306,8 @@ export default {
         onRowMenu(e, row) {
             console.log('row-menu:', e, row);
         },
-        onHeaderRowMenu(e, row) {
-            console.log('header-row-menu:', e, row);
+        onHeaderRowMenu(e) {
+            console.log('header-row-menu:', e);
         },
         onRowClick(e, row) {
             console.log('row-click:', e, row);
@@ -355,7 +322,10 @@ export default {
         onHeaderCellClick(e, row) {
             console.log('header-cell-click:', e, row);
         },
-        onTableScroll(e) {
+        onTableScroll(e, data) {
+            console.log(data);
+            const { startIndex, endIndex } = data;
+
             // console.log(
             //   'scroll:',
             //   e.target.scrollHeight,

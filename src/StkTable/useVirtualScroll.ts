@@ -168,10 +168,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
     function updateVirtualScrollY(sTop = 0) {
         const { rowHeight, pageSize } = virtualScroll.value;
         const startIndex = Math.floor(sTop / rowHeight);
+        let endIndex = startIndex + pageSize;
+        if (endIndex > dataSourceCopy.value.length) {
+            endIndex = dataSourceCopy.value.length; // 溢出index修正
+        }
         Object.assign(virtualScroll.value, {
             startIndex,
             offsetTop: startIndex * rowHeight, // startIndex之前的高度
-            endIndex: startIndex + pageSize,
+            endIndex,
         });
     }
 
