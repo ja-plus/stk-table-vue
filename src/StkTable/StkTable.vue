@@ -207,6 +207,8 @@ import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { howDeepTheColumn, tableSort } from './utils';
 
+/** Generic stands for DataType */
+type DT = any;
 /**
  * props 不能放在单独的文件中。vue2.7 compiler 构建会出错。
  */
@@ -307,28 +309,40 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits([
-    'sort-change',
-    'row-click',
-    'current-change',
-    'row-dblclick',
-    'header-row-menu',
-    'row-menu',
-    'cell-click',
-    'header-cell-click',
-    'scroll',
-    'col-order-change',
-    'th-drop',
-    'th-drag-start',
-    'columns',
-]);
+const emits = defineEmits<{
+    /** 排序变更触发 */
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
+    /** 一行点击事件 */
+    (e: 'row-click', ev: MouseEvent, row: DT): void;
+    /** 选中一行触发。ev返回null表示不是点击事件触发的 */
+    (e: 'current-change', ev: MouseEvent | null, row: DT): void;
+    /** 行双击事件 */
+    (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
+    /** 表头右键事件 */
+    (e: 'header-row-menu', ev: MouseEvent): void;
+    /** 表体行右键点击事件 */
+    (e: 'row-menu', ev: MouseEvent, row: DT): void;
+    /** 单元格点击事件 */
+    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**表头单元格点击事件 */
+    (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
+    /** 表格滚动事件 */
+    (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
+    /** 表头列拖动事件 */
+    (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
+    /** 表头列拖动开始 */
+    (e: 'th-drag-start', dragStartKey: string): void;
+    /** 表头列拖动drop */
+    (e: 'th-drop', targetColKey: string): void;
+    (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+}>();
 
 const tableContainer = ref<HTMLDivElement>();
 const colResizeIndicator = ref<HTMLDivElement>();
 /** 当前选中的一行*/
-const currentItem = ref(null);
+const currentItem = ref<DT | null>(null);
 /** 当前hover的行 */
-const currentHover = ref(null);
+const currentHover = ref<DT | null>(null);
 
 /** 排序的列dataIndex*/
 let sortCol = ref<string | null>();
@@ -338,9 +352,9 @@ let sortOrderIndex = ref(0);
 const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
 /** 表头.内容是 props.columns 的引用集合 */
-const tableHeaders = ref<StkTableColumn<any>[][]>([]);
+const tableHeaders = ref<StkTableColumn<DT>[][]>([]);
 /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
-const tableHeaderLast = ref<StkTableColumn<any>[]>([]);
+const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef([...props.dataSource]);
 
@@ -352,14 +366,14 @@ const rowKeyGenStore = new WeakMap();
 
 const { isColResizing, onThResizeMouseDown } = useColResize({
     props,
-    emit,
+    emits,
     colKeyGen,
     colResizeIndicator,
     tableContainer,
     tableHeaderLast,
 });
 
-const { onThDragStart, onThDragOver, onThDrop } = useThDrag({ emit });
+const { onThDragStart, onThDragOver, onThDrop } = useThDrag({ emits });
 
 const {
     virtualScroll,
@@ -563,40 +577,40 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
     }
     // 只有点击才触发事件
     if (click || options.emit) {
-        emit('sort-change', col, order, toRaw(dataSourceCopy.value));
+        emits('sort-change', col, order, toRaw(dataSourceCopy.value));
     }
 }
 
-function onRowClick(e: MouseEvent, row: any) {
-    emit('row-click', e, row);
+function onRowClick(e: MouseEvent, row: DT) {
+    emits('row-click', e, row);
     // 选中同一行不触发current-change 事件
     if (currentItem.value === row) return;
     currentItem.value = row;
-    emit('current-change', e, row);
+    emits('current-change', e, row);
 }
 
-function onRowDblclick(e: MouseEvent, row: any) {
-    emit('row-dblclick', e, row);
+function onRowDblclick(e: MouseEvent, row: DT) {
+    emits('row-dblclick', e, row);
 }
 
 /** 表头行右键 */
 function onHeaderMenu(e: MouseEvent) {
-    emit('header-row-menu', e);
+    emits('header-row-menu', e);
 }
 
 /** 表体行右键 */
-function onRowMenu(e: MouseEvent, row: any) {
-    emit('row-menu', e, row);
+function onRowMenu(e: MouseEvent, row: DT) {
+    emits('row-menu', e, row);
 }
 
 /** 单元格单击 */
-function onCellClick(e: MouseEvent, row: any, col: StkTableColumn<any>) {
-    emit('cell-click', e, row, col);
+function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    emits('cell-click', e, row, col);
 }
 
 /** 表头单元格单击 */
-function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<any>) {
-    emit('header-cell-click', e, col);
+function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
+    emits('header-cell-click', e, col);
 }
 
 /**
@@ -632,11 +646,15 @@ function onTableScroll(e: Event) {
     if (virtualX_on.value) {
         updateVirtualScrollX(scrollLeft);
     }
-    emit('scroll', e);
+    const data = {
+        startIndex: virtualScroll.value.startIndex,
+        endIndex: virtualScroll.value.endIndex,
+    };
+    emits('scroll', e, data);
 }
 
 /** tr hover事件 */
-function onTrMouseOver(_e: MouseEvent, row: any) {
+function onTrMouseOver(_e: MouseEvent, row: DT) {
     if (props.showTrHoverClass) {
         currentHover.value = rowKeyGen(row);
     }
@@ -651,7 +669,7 @@ function setCurrentRow(rowKey: string, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
     currentItem.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
     if (!option.silent) {
-        emit('current-change', null, currentItem.value);
+        emits('current-change', null, currentItem.value);
     }
 }
 

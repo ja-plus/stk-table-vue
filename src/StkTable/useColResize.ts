@@ -2,35 +2,42 @@ import { Ref, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Default_Col_Width } from './const';
 import { StkTableColumn } from './types';
 
-type ColResizeState = {
+type ColResizeState<DT extends Record<string, any>> = {
     /** 当前被拖动的列*/
-    currentCol: StkTableColumn<any> | null;
+    currentCol: StkTableColumn<DT> | null;
     /** 当前被拖动列的下标 */
     currentColIndex: number;
     /** 最后一个叶子列 */
-    lastCol: StkTableColumn<any> | null;
+    lastCol: StkTableColumn<DT> | null;
     /** 鼠标按下开始位置 */
     startX: number;
     /** 鼠标按下时鼠标对于表格的偏移量 */
     startOffsetTableX: 0;
 };
 
-type Params = {
+type Params<DT extends Record<string, any>> = {
     props: any;
-    emit: any;
+    emits: any;
     tableContainer: Ref<HTMLElement | undefined>;
-    tableHeaderLast: Ref<StkTableColumn<any>[]>;
+    tableHeaderLast: Ref<StkTableColumn<DT>[]>;
     colResizeIndicator: Ref<HTMLElement | undefined>;
     colKeyGen: (p: any) => string;
 };
 
 /** 列宽拖动 */
-export function useColResize({ tableContainer, tableHeaderLast, colResizeIndicator, props, emit, colKeyGen }: Params) {
+export function useColResize<DT extends Record<string, any>>({
+    tableContainer,
+    tableHeaderLast,
+    colResizeIndicator,
+    props,
+    emits,
+    colKeyGen,
+}: Params<DT>) {
     /** 列宽是否在拖动 */
     const isColResizing = ref(false);
 
     /** 列宽调整状态 */
-    let colResizeState: ColResizeState = {
+    let colResizeState: ColResizeState<DT> = {
         currentCol: null,
         currentColIndex: 0,
         lastCol: null,
@@ -63,12 +70,12 @@ export function useColResize({ tableContainer, tableHeaderLast, colResizeIndicat
      * @param col 当前列配置
      * @param isPrev 是否要上一列
      */
-    function onThResizeMouseDown(e: MouseEvent, col: StkTableColumn<any>, isPrev = false) {
+    function onThResizeMouseDown(e: MouseEvent, col: StkTableColumn<DT>, isPrev = false) {
         if (!tableContainer.value) return;
         e.stopPropagation();
         e.preventDefault();
         const { clientX } = e;
-        const { scrollLeft } = tableContainer.value;
+        const { scrollLeft, scrollTop } = tableContainer.value;
         const { left } = tableContainer.value.getBoundingClientRect();
         /** 列下标 */
         let colIndex = tableHeaderLast.value.findIndex(it => colKeyGen(it) === colKeyGen(col));
@@ -91,9 +98,10 @@ export function useColResize({ tableContainer, tableHeaderLast, colResizeIndicat
 
         // 展示指示线，更新其位置
         if (colResizeIndicator.value) {
-            colResizeIndicator.value.style.display = 'block';
-            colResizeIndicator.value.style.left = offsetTableX + 'px';
-            colResizeIndicator.value.style.top = tableContainer.value.scrollTop + 'px';
+            const style = colResizeIndicator.value.style;
+            style.display = 'block';
+            style.left = offsetTableX + 'px';
+            style.top = scrollTop + 'px';
         }
     }
 
@@ -135,13 +143,14 @@ export function useColResize({ tableContainer, tableHeaderLast, colResizeIndicat
         if (!curCol) return;
         curCol.width = width + 'px';
 
-        emit('update:columns', [...props.columns]);
+        emits('update:columns', [...props.columns]);
 
         // 隐藏指示线
         if (colResizeIndicator.value) {
-            colResizeIndicator.value.style.display = 'none';
-            colResizeIndicator.value.style.left = '0';
-            colResizeIndicator.value.style.top = '0';
+            const style = colResizeIndicator.value.style;
+            style.display = 'none';
+            style.left = '0';
+            style.top = '0';
         }
         // 清除拖动状态
         isColResizing.value = false;
@@ -155,9 +164,9 @@ export function useColResize({ tableContainer, tableHeaderLast, colResizeIndicat
     }
 
     /**获取最后一个叶子 */
-    function findLastChildCol(column: StkTableColumn<any> | null) {
+    function findLastChildCol(column: StkTableColumn<DT> | null) {
         if (column?.children?.length) {
-            const lastChild = column.children.at(-1) as StkTableColumn<any>;
+            const lastChild = column.children.at(-1) as StkTableColumn<DT>;
             return findLastChildCol(lastChild);
         }
         return column;
