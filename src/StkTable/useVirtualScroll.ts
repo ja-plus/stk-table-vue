@@ -13,8 +13,12 @@ type Option = {
 export type VirtualScrollStore = {
     /** 容器高度 */
     containerHeight: number;
+    /** 一页的大小 */
+    pageSize: number;
     /** 数组开始位置 */
     startIndex: number;
+    /** 数组结束位置 */
+    endIndex: number;
     /** 行高 */
     rowHeight: number;
     /** 表格定位上边距 */
@@ -44,7 +48,9 @@ export type VirtualScrollXStore = {
 export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option) {
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
+        pageSize: 10,
         startIndex: 0,
+        endIndex: 0,
         rowHeight: 28,
         offsetTop: 0,
         scrollTop: 0,
@@ -58,23 +64,21 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
         scrollLeft: 0,
     });
 
+    /** 是否虚拟滚动标志 */
     const virtual_on = computed(() => {
-        return props.virtual && dataSourceCopy.value.length > virtual_pageSize.value * 2;
-    });
-
-    const virtual_pageSize = computed(() => {
-        // 这里最终+1，因为headless=true无头时，需要上下各预渲染一行。
-        return Math.ceil(virtualScroll.value.containerHeight / virtualScroll.value.rowHeight) + 1;
+        return props.virtual && dataSourceCopy.value.length > virtualScroll.value.pageSize * 2;
     });
 
     const virtual_dataSourcePart = computed(() => {
         if (!virtual_on.value) return dataSourceCopy.value;
-        return dataSourceCopy.value.slice(virtualScroll.value.startIndex, virtualScroll.value.startIndex + virtual_pageSize.value);
+        const { startIndex, endIndex } = virtualScroll.value;
+        return dataSourceCopy.value.slice(startIndex, endIndex);
     });
 
     const virtual_offsetBottom = computed(() => {
         if (!virtual_on.value) return 0;
-        return (dataSourceCopy.value.length - virtualScroll.value.startIndex - virtual_dataSourcePart.value.length) * virtualScroll.value.rowHeight;
+        const { startIndex, rowHeight } = virtualScroll.value;
+        return (dataSourceCopy.value.length - startIndex - virtual_dataSourcePart.value.length) * rowHeight;
     });
 
     const virtualX_on = computed(() => {
@@ -90,18 +94,19 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
             // 虚拟横向滚动，固定列要一直保持存在
             const leftCols = [];
             const rightCols = [];
+            const { startIndex, endIndex } = virtualScrollX.value;
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
-            for (let i = 0; i < virtualScrollX.value.startIndex; i++) {
+            for (let i = 0; i < startIndex; i++) {
                 const col = tableHeaderLast.value[i];
                 if (col.fixed === 'left') leftCols.push(col);
             }
             // 右侧固定列，如果在右边不可见区。则需要拿出来放在后面
-            for (let i = virtualScrollX.value.endIndex; i < tableHeaderLast.value.length; i++) {
+            for (let i = endIndex; i < tableHeaderLast.value.length; i++) {
                 const col = tableHeaderLast.value[i];
                 if (col.fixed === 'right') rightCols.push(col);
             }
 
-            const mainColumns = tableHeaderLast.value.slice(virtualScrollX.value.startIndex, virtualScrollX.value.endIndex);
+            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex);
 
             return leftCols.concat(mainColumns).concat(rightCols);
         }
@@ -125,12 +130,18 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
     function initVirtualScrollY(height?: number) {
         if (!virtual_on.value) return;
         const { offsetHeight, scrollTop } = tableContainer.value || {};
+        const { rowHeight } = virtualScroll.value;
+        let containerHeight: number;
         // FIXME: 可能多次获取offsetHeight 会导致浏览器频繁重排
         if (typeof height === 'number') {
-            virtualScroll.value.containerHeight = height;
+            containerHeight = height;
         } else {
-            virtualScroll.value.containerHeight = offsetHeight || Default_Table_Height;
+            containerHeight = offsetHeight || Default_Table_Height;
         }
+        Object.assign(virtualScroll.value, {
+            containerHeight,
+            pageSize: Math.ceil(containerHeight / rowHeight) + 1, // 这里最终+1，因为headless=true无头时，需要上下各预渲染一行。
+        });
         updateVirtualScrollY(scrollTop);
     }
 
@@ -152,11 +163,12 @@ export function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableH
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight } = virtualScroll.value;
+        const { rowHeight, pageSize } = virtualScroll.value;
         const startIndex = Math.floor(sTop / rowHeight);
         Object.assign(virtualScroll.value, {
             startIndex,
             offsetTop: startIndex * rowHeight, // startIndex之前的高度
+            endIndex: startIndex + pageSize,
         });
     }
 
