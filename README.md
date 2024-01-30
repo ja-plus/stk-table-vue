@@ -15,6 +15,7 @@ js体积(未压缩41kb)
 * [] 列固定阴影
 * [] 不传row-key 时，自动按序号生成id
 * [] 列筛选
+* [] 斑马纹
 
 ## Usage
 > npm install stk-table-vue
