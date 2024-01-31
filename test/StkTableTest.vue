@@ -84,7 +84,7 @@ export default {
             props: {
                 rowKey: 'name',
                 theme: 'dark',
-                stripe: false,
+                stripe: true,
                 showOverflow: false,
                 showHeaderOverflow: false,
                 sortRemote: false,
@@ -196,7 +196,8 @@ export default {
                 { key: 'width', desc: 'table宽度', value: 'string' },
                 { key: 'maxWidth', desc: '最大宽度', value: 'string', defaultValue: 'max-content' },
                 { key: 'minWidth', desc: '最小宽度', value: 'string' },
-                { key: 'fixedMode', desc: 'table-layout 切换为fixed。此模式仅生效col.width', value: 'boolean', default: 'false' },
+                { key: 'stripe', desc: '斑马纹', value: 'boolean', defaultValue: 'false' },
+                { key: 'fixedMode', desc: 'table-layout 切换为fixed。此模式仅生效col.width', value: 'boolean', defaultValue: 'false' },
                 { key: 'showOverflow', desc: 'td文本溢出展示...', value: 'boolean', defaultValue: 'false' },
                 { key: 'showHeaderOverflow', desc: 'th文本溢出展示...', value: 'boolean', defaultValue: 'false' },
                 {
