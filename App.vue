@@ -14,7 +14,7 @@ import StkTableTest from './test/StkTableTest.vue';
 
 <style>
 body {
-    height: 100vh;
+    /* height: 100vh; */
     /* margin: 0; */
     box-sizing: border-box;
     /* padding: 10px; */

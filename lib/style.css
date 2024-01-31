@@ -7,10 +7,11 @@
   --row-height:28px;
   --cell-padding-x:8px;
   --resize-handle-width:4px;
-  --border-color:#e8eaec;
+  --border-color:#e8e8f4;
   --border-width:1px;
   --td-bgc:#fff;
-  --th-bgc:#f8f8f9;
+  --th-bgc:#fafafc;
+  --th-color:#272841;
   --tr-active-bgc:#e6f7ff;
   --tr-hover-bgc:rgba(230, 247, 255, 0.7);
   --bg-border-top:linear-gradient(180deg, var(--border-color) var(--border-width), transparent var(--border-width));
@@ -18,30 +19,33 @@
   --bg-border-bottom:linear-gradient(0deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --bg-border-left:linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --highlight-color:#71a2fd;
-  --sort-arrow-color:#5d5f69;
+  --stripe-bgc:#fafafc;
+  --sort-arrow-color:#757699;
   --sort-arrow-hover-color:#8f90b5;
   --sort-arrow-active-color:#1b63d9;
   --sort-arrow-active-sub-color:#cbcbe1;
-  --col-resize-indicator-color:#cbcbe1;
+  --col-resize-indicator-color:#87879c;
   position:relative;
   overflow:auto;
   display:flex;
   flex-direction:column;
 }
 .stk-table.dark{
-  --th-bgc:#181c21;
-  --td-bgc:#181c21;
-  --border-color:#26292e;
+  --th-bgc:#202029;
+  --th-color:#C0C0D1;
+  --td-bgc:#1b1b24;
+  --border-color:#292933;
   --tr-active-bgc:#283f63;
   --tr-hover-bgc:#1a2b46;
-  --table-bgc:#181c21;
+  --table-bgc:#1b1b24;
   --highlight-color:#1e4c99;
+  --stripe-bgc:#202029;
   --sort-arrow-color:#5d6064;
   --sort-arrow-hover-color:#727782;
   --sort-arrow-active-color:#d0d1d2;
   --sort-arrow-active-sub-color:#5d6064;
   --col-resize-indicator-color:#5d6064;
-  color:#d0d1d2;
+  color:#d1d1e0;
 }
 .stk-table.headless{
   border-top:1px solid var(--border-color);
@@ -78,6 +82,15 @@
 .stk-table.border .stk-table-main tbody td:first-child{
   background-image:var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
 }
+.stk-table.border.virtual-x .stk-table-main .virtual-x-left{
+  background:none;
+  pointer-events:none;
+}
+.stk-table.border.virtual-x .stk-table-main .virtual-x-right{
+  padding:0;
+  background:none;
+  pointer-events:none;
+}
 .stk-table.border.virtual-x .stk-table-main thead tr:first-child .virtual-x-left + th{
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
 }
@@ -87,10 +100,18 @@
 .stk-table.border-body-v .stk-table-main tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
+.stk-table.stripe .stk-table-main{
+}
+.stk-table.stripe .stk-table-main tbody tr:nth-child(odd){
+  background-color:var(--stripe-bgc);
+}
+.stk-table.stripe .stk-table-main tbody tr:hover{
+  background-color:var(--tr-hover-bgc);
+}
 .stk-table .column-resize-indicator{
   width:0;
   height:100%;
-  border-left:1px dashed var(--col-resize-indicator-color);
+  border-left:2px solid var(--col-resize-indicator-color);
   position:absolute;
   z-index:10;
   display:none;
@@ -115,6 +136,9 @@
   font-size:14px;
   box-sizing:border-box;
   padding:0 var(--cell-padding-x);
+}
+.stk-table .stk-table-main th{
+  color:var(--th-color);
 }
 .stk-table .stk-table-main thead tr:first-child th{
   position:sticky;
@@ -192,8 +216,6 @@
 }
 .stk-table .stk-table-main thead tr th .table-header-cell-wrapper .table-header-resizer.right{
   right:0;
-}
-.stk-table .stk-table-main tbody{
 }
 .stk-table .stk-table-main tbody tr{
   background-color:var(--td-bgc);

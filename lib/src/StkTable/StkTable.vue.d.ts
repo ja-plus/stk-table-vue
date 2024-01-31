@@ -1,4 +1,4 @@
-import { SortOption, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
 /**
  * 选中一行，
  * @param {string} rowKey
@@ -36,6 +36,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth?: string | undefined;
     /** 表格最大宽度*/
     maxWidth?: string | undefined;
+    /** 斑马线条纹 */
+    stripe?: boolean | undefined;
     /** 是否使用 table-layout:fixed */
     fixedMode?: boolean | undefined;
     /** 是否隐藏表头 */
@@ -99,6 +101,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
 }>, {
     width: string;
     fixedMode: boolean;
+    stripe: boolean;
     minWidth: string;
     maxWidth: string;
     headless: boolean;
@@ -135,25 +138,31 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     scrollTo: typeof scrollTo;
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    scroll: (...args: any[]) => void;
-    "th-drag-start": (...args: any[]) => void;
-    "col-order-change": (...args: any[]) => void;
-    "th-drop": (...args: any[]) => void;
-    columns: (...args: any[]) => void;
-    "sort-change": (...args: any[]) => void;
-    "row-click": (...args: any[]) => void;
-    "current-change": (...args: any[]) => void;
-    "row-dblclick": (...args: any[]) => void;
-    "header-row-menu": (...args: any[]) => void;
-    "row-menu": (...args: any[]) => void;
-    "cell-click": (...args: any[]) => void;
-    "header-cell-click": (...args: any[]) => void;
+    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[]) => void;
+    "row-click": (ev: MouseEvent, row: any) => void;
+    "current-change": (ev: MouseEvent | null, row: any) => void;
+    "row-dblclick": (ev: MouseEvent, row: any) => void;
+    "header-row-menu": (ev: MouseEvent) => void;
+    "row-menu": (ev: MouseEvent, row: any) => void;
+    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
+    scroll: (ev: Event, data: {
+        startIndex: number;
+        endIndex: number;
+    }) => void;
+    "scroll-x": (ev: Event) => void;
+    "col-order-change": (dragStartKey: string, targetColKey: string) => void;
+    "th-drag-start": (dragStartKey: string) => void;
+    "th-drop": (targetColKey: string) => void;
+    "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
     /** 表格最大宽度*/
     maxWidth?: string | undefined;
+    /** 斑马线条纹 */
+    stripe?: boolean | undefined;
     /** 是否使用 table-layout:fixed */
     fixedMode?: boolean | undefined;
     /** 是否隐藏表头 */
@@ -217,6 +226,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
 }>, {
     width: string;
     fixedMode: boolean;
+    stripe: boolean;
     minWidth: string;
     maxWidth: string;
     headless: boolean;
@@ -241,24 +251,29 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     bordered: boolean;
     autoResize: boolean;
 }>>> & {
-    onScroll?: ((...args: any[]) => any) | undefined;
-    "onTh-drag-start"?: ((...args: any[]) => any) | undefined;
-    "onCol-order-change"?: ((...args: any[]) => any) | undefined;
-    "onTh-drop"?: ((...args: any[]) => any) | undefined;
-    onColumns?: ((...args: any[]) => any) | undefined;
-    "onSort-change"?: ((...args: any[]) => any) | undefined;
-    "onRow-click"?: ((...args: any[]) => any) | undefined;
-    "onCurrent-change"?: ((...args: any[]) => any) | undefined;
-    "onRow-dblclick"?: ((...args: any[]) => any) | undefined;
-    "onHeader-row-menu"?: ((...args: any[]) => any) | undefined;
-    "onRow-menu"?: ((...args: any[]) => any) | undefined;
-    "onCell-click"?: ((...args: any[]) => any) | undefined;
-    "onHeader-cell-click"?: ((...args: any[]) => any) | undefined;
+    onScroll?: ((ev: Event, data: {
+        startIndex: number;
+        endIndex: number;
+    }) => any) | undefined;
+    "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
+    "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
+    "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
+    "onTh-drop"?: ((targetColKey: string) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[]) => any) | undefined;
+    "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onCurrent-change"?: ((ev: MouseEvent | null, row: any) => any) | undefined;
+    "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
+    "onRow-menu"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
+    "onScroll-x"?: ((ev: Event) => any) | undefined;
 }, {
     width: string;
     minWidth: string;
     maxWidth: string;
     colKey: UniqKey;
+    stripe: boolean;
     fixedMode: boolean;
     headless: boolean;
     theme: "light" | "dark";

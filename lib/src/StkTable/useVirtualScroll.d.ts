@@ -1,17 +1,21 @@
 import { Ref, ShallowRef } from 'vue';
 import { StkTableColumn } from './types';
-type Option = {
+type Option<DT extends Record<string, any>> = {
     tableContainer: Ref<HTMLElement | undefined>;
     props: any;
-    dataSourceCopy: ShallowRef<any[]>;
-    tableHeaderLast: Ref<StkTableColumn<any>[]>;
+    dataSourceCopy: ShallowRef<DT[]>;
+    tableHeaderLast: Ref<StkTableColumn<DT>[]>;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
     /** 容器高度 */
     containerHeight: number;
+    /** 一页的大小 */
+    pageSize: number;
     /** 数组开始位置 */
     startIndex: number;
+    /** 数组结束位置 */
+    endIndex: number;
     /** 行高 */
     rowHeight: number;
     /** 表格定位上边距 */
@@ -37,10 +41,12 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
+        pageSize: number;
         startIndex: number;
+        endIndex: number;
         rowHeight: number;
         offsetTop: number;
         scrollTop: number;
@@ -53,10 +59,10 @@ export declare function useVirtualScroll({ tableContainer, props, dataSourceCopy
         scrollLeft: number;
     }>;
     virtual_on: import("vue").ComputedRef<any>;
-    virtual_dataSourcePart: import("vue").ComputedRef<any[]>;
+    virtual_dataSourcePart: import("vue").ComputedRef<DT[]>;
     virtual_offsetBottom: import("vue").ComputedRef<number>;
     virtualX_on: import("vue").ComputedRef<any>;
-    virtualX_columnPart: import("vue").ComputedRef<StkTableColumn<any>[]>;
+    virtualX_columnPart: import("vue").ComputedRef<StkTableColumn<DT>[]>;
     virtualX_offsetRight: import("vue").ComputedRef<number>;
     initVirtualScroll: (height?: number) => void;
     initVirtualScrollY: (height?: number) => void;
