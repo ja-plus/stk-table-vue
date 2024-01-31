@@ -13,6 +13,7 @@
             'border-h': props.bordered === 'h',
             'border-v': props.bordered === 'v',
             'border-body-v': props.bordered === 'body-v',
+            stripe: props.stripe,
         }"
         :style="virtual && { '--row-height': virtualScroll.rowHeight + 'px' }"
         @scroll="onTableScroll"
@@ -219,6 +220,8 @@ const props = withDefaults(
         minWidth?: string;
         /** 表格最大宽度*/
         maxWidth?: string;
+        /** 斑马线条纹 */
+        stripe?: boolean;
         /** 是否使用 table-layout:fixed */
         fixedMode?: boolean;
         /** 是否隐藏表头 */
@@ -283,6 +286,7 @@ const props = withDefaults(
     {
         width: '',
         fixedMode: false,
+        stripe: false,
         minWidth: '',
         maxWidth: '',
         headless: false,

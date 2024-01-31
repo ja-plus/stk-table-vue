@@ -14,6 +14,7 @@
     --border-width: 1px;
     --td-bgc: #fff;
     --th-bgc: #f8f8f9;
+    --th-color: #000;
     --tr-active-bgc: rgb(230, 247, 255);
     --tr-hover-bgc: rgba(230, 247, 255, 0.7);
     --bg-border-top: linear-gradient(180deg, var(--border-color) var(--border-width), transparent var(--border-width));
@@ -21,6 +22,8 @@
     --bg-border-bottom: linear-gradient(0deg, var(--border-color) var(--border-width), transparent var(--border-width));
     --bg-border-left: linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
     --highlight-color: #71a2fd;
+    /* 斑马纹颜色*/
+    --stripe-bgc: #f8f8f9;
 
     --sort-arrow-color: #5d5f69;
     --sort-arrow-hover-color: #8f90b5;
@@ -36,14 +39,17 @@
 
     /**深色模式 */
     &.dark {
-        --th-bgc: #181c21;
-        --td-bgc: #181c21;
-        --border-color: #26292e;
+        --th-bgc: #202029;
+        --th-color: #C0C0D1;
+        --td-bgc: #1b1b24;
+        --border-color: #292933;
         --tr-active-bgc: #283f63;
         --tr-hover-bgc: #1a2b46;
-        --table-bgc: #181c21;
-        --highlight-color: #1e4c99;
+        --table-bgc: #1b1b24;
         /* 不能用rgba，因为固定列时，会变成半透明*/
+        --highlight-color: #1e4c99;
+
+        --stripe-bgc: #202029;
 
         --sort-arrow-color: #5d6064;
         --sort-arrow-hover-color: #727782;
@@ -54,7 +60,7 @@
 
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
-        color: #d0d1d2;
+        color: #d1d1e0;
     }
 
     /*.stk-table-fixed-left-col-box-shadow {
@@ -151,6 +157,22 @@
         }
     }
 
+    &.stripe {
+        .stk-table-main {
+
+            /* 斑马纹*/
+            tbody {
+                tr:nth-child(odd) td {
+                    background-color: var(--stripe-bgc);
+                }
+
+                tr:hover {
+                    background-color: var(--tr-hover-bgc);
+                }
+            }
+        }
+    }
+
     /** 列宽调整指示器 */
     .column-resize-indicator {
         width: 0;
@@ -181,6 +203,10 @@
             font-size: 14px;
             box-sizing: border-box;
             padding: 0 var(--cell-padding-x);
+        }
+
+        th {
+            color: var(--th-color);
         }
 
         thead {
@@ -355,13 +381,6 @@
                 }
             }
 
-            /* 斑马纹
-             tr:nth-child(2n) td {
-               background-color: #fafafc;
-             }
-             tr:hover {
-               background-color: #ebf3ff;
-             }*/
         }
 
         /* tr .fixed-cell--left{

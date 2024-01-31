@@ -7,17 +7,18 @@
         <button @click="addRow(1, true)">unshiftRow</button>
         <button @click="addColumn()">addColumn</button>
         <button @click="deleteColumn()">deleteColumn</button>
-        <button @click="props.showOverflow = !props.showOverflow">showOverflow:{{ props.showOverflow }}</button>
-        <button @click="props.showHeaderOverflow = !props.showHeaderOverflow">showHeaderOverflow:{{ props.showHeaderOverflow }}</button>
-        <button @click="props.sortRemote = !props.sortRemote">sortRemote:{{ props.sortRemote }}</button>
         <button @click="props.theme === 'light' ? (props.theme = 'dark') : (props.theme = 'light')">theme:{{ props.theme }}</button>
-        <button @click="props.headless = !props.headless">headless:{{ props.headless }}</button>
-        <button @click="props.colResizable = !props.colResizable">colResizable:{{ props.colResizable }}</button>
+        <label><input v-model="props.showOverflow" type="checkbox" />showOverflow</label>
+        <label><input v-model="props.showHeaderOverflow" type="checkbox" />showHeaderOverflow</label>
+        <label><input v-model="props.sortRemote" type="checkbox" />sortRemote</label>
+        <label><input v-model="props.headless" type="checkbox" />headless</label>
+        <label><input v-model="props.colResizable" type="checkbox" />colResizable</label>
         <span> border: </span>
         <input v-model="props.bordered" type="radio" name="border" value="true" /> true
         <input v-model="props.bordered" type="radio" name="border" value="h" />horizontal
         <input v-model="props.bordered" type="radio" name="border" value="v" /> vertical
         <input v-model="props.bordered" type="radio" name="border" value="body-v" />body-vertical
+        <label><input v-model="props.stripe" type="checkbox" />stripe</label>
     </div>
     <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
@@ -83,6 +84,7 @@ export default {
             props: {
                 rowKey: 'name',
                 theme: 'dark',
+                stripe: false,
                 showOverflow: false,
                 showHeaderOverflow: false,
                 sortRemote: false,
@@ -279,6 +281,8 @@ export default {
                     value: '(sourceDataIndex:string,targetDataIndex:string):void',
                 },
             ],
+
+            scrollTimeout: 0,
         };
     },
     mounted() {
@@ -323,9 +327,21 @@ export default {
             console.log('header-cell-click:', e, row);
         },
         onTableScroll(e, data) {
-            console.log(data);
             const { startIndex, endIndex } = data;
 
+            window.clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = window.setTimeout(() => {
+                console.log(startIndex, endIndex);
+                for (let i = startIndex; i < endIndex; i++) {
+                    const item = this.dataSource[i];
+                    if (!item.name) {
+                        this.dataSource[i] = {
+                            name: 'name' + i,
+                        };
+                    }
+                }
+                this.dataSource = [...this.dataSource];
+            }, 200);
             // console.log(
             //   'scroll:',
             //   e.target.scrollHeight,

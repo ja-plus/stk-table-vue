@@ -12,10 +12,10 @@ js体积(未压缩41kb)
 * [x] 多级表头。（不支持横向虚拟滚动）
 * [x] 支持table-layout: fixed 配置。
 * [x] 鼠标悬浮在表格上，键盘上下左右滚动虚拟表格
+* [x] 斑马纹
 * [] 列固定阴影
 * [] 不传row-key 时，自动按序号生成id
 * [] 列筛选
-* [] 斑马纹
 
 ## Usage
 > npm install stk-table-vue
@@ -44,6 +44,8 @@ export type StkProps = Partial<{
     minWidth: string;
     /** 表格最大宽度*/
     maxWidth: string;
+    /** 斑马线条纹 */
+    stripe: boolean;
     /** 是否使用 table-layout:fixed */
     fixedMode: boolean;
     /** 是否隐藏表头 */
