@@ -19,6 +19,8 @@
         <input v-model="props.bordered" type="radio" name="border" value="v" /> vertical
         <input v-model="props.bordered" type="radio" name="border" value="body-v" />body-vertical
         <label><input v-model="props.stripe" type="checkbox" />stripe</label>
+        <label><input v-model="props.virtual" type="checkbox" />virtual</label>
+        <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
     </div>
     <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
@@ -171,16 +173,14 @@ export default {
                     // },
                 },
             ],
-            dataSource: new Array(150)
-                .fill(0)
-                .map((it, i) => ({
-                    name: 'name' + i,
-                    age: Math.ceil(Math.random() * 100),
-                    email: 'add@sa.com',
-                    gender: Number(Math.random() * 100 - 50).toFixed(2),
-                    address: 'ahshshsshshhs',
-                }))
-                .concat(new Array(20000).fill({})),
+            dataSource: new Array(30).fill(0).map((it, i) => ({
+                name: 'name' + i,
+                age: Math.ceil(Math.random() * 100),
+                email: 'add@sa.com',
+                gender: Number(Math.random() * 100 - 50).toFixed(2),
+                address: 'ahshshsshshhs',
+            })),
+            // .concat(new Array(100).fill({})),
             addIndex: 0,
             docTableColumns: [
                 { title: '字段', dataIndex: 'key' },
@@ -275,7 +275,8 @@ export default {
                 { key: 'sort-change', desc: '筛选改变', value: '(e:MouseEvent,row,col,sortedData:any[]):void' },
                 { key: 'cell-click', desc: '单元格单击', value: '(e:MouseEvent,row,col):void' },
                 { key: 'header-cell-click', desc: '表头单元格单击', value: '(e:MouseEvent,row,col):void' },
-                { key: 'scroll', desc: '滚动', value: '(e:MouseEvent):void' },
+                { key: 'scroll', desc: '滚动', value: '(e:MouseEvent, data:{startIndex:number, endIndex:number}):void' },
+                { key: 'scroll-x', desc: '横向滚动', value: '(e:MouseEvent):void' },
                 {
                     key: 'col-order-change',
                     desc: '表头拖动改变列顺序时',

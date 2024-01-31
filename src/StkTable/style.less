@@ -10,11 +10,11 @@
     --row-height: 28px;
     --cell-padding-x: 8px;
     --resize-handle-width: 4px;
-    --border-color: #e8eaec;
+    --border-color: #e8e8f4;
     --border-width: 1px;
     --td-bgc: #fff;
-    --th-bgc: #f8f8f9;
-    --th-color: #000;
+    --th-bgc: #fafafc;
+    --th-color: #272841;
     --tr-active-bgc: rgb(230, 247, 255);
     --tr-hover-bgc: rgba(230, 247, 255, 0.7);
     --bg-border-top: linear-gradient(180deg, var(--border-color) var(--border-width), transparent var(--border-width));
@@ -23,14 +23,14 @@
     --bg-border-left: linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
     --highlight-color: #71a2fd;
     /* 斑马纹颜色*/
-    --stripe-bgc: #f8f8f9;
+    --stripe-bgc: #fafafc;
 
-    --sort-arrow-color: #5d5f69;
+    --sort-arrow-color: #757699;
     --sort-arrow-hover-color: #8f90b5;
     --sort-arrow-active-color: #1b63d9;
     --sort-arrow-active-sub-color: #cbcbe1;
     /** 列宽拖动指示器颜色 */
-    --col-resize-indicator-color: #cbcbe1;
+    --col-resize-indicator-color: #87879c;
 
     position: relative;
     overflow: auto;
@@ -137,6 +137,15 @@
 
         &.virtual-x {
             .stk-table-main {
+                .virtual-x-left {
+                    background: none;
+                    pointer-events: none;;
+                }
+                .virtual-x-right {
+                    padding: 0;
+                    background: none;
+                    pointer-events: none;;
+                }
                 thead tr:first-child .virtual-x-left+th {
                     /* 横向虚拟滚动时，左侧第一个单元格加上border-left*/
                     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
@@ -177,7 +186,7 @@
     .column-resize-indicator {
         width: 0;
         height: 100%;
-        border-left: 1px dashed var(--col-resize-indicator-color);
+        border-left: 2px solid var(--col-resize-indicator-color);
         position: absolute;
         z-index: 10;
         display: none;

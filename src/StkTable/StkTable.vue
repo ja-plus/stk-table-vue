@@ -113,7 +113,7 @@
                     <!-- 这个th用于横向虚拟滚动表格右边距 width、maxWidth 用于兼容低版本浏览器-->
                     <th
                         v-if="virtualX_on"
-                        style="padding: 0"
+                        class="virtual-x-right"
                         :style="{
                             minWidth: virtualX_offsetRight + 'px',
                             width: virtualX_offsetRight + 'px',
@@ -332,6 +332,8 @@ const emits = defineEmits<{
     (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
     /** 表格滚动事件 */
     (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
+    /** 表格横向滚动事件 */
+    (e: 'scroll-x', ev: Event): void;
     /** 表头列拖动事件 */
     (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
     /** 表头列拖动开始 */
@@ -639,14 +641,20 @@ function onTableScroll(e: Event) {
 
     // 此处可优化，因为访问e.target.scrollXX消耗性能
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
+    const isYScroll = scrollTop !== virtualScroll.value.scrollTop;
+    const isXScroll = scrollLeft !== virtualScrollX.value.scrollLeft;
     // 纵向滚动有变化
-    if (scrollTop !== virtualScroll.value.scrollTop) virtualScroll.value.scrollTop = scrollTop;
+    if (isYScroll) {
+        virtualScroll.value.scrollTop = scrollTop;
+    }
     if (virtual_on.value) {
         updateVirtualScrollY(scrollTop);
     }
 
     // 横向滚动有变化
-    if (scrollLeft !== virtualScrollX.value.scrollLeft) virtualScrollX.value.scrollLeft = scrollLeft;
+    if (isXScroll) {
+        virtualScrollX.value.scrollLeft = scrollLeft;
+    }
     if (virtualX_on.value) {
         updateVirtualScrollX(scrollLeft);
     }
@@ -654,7 +662,12 @@ function onTableScroll(e: Event) {
         startIndex: virtualScroll.value.startIndex,
         endIndex: virtualScroll.value.endIndex,
     };
-    emits('scroll', e, data);
+    if (isYScroll) {
+        emits('scroll', e, data);
+    }
+    if (isXScroll) {
+        emits('scroll-x', e);
+    }
 }
 
 /** tr hover事件 */

@@ -204,7 +204,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         // -----
         colWidthSum = 0;
         let endIndex = headerLength;
-        for (let colIndex = startIndex; colIndex < headerLength - 1; colIndex++) {
+        for (let colIndex = startIndex; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLast.value[colIndex];
             colWidthSum += getCalcWidth(col);
             // 列宽大于容器宽度则停止
@@ -212,6 +212,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
                 endIndex = colIndex + 2; // TODO:预渲染的列数
                 break;
             }
+        }
+        if (endIndex > headerLength) {
+            endIndex = headerLength;
         }
         Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft });
     }

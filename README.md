@@ -16,6 +16,7 @@ js体积(未压缩41kb)
 * [] 列固定阴影
 * [] 不传row-key 时，自动按序号生成id
 * [] 列筛选
+* [] 非虚拟滚动时，大数据分批加载。
 
 ## Usage
 > npm install stk-table-vue
@@ -213,3 +214,6 @@ export type StkTableColumn<T extends Record<string, any>> = {
   ]
 </script>
 ```
+
+### Special
+如果在页面滚动时，需要表头吸附在页面顶部。可以把 `.stk-table` 中的 `overflow-y` 设置为 `initial`
