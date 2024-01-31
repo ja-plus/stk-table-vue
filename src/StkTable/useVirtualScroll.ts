@@ -121,7 +121,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         let width = 0;
         for (let i = virtualScrollX.value.endIndex; i < tableHeaderLast.value.length; i++) {
             const col = tableHeaderLast.value[i];
-            width += getCalcWidth(col);
+            if (col.fixed !== 'right') {
+                width += getCalcWidth(col);
+            }
         }
         return width;
     });
@@ -209,7 +211,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
             colWidthSum += getCalcWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= virtualScrollX.value.containerWidth) {
-                endIndex = colIndex + 2; // TODO:预渲染的列数
+                endIndex = colIndex + 1; // TODO:预渲染的列数
                 break;
             }
         }
