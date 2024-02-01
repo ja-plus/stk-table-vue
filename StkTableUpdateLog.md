@@ -1,4 +1,4 @@
-## 0.0.1-beta.10
+## 0.0.1
 * feature: `props.stripe` 表格斑马条纹。
 * feature: 新增`@scroll-x` 事件，用于区分横向滚动和纵向滚动。原scroll事件只响应纵向滚动事件。
 * fix: `virtual-x` 右侧有固定列时，宽度计算有问题。
