@@ -228,6 +228,8 @@ const props = withDefaults(
         headless?: boolean;
         /** 主题，亮、暗 */
         theme?: 'light' | 'dark';
+        /** 行高 */
+        rowHeight?: number;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动 */
@@ -292,6 +294,7 @@ const props = withDefaults(
         maxWidth: '',
         headless: false,
         theme: 'light',
+        rowHeight: 28,
         virtual: false,
         virtualX: false,
         columns: () => [],

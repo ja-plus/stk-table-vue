@@ -44,6 +44,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headless?: boolean | undefined;
     /** 主题，亮、暗 */
     theme?: "light" | "dark" | undefined;
+    /** 行高 */
+    rowHeight?: number | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
     /** x轴虚拟滚动 */
@@ -107,6 +109,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     headless: boolean;
     theme: string;
+    rowHeight: number;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -170,6 +173,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headless?: boolean | undefined;
     /** 主题，亮、暗 */
     theme?: "light" | "dark" | undefined;
+    /** 行高 */
+    rowHeight?: number | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
     /** x轴虚拟滚动 */
@@ -233,6 +238,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     maxWidth: string;
     headless: boolean;
     theme: string;
+    rowHeight: number;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -274,6 +280,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
+    rowHeight: number;
     colKey: UniqKey;
     stripe: boolean;
     fixedMode: boolean;

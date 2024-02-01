@@ -53,10 +53,10 @@ function getCalcWidth<DT extends Record<string, any>>(col: StkTableColumn<DT>) {
 export function useVirtualScroll<DT extends Record<string, any>>({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option<DT>) {
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
+        rowHeight: props.rowHeight,
         pageSize: 10,
         startIndex: 0,
         endIndex: 0,
-        rowHeight: 28,
         offsetTop: 0,
         scrollTop: 0,
     });

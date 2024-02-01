@@ -27,6 +27,7 @@
             ref="stkTable"
             v-bind="props"
             v-model:columns="columns"
+            :row-height="28"
             row-key="name"
             :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"
@@ -197,6 +198,7 @@ export default {
                 { key: 'width', desc: 'table宽度', value: 'string' },
                 { key: 'maxWidth', desc: '最大宽度', value: 'string', defaultValue: 'max-content' },
                 { key: 'minWidth', desc: '最小宽度', value: 'string' },
+                { key: 'rowHeight', desc: '行高', value: 'number', defaultValue: '28' },
                 { key: 'stripe', desc: '斑马纹', value: 'boolean', defaultValue: 'false' },
                 { key: 'fixedMode', desc: 'table-layout 切换为fixed。此模式仅生效col.width', value: 'boolean', defaultValue: 'false' },
                 { key: 'showOverflow', desc: 'td文本溢出展示...', value: 'boolean', defaultValue: 'false' },
