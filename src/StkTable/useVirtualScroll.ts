@@ -69,12 +69,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         scrollLeft: 0,
     });
 
-    /** 左侧固定列阴影 */
-    const fixedLeftShadowState = ref({
-        show: false,
-        width: 0,
-    });
-
     /** 是否虚拟滚动标志 */
     const virtual_on = computed(() => {
         return props.virtual && dataSourceCopy.value.length > virtualScroll.value.pageSize * 2;
@@ -227,12 +221,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft });
     }
 
-    /** 这一侧 */
-    function FixedLeftShadow() {
-        return (
-            <div class={fixedLeftShadowState.value.show && 'fixed-left-col-shadow'} style={{ width: fixedLeftShadowState.value.width + 'px' }}></div>
-        );
-    }
     return {
         virtualScroll,
         virtualScrollX,
@@ -247,6 +235,5 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         initVirtualScrollX,
         updateVirtualScrollY,
         updateVirtualScrollX,
-        FixedLeftShadow,
     };
 }

@@ -188,7 +188,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 /**
  * @author JA+
  * 不支持低版本浏览器非虚拟滚动表格的表头固定，列固定，因为会卡。
@@ -197,7 +197,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, VNode, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
 import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -391,6 +391,13 @@ const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
+/** 左侧固定列阴影 */
+const fixedLeftShadow = ref({
+    show: false,
+    width: 0,
+    left: 0,
+});
+
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
@@ -422,7 +429,6 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
-    FixedLeftShadow,
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast });
 
 const { getFixedStyle } = useFixedStyle({
@@ -482,6 +488,10 @@ watch(
             const column = tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
             onColumnSort(column, false);
         }
+        const lastLeftCol = tableHeaderLast.value.findLast(it => it.fixed === 'left');
+        if (!lastLeftCol) return;
+        fixedLeftShadow.value.width = parseInt(lastLeftCol.width || '0');
+        fixedLeftShadow.value.left = parseInt(getFixedStyle(1, lastLeftCol).left || '0');
     },
     {
         deep: false,
@@ -692,7 +702,6 @@ function onTableWheel(e: MouseEvent) {
 function onTableScroll(e: Event) {
     if (!e?.target) return;
 
-    // 此处可优化，因为访问e.target.scrollXX消耗性能
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
     const { scrollTop: vScrollTop, startIndex, endIndex } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
@@ -710,6 +719,7 @@ function onTableScroll(e: Event) {
     // 横向滚动有变化
     if (isXScroll) {
         virtualScrollX.value.scrollLeft = scrollLeft;
+        fixedLeftShadow.value.show = Boolean(scrollLeft);
     }
     if (virtualX_on.value) {
         updateVirtualScrollX(scrollLeft);
@@ -786,6 +796,19 @@ function scrollTo(top: number | null = 0, left: number | null = 0) {
 /** 获取当前状态的表格数据 */
 function getTableData() {
     return toRaw(dataSourceCopy.value);
+}
+
+/** 左侧固定列的阴影 */
+function FixedLeftShadow(): VNode {
+    return (
+        <div
+            class={fixedLeftShadow.value.show && 'fixed-left-col-shadow'}
+            style={{
+                width: fixedLeftShadow.value.width + 'px',
+                left: fixedLeftShadow.value.left + 'px',
+            }}
+        ></div>
+    );
 }
 
 defineExpose({
