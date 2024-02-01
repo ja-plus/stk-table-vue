@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
 import vueJsxPlugin from '@vitejs/plugin-vue-jsx';
 import dts from 'vite-plugin-dts';
-
 // https://vitejs.dev/config/
 export default defineConfig({
     build: {
@@ -22,13 +21,10 @@ export default defineConfig({
             '@': path.resolve('src'),
         },
     },
-    test: {
-        environment: 'happy-dom',
-    },
     plugins: [
         vue(),
         vueJsxPlugin(),
-        dts(),
+        ...(process.env.NODE_ENV === 'production' ? [dts()] : []),
         // (function (){
         //   return {
         //     name: 'auto-import-style',
