@@ -2,6 +2,7 @@
 * add: 表格斑马条纹。props.stripe
 * add: 新增scroll-x 事件，用于区分横向滚动和纵向滚动。原scroll事件只响应纵向滚动事件。
 * fix: virtual-x 右侧有固定列时，宽度计算有问题。
+* add: auto-resize prop 支持传回调方法。用于resize后执行。
 
 ## 0.0.1-beta.9
 * revert: 添加.stk-table-main width相关的默认值。

@@ -96,8 +96,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
+     * 传入方法表示resize后的回调
      */
-    autoResize?: boolean | undefined;
+    autoResize?: boolean | (() => void) | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -221,8 +222,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
+     * 传入方法表示resize后的回调
      */
-    autoResize?: boolean | undefined;
+    autoResize?: boolean | (() => void) | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -294,7 +296,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colResizable: boolean;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
-    autoResize: boolean;
+    autoResize: boolean | (() => void);
 }, {}>, {
     tableHeader?(_: {
         column: StkTableColumn<any>;

@@ -28,6 +28,7 @@
             v-bind="props"
             v-model:columns="columns"
             row-key="name"
+            :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"
             @current-change="onCurrentChange"
             @row-menu="onRowMenu"
@@ -232,7 +233,7 @@ export default {
                 {
                     key: 'autoResize',
                     desc: '自动重新计算虚拟滚动高度宽度。默认true。[非响应式]',
-                    value: 'boolean',
+                    value: 'boolean | (() => void)',
                     defaultValue: 'true',
                 },
                 { key: '------------', desc: '---------' },

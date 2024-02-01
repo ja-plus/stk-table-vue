@@ -58,8 +58,10 @@ export function useAutoResize({ tableContainer, initVirtualScroll, scrollTo, pro
         }
         debounceTime = window.setTimeout(() => {
             if (props.autoResize) {
-                scrollTo();
                 initVirtualScroll();
+                if (typeof props.autoResize === 'function') {
+                    props.autoResize();
+                }
             }
             debounceTime = 0;
         }, debounceMs);

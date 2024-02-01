@@ -280,8 +280,9 @@ const props = withDefaults(
         /**
          * 自动重新计算虚拟滚动高度宽度。默认true
          * [非响应式]
+         * 传入方法表示resize后的回调
          */
-        autoResize?: boolean;
+        autoResize?: boolean | (() => void);
     }>(),
     {
         width: '',
