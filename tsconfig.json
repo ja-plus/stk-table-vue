@@ -21,11 +21,6 @@
             ]
         }
     },
-    "vueCompilerOptions": {
-        "plugins": [
-            "@volar/vue-language-plugin-pug"
-        ]
-    },
     "include": [
         "./src/**/*.js",
         "./src/**/*.ts",

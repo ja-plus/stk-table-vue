@@ -10,9 +10,4 @@
     "exclude": [
         "node_modules"
     ],
-    "vueCompilerOptions": {
-        "plugins": [
-            "@volar/vue-language-plugin-pug"
-        ]
-    }
 }

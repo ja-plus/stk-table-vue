@@ -71,7 +71,7 @@
 
 <script lang="tsx">
 import { h } from 'vue';
-import { StkTable } from '../src/StkTable/index';
+import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
@@ -85,7 +85,7 @@ export default {
         return {
             props: {
                 rowKey: 'name',
-                theme: 'dark',
+                theme: 'dark' as 'dark' | 'light',
                 stripe: true,
                 showOverflow: false,
                 showHeaderOverflow: false,
@@ -172,7 +172,7 @@ export default {
                     //     );
                     // },
                 },
-            ],
+            ] as StkTableColumn<any>[],
             dataSource: new Array(30).fill(0).map((it, i) => ({
                 name: 'name' + i,
                 age: Math.ceil(Math.random() * 100),
