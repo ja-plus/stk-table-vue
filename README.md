@@ -1,7 +1,7 @@
 # StkTable (Sticky Table)
 
 Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
-js体积(未压缩41kb)
+js体积(未压缩44kb)
 
 ## Feature TODO:
 * [x] 高亮行，单元格。

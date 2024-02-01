@@ -24,11 +24,8 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <!-- 横向滚动时固定列的阴影，TODO: 覆盖一层在整个表上，使用linear-gradient 绘制阴影-->
-        <!-- <div
-        :class="showFixedLeftShadow && 'stk-table-fixed-left-col-box-shadow'"
-        :style="{ width: fixedLeftColWidth + 'px' }"
-      ></div> -->
+        <!-- 横向滚动时固定列的阴影-->
+        <FixedLeftShadow />
         <!-- 这个元素用于虚拟滚动时，撑开父容器的高度 （已弃用，因为滚动条拖动过快，下方tr为加载出来时，会导致表头sticky闪动）
         <div
           v-if="virtual"
@@ -425,6 +422,7 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
+    FixedLeftShadow,
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast });
 
 const { getFixedStyle } = useFixedStyle({
