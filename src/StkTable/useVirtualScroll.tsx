@@ -94,7 +94,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
 
     const virtualX_on = computed(() => {
         return (
-            props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getCalcWidth(col)), 0) > virtualScrollX.value.containerWidth * 1.5
+            props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getCalcWidth(col)), 0) > virtualScrollX.value.containerWidth + 100
         );
     });
 
