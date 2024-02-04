@@ -1,10 +1,11 @@
 import { Ref, onBeforeUnmount, onMounted } from 'vue';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
-const ARROW_CODES = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft'];
+/** 翻页按键 */
+const SCROLL_CODES = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft', 'PageUp', 'PageDown'] as const;
 
 type Options = {
-    scrollTo: (x: number | null, y: number | null) => void;
+    scrollTo: (y: number | null, x: number | null) => void;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
 };
@@ -33,20 +34,24 @@ export function useKeyboardArrowScroll(targetElement: Ref<HTMLElement | undefine
 
     /** 键盘按下事件 */
     function handleKeydown(e: KeyboardEvent) {
-        if (!ARROW_CODES.includes(e.code)) return;
+        if (!SCROLL_CODES.includes(e.code as any)) return;
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
-        const { scrollTop, rowHeight } = virtualScroll.value;
+        const { scrollTop, rowHeight, pageSize } = virtualScroll.value;
         const { scrollLeft } = virtualScrollX.value;
-        if (e.code === ARROW_CODES[0]) {
+        if (e.code === SCROLL_CODES[0]) {
             scrollTo(scrollTop - rowHeight, null);
-        } else if (e.code === ARROW_CODES[1]) {
+        } else if (e.code === SCROLL_CODES[1]) {
             scrollTo(null, scrollLeft + rowHeight);
-        } else if (e.code === ARROW_CODES[2]) {
+        } else if (e.code === SCROLL_CODES[2]) {
             scrollTo(scrollTop + rowHeight, null);
-        } else if (e.code === ARROW_CODES[3]) {
+        } else if (e.code === SCROLL_CODES[3]) {
             scrollTo(null, scrollLeft - rowHeight);
+        } else if (e.code === SCROLL_CODES[4]) {
+            scrollTo(scrollTop - rowHeight * pageSize, null);
+        } else if (e.code === SCROLL_CODES[5]) {
+            scrollTo(scrollTop + rowHeight * pageSize, null);
         }
     }
 

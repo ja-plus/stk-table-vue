@@ -43,6 +43,10 @@
             @col-order-change="onColOrderChange"
         ></StkTable>
     </div>
+    <div>
+        columns:
+        <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
+    </div>
     <StkTableMultiHeader></StkTableMultiHeader>
 
     <!-- <StkTableC
@@ -57,11 +61,6 @@
         @row-dblclick="onRowDblclick"
         @col-order-change="onColOrderChange2"
     ></StkTableC> -->
-
-    <div>
-        columns:
-        <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
-    </div>
 
     <FixedMode></FixedMode>
     <StkTableInsertSort />
@@ -105,9 +104,6 @@ export default {
                 bordered: true,
             },
             columns: [
-                // {
-                //   title: 'BasicInfo',
-                //   children: [
                 {
                     title: 'Name',
                     dataIndex: 'name',
@@ -117,13 +113,11 @@ export default {
                     className: 'my-td',
                     sorter: true,
                     customHeaderCell: props => {
-                        // render(h) {
                         return h(
                             'span',
                             { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' },
                             props.col.title + '(render) text-overflow,',
                         );
-                        // },
                     },
                 },
                 {
@@ -139,9 +133,6 @@ export default {
                     align: 'right',
                     headerAlign: 'right',
                 },
-                //   ]
-                // },
-
                 {
                     title: 'Gender',
                     dataIndex: 'gender',

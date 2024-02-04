@@ -1,3 +1,6 @@
+## 0.0.3
+* feature: `PageUp`/`PageDown` 滚动表格
+
 ## 0.0.2
 * fix: 2级表头滚动问题
 * feature: 支持任意多级表头

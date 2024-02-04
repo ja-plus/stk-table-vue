@@ -17,7 +17,7 @@ js体积(未压缩41kb)
 * [x] 支持table-layout: fixed 配置。
 * 鼠标悬浮在表格上，键盘滚动虚拟表格。
   - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
-  - [] 键盘 `PageUp`/ `PageDown` 按键支持。
+  - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
 * [x] 斑马纹。
 * [] 列固定阴影。
 * [] 不传row-key 时，自动按序号生成id。

@@ -680,8 +680,11 @@ function onTableScroll(e: Event) {
 
     // 此处可优化，因为访问e.target.scrollXX消耗性能
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
-    const isYScroll = scrollTop !== virtualScroll.value.scrollTop;
-    const isXScroll = scrollLeft !== virtualScrollX.value.scrollLeft;
+    const { scrollTop: vScrollTop, startIndex, endIndex } = virtualScroll.value;
+    const { scrollLeft: vScrollLeft } = virtualScrollX.value;
+    const isYScroll = scrollTop !== vScrollTop;
+    const isXScroll = scrollLeft !== vScrollLeft;
+
     // 纵向滚动有变化
     if (isYScroll) {
         virtualScroll.value.scrollTop = scrollTop;
@@ -697,10 +700,7 @@ function onTableScroll(e: Event) {
     if (virtualX_on.value) {
         updateVirtualScrollX(scrollLeft);
     }
-    const data = {
-        startIndex: virtualScroll.value.startIndex,
-        endIndex: virtualScroll.value.endIndex,
-    };
+    const data = { startIndex, endIndex };
     if (isYScroll) {
         emits('scroll', e, data);
     }
