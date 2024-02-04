@@ -19,5 +19,5 @@ export declare function insertToOrderedArray<T extends object>(sortState: SortSt
  * @param dataSource 排序的数组
  */
 export declare function tableSort(sortOption: SortOption, order: Order, dataSource: any[]): any[];
-/** column 的层级 */
-export declare function howDeepTheColumn(arr: StkTableColumn<any>[], level?: number): number;
+/** 表头column配置的层级 */
+export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
