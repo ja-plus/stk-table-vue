@@ -43,6 +43,8 @@
             @col-order-change="onColOrderChange"
         ></StkTable>
     </div>
+    <StkTableMultiHeader></StkTableMultiHeader>
+
     <!-- <StkTableC
         ref="stkTableC"
         row-key="name"
@@ -79,10 +81,11 @@ import { StkTable, StkTableColumn } from '../src/StkTable/index';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import FixedMode from './FixedMode.vue';
 import DragResize from './utils/DragResize';
+import StkTableMultiHeader from './StkTableMultiHeader.vue';
 
 export default {
     name: 'StkTableTest',
-    components: { StkTable, StkTableInsertSort, FixedMode },
+    components: { StkTable, StkTableInsertSort, FixedMode, StkTableMultiHeader },
     data() {
         return {
             props: {

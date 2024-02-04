@@ -116,12 +116,12 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
     return targetDataSource;
 }
 
-/** column 的层级 */
-export function howDeepTheColumn(arr: StkTableColumn<any>[], level = 1) {
+/** 表头column配置的层级 */
+export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
     const levels = [level];
     arr.forEach(item => {
         if (item.children?.length) {
-            levels.push(howDeepTheColumn(item.children, level + 1));
+            levels.push(howDeepTheHeader(item.children, level + 1));
         }
     });
     return Math.max(...levels);

@@ -60,7 +60,7 @@
                         :draggable="headerDrag ? 'true' : 'false'"
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
                         :colspan="col.colSpan"
-                        :style="getCellStyle(1, col)"
+                        :style="getCellStyle(1, col, rowIndex)"
                         :title="col.title"
                         :class="[
                             col.sorter ? 'sortable' : '',
@@ -206,7 +206,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { howDeepTheColumn, tableSort } from './utils';
+import { howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -361,7 +361,17 @@ let sortOrderIndex = ref(0);
 /** 排序切换顺序 */
 const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
-/** 表头.内容是 props.columns 的引用集合 */
+/**
+ * 表头.内容是 props.columns 的引用集合
+ * @eg
+ * ```js
+ * [
+ *      [{dataInex:'id',...}], // 第0行列配置
+ *      [], // 第一行列配置
+ *      //...
+ * ]
+ * ```
+ */
 const tableHeaders = ref<StkTableColumn<DT>[][]>([]);
 /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
@@ -402,6 +412,7 @@ const {
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast });
 
 const { getFixedStyle } = useFixedStyle({
+    props,
     tableHeaderLast,
     virtualScroll,
     virtualScrollX,
@@ -474,33 +485,56 @@ function dealColumns() {
     tableHeaders.value = [];
     tableHeaderLast.value = [];
     const copyColumn = props.columns; // do not deep clone
-    const deep = howDeepTheColumn(copyColumn);
-    const tmpHeaderLast: StkTableColumn<any>[] = [];
+    const deep = howDeepTheHeader(copyColumn);
+    const tempHeaderLast: StkTableColumn<any>[] = [];
 
     if (deep > 1 && props.virtualX) {
         console.error('多级表头不支持横向虚拟滚动');
     }
 
     // 展开columns
-    (function flat(arr: StkTableColumn<any>[], depth = 0) {
+
+    /**
+     * @param arr
+     * @param depth 深度
+     * @param parentFixed 父节点固定列继承。
+     */
+    function flat(arr: StkTableColumn<any>[], depth = 0 /* , parentFixed: 'left' | 'right' | null = null */) {
         if (!tableHeaders.value[depth]) {
             tableHeaders.value[depth] = [];
         }
+        /** 所有子节点数量 */
+        let allChildrenLen = 0;
         arr.forEach(col => {
-            col.rowSpan = col.children ? 1 : deep - depth;
-            col.colSpan = col.children?.length;
-            if (col.rowSpan === 1) delete col.rowSpan;
-            if (col.colSpan === 1) delete col.colSpan;
-            tableHeaders.value[depth].push(col);
-            if (!props.virtualX && col.children) {
-                flat(col.children, depth + 1);
+            // TODO: 继承父节点固定列配置
+            // if (parentFixed) {
+            //     col.fixed = parentFixed;
+            // }
+            /** 一列中的子节点数量 */
+            let colChildrenLen = 1;
+            if (col.children) {
+                // DFS
+                colChildrenLen = flat(col.children, depth + 1 /* , col.fixed */);
             } else {
-                tmpHeaderLast.push(col); // 没有children的列作为colgroup
+                tempHeaderLast.push(col); // 没有children的列作为colgroup
             }
+            // 回溯
+            tableHeaders.value[depth].push(col);
+            const rowSpan = col.children ? 1 : deep - depth;
+            const colSpan = colChildrenLen;
+            if (rowSpan !== 1) {
+                col.rowSpan = rowSpan;
+            }
+            if (colSpan !== 1) {
+                col.colSpan = colSpan;
+            }
+            allChildrenLen += colChildrenLen;
         });
-    })(copyColumn);
+        return allChildrenLen;
+    }
+    flat(copyColumn);
 
-    tableHeaderLast.value = tmpHeaderLast;
+    tableHeaderLast.value = tempHeaderLast;
 }
 
 /**
@@ -545,13 +579,14 @@ function getColWidthStyle(col: StkTableColumn<any>) {
  * 性能优化，缓存style行内样式
  *
  * FIXME: col变化时仍从缓存拿style。watch col?
- * @param {1|2} tagType 1-th 2-td
- * @param {StkTableColumn} col
+ * @param tagType 1-th 2-td
+ * @param col
+ * @param depth 表头层级
  */
-function getCellStyle(tagType: 1 | 2, col: StkTableColumn<any>): CSSProperties {
+function getCellStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth?: number): CSSProperties {
     const style: CSSProperties = {
         ...getColWidthStyle(col),
-        ...getFixedStyle(tagType, col),
+        ...getFixedStyle(tagType, col, depth),
     };
     if (tagType === 1) {
         // TH

@@ -1,3 +1,8 @@
+## 0.0.2
+* fix: 2级表头滚动问题
+* feature: 支持任意多级表头
+* change: th z-index 3 -> 4, fixed时 4 -> 5
+
 ## 0.0.1
 * feature: `props.stripe` 表格斑马条纹。
 * feature: 新增`@scroll-x` 事件，用于区分横向滚动和纵向滚动。原scroll事件只响应纵向滚动事件。

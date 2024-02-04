@@ -4,6 +4,7 @@ import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 type Options = {
+    props: any;
     tableHeaderLast: Ref<StkTableColumn<any>[]>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
@@ -15,7 +16,7 @@ type Options = {
  * @param param0
  * @returns
  */
-export function useFixedStyle({ tableHeaderLast, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight }: Options) {
+export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight }: Options) {
     const fixedColumnsPositionStore = computed(() => {
         const store: Record<string, number> = {};
         const cols = [...tableHeaderLast.value];
@@ -45,25 +46,34 @@ export function useFixedStyle({ tableHeaderLast, virtualScroll, virtualScrollX, 
     });
     /**
      * 固定列的style
-     * @param {1|2} tagType 1-th 2-td
-     * @param {StkTableColumn} col
+     * @param tagType 1-th 2-td
+     * @param col
+     * @param depth 深度。tagType = 1时使用
      */
-    function getFixedStyle(tagType: 1 | 2, col: StkTableColumn<any>): CSSProperties {
-        const style: CSSProperties = {};
-        if (Is_Legacy_Mode) {
-            if (tagType === 1) {
-                style.position = 'relative';
-                style.top = virtualScroll.value.scrollTop + 'px';
-            }
-        }
+    function getFixedStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth = 0): CSSProperties {
         const { fixed, dataIndex } = col;
-        if (fixed === 'left' || fixed === 'right') {
-            const isFixedLeft = fixed === 'left';
+        const isFixedLeft = fixed === 'left';
+        const style: CSSProperties = {};
+        // TD
+        if (Is_Legacy_Mode) {
+            style.position = 'relative';
+        } else {
+            style.position = 'sticky';
+        }
+        if (tagType === 1) {
+            // TH
             if (Is_Legacy_Mode) {
-                /**
-                 * ----------浏览器兼容--------------
-                 */
-                style.position = 'relative'; // 固定列方案替换为relative。原因:transform 在chrome84浏览器，列变动会导致横向滚动条计算出问题。
+                style.top = virtualScroll.value.scrollTop + depth * props.rowHeight + 'px';
+            } else {
+                style.top = depth * props.rowHeight + 'px';
+            }
+            style.zIndex = isFixedLeft ? '5' : '4'; // 保证固定列高于其他单元格
+        } else {
+            style.zIndex = isFixedLeft ? '3' : '2';
+        }
+
+        if (fixed === 'left' || fixed === 'right') {
+            if (Is_Legacy_Mode) {
                 if (isFixedLeft) {
                     if (virtualX_on.value) style.left = virtualScrollX.value.scrollLeft - virtualScrollX.value.offsetLeft + 'px';
                     else style.left = virtualScrollX.value.scrollLeft + 'px';
@@ -71,27 +81,11 @@ export function useFixedStyle({ tableHeaderLast, virtualScroll, virtualScrollX, 
                     // TODO:计算右侧距离
                     style.right = `${virtualX_offsetRight.value}px`;
                 }
-                if (tagType === 1) {
-                    style.top = virtualScroll.value.scrollTop + 'px';
-                    style.zIndex = isFixedLeft ? '4' : '3'; // 保证固定列高于其他单元格
-                } else {
-                    style.zIndex = isFixedLeft ? '3' : '2';
-                }
             } else {
-                /**
-                 * -------------高版本浏览器----------------
-                 */
-                style.position = 'sticky';
                 if (isFixedLeft) {
                     style.left = fixedColumnsPositionStore.value[dataIndex] + 'px';
                 } else {
                     style.right = fixedColumnsPositionStore.value[dataIndex] + 'px';
-                }
-                if (tagType === 1) {
-                    style.top = '0';
-                    style.zIndex = isFixedLeft ? '4' : '3'; // 保证固定列高于其他单元格
-                } else {
-                    style.zIndex = isFixedLeft ? '3' : '2';
                 }
             }
         }
