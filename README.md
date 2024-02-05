@@ -43,7 +43,8 @@ stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
 
 ```
 ## API
-### StkTable Component Props
+### StkTable Component 
+#### Props
 ```ts
 export type StkProps = {
   width?: string;
@@ -61,6 +62,8 @@ export type StkProps = {
   theme?: 'light' | 'dark';
   /** 行高 */
   rowHeight?: number;
+  /** 表头行高。default = rowHeight */
+  headerRowHeight?: number | null;
   /** 虚拟滚动 */
   virtual?: boolean;
   /** x轴虚拟滚动 */
@@ -118,8 +121,67 @@ export type StkProps = {
   autoResize?: boolean | (() => void);
 };
 ```
+#### Emits
+```js
+  /** 排序变更触发 */
+  (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
+  /** 一行点击事件 */
+  (e: 'row-click', ev: MouseEvent, row: DT): void;
+  /** 选中一行触发。ev返回null表示不是点击事件触发的 */
+  (e: 'current-change', ev: MouseEvent | null, row: DT): void;
+  /** 行双击事件 */
+  (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
+  /** 表头右键事件 */
+  (e: 'header-row-menu', ev: MouseEvent): void;
+  /** 表体行右键点击事件 */
+  (e: 'row-menu', ev: MouseEvent, row: DT): void;
+  /** 单元格点击事件 */
+  (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+  /** 表头单元格点击事件 */
+  (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
+  /** 表格滚动事件 */
+  (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
+  /** 表格横向滚动事件 */
+  (e: 'scroll-x', ev: Event): void;
+  /** 表头列拖动事件 */
+  (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
+  /** 表头列拖动开始 */
+  (e: 'th-drag-start', dragStartKey: string): void;
+  /** 表头列拖动drop */
+  (e: 'th-drop', targetColKey: string): void;
+  /** v-model:columns col resize 时更新宽度*/
+  (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+```
 
-### StkTableColumn
+#### Expose
+```js
+defineExpose({
+  /** 初始化横向纵向虚拟滚动 */
+  initVirtualScroll,
+  /** 初始化横向虚拟滚动 */
+  initVirtualScrollX,
+  /** 初始化纵向虚拟滚动 */
+  initVirtualScrollY,
+  /** 设置当前选中行 */
+  setCurrentRow,
+  /** 设置高亮渐暗单元格 */
+  setHighlightDimCell,
+  /** 设置高亮渐暗行 */
+  setHighlightDimRow,
+  /** 表格排序列dataIndex */
+  sortCol,
+  /** 设置排序 */
+  setSorter,
+  /** 重置排序 */
+  resetSorter,
+  /** 滚动至 */
+  scrollTo,
+  /** 获取表格数据 */
+  getTableData,
+});
+```
+
+### StkTableColumn 列配置
 ``` ts
 type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
 /** 表格列配置 */

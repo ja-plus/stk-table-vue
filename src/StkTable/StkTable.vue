@@ -234,16 +234,16 @@ const props = withDefaults(
         theme?: 'light' | 'dark';
         /** 行高 */
         rowHeight?: number;
-        /** 表头行高 */
+        /** 表头行高。default = rowHeight */
         headerRowHeight?: number | null;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动 */
         virtualX?: boolean;
         /** 表格列配置 */
-        columns?: StkTableColumn<any>[];
+        columns?: StkTableColumn<DT>[];
         /** 表格数据源 */
-        dataSource?: any[];
+        dataSource?: DT[];
         /** 行唯一键 */
         rowKey?: UniqKey;
         /** 列唯一键 */
@@ -392,7 +392,7 @@ const tableHeaders = ref<StkTableColumn<DT>[][]>([]);
 /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
-const dataSourceCopy = shallowRef([...props.dataSource]);
+const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
@@ -791,16 +791,27 @@ function getTableData() {
 }
 
 defineExpose({
+    /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll,
+    /** 初始化横向虚拟滚动 */
     initVirtualScrollX,
+    /** 初始化纵向虚拟滚动 */
     initVirtualScrollY,
+    /** 设置当前选中行 */
     setCurrentRow,
+    /** 设置高亮渐暗单元格 */
     setHighlightDimCell,
+    /** 设置高亮渐暗行 */
     setHighlightDimRow,
+    /** 表格排序列dataIndex */
     sortCol,
+    /** 设置排序 */
     setSorter,
+    /** 重置排序 */
     resetSorter,
+    /** 滚动至 */
     scrollTo,
+    /** 获取表格数据 */
     getTableData,
 });
 </script>
