@@ -83,7 +83,7 @@
                         <div class="table-header-cell-wrapper">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" />
                             <template v-else>
-                                <slot name="tableHeader" :column="col">
+                                <slot name="tableHeader" :col="col">
                                     <span class="table-header-title">{{ col.title }}</span>
                                 </slot>
                             </template>
@@ -91,14 +91,12 @@
                             <!-- 排序图图标 -->
                             <span v-if="col.sorter" class="table-header-sorter">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 16 16">
-                                    <g id="sort-btn">
-                                        <polygon id="arrow-up" fill="#757699" points="8 2 4.8 6 11.2 6"></polygon>
-                                        <polygon
-                                            id="arrow-down"
-                                            transform="translate(8, 12) rotate(-180) translate(-8, -12) "
-                                            points="8 10 4.8 14 11.2 14"
-                                        ></polygon>
-                                    </g>
+                                    <polygon class="arrow-up" fill="#757699" points="8 2 4.8 6 11.2 6"></polygon>
+                                    <polygon
+                                        class="arrow-down"
+                                        transform="translate(8, 12) rotate(-180) translate(-8, -12) "
+                                        points="8 10 4.8 14 11.2 14"
+                                    ></polygon>
                                 </svg>
                             </span>
                             <!-- 列宽拖动handler -->
@@ -332,7 +330,7 @@ const emits = defineEmits<{
     (e: 'row-menu', ev: MouseEvent, row: DT): void;
     /** 单元格点击事件 */
     (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
-    /**表头单元格点击事件 */
+    /** 表头单元格点击事件 */
     (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
     /** 表格滚动事件 */
     (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
@@ -344,6 +342,7 @@ const emits = defineEmits<{
     (e: 'th-drag-start', dragStartKey: string): void;
     /** 表头列拖动drop */
     (e: 'th-drop', targetColKey: string): void;
+    /** v-model:columns col resize 时更新宽度*/
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }>();
 
@@ -377,6 +376,9 @@ const tableHeaders = ref<StkTableColumn<DT>[][]>([]);
 const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef([...props.dataSource]);
+
+/** 表头深度 */
+const headerDepth = { value: 1 };
 
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
@@ -453,7 +455,6 @@ watch(
             console.warn('invalid dataSource');
             return;
         }
-        // dealColumns(val);
         let needInitVirtualScrollY = false;
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
@@ -478,7 +479,6 @@ onMounted(() => {
 
 /**
  * 处理多级表头
- * FIXME: 仅支持到两级表头。不支持多级。
  */
 function dealColumns() {
     // reset
@@ -534,6 +534,7 @@ function dealColumns() {
     }
     flat(copyColumn);
 
+    headerDepth.value = deep;
     tableHeaderLast.value = tempHeaderLast;
 }
 

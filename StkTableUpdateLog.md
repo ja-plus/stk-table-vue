@@ -1,5 +1,7 @@
 ## 0.0.3
 * feature: `PageUp`/`PageDown` 滚动表格
+* change: `slot.tableHeader` props `column` -> `col`
+* change: 排序箭头css `arrow-up/arrow-down` id选择器 -> class选择器
 
 ## 0.0.2
 * fix: 2级表头滚动问题
