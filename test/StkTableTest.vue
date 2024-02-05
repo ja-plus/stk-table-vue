@@ -28,6 +28,7 @@
             v-bind="props"
             v-model:columns="columns"
             :row-height="28"
+            :header-row-height="36"
             row-key="name"
             :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"

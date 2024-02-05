@@ -2,6 +2,7 @@ export const Default_Col_Width = '100';
 
 export const Default_Table_Height = 100;
 export const Default_Table_Width = 200;
+export const Default_Row_Height = 28;
 
 /** 高亮背景色 */
 export const Highlight_Color = {

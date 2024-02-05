@@ -15,7 +15,12 @@
             'border-body-v': props.bordered === 'body-v',
             stripe: props.stripe,
         }"
-        :style="virtual && { '--row-height': virtualScroll.rowHeight + 'px' }"
+        :style="
+            virtual && {
+                '--row-height': virtualScroll.rowHeight + 'px',
+                '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
+            }
+        "
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
@@ -196,6 +201,7 @@
  * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { Default_Row_Height } from './const';
 import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -228,6 +234,8 @@ const props = withDefaults(
         theme?: 'light' | 'dark';
         /** 行高 */
         rowHeight?: number;
+        /** 表头行高 */
+        headerRowHeight?: number | null;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动 */
@@ -292,7 +300,8 @@ const props = withDefaults(
         maxWidth: '',
         headless: false,
         theme: 'light',
-        rowHeight: 28,
+        rowHeight: Default_Row_Height,
+        headerRowHeight: null,
         virtual: false,
         virtualX: false,
         columns: () => [],
@@ -385,9 +394,6 @@ const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef([...props.dataSource]);
 
-/** 表头深度 */
-const headerDepth = { value: 1 };
-
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
@@ -441,9 +447,11 @@ if (props.autoResize) {
 
 /** 键盘箭头滚动 */
 useKeyboardArrowScroll(tableContainer, {
+    props,
     scrollTo,
     virtualScroll,
     virtualScrollX,
+    tableHeaders,
 });
 
 watch(
@@ -542,7 +550,6 @@ function dealColumns() {
     }
     flat(copyColumn);
 
-    headerDepth.value = deep;
     tableHeaderLast.value = tempHeaderLast;
 }
 
