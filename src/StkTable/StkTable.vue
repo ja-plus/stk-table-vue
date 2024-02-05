@@ -346,6 +346,14 @@ const emits = defineEmits<{
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }>();
 
+// 仅支持vue3.3+
+// const slots = defineSlots<{
+//     /** 表头插槽 */
+//     tableHeader(props: { col: StkTableColumn<DT> }): void;
+//     /** 空状态插槽 */
+//     empty(): void;
+// }>();
+
 const tableContainer = ref<HTMLDivElement>();
 const colResizeIndicator = ref<HTMLDivElement>();
 /** 当前选中的一行*/
