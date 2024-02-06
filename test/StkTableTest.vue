@@ -29,6 +29,7 @@
             v-model:columns="columns"
             :row-height="28"
             :header-row-height="36"
+            fixed-col-shadow
             row-key="name"
             :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"

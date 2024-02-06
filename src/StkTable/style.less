@@ -33,6 +33,10 @@
     /** 列宽拖动指示器颜色 */
     --col-resize-indicator-color: #87879c;
 
+    /** 固定列阴影颜色 */
+    --fixed-col-shadow-color-from: rgba(0, 0, 0, 0.1);
+    --fixed-col-shadow-color-to: rgba(0, 0, 0, 0);
+
     position: relative;
     overflow: auto;
     display: flex;
@@ -59,17 +63,12 @@
 
         --col-resize-indicator-color: #5d6064;
 
+        --fixed-col-shadow-color-from: rgba(135, 135, 156, 0.1);
+        --fixed-col-shadow-color-to: rgba(135, 135, 156, 0);
+
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
-    }
-
-    .fixed-left-col-shadow {
-       position: absolute;
-       height: 100%;
-       background-color: red;
-       z-index: 5;
-       pointer-events: none;
     }
 
     &.headless {
@@ -215,6 +214,33 @@
             font-size: 14px;
             box-sizing: border-box;
             padding: 0 var(--cell-padding-x);
+
+            /*固定列阴影*/
+            &.fixed-cell--left {
+                --shadow-rotate: 90deg;
+
+                &.fixed-cell--shadow::after {
+                    right: -10px;
+                }
+            }
+
+            &.fixed-cell--right {
+                --shadow-rotate: -90deg;
+
+                &.fixed-cell--shadow::after {
+                    left: -10px;
+                }
+            }
+
+            &.fixed-cell--shadow::after {
+                content: '';
+                width: 10px;
+                height: 100%;
+                top: 0px;
+                position: absolute;
+                pointer-events: none;
+                background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
+            }
         }
 
         th {
@@ -222,9 +248,10 @@
         }
 
         thead {
-            height: var(--header-row-height);
 
             tr {
+                height: var(--header-row-height);
+
                 &:first-child th {
                     position: sticky;
                     top: 0;

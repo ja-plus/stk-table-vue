@@ -19,7 +19,9 @@ js体积(未压缩44kb)
   - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
   - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
 * [x] 斑马纹。
-* [] 列固定阴影。
+* [x] 列固定阴影。
+  - [] 多级表头固定列阴影。
+  - [] sticky column 动态计算阴影位置。
 * [] 不传row-key 时，自动按序号生成id。
 * [] 列筛选。
 * [] 非虚拟滚动时，大数据分批加载。
@@ -42,6 +44,10 @@ stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
 </template>
 
 ```
+
+## Notice
+注意，组件会改动 `props.columns` 中的对象。如果多个组件 `columns` 数组元素存在引用同一个 `StkTableColumn` 对象。则考虑赋值 `columns` 前进行深拷贝。
+
 ## API
 ### StkTable Component 
 #### Props
@@ -119,38 +125,81 @@ export type StkProps = {
    * 传入方法表示resize后的回调
    */
   autoResize?: boolean | (() => void);
+  /** 是否展示固定列阴影。默认不展示。 */
+  fixedColShadow?: boolean;
 };
 ```
 #### Emits
 ```js
-  /** 排序变更触发 */
-  (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
-  /** 一行点击事件 */
-  (e: 'row-click', ev: MouseEvent, row: DT): void;
-  /** 选中一行触发。ev返回null表示不是点击事件触发的 */
-  (e: 'current-change', ev: MouseEvent | null, row: DT): void;
-  /** 行双击事件 */
-  (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
-  /** 表头右键事件 */
-  (e: 'header-row-menu', ev: MouseEvent): void;
-  /** 表体行右键点击事件 */
-  (e: 'row-menu', ev: MouseEvent, row: DT): void;
-  /** 单元格点击事件 */
-  (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
-  /** 表头单元格点击事件 */
-  (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
-  /** 表格滚动事件 */
-  (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
-  /** 表格横向滚动事件 */
-  (e: 'scroll-x', ev: Event): void;
-  /** 表头列拖动事件 */
-  (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
-  /** 表头列拖动开始 */
-  (e: 'th-drag-start', dragStartKey: string): void;
-  /** 表头列拖动drop */
-  (e: 'th-drop', targetColKey: string): void;
-  /** v-model:columns col resize 时更新宽度*/
-  (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+  {
+    /**
+     * 排序变更触发
+     * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
+     */
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
+    /**
+     * 一行点击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
+    (e: 'row-click', ev: MouseEvent, row: DT): void;
+    /**
+     * 选中一行触发。ev返回null表示不是点击事件触发的
+     * ```(ev: MouseEvent | null, row: DT)```
+     */
+    (e: 'current-change', ev: MouseEvent | null, row: DT): void;
+    /**
+     * 行双击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
+    (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
+    /**
+     * 表头右键事件
+     * ```(ev: MouseEvent)```
+     */
+    (e: 'header-row-menu', ev: MouseEvent): void;
+    /**
+     * 表体行右键点击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
+    (e: 'row-menu', ev: MouseEvent, row: DT): void;
+    /**
+     * 单元格点击事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 表头单元格点击事件
+     * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
+     */
+    (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
+    /**
+     * 表格滚动事件
+     * ```(ev: Event, data: { startIndex: number; endIndex: number })```
+     */
+    (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
+    /**
+     * 表格横向滚动事件
+     * ```(ev: Event)```
+     */
+    (e: 'scroll-x', ev: Event): void;
+    /**
+     * 表头列拖动事件
+     * ```(dragStartKey: string, targetColKey: string)```
+     */
+    (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
+    /**
+     * 表头列拖动开始
+     * ```(dragStartKey: string)```
+     */
+    (e: 'th-drag-start', dragStartKey: string): void;
+    /**
+     * 表头列拖动drop
+     * ```(targetColKey: string)```
+     */
+    (e: 'th-drop', targetColKey: string): void;
+    /** v-model:columns col resize 时更新宽度*/
+    (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+}
 ```
 
 #### Expose

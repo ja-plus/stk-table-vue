@@ -38,12 +38,25 @@ export type StkTableColumn<T extends Record<string, any>> = {
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;
     /** private */ colSpan?: number;
-    /**自定义 td 渲染内容 */
+    /**
+     * 自定义 td 渲染内容。
+     *
+     * 组件prop入参:
+     * - props.row 一行的记录。
+     * - props.col 列配置
+     */
     customCell?: Component | VNode | CustomCellFunc<T>;
-    /** 自定义 th 渲染内容 */
+    /**
+     * 自定义 th 渲染内容
+     *
+     * 组件prop入参:
+     * - props.col 列配置
+     */
     customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+    /** 父节点引用 */
+    __PARENT__?: StkTableColumn<T> | null;
 };
 
 export type SortOption = Pick<StkTableColumn<any>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;

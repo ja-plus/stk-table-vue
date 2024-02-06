@@ -45,6 +45,6 @@ const dataSource = new Array(20).fill(0).map((it, i) => {
 <template>
     <div>
         多级表头处理
-        <StkTable style="height: 200px; width: 600px" :columns="columns" :data-source="dataSource"> </StkTable>
+        <StkTable style="height: 200px; width: 600px" fixed-col-shadow :columns="columns" :data-source="dataSource"> </StkTable>
     </div>
 </template>

@@ -24,8 +24,6 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <!-- 横向滚动时固定列的阴影-->
-        <FixedLeftShadow />
         <!-- 这个元素用于虚拟滚动时，撑开父容器的高度 （已弃用，因为滚动条拖动过快，下方tr为加载出来时，会导致表头sticky闪动）
         <div
           v-if="virtual"
@@ -69,8 +67,7 @@
                             col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
                             showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
-                            col.fixed ? 'fixed-cell' : '',
-                            col.fixed ? 'fixed-cell--' + col.fixed : '',
+                            ...getFixedColClass(col),
                         ]"
                         @click="
                             e => {
@@ -164,12 +161,7 @@
                         v-for="col in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
-                        :class="[
-                            col.className,
-                            showOverflow ? 'text-overflow' : '',
-                            col.fixed ? 'fixed-cell' : '',
-                            col.fixed ? 'fixed-cell--' + col.fixed : '',
-                        ]"
+                        :class="[col.className, showOverflow ? 'text-overflow' : '', ...getFixedColClass(col)]"
                         :style="getCellStyle(2, col)"
                         @click="e => onCellClick(e, row, col)"
                     >
@@ -288,6 +280,8 @@ const props = withDefaults(
          * 传入方法表示resize后的回调
          */
         autoResize?: boolean | (() => void);
+        /** 是否展示固定列阴影。默认不展示。 */
+        fixedColShadow?: boolean;
     }>(),
     {
         width: '',
@@ -318,35 +312,75 @@ const props = withDefaults(
         colMinWidth: 10,
         bordered: true,
         autoResize: true,
+        fixedColShadow: false,
     },
 );
 
 const emits = defineEmits<{
-    /** 排序变更触发 */
+    /**
+     * 排序变更触发
+     * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
+     */
     (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
-    /** 一行点击事件 */
+    /**
+     * 一行点击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
     (e: 'row-click', ev: MouseEvent, row: DT): void;
-    /** 选中一行触发。ev返回null表示不是点击事件触发的 */
+    /**
+     * 选中一行触发。ev返回null表示不是点击事件触发的
+     * ```(ev: MouseEvent | null, row: DT)```
+     */
     (e: 'current-change', ev: MouseEvent | null, row: DT): void;
-    /** 行双击事件 */
+    /**
+     * 行双击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
     (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
-    /** 表头右键事件 */
+    /**
+     * 表头右键事件
+     * ```(ev: MouseEvent)```
+     */
     (e: 'header-row-menu', ev: MouseEvent): void;
-    /** 表体行右键点击事件 */
+    /**
+     * 表体行右键点击事件
+     * ```(ev: MouseEvent, row: DT)```
+     */
     (e: 'row-menu', ev: MouseEvent, row: DT): void;
-    /** 单元格点击事件 */
+    /**
+     * 单元格点击事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
     (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
-    /** 表头单元格点击事件 */
+    /**
+     * 表头单元格点击事件
+     * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
+     */
     (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
-    /** 表格滚动事件 */
+    /**
+     * 表格滚动事件
+     * ```(ev: Event, data: { startIndex: number; endIndex: number })```
+     */
     (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
-    /** 表格横向滚动事件 */
+    /**
+     * 表格横向滚动事件
+     * ```(ev: Event)```
+     */
     (e: 'scroll-x', ev: Event): void;
-    /** 表头列拖动事件 */
+    /**
+     * 表头列拖动事件
+     * ```(dragStartKey: string, targetColKey: string)```
+     */
     (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
-    /** 表头列拖动开始 */
+    /**
+     * 表头列拖动开始
+     * ```(dragStartKey: string)```
+     */
     (e: 'th-drag-start', dragStartKey: string): void;
-    /** 表头列拖动drop */
+    /**
+     * 表头列拖动drop
+     * ```(targetColKey: string)```
+     */
     (e: 'th-drop', targetColKey: string): void;
     /** v-model:columns col resize 时更新宽度*/
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
@@ -391,11 +425,14 @@ const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
-/** 左侧固定列阴影 */
-const fixedLeftShadow = ref({
-    show: false,
-    width: 0,
-    left: 0,
+/** 固定列阴影 */
+const fixedShadow = ref({
+    /** 是否展示左侧固定列阴影 */
+    showL: false,
+    /** 是否展示右侧固定列阴影 */
+    showR: false,
+    /** 保存需要出现阴影的列 */
+    cols: [] as StkTableColumn<DT>[],
 });
 
 /**高亮帧间隔 
@@ -488,10 +525,7 @@ watch(
             const column = tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
             onColumnSort(column, false);
         }
-        const lastLeftCol = tableHeaderLast.value.findLast(it => it.fixed === 'left');
-        if (!lastLeftCol) return;
-        fixedLeftShadow.value.width = parseInt(lastLeftCol.width || '0');
-        fixedLeftShadow.value.left = parseInt(getFixedStyle(1, lastLeftCol).left || '0');
+        updateFixedShadow();
     },
     {
         deep: false,
@@ -499,6 +533,7 @@ watch(
 );
 onMounted(() => {
     initVirtualScroll();
+    updateFixedShadow();
 });
 
 /**
@@ -521,9 +556,10 @@ function dealColumns() {
     /**
      * @param arr
      * @param depth 深度
+     * @param parent 父节点引用，用于构建双向链表。
      * @param parentFixed 父节点固定列继承。
      */
-    function flat(arr: StkTableColumn<any>[], depth = 0 /* , parentFixed: 'left' | 'right' | null = null */) {
+    function flat(arr: StkTableColumn<DT>[], parent: StkTableColumn<DT> | null, depth = 0 /* , parentFixed: 'left' | 'right' | null = null */) {
         if (!tableHeaders.value[depth]) {
             tableHeaders.value[depth] = [];
         }
@@ -534,11 +570,13 @@ function dealColumns() {
             // if (parentFixed) {
             //     col.fixed = parentFixed;
             // }
+            // 构建指向父节点的引用
+            col.__PARENT__ = parent;
             /** 一列中的子节点数量 */
             let colChildrenLen = 1;
             if (col.children) {
                 // DFS
-                colChildrenLen = flat(col.children, depth + 1 /* , col.fixed */);
+                colChildrenLen = flat(col.children, col, depth + 1 /* , col.fixed */);
             } else {
                 tempHeaderLast.push(col); // 没有children的列作为colgroup
             }
@@ -556,15 +594,58 @@ function dealColumns() {
         });
         return allChildrenLen;
     }
-    flat(copyColumn);
+
+    flat(copyColumn, null);
 
     tableHeaderLast.value = tempHeaderLast;
+    dealFixedColShadow();
+}
+
+/** 处理固定列阴影 */
+function dealFixedColShadow() {
+    if (!props.fixedColShadow) return;
+    fixedShadow.value.cols = [];
+    const lastLeftCol = tableHeaderLast.value.findLast(it => it.fixed === 'left');
+    const lastRightCol = tableHeaderLast.value.find(it => it.fixed === 'right');
+    // 处理多级表头列阴影
+    let node: any = { __PARENT__: lastLeftCol };
+    while ((node = node.__PARENT__)) {
+        if (node.fixed) {
+            fixedShadow.value.cols.push(node);
+        }
+    }
+    node = { __PARENT__: lastRightCol };
+    while ((node = node.__PARENT__)) {
+        if (node.fixed) {
+            fixedShadow.value.cols.push(node);
+        }
+    }
+}
+
+/** 固定列class */
+function getFixedColClass(col: StkTableColumn<DT>): string[] {
+    const { showR, showL, cols } = fixedShadow.value;
+    const classArr = [
+        col.fixed ? 'fixed-cell' : '',
+        col.fixed ? 'fixed-cell--' + col.fixed : '',
+        props.fixedColShadow && col.fixed && ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) && cols.includes(col)
+            ? 'fixed-cell--shadow'
+            : '',
+    ];
+    return classArr;
+}
+
+function updateFixedShadow() {
+    if (!props.fixedColShadow) return;
+    const { clientWidth, scrollWidth, scrollLeft } = tableContainer.value as HTMLDivElement;
+    fixedShadow.value.showL = Boolean(scrollLeft);
+    fixedShadow.value.showR = Math.abs(scrollWidth - scrollLeft - clientWidth) > 0.5;
 }
 
 /**
  * 行唯一值生成
  */
-function rowKeyGen(row: any) {
+function rowKeyGen(row: DT) {
     let key = rowKeyGenStore.get(row);
     if (!key) {
         key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
@@ -719,7 +800,7 @@ function onTableScroll(e: Event) {
     // 横向滚动有变化
     if (isXScroll) {
         virtualScrollX.value.scrollLeft = scrollLeft;
-        fixedLeftShadow.value.show = Boolean(scrollLeft);
+        updateFixedShadow();
     }
     if (virtualX_on.value) {
         updateVirtualScrollX(scrollLeft);
@@ -796,19 +877,6 @@ function scrollTo(top: number | null = 0, left: number | null = 0) {
 /** 获取当前状态的表格数据 */
 function getTableData() {
     return toRaw(dataSourceCopy.value);
-}
-
-/** 左侧固定列的阴影 */
-function FixedLeftShadow(): VNode {
-    return (
-        <div
-            class={fixedLeftShadow.value.show && 'fixed-left-col-shadow'}
-            style={{
-                width: fixedLeftShadow.value.width + 'px',
-                left: fixedLeftShadow.value.left + 'px',
-            }}
-        ></div>
-    );
 }
 
 defineExpose({
