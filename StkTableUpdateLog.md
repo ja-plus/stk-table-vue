@@ -1,3 +1,6 @@
+## 0.1.1
+* fix: watch `props.fixedColShadow` 响应。 
+
 ## 0.1.0
 * feature: 固定列阴影。通过`props.fixedColShadow` 开启。出于与旧版行为保持一致，默认关闭。
 * feature: `PageUp`/`PageDown` 滚动表格。

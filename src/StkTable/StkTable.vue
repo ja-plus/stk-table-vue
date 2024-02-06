@@ -189,7 +189,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { CSSProperties, VNode, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
 import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -531,6 +531,9 @@ watch(
         deep: false,
     },
 );
+
+watch(() => props.fixedColShadow, dealFixedColShadow);
+
 onMounted(() => {
     initVirtualScroll();
     updateFixedShadow();
@@ -605,8 +608,15 @@ function dealColumns() {
 function dealFixedColShadow() {
     if (!props.fixedColShadow) return;
     fixedShadow.value.cols = [];
-    const lastLeftCol = tableHeaderLast.value.findLast(it => it.fixed === 'left');
-    const lastRightCol = tableHeaderLast.value.find(it => it.fixed === 'right');
+    // 找到最右边的固定列 findLast
+    let lastLeftCol = null;
+    for (let i = tableHeaderLast.value.length - 1; i > 0; i--) {
+        const col = tableHeaderLast.value[i];
+        if (col.fixed === 'left') {
+            lastLeftCol = col;
+            break;
+        }
+    }
     // 处理多级表头列阴影
     let node: any = { __PARENT__: lastLeftCol };
     while ((node = node.__PARENT__)) {
@@ -614,6 +624,9 @@ function dealFixedColShadow() {
             fixedShadow.value.cols.push(node);
         }
     }
+
+    // 找到最左边的固定列
+    const lastRightCol = tableHeaderLast.value.find(it => it.fixed === 'right');
     node = { __PARENT__: lastRightCol };
     while ((node = node.__PARENT__)) {
         if (node.fixed) {
