@@ -1,10 +1,10 @@
-## 0.0.3
+## 0.1.0
+* feature: 固定列阴影。通过`props.fixedColShadow` 开启。出于与旧版行为保持一致，默认关闭。
 * feature: `PageUp`/`PageDown` 滚动表格。
 * change: `slot.tableHeader` props `column` -> `col`。
 * change: 排序箭头css `arrow-up/arrow-down` id选择器 -> class选择器。
 * feature: 新增 `props.headerRowHeight` 控制表头行高。
 * optimize: virtualX_on 计算规则更改位超出容器宽度 + 100时开启。(之前为超出容器宽度*1.5)。
-* feature: 固定列阴影。通过`props.fixedColShadow` 开启。出于与旧版行为保持一致，默认关闭。
 
 ## 0.0.2
 * fix: 2级表头滚动问题。

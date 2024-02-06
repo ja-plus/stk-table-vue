@@ -46,6 +46,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     theme?: "light" | "dark" | undefined;
     /** 行高 */
     rowHeight?: number | undefined;
+    /** 表头行高。default = rowHeight */
+    headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
     /** x轴虚拟滚动 */
@@ -101,6 +103,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
      * 传入方法表示resize后的回调
      */
     autoResize?: boolean | (() => void) | undefined;
+    /** 是否展示固定列阴影。默认不展示。 */
+    fixedColShadow?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -110,6 +114,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headless: boolean;
     theme: string;
     rowHeight: number;
+    headerRowHeight: null;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -129,17 +134,29 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colMinWidth: number;
     bordered: boolean;
     autoResize: boolean;
+    fixedColShadow: boolean;
 }>, {
+    /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
+    /** 初始化横向虚拟滚动 */
     initVirtualScrollX: () => void;
+    /** 初始化纵向虚拟滚动 */
     initVirtualScrollY: (height?: number | undefined) => void;
+    /** 设置当前选中行 */
     setCurrentRow: typeof setCurrentRow;
+    /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
+    /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
+    /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
+    /** 设置排序 */
     setSorter: typeof setSorter;
+    /** 重置排序 */
     resetSorter: typeof resetSorter;
+    /** 滚动至 */
     scrollTo: typeof scrollTo;
+    /** 获取表格数据 */
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any>, order: Order, data: any[]) => void;
@@ -175,6 +192,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     theme?: "light" | "dark" | undefined;
     /** 行高 */
     rowHeight?: number | undefined;
+    /** 表头行高。default = rowHeight */
+    headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
     /** x轴虚拟滚动 */
@@ -230,6 +249,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
      * 传入方法表示resize后的回调
      */
     autoResize?: boolean | (() => void) | undefined;
+    /** 是否展示固定列阴影。默认不展示。 */
+    fixedColShadow?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -239,6 +260,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headless: boolean;
     theme: string;
     rowHeight: number;
+    headerRowHeight: null;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -258,6 +280,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colMinWidth: number;
     bordered: boolean;
     autoResize: boolean;
+    fixedColShadow: boolean;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -281,10 +304,11 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     minWidth: string;
     maxWidth: string;
     rowHeight: number;
+    headless: boolean;
+    headerRowHeight: number | null;
     colKey: UniqKey;
     stripe: boolean;
     fixedMode: boolean;
-    headless: boolean;
     theme: "light" | "dark";
     virtual: boolean;
     virtualX: boolean;
@@ -304,9 +328,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);
+    fixedColShadow: boolean;
 }, {}>, {
     tableHeader?(_: {
-        column: StkTableColumn<any>;
+        col: StkTableColumn<any>;
     }): any;
     empty?(_: {}): any;
 }>;

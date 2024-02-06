@@ -295,6 +295,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     no-data-full
     col-resizable
     auto-resize
+    fixed-col-shadow
     :col-min-width="10"
     :headless="false"
     :data-source="dataSource"
@@ -307,6 +308,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     @cell-click="onCellClick"
     @header-cell-click="onHeaderCellClick"
     @scroll="onTableScroll"
+    @scroll-x="onTableScrollX"
     @col-order-change="onColOrderChange"
   />
 </template>
