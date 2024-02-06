@@ -143,7 +143,7 @@
                     :key="rowKey ? rowKeyGen(row) : i"
                     :data-row-key="rowKey ? rowKeyGen(row) : i"
                     :class="{
-                        active: rowKey ? rowKeyGen(row) === (currentItem && rowKeyGen(currentItem)) : row === currentItem,
+                        active: rowKey ? rowKeyGen(row) === rowKeyGen(currentItem) : row === currentItem,
                         hover: rowKey ? rowKeyGen(row) === currentHover : row === currentHover,
                         [rowClassName(row, i)]: true,
                     }"
@@ -398,6 +398,11 @@ const tableContainer = ref<HTMLDivElement>();
 const colResizeIndicator = ref<HTMLDivElement>();
 /** 当前选中的一行*/
 const currentItem = ref<DT | null>(null);
+/**
+ * 保存当前选中行的key<br>
+ * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
+ */
+const currentItemKey = ref<any>(null);
 /** 当前hover的行 */
 const currentHover = ref<DT | null>(null);
 
@@ -659,6 +664,7 @@ function updateFixedShadow() {
  * 行唯一值生成
  */
 function rowKeyGen(row: DT) {
+    if (!row) return;
     let key = rowKeyGenStore.get(row);
     if (!key) {
         key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
@@ -747,8 +753,9 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
 function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
     // 选中同一行不触发current-change 事件
-    if (currentItem.value === row) return;
+    if (props.rowKey ? currentItemKey.value === rowKeyGen(row) : currentItem.value === row) return;
     currentItem.value = row;
+    currentItemKey.value = rowKeyGen(row);
     emits('current-change', e, row);
 }
 
@@ -842,6 +849,7 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 function setCurrentRow(rowKey: string, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
     currentItem.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
+    currentItemKey.value = rowKeyGen(currentItem.value);
     if (!option.silent) {
         emits('current-change', null, currentItem.value);
     }
