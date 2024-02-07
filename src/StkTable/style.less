@@ -100,33 +100,23 @@
     }
 
     &.border {
-        .stk-table-main {
 
-            th,
-            td {
-                background-image: var(--bg-border-right), var(--bg-border-bottom);
-            }
+        th,
+        td {
+            background-image: var(--bg-border-right), var(--bg-border-bottom);
+        }
 
-            thead {
-                tr {
-                    &:first-child th {
-                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+        thead {
+            tr {
+                &:first-child th {
+                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 
-                        &:first-child {
-                            background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                        }
-                    }
-
-                    th {
-                        &:first-child {
-                            background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                        }
+                    &:first-child {
+                        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                     }
                 }
-            }
 
-            tbody {
-                td {
+                th {
                     &:first-child {
                         background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                     }
@@ -134,57 +124,49 @@
             }
         }
 
-        &.virtual-x {
-            .stk-table-main {
-                .virtual-x-left {
-                    background: none;
-                    pointer-events: none;
-                    ;
-                }
-
-                .virtual-x-right {
-                    padding: 0;
-                    background: none;
-                    pointer-events: none;
-                    ;
-                }
-
-                thead tr:first-child .virtual-x-left+th {
-                    /* 横向虚拟滚动时，左侧第一个单元格加上border-left*/
-                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
-                }
-
-                tr .virtual-x-left+th {
+        tbody {
+            td {
+                &:first-child {
                     background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
                 }
+            }
+        }
+
+        &.virtual-x {
+            .virtual-x-left {
+                background: none;
+                pointer-events: none;
+            }
+
+            .virtual-x-right {
+                padding: 0;
+                background: none;
+                pointer-events: none;
+            }
+
+            thead tr:first-child .virtual-x-left+th {
+                /* 横向虚拟滚动时，左侧第一个单元格加上border-left*/
+                background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
+            }
+
+            tr .virtual-x-left+th {
+                background-image: var(--bg-border-right), var(--bg-border-bottom), var(--bg-border-left);
             }
         }
     }
 
     &.border-body-v {
-        .stk-table-main {
-            tbody {
-                --bg-border-bottom: linear-gradient(transparent, transparent);
-            }
+        tbody {
+            --bg-border-bottom: linear-gradient(transparent, transparent);
         }
     }
 
     &.stripe {
-        .stk-table-main {
 
-            /* 斑马纹*/
-            tbody {
-                tr:nth-child(odd) {
-                    background-color: var(--stripe-bgc);
-                }
-
-                tr:hover {
-                    background-color: var(--tr-hover-bgc);
-                }
-
-                tr.active {
-                    background-color: var(--tr-active-bgc);
-                }
+        /* 斑马纹*/
+        tbody {
+            tr:nth-child(odd) {
+                background-color: var(--stripe-bgc);
             }
         }
     }
@@ -218,41 +200,78 @@
             font-size: 14px;
             box-sizing: border-box;
             padding: 0 var(--cell-padding-x);
-
-            /*固定列阴影*/
-            &.fixed-cell--left {
-                --shadow-rotate: 90deg;
-
-                &.fixed-cell--shadow::after {
-                    right: -10px;
-                }
-            }
-
-            &.fixed-cell--right {
-                --shadow-rotate: -90deg;
-
-                &.fixed-cell--shadow::after {
-                    left: -10px;
-                }
-            }
-
-            &.fixed-cell--shadow::after {
-                content: '';
-                width: 10px;
-                height: 100%;
-                top: 0px;
-                position: absolute;
-                pointer-events: none;
-                background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
-            }
         }
 
         th {
             color: var(--th-color);
+            background-color: var(--th-bgc);
+
+            &.sortable {
+                cursor: pointer;
+            }
+
+            &.text-overflow {
+                .table-header-cell-wrapper {
+                    white-space: nowrap;
+                    overflow: hidden;
+                }
+
+                .table-header-title {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+            }
+        }
+
+        td {
+            &.fixed-cell {
+                background-color: inherit;
+                /* 防止横向滚动后透明*/
+            }
+
+            &.highlight-cell {
+                animation: stkTableDim 2s linear;
+            }
+
+            &.text-overflow {
+                .table-cell-wrapper {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        /*固定列阴影-左*/
+        .fixed-cell--left {
+            --shadow-rotate: 90deg;
+
+            &.fixed-cell--shadow::after {
+                right: -10px;
+            }
+        }
+
+        /*固定列阴影-右*/
+        .fixed-cell--right {
+            --shadow-rotate: -90deg;
+
+            &.fixed-cell--shadow::after {
+                left: -10px;
+            }
+        }
+
+        /*固定列阴影*/
+        .fixed-cell--shadow::after {
+            content: '';
+            width: 10px;
+            height: 100%;
+            top: 0px;
+            position: absolute;
+            pointer-events: none;
+            background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
         }
 
         thead {
-
             tr {
                 height: var(--header-row-height);
 
@@ -260,101 +279,86 @@
                     position: sticky;
                     top: 0;
                 }
+            }
+        }
 
-                th {
-                    background-color: var(--th-bgc);
+        th {
 
-                    &.sortable {
-                        cursor: pointer;
-                    }
-
-                    &.text-overflow {
-                        .table-header-cell-wrapper {
-                            white-space: nowrap;
-                            overflow: hidden;
-
-                            .table-header-title {
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                            }
-                        }
-                    }
-
-                    &:not(.sorter-desc):not(.sorter-asc):hover .table-header-cell-wrapper .table-header-sorter {
-                        .arrow-up {
-                            fill: var(--sort-arrow-hover-color);
-                        }
-
-                        .arrow-down {
-                            fill: var(--sort-arrow-hover-color);
-                        }
-                    }
-
-                    &.sorter-desc .table-header-cell-wrapper .table-header-sorter {
-                        display: initial;
-
-                        .arrow-up {
-                            fill: var(--sort-arrow-active-sub-color);
-                        }
-
-                        .arrow-down {
-                            fill: var(--sort-arrow-active-color);
-                        }
-                    }
-
-                    &.sorter-asc .table-header-cell-wrapper .table-header-sorter {
-                        display: initial;
-
-                        .arrow-up {
-                            fill: var(--sort-arrow-active-color);
-                        }
-
-                        .arrow-down {
-                            fill: var(--sort-arrow-active-sub-color);
-                        }
-                    }
-
-                    .table-header-cell-wrapper {
-                        max-width: 100%;
-                        /*最大宽度不超过列宽*/
-                        display: inline-flex;
-                        align-items: center;
-
-                        .table-header-title {
-                            overflow: hidden;
-                            align-self: flex-start;
-                        }
-
-                        .table-header-sorter {
-                            flex-shrink: 0;
-                            margin-left: 4px;
-                            width: 16px;
-                            height: 16px;
-                            display: none;
-
-                            .arrow-up,
-                            .arrow-down {
-                                fill: var(--sort-arrow-color);
-                            }
-                        }
-
-                        .table-header-resizer {
-                            position: absolute;
-                            top: 0;
-                            bottom: 0;
-                            cursor: col-resize;
-                            width: var(--resize-handle-width);
-
-                            &.left {
-                                left: 0;
-                            }
-
-                            &.right {
-                                right: 0;
-                            }
-                        }
-                    }
+            &:not(.sorter-desc):not(.sorter-asc):hover .table-header-sorter {
+                .arrow-up {
+                    fill: var(--sort-arrow-hover-color);
                 }
+
+                .arrow-down {
+                    fill: var(--sort-arrow-hover-color);
+                }
+            }
+
+            &.sorter-desc .table-header-sorter {
+                display: initial;
+
+                .arrow-up {
+                    fill: var(--sort-arrow-active-sub-color);
+                }
+
+                .arrow-down {
+                    fill: var(--sort-arrow-active-color);
+                }
+            }
+
+            &.sorter-asc .table-header-sorter {
+                display: initial;
+
+                .arrow-up {
+                    fill: var(--sort-arrow-active-color);
+                }
+
+                .arrow-down {
+                    fill: var(--sort-arrow-active-sub-color);
+                }
+            }
+
+
+        }
+
+        .table-header-cell-wrapper {
+            max-width: 100%;
+            /*最大宽度不超过列宽*/
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .table-header-title {
+            overflow: hidden;
+            align-self: flex-start;
+        }
+
+        .table-header-sorter {
+            flex-shrink: 0;
+            margin-left: 4px;
+            width: 16px;
+            height: 16px;
+            display: none;
+
+            .arrow-up,
+            .arrow-down {
+                fill: var(--sort-arrow-color);
+            }
+        }
+
+        .table-header-resizer {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            cursor: col-resize;
+            width: var(--resize-handle-width);
+
+            &.left {
+                left: 0;
+            }
+
+            &.right {
+                right: 0;
             }
         }
 
@@ -381,65 +385,9 @@
                 &.active {
                     background-color: var(--tr-active-bgc);
                 }
-
-                td {
-                    &.fixed-cell {
-                        background-color: inherit;
-                        /* 防止横向滚动后透明*/
-                    }
-
-                    &.highlight-cell {
-                        animation: stkTableDim 2s linear;
-                    }
-
-                    &.text-overflow {
-                        .table-cell-wrapper {
-                            white-space: nowrap;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                        }
-                    }
-
-                    /*   &.perch-td {
-                            padding: 0;
-                            height: 0;
-                            &.top {
-                            background-image: repeating-linear-gradient(
-                                180deg,
-                                transparent 0,
-                                transparent var(--row-height),
-                                var(--border-color) var(--row-height),
-                                var(--border-color) calc(var(--row-height) + 1px)
-                                ),
-                                var(--bg-border-right);
-                            }
-                            &.bottom {
-                            background-image: repeating-linear-gradient(
-                                0deg,
-                                transparent 0,
-                                transparent var(--row-height),
-                                var(--border-color) var(--row-height),
-                                var(--border-color) calc(var(--row-height) + 1px)
-                                ),
-                                var(--bg-border-right);
-                            }
-                        }*/
-                }
             }
 
         }
-
-        /* tr .fixed-cell--left{
-            border: 1px solid red;
-            &::after{
-                content: '';
-                width: 20px;
-                position: absolute;
-                right: -20px;
-                top: 0px;
-                background: rgba(255,255,255,0.5);
-            }
-        } */
     }
 
     .stk-table-no-data {
@@ -464,47 +412,38 @@
 
     /**虚拟滚动模式 */
     &.virtual {
-        .stk-table-main {
-            thead {
-                tr {
-                    th {
 
-                        /* 为不影响布局，表头行高要定死*/
-                        .table-header-cell-wrapper {
-                            overflow: hidden;
-                            max-height: var(--header-row-height);
-                        }
-                    }
-                }
-            }
+        /* 为不影响布局，表头行高要定死*/
+        .table-header-cell-wrapper {
+            overflow: hidden;
+            max-height: var(--header-row-height);
+        }
 
-            tbody {
-                position: relative;
+        tbody {
+            position: relative;
 
-                tr {
-                    &.padding-top-tr td {
-                        height: 0;
-                    }
+            tr {
 
-                    td {
-                        height: var(--row-height);
-                        line-height: 1;
+                td {
+                    height: var(--row-height);
+                    line-height: 1;
 
-                        .table-cell-wrapper {
-                            max-height: var(--row-height);
-                            overflow: hidden;
-                        }
+                    .table-cell-wrapper {
+                        max-height: var(--row-height);
+                        overflow: hidden;
                     }
                 }
             }
         }
+
+        .padding-top-tr td {
+            height: 0;
+        }
     }
 
     &.virtual-x {
-        .stk-table-main {
-            .virtual-x-left {
-                padding: 0;
-            }
+        .virtual-x-left {
+            padding: 0;
         }
     }
 }

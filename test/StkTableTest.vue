@@ -32,7 +32,7 @@
             fixed-col-shadow
             row-key="name"
             :auto-resize="() => console.log('auto-resize')"
-            :data-source="[{ name: 1 }, { name: 2 }, { name: 3 }]"
+            :data-source="dataSource"
             @current-change="onCurrentChange"
             @row-menu="onRowMenu"
             @header-row-menu="onHeaderRowMenu"
