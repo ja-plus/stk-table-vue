@@ -183,6 +183,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
 
     /** 通过横向滚动条位置，计算横向虚拟滚动的参数 */
     function updateVirtualScrollX(sLeft = 0) {
+        console.log(sLeft, 'sdf');
         const headerLength = tableHeaderLast.value?.length;
         if (!headerLength) return;
         let startIndex = 0;
@@ -206,7 +207,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         // -----
         colWidthSum = 0;
         let endIndex = headerLength;
-        for (let colIndex = startIndex; colIndex < headerLength; colIndex++) {
+        for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLast.value[colIndex];
             colWidthSum += getCalcWidth(col);
             // 列宽大于容器宽度则停止

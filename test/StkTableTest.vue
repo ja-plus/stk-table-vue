@@ -74,7 +74,7 @@
     </div>
 </template>
 
-<script lang="tsx">
+<script lang="ts">
 import { h } from 'vue';
 import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
@@ -109,7 +109,7 @@ export default {
                 {
                     title: 'Name',
                     dataIndex: 'name',
-                    //fixed: 'left',
+                    fixed: 'left',
                     width: '200px',
                     headerClassName: 'my-th',
                     className: 'my-td',
@@ -125,7 +125,7 @@ export default {
                 {
                     title: 'Age',
                     dataIndex: 'age',
-                    //fixed: 'left',
+                    fixed: 'left',
                     width: '100px', // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
                     sorter(data, { order, column }) {
                         // console.log(data, order, column);
@@ -159,13 +159,13 @@ export default {
                 {
                     title: 'R',
                     width: '50px',
-                    //  fixed: 'right'
+                    fixed: 'right',
                 },
                 {
                     title: 'Operate',
                     dataIndex: 'Operate',
                     width: '150px',
-                    // fixed: 'right',
+                    fixed: 'right',
                     // customCell() {
                     //     return (
                     //         <button>
