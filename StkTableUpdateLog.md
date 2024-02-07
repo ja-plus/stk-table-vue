@@ -2,6 +2,7 @@
 * fix: watch `props.fixedColShadow` 响应。 
 * fix: `current-change` 在 `props.dataSource` 不用ref包的情况下。判断相等有误，导致重复触发的问题。使用rowKey判断解决。
 * optimize: 减少 css 一些选择器层级。
+* change: 表格border-left 不再由最左侧单元格提供。而由外层容器提供。
 
 ## 0.1.0
 * feature: 固定列阴影。通过`props.fixedColShadow` 开启。出于与旧版行为保持一致，默认关闭。

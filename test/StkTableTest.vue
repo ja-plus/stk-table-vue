@@ -109,7 +109,7 @@ export default {
                 {
                     title: 'Name',
                     dataIndex: 'name',
-                    fixed: 'left',
+                    //fixed: 'left',
                     width: '200px',
                     headerClassName: 'my-th',
                     className: 'my-td',
@@ -125,7 +125,7 @@ export default {
                 {
                     title: 'Age',
                     dataIndex: 'age',
-                    fixed: 'left',
+                    //fixed: 'left',
                     width: '100px', // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
                     sorter(data, { order, column }) {
                         // console.log(data, order, column);
@@ -156,12 +156,16 @@ export default {
                 { title: 'Address', dataIndex: 'address1', width: '100px' },
                 { title: 'Address', dataIndex: 'address2', width: '100px' },
                 { title: 'Address', dataIndex: 'address3', width: '100px' },
-                { title: 'R', width: '50px', fixed: 'right' },
+                {
+                    title: 'R',
+                    width: '50px',
+                    //  fixed: 'right'
+                },
                 {
                     title: 'Operate',
                     dataIndex: 'Operate',
                     width: '150px',
-                    fixed: 'right',
+                    // fixed: 'right',
                     // customCell() {
                     //     return (
                     //         <button>
