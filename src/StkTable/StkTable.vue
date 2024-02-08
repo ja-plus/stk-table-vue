@@ -67,7 +67,7 @@
                             col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
                             showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
-                            ...getFixedColClass(col),
+                            getFixedColClass(col),
                         ]"
                         @click="
                             e => {
@@ -161,7 +161,7 @@
                         v-for="col in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
-                        :class="[col.className, showOverflow ? 'text-overflow' : '', ...getFixedColClass(col)]"
+                        :class="[col.className, showOverflow ? 'text-overflow' : '', getFixedColClass(col)]"
                         :style="getCellStyle(2, col)"
                         @click="e => onCellClick(e, row, col)"
                     >
@@ -194,6 +194,7 @@ import { Default_Row_Height } from './const';
 import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
+import { useFixedCol } from './useFixedCol';
 import { useFixedStyle } from './useFixedStyle';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
@@ -430,16 +431,6 @@ const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
-/** 固定列阴影 */
-const fixedShadow = ref({
-    /** 是否展示左侧固定列阴影 */
-    showL: false,
-    /** 是否展示右侧固定列阴影 */
-    showR: false,
-    /** 保存需要出现阴影的列 */
-    cols: [] as StkTableColumn<DT>[],
-});
-
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
@@ -498,6 +489,13 @@ useKeyboardArrowScroll(tableContainer, {
     virtualScroll,
     virtualScrollX,
     tableHeaders,
+});
+
+/** 固定列处理 */
+const { getFixedColClass, dealFixedColShadow, updateFixedShadow } = useFixedCol({
+    props,
+    tableContainer,
+    tableHeaderLast,
 });
 
 watch(
@@ -607,57 +605,6 @@ function dealColumns() {
 
     tableHeaderLast.value = tempHeaderLast;
     dealFixedColShadow();
-}
-
-/** 处理固定列阴影 */
-function dealFixedColShadow() {
-    if (!props.fixedColShadow) return;
-    fixedShadow.value.cols = [];
-    // 找到最右边的固定列 findLast
-    let lastLeftCol = null;
-    for (let i = tableHeaderLast.value.length - 1; i > 0; i--) {
-        const col = tableHeaderLast.value[i];
-        if (col.fixed === 'left') {
-            lastLeftCol = col;
-            break;
-        }
-    }
-    // 处理多级表头列阴影
-    let node: any = { __PARENT__: lastLeftCol };
-    while ((node = node.__PARENT__)) {
-        if (node.fixed) {
-            fixedShadow.value.cols.push(node);
-        }
-    }
-
-    // 找到最左边的固定列
-    const lastRightCol = tableHeaderLast.value.find(it => it.fixed === 'right');
-    node = { __PARENT__: lastRightCol };
-    while ((node = node.__PARENT__)) {
-        if (node.fixed) {
-            fixedShadow.value.cols.push(node);
-        }
-    }
-}
-
-/** 固定列class */
-function getFixedColClass(col: StkTableColumn<DT>): string[] {
-    const { showR, showL, cols } = fixedShadow.value;
-    const classArr = [
-        col.fixed ? 'fixed-cell' : '',
-        col.fixed ? 'fixed-cell--' + col.fixed : '',
-        props.fixedColShadow && col.fixed && ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) && cols.includes(col)
-            ? 'fixed-cell--shadow'
-            : '',
-    ];
-    return classArr;
-}
-
-function updateFixedShadow() {
-    if (!props.fixedColShadow) return;
-    const { clientWidth, scrollWidth, scrollLeft } = tableContainer.value as HTMLDivElement;
-    fixedShadow.value.showL = Boolean(scrollLeft);
-    fixedShadow.value.showR = Math.abs(scrollWidth - scrollLeft - clientWidth) > 0.5;
 }
 
 /**
