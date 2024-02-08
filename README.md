@@ -9,6 +9,10 @@ js体积(未压缩46kb)
 * [x] 列固定。
 * [x] 表头拖动更改顺序。
 * [x] 表头列宽拖动调整宽度。
+* [x] 排序
+  - [x] 基本表头点击排序
+  - [] 支持配置 `null` | `undefined` 永远排最后。
+  - [] 支持配置 string 使用 `String.prototype.localCompare` 排序。
 * 多级表头。
   - [x] 支持最多`2级`表头。
   - [x] 支持更多级表头
@@ -26,6 +30,7 @@ js体积(未压缩46kb)
 * [] 不传row-key 时，自动按序号生成id。
 * [] 列筛选。
 * [] 非虚拟滚动时，大数据分批加载。
+
 
 ## Usage
 > npm install stk-table-vue
