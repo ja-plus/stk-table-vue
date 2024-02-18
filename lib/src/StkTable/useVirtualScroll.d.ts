@@ -41,7 +41,7 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainer, dataSourceCopy, tableHeaderLast }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;

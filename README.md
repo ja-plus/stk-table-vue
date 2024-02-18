@@ -144,6 +144,8 @@ export type StkProps = {
   autoResize?: boolean | (() => void);
   /** 是否展示固定列阴影。默认不展示。 */
   fixedColShadow?: boolean;
+  /** 优化vue2 滚动 */
+  optimizeVue2Scroll?: boolean;
 };
 ```
 #### Emits

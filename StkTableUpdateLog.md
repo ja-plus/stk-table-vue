@@ -1,12 +1,10 @@
 ## 0.2.0
 * optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。
-* fix: `@scroll` 事件返回的 startIndex , endIndex 不正确的问题。
-
-## 0.1.1
-* fix: watch `props.fixedColShadow` 响应。 
-* fix: `current-change` 在 `props.dataSource` 不用ref包的情况下。判断相等有误，导致重复触发的问题。使用rowKey判断解决。
 * optimize: 减少 css 一些选择器层级。
 * change: 表格border-left 不再由最左侧单元格提供。而由外层容器提供。
+* fix: `@scroll` 事件返回的 startIndex , endIndex 不正确的问题。
+* fix: watch `props.fixedColShadow` 响应。 
+* fix: `current-change` 在 `props.dataSource` 不用ref包的情况下。判断相等有误，导致重复触发的问题。使用rowKey判断解决。
 * fix: 横向虚拟滚动右侧列会在视口加载的问题。
 
 ## 0.1.0

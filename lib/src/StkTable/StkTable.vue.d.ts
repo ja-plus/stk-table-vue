@@ -105,6 +105,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     autoResize?: boolean | (() => void) | undefined;
     /** 是否展示固定列阴影。默认不展示。 */
     fixedColShadow?: boolean | undefined;
+    /** 优化vue2 滚动 */
+    optimizeVue2Scroll?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -135,6 +137,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     bordered: boolean;
     autoResize: boolean;
     fixedColShadow: boolean;
+    optimizeVue2Scroll: boolean;
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -251,6 +254,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     autoResize?: boolean | (() => void) | undefined;
     /** 是否展示固定列阴影。默认不展示。 */
     fixedColShadow?: boolean | undefined;
+    /** 优化vue2 滚动 */
+    optimizeVue2Scroll?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -281,6 +286,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     bordered: boolean;
     autoResize: boolean;
     fixedColShadow: boolean;
+    optimizeVue2Scroll: boolean;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -329,6 +335,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);
     fixedColShadow: boolean;
+    optimizeVue2Scroll: boolean;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
