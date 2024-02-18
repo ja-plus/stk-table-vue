@@ -45,12 +45,17 @@ function getCalcWidth<DT extends Record<string, any>>(col: StkTableColumn<DT>) {
     return parseInt(col.minWidth || col.width || Default_Col_Width);
 }
 
+/** vue2 优化滚动回收延时 */
+const VUE2_SCROLL_TIMEOUT_MS = 200;
+/** vue2 优化滚动到一定条数，gc触发的数量 */
+const VUE2_SCROLL_TRIGGER_GC_SIZE = 2000;
+
 /**
  * 虚拟滚动
  * @param param0
  * @returns
  */
-export function useVirtualScroll<DT extends Record<string, any>>({ tableContainer, props, dataSourceCopy, tableHeaderLast }: Option<DT>) {
+export function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainer, dataSourceCopy, tableHeaderLast }: Option<DT>) {
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
@@ -166,25 +171,43 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         initVirtualScrollX();
     }
 
+    let vue2ScrollYTimeout: null | number = null;
+
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize } = virtualScroll.value;
+        const { rowHeight, pageSize, scrollTop } = virtualScroll.value;
         const startIndex = Math.floor(sTop / rowHeight);
+        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
         let endIndex = startIndex + pageSize;
         if (endIndex > dataSourceCopy.value.length) {
             endIndex = dataSourceCopy.value.length; // 溢出index修正
         }
-        Object.assign(virtualScroll.value, {
-            startIndex,
-            offsetTop: startIndex * rowHeight, // startIndex之前的高度
-            endIndex,
-        });
+        if (vue2ScrollYTimeout) {
+            window.clearTimeout(vue2ScrollYTimeout);
+        }
+        if (!props.optimizeVue2Scroll || sTop < scrollTop) {
+            // 向上滚动
+            Object.assign(virtualScroll.value, {
+                startIndex,
+                offsetTop,
+                endIndex,
+                scrollTop: sTop,
+            });
+        } else {
+            // vue2向下滚动优化
+            Object.assign(virtualScroll.value, { endIndex, scrollTop: sTop });
+            vue2ScrollYTimeout = window.setTimeout(() => {
+                Object.assign(virtualScroll.value, { startIndex, offsetTop });
+            }, VUE2_SCROLL_TIMEOUT_MS);
+        }
     }
+
+    let vue2ScrollXTimeout: null | number = null;
 
     /** 通过横向滚动条位置，计算横向虚拟滚动的参数 */
     function updateVirtualScrollX(sLeft = 0) {
-        console.log(sLeft, 'sdf');
         const headerLength = tableHeaderLast.value?.length;
+        const { scrollLeft } = virtualScrollX.value;
         if (!headerLength) return;
         let startIndex = 0;
         let offsetLeft = 0;
@@ -219,7 +242,21 @@ export function useVirtualScroll<DT extends Record<string, any>>({ tableContaine
         if (endIndex > headerLength) {
             endIndex = headerLength;
         }
-        Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft });
+
+        if (vue2ScrollXTimeout) {
+            window.clearTimeout(vue2ScrollXTimeout);
+        }
+
+        if (!props.optimizeVue2Scroll || sLeft < scrollLeft) {
+            // 向左滚动
+            Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
+        } else {
+            //vue2 向右滚动 优化
+            Object.assign(virtualScroll.value, { endIndex, scrollLeft: sLeft });
+            vue2ScrollXTimeout = window.setTimeout(() => {
+                Object.assign(virtualScroll.value, { startIndex, offsetLeft });
+            }, VUE2_SCROLL_TIMEOUT_MS);
+        }
     }
 
     return {

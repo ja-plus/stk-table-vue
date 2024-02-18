@@ -30,6 +30,8 @@ js体积(未压缩46kb)
 * [] 不传row-key 时，自动按序号生成id。
 * [] 列筛选。
 * [] 非虚拟滚动时，大数据分批加载。
+* [x] vue2支持。
+  - `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
 
 
 ## Usage
@@ -50,6 +52,15 @@ stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
 </template>
 
 ```
+
+### Vue2 Usage
+vue2 支持源码引入使用。依赖`less`。
+```html
+<script>
+  import { StkTable } from 'stk-table-vue/src/StkTable/index'
+</script>
+```
+
 
 ## Notice
 注意，组件会改动 `props.columns` 中的对象。如果多个组件 `columns` 数组元素存在引用同一个 `StkTableColumn` 对象。则考虑赋值 `columns` 前进行深拷贝。

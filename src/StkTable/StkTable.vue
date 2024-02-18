@@ -283,6 +283,8 @@ const props = withDefaults(
         autoResize?: boolean | (() => void);
         /** 是否展示固定列阴影。默认不展示。 */
         fixedColShadow?: boolean;
+        /** 优化vue2 滚动 */
+        optimizeVue2Scroll?: boolean;
     }>(),
     {
         width: '',
@@ -314,6 +316,7 @@ const props = withDefaults(
         bordered: true,
         autoResize: true,
         fixedColShadow: false,
+        optimizeVue2Scroll: false,
     },
 );
 
@@ -751,27 +754,25 @@ function onTableScroll(e: Event) {
     if (!e?.target) return;
 
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
-    const { scrollTop: vScrollTop, startIndex, endIndex } = virtualScroll.value;
+    const { scrollTop: vScrollTop } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
     const isYScroll = scrollTop !== vScrollTop;
     const isXScroll = scrollLeft !== vScrollLeft;
 
     // 纵向滚动有变化
-    if (isYScroll) {
-        virtualScroll.value.scrollTop = scrollTop;
-    }
-    if (virtual_on.value) {
+    if (isYScroll && virtual_on.value) {
         updateVirtualScrollY(scrollTop);
     }
 
     // 横向滚动有变化
     if (isXScroll) {
-        virtualScrollX.value.scrollLeft = scrollLeft;
         updateFixedShadow();
+        if (virtualX_on.value) {
+            updateVirtualScrollX(scrollLeft);
+        }
     }
-    if (virtualX_on.value) {
-        updateVirtualScrollX(scrollLeft);
-    }
+
+    const { startIndex, endIndex } = virtualScroll.value;
     const data = { startIndex, endIndex };
     if (isYScroll) {
         emits('scroll', e, data);

@@ -1,3 +1,7 @@
+## 0.2.0
+* optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。
+* fix: `@scroll` 事件返回的 startIndex , endIndex 不正确的问题。
+
 ## 0.1.1
 * fix: watch `props.fixedColShadow` 响应。 
 * fix: `current-change` 在 `props.dataSource` 不用ref包的情况下。判断相等有误，导致重复触发的问题。使用rowKey判断解决。
