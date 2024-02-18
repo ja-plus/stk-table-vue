@@ -47,8 +47,6 @@ function getCalcWidth<DT extends Record<string, any>>(col: StkTableColumn<DT>) {
 
 /** vue2 优化滚动回收延时 */
 const VUE2_SCROLL_TIMEOUT_MS = 200;
-/** vue2 优化滚动到一定条数，gc触发的数量 */
-const VUE2_SCROLL_TRIGGER_GC_SIZE = 2000;
 
 /**
  * 虚拟滚动
@@ -175,7 +173,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize, scrollTop } = virtualScroll.value;
+        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
         const startIndex = Math.floor(sTop / rowHeight);
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度
         let endIndex = startIndex + pageSize;
@@ -185,7 +183,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
         if (vue2ScrollYTimeout) {
             window.clearTimeout(vue2ScrollYTimeout);
         }
-        if (!props.optimizeVue2Scroll || sTop < scrollTop) {
+        /**
+         * 一次滚动大于一页时表示滚动过快，回退优化
+         */
+        if (!props.optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // 向上滚动
             Object.assign(virtualScroll.value, {
                 startIndex,
@@ -247,14 +248,15 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
             window.clearTimeout(vue2ScrollXTimeout);
         }
 
-        if (!props.optimizeVue2Scroll || sLeft < scrollLeft) {
+        // <= 等于是因为初始化时要赋值
+        if (!props.optimizeVue2Scroll || sLeft <= scrollLeft) {
             // 向左滚动
             Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
         } else {
             //vue2 向右滚动 优化
-            Object.assign(virtualScroll.value, { endIndex, scrollLeft: sLeft });
+            Object.assign(virtualScrollX.value, { endIndex, scrollLeft: sLeft });
             vue2ScrollXTimeout = window.setTimeout(() => {
-                Object.assign(virtualScroll.value, { startIndex, offsetLeft });
+                Object.assign(virtualScrollX.value, { startIndex, offsetLeft });
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }
