@@ -1,5 +1,5 @@
 /**高亮渐暗 */
-@keyframes stkTableDim {
+@keyframes stk-table-dim {
     from {
         background-color: var(--highlight-color);
     }
@@ -43,6 +43,8 @@
     flex-direction: column;
     /* border-left: 此方案用于减少cell 中border-left 的css选择。同时利于多级表头border-left问题。利于横向滚动border-left*/
     border-left: 1px solid var(--border-color);
+    /* 下面border用于表格内容不满高度时，绘制表格边界线 */
+    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 
     /**深色模式 */
     &.dark {
@@ -209,7 +211,7 @@
             }
 
             &.highlight-cell {
-                animation: stkTableDim 2s linear;
+                animation: stk-table-dim 2s linear;
             }
 
             &.text-overflow {
@@ -349,7 +351,7 @@
 
                 /* td inherit tr bgc*/
                 &.highlight-row {
-                    animation: stkTableDim 2s linear;
+                    animation: stk-table-dim 2s linear;
                 }
 
                 /* &.highlight-row-transition {

@@ -35,8 +35,7 @@ Vue2.7支持引入源码(ts)使用。
 * [] 不传row-key 时，自动按序号生成id。
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
-  - `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
-* [] stk-table border-top border-bottom border-right
+  - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
 
 
 ## Usage
