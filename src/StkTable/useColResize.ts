@@ -1,6 +1,6 @@
 import { Ref, onBeforeUnmount, onMounted, ref } from 'vue';
-import { Default_Col_Width } from './const';
 import { StkTableColumn } from './types';
+import { getColWidth } from './utils';
 
 type ColResizeState<DT extends Record<string, any>> = {
     /** 当前被拖动的列*/
@@ -115,7 +115,7 @@ export function useColResize<DT extends Record<string, any>>({
         const { lastCol, startX, startOffsetTableX } = colResizeState;
         const { clientX } = e;
         let moveX = clientX - startX;
-        const currentColWidth = parseInt(lastCol?.width || Default_Col_Width);
+        const currentColWidth = getColWidth(lastCol);
         // 移动量不小于最小列宽
         if (currentColWidth + moveX < props.colMinWidth) {
             moveX = -currentColWidth;
@@ -136,7 +136,7 @@ export function useColResize<DT extends Record<string, any>>({
         const moveX = clientX - startX;
 
         // 移动量不小于最小列宽
-        let width = parseInt(lastCol?.width || Default_Col_Width) + moveX;
+        let width = getColWidth(lastCol) + moveX;
         if (width < props.colMinWidth) width = props.colMinWidth;
 
         const curCol = tableHeaderLast.value.find(it => colKeyGen(it) === colKeyGen(lastCol));

@@ -1,3 +1,4 @@
+import { Default_Col_Width } from './const';
 import { Order, SortOption, SortState, StkTableColumn } from './types';
 
 /**
@@ -125,4 +126,12 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
         }
     });
     return Math.max(...levels);
+}
+
+/** 获取列宽 */
+export function getColWidth(col: StkTableColumn<any> | null): number {
+    if (typeof col?.width === 'number') {
+        return Math.floor(col.width ?? Default_Col_Width);
+    }
+    return parseInt(col?.width ?? Default_Col_Width);
 }

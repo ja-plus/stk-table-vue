@@ -4,7 +4,7 @@ const columns = [
     {
         dataIndex: 'Basic',
         title: 'Basic',
-        // fixed: 'left',
+        fixed: 'left',
         children: [
             { dataIndex: 'id', title: 'ID', width: '100px', fixed: 'left' },
             {

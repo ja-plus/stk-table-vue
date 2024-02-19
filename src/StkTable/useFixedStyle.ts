@@ -1,7 +1,8 @@
 import { CSSProperties, Ref, computed } from 'vue';
-import { Default_Col_Width, Is_Legacy_Mode } from './const';
+import { Is_Legacy_Mode } from './const';
 import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
+import { getColWidth } from './utils';
 
 type Options = {
     props: any;
@@ -27,7 +28,7 @@ export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualSc
             const item = cols[i];
             if (item.fixed === 'left') {
                 store[item.dataIndex] = left;
-                left += parseInt(item.width || Default_Col_Width);
+                left += getColWidth(item);
             }
             if (!rightStartIndex && item.fixed === 'right') {
                 rightStartIndex = i;
@@ -38,7 +39,7 @@ export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualSc
             const item = cols[i];
             if (item.fixed === 'right') {
                 store[item.dataIndex] = right;
-                right += parseInt(item.width || Default_Col_Width);
+                right += getColWidth(item);
             }
         }
 

@@ -1,6 +1,7 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
-import { Default_Col_Width, Default_Table_Height, Default_Table_Width } from './const';
+import { Default_Table_Height, Default_Table_Width } from './const';
 import { StkTableColumn } from './types';
+import { getColWidth } from './utils';
 
 type Option<DT extends Record<string, any>> = {
     tableContainer: Ref<HTMLElement | undefined>;
@@ -39,11 +40,6 @@ export type VirtualScrollXStore = {
     /** 横向滚动位置，用于判断是横向滚动还是纵向 */
     scrollLeft: number;
 };
-
-/**获取计算宽度 */
-function getCalcWidth<DT extends Record<string, any>>(col: StkTableColumn<DT>) {
-    return parseInt(col.minWidth || col.width || Default_Col_Width);
-}
 
 /** vue2 优化滚动回收延时 */
 const VUE2_SCROLL_TIMEOUT_MS = 200;
@@ -90,9 +86,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
     });
 
     const virtualX_on = computed(() => {
-        return (
-            props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getCalcWidth(col)), 0) > virtualScrollX.value.containerWidth + 100
-        );
+        return props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getColWidth(col)), 0) > virtualScrollX.value.containerWidth + 100;
     });
 
     const virtualX_columnPart = computed(() => {
@@ -125,7 +119,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
         for (let i = virtualScrollX.value.endIndex; i < tableHeaderLast.value.length; i++) {
             const col = tableHeaderLast.value[i];
             if (col.fixed !== 'right') {
-                width += getCalcWidth(col);
+                width += getColWidth(col);
             }
         }
         return width;
@@ -219,7 +213,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
             const col = tableHeaderLast.value[colIndex];
             // fixed left 不进入计算列宽
             if (col.fixed === 'left') continue;
-            const colWidth = getCalcWidth(col);
+            const colWidth = getColWidth(col);
             colWidthSum += colWidth;
             // 列宽（非固定列）加到超过scrollLeft的时候，表示startIndex从上一个开始下标
             if (colWidthSum >= sLeft) {
@@ -233,7 +227,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLast.value[colIndex];
-            colWidthSum += getCalcWidth(col);
+            colWidthSum += getColWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= virtualScrollX.value.containerWidth) {
                 endIndex = colIndex + 1; // TODO:预渲染的列数
