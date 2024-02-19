@@ -23,13 +23,21 @@ const columns = [
     {
         dataIndex: 'other',
         title: 'Other',
-        children: new Array(10).fill(0).map((it, i) => {
+        children: new Array(2).fill(0).map((it, i) => {
             return {
                 dataIndex: 'other' + i,
                 title: 'Other ' + i,
                 width: '100px',
             };
         }),
+    },
+    {
+        dataIndex: 'right',
+        title: 'Right',
+        children: [
+            { dataIndex: 'right-1', title: 'right-1', width: '50px', fixed: 'right' },
+            { dataIndex: 'right-2', title: 'right-2', width: '100px', fixed: 'right' },
+        ],
     },
 ];
 const dataSource = new Array(20).fill(0).map((it, i) => {

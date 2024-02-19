@@ -2,7 +2,7 @@
 
 Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
 
-Vue2.7支持引入源码(ts)使用。
+Vue2.7支持引入源码(**ts**)使用。
 
 ## Feature TODO:
 * [x] 高亮行，单元格。
@@ -11,7 +11,7 @@ Vue2.7支持引入源码(ts)使用。
   - [x] 横向（必须设置列宽）。
 * [x] 列固定。
   - [x] 固定列阴影。
-    - [] 多级表头固定列阴影。
+    - [x] 多级表头固定列阴影。
     - [] sticky column 动态计算阴影位置。
 * [] 列筛选。
 * [x] 斑马纹。
@@ -19,14 +19,12 @@ Vue2.7支持引入源码(ts)使用。
 * [x] 表头拖动更改顺序。
 * [x] 表头拖动调整列宽。
 * [x] 排序
-  - [x] 基本表头点击排序
+  - [x] 基本表头点击排序。
   - [] 支持配置 `null` | `undefined` 永远排最后。
   - [] 支持配置 string 使用 `String.prototype.localCompare` 排序。
 * 多级表头。
   - [x] 支持最多`2级`表头。
-  - [x] 支持更多级表头
-  - [] 多级表头border-left 问题。
-  - [] 多级表头固定列横向滚动
+  - [x] 支持更多级表头。
   - [] 横向虚拟滚动。
 * [x] 支持table-layout: fixed 配置。
 * 鼠标悬浮在表格上，键盘滚动虚拟表格。
@@ -70,6 +68,24 @@ vue2.7 支持引入源码使用。依赖`less`。
   import { StkTable } from 'stk-table-vue/src/StkTable/StkTable.vue';
   import 'stk-table-vue/lib/style.css';
 </script>
+```
+#### webpack TS 配置参考
+##### webpack.config.js
+```js
+ rules:[{ 
+  test: /\.ts$/,
+  loader:'swc-loader'
+ }]
+```
+##### .swcrc
+```json
+{
+  "jsc":{
+    "parser":{
+      "syntax":"typescript",
+    }
+  }
+}
 ```
 
 

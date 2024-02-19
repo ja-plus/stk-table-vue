@@ -1,5 +1,6 @@
 ## 0.2.1
 * optimize: `StkTable.vue` 文件script 中 lang `tsx` -> `ts`。方便vue2.7引入使用。
+* feature: 多级表头固定列阴影。
 
 ## 0.2.0
 * optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。

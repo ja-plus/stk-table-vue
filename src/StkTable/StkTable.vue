@@ -769,6 +769,9 @@ function onTableScroll(e: Event) {
         updateFixedShadow();
         if (virtualX_on.value) {
             updateVirtualScrollX(scrollLeft);
+        } else {
+            // 非虚拟滚动也记录一下滚动条位置。用于判断isXScroll
+            virtualScrollX.value.scrollLeft = scrollLeft;
         }
     }
 

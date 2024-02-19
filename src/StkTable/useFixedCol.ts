@@ -31,7 +31,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, tableHeader
         fixedShadowCols = [];
         // 找到最右边的固定列 findLast
         let lastLeftCol = null;
-        for (let i = tableHeaderLast.value.length - 1; i > 0; i--) {
+        for (let i = tableHeaderLast.value.length - 1; i >= 0; i--) {
             const col = tableHeaderLast.value[i];
             if (col.fixed === 'left') {
                 lastLeftCol = col;
