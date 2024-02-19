@@ -1,14 +1,23 @@
 # StkTable (Sticky Table)
 
 Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
-js体积(未压缩46kb)
+
+Vue2.7支持引入源码(ts)使用。
 
 ## Feature TODO:
 * [x] 高亮行，单元格。
-* [x] 横向虚拟滚动。
+* [x] 虚拟滚动。
+  - [x] 纵向。
+  - [x] 横向（必须设置列宽）。
 * [x] 列固定。
+  - [x] 固定列阴影。
+    - [] 多级表头固定列阴影。
+    - [] sticky column 动态计算阴影位置。
+* [] 列筛选。
+* [x] 斑马纹。
+  - [] 虚拟滚动斑马纹。
 * [x] 表头拖动更改顺序。
-* [x] 表头列宽拖动调整宽度。
+* [x] 表头拖动调整列宽。
 * [x] 排序
   - [x] 基本表头点击排序
   - [] 支持配置 `null` | `undefined` 永远排最后。
@@ -23,15 +32,11 @@ js体积(未压缩46kb)
 * 鼠标悬浮在表格上，键盘滚动虚拟表格。
   - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
   - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
-* [x] 斑马纹。
-* [x] 列固定阴影。
-  - [] 多级表头固定列阴影。
-  - [] sticky column 动态计算阴影位置。
 * [] 不传row-key 时，自动按序号生成id。
-* [] 列筛选。
 * [] 非虚拟滚动时，大数据分批加载。
-* [x] vue2支持。
+* [x] vue2.7支持（引入源码使用）。
   - `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
+* [] stk-table border-top border-bottom border-right
 
 
 ## Usage
@@ -53,13 +58,21 @@ stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
 
 ```
 
-### Vue2 Usage
-vue2 支持源码引入使用。依赖`less`。
+### Vue2.7 Usage
+vue2.7 支持引入源码使用。依赖`less`。
 ```html
 <script>
-  import { StkTable } from 'stk-table-vue/src/StkTable/index'
+  import { StkTable } from 'stk-table-vue/src/StkTable/index';
 </script>
 ```
+不要less的话
+```html
+<script>
+  import { StkTable } from 'stk-table-vue/src/StkTable/StkTable.vue';
+  import 'stk-table-vue/lib/style.css';
+</script>
+```
+
 
 
 ## Notice

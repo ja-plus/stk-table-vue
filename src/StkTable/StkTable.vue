@@ -180,7 +180,7 @@
     </div>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
 /**
  * @author JA+
  * 不支持低版本浏览器非虚拟滚动表格的表头固定，列固定，因为会卡。
