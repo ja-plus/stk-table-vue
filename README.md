@@ -266,6 +266,8 @@ defineExpose({
   setHighlightDimRow,
   /** 表格排序列dataIndex */
   sortCol,
+  /** 获取当前排序状态 */
+  getSortColumns,
   /** 设置排序 */
   setSorter,
   /** 重置排序 */

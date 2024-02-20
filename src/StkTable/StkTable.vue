@@ -191,7 +191,7 @@
  */
 import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
-import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -851,6 +851,13 @@ function getTableData() {
     return toRaw(dataSourceCopy.value);
 }
 
+/** 获取当前排序列的信息 */
+function getSortColumns(): SortState<DT>[] {
+    const sortOrder = sortSwitchOrder[sortOrderIndex.value];
+    if (!sortOrder) return [];
+    return [{ dataIndex: sortCol.value, order: sortOrder }];
+}
+
 defineExpose({
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll,
@@ -866,6 +873,8 @@ defineExpose({
     setHighlightDimRow,
     /** 表格排序列dataIndex */
     sortCol,
+    /** 获取当前排序状态 */
+    getSortColumns,
     /** 设置排序 */
     setSorter,
     /** 重置排序 */
