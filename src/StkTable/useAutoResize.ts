@@ -1,10 +1,9 @@
 import { Ref, onBeforeUnmount, onMounted, watch } from 'vue';
 
 type Options = {
+    props: any;
     tableContainer: Ref<HTMLElement | undefined>;
     initVirtualScroll: () => void;
-    scrollTo: () => void;
-    props: any;
     /** 防抖延时 */
     debounceMs: number;
 };
@@ -12,7 +11,7 @@ type Options = {
  * 窗口变化自动重置虚拟滚动
  * @param param0
  */
-export function useAutoResize({ tableContainer, initVirtualScroll, scrollTo, props, debounceMs }: Options) {
+export function useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs }: Options) {
     let resizeObserver: ResizeObserver | null = null;
 
     onMounted(() => {

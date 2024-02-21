@@ -2,6 +2,7 @@
 * optimize: `StkTable.vue` 文件script 中 lang `tsx` -> `ts`。方便vue2.7引入使用。
 * feature: 多级表头固定列阴影。
 * feature: `StkTable` expose `getSortColumns`，用于获取当前排序信息。
+* change: `auto-resize` debounce  `500ms` -> `200ms` 
 
 ## 0.2.0
 * optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。

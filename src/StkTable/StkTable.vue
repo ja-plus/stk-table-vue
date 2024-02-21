@@ -482,7 +482,7 @@ const { getFixedStyle } = useFixedStyle({
 const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
 
 if (props.autoResize) {
-    useAutoResize({ tableContainer, initVirtualScroll, scrollTo, props, debounceMs: 500 });
+    useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs: 200 });
 }
 
 /** 键盘箭头滚动 */
