@@ -41,11 +41,11 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     /* border-left: 此方案用于减少cell 中border-left 的css选择。同时利于多级表头border-left问题。利于横向滚动border-left*/
     border-left: 1px solid var(--border-color);
     /* 下面border用于表格内容不满高度时，绘制表格边界线 */
     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-
     /**深色模式 */
     &.dark {
         --th-bgc: #202029;
@@ -77,6 +77,7 @@
 
     &.headless {
         border-top: 1px solid var(--border-color);
+        background-image: var(--bg-border-right), var(--bg-border-bottom);
     }
 
     /* 调整列宽的话，表格宽度应当自适应 */
@@ -114,7 +115,6 @@
             tr {
                 &:first-child th {
                     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-
                 }
 
             }

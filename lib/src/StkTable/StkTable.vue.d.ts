@@ -1,4 +1,6 @@
-import { Order, SortOption, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
+/** Generic stands for DataType */
+type DT = any;
 /**
  * 选中一行，
  * @param {string} rowKey
@@ -30,6 +32,8 @@ declare function resetSorter(): void;
 declare function scrollTo(top?: number | null, left?: number | null): void;
 /** 获取当前状态的表格数据 */
 declare function getTableData(): any[];
+/** 获取当前排序列的信息 */
+declare function getSortColumns(): SortState<DT>[];
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
@@ -74,8 +78,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showOverflow?: boolean | undefined;
     /** 是否增加行hover class */
     showTrHoverClass?: boolean | undefined;
-    /** 表头是否可拖动 */
-    headerDrag?: boolean | undefined;
+    /** 表头是否可拖动。支持回调函数。 */
+    headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -153,6 +157,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
     /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
+    /** 获取当前排序状态 */
+    getSortColumns: typeof getSortColumns;
     /** 设置排序 */
     setSorter: typeof setSorter;
     /** 重置排序 */
@@ -179,7 +185,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "th-drag-start": (dragStartKey: string) => void;
     "th-drop": (targetColKey: string) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
-}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -223,8 +229,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showOverflow?: boolean | undefined;
     /** 是否增加行hover class */
     showTrHoverClass?: boolean | undefined;
-    /** 表头是否可拖动 */
-    headerDrag?: boolean | undefined;
+    /** 表头是否可拖动。支持回调函数。 */
+    headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -312,7 +318,6 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     rowHeight: number;
     headless: boolean;
     headerRowHeight: number | null;
-    colKey: UniqKey;
     stripe: boolean;
     fixedMode: boolean;
     theme: "light" | "dark";
@@ -321,6 +326,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: UniqKey;
+    colKey: UniqKey;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -328,7 +334,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showHeaderOverflow: boolean;
     showOverflow: boolean;
     showTrHoverClass: boolean;
-    headerDrag: boolean;
+    headerDrag: boolean | ((col: StkTableColumn<any>) => boolean);
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;

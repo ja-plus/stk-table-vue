@@ -68,14 +68,14 @@
     <StkTableInsertSort />
 
     <hr />
-    <div style="width: max-content">
+    <div>
         <h2>API</h2>
         <StkTable theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { h, onMounted, ref, shallowRef } from 'vue';
+import { h, nextTick, onMounted, ref, shallowRef } from 'vue';
 import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
@@ -406,7 +406,7 @@ function addRow(num = 1, unshift = false) {
     }
     dataSource.value = [...dataSource.value]; // 没有监听deep
 
-    this.$nextTick(() => {
+    nextTick(() => {
         const rowKeys = tmpIndex.map(it => it.name);
         stkTable.value.setHighlightDimRow(rowKeys);
     });

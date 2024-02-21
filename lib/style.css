@@ -1,4 +1,4 @@
-@keyframes stkTableDim{
+@keyframes stk-table-dim{
   from{
     background-color:var(--highlight-color);
   }
@@ -32,8 +32,11 @@
   overflow:auto;
   display:flex;
   flex-direction:column;
+  box-sizing:border-box;
   border-left:1px solid #e8e8f4;
   border-left:1px solid var(--border-color);
+  background-image:linear-gradient(180deg, #e8e8f4 1px, transparent 1px), linear-gradient(270deg, #e8e8f4 1px, transparent 1px), linear-gradient(0deg, #e8e8f4 1px, transparent 1px);
+  background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.dark{
   --th-bgc:#202029;
@@ -56,6 +59,7 @@
 }
 .stk-table.headless{
   border-top:1px solid var(--border-color);
+  background-image:var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.col-resizable .stk-table-main{
   width:-moz-fit-content !important;
@@ -144,7 +148,7 @@
   background-color:inherit;
 }
 .stk-table .stk-table-main td.highlight-cell{
-  animation:stkTableDim 2s linear;
+  animation:stk-table-dim 2s linear;
 }
 .stk-table .stk-table-main td.text-overflow .table-cell-wrapper{
   white-space:nowrap;
@@ -243,7 +247,7 @@
   height:var(--row-height);
 }
 .stk-table .stk-table-main tbody tr.highlight-row{
-  animation:stkTableDim 2s linear;
+  animation:stk-table-dim 2s linear;
 }
 .stk-table .stk-table-main tbody tr.hover,
 .stk-table .stk-table-main tbody tr:hover{

@@ -26,11 +26,11 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 筛选 */
     sorter?: Sorter<T>;
     /** 列宽。横向虚拟滚动时必须设置。 */
-    width?: string;
+    width?: string | number;
     /** 最小列宽。非x虚拟滚动生效。 */
-    minWidth?: string;
+    minWidth?: string | number;
     /** 最大列宽。非x虚拟滚动生效。 */
-    maxWidth?: string;
+    maxWidth?: string | number;
     /**th class */
     headerClassName?: string;
     /** td class */

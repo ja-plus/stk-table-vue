@@ -21,3 +21,5 @@ export declare function insertToOrderedArray<T extends object>(sortState: SortSt
 export declare function tableSort(sortOption: SortOption, order: Order, dataSource: any[]): any[];
 /** 表头column配置的层级 */
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
+/** 获取列宽 */
+export declare function getColWidth(col: StkTableColumn<any> | null): number;

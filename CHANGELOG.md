@@ -5,6 +5,7 @@
 * change: `auto-resize` debounce  `500ms` -> `200ms` 
 * optimize: `StkTable.vue` 文件script 中 lang `tsx` -> `ts`。方便vue2.7引入使用。
 * fix: `headerDarg` 拖动文字节点，控制台报错的问题
+* change: `stk-table` border,`headless` border-top
 
 ## 0.2.0
 * optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。
