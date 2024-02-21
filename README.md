@@ -4,6 +4,8 @@ Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐
 
 Vue2.7支持引入源码(**ts**)使用。
 
+## Bug TODO:
+* [] props.dataSource 为 shallowRef 时，高亮行不生效。(2024.02.21)
 ## Feature TODO:
 * [x] 高亮行，单元格。
 * [x] 虚拟滚动。

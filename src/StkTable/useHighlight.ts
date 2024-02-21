@@ -47,6 +47,7 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
                     //     void rowEl.offsetHeight; // reflow
                     //     rowEl.classList.add('highlight-row-transition');
                     //   }
+
                     /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
                     const progress = (nowTs - row._bgc_progress_ms) / Highlight_Duration;
                     //   row._bgc_progress = progress;
@@ -58,6 +59,7 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
                     }
                 });
                 needDeleteRows.forEach((row: any) => highlightDimRows.delete(row));
+                // TODO: shallowRef 时，需要手动更新
 
                 if (highlightDimRows.size > 0) {
                     // 还有高亮的行,则下一次循环
