@@ -1,3 +1,6 @@
+## 0.2.2
+
+
 ## 0.2.1
 * feature: 多级表头固定列阴影。
 * feature: `StkTable` expose `getSortColumns`，用于获取当前排序信息。
