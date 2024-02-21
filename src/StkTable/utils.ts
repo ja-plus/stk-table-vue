@@ -63,6 +63,9 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
     }
 }
 
+type TableSortOption = {
+    emptyValueSortToBottom?: boolean;
+};
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
@@ -72,9 +75,11 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
  * @param order 排序方式
  * @param dataSource 排序的数组
  */
-export function tableSort(sortOption: SortOption, order: Order, dataSource: any[]): any[] {
+export function tableSort(sortOption: SortOption, order: Order, dataSource: any[], option: TableSortOption = {}): any[] {
     if (!dataSource?.length) return dataSource || [];
+    option = Object.assign({ emptyValueSortToBottom: false }, option);
     let targetDataSource = [...dataSource];
+
     if (typeof sortOption.sorter === 'function') {
         const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
         if (customSorterData) targetDataSource = customSorterData;
@@ -104,13 +109,33 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
                 numArr.sort((a, b) => +b[sortField] - +a[sortField]);
                 targetDataSource = [...numArr, ...nanArr];
             }
-            // targetDataSource = [...numArr, ...nanArr]; // 非数字不进入排序，一直排在最后
+            if (option.emptyValueSortToBottom) {
+                // 非数字不进入排序，一直排在最后
+                targetDataSource = [...numArr, ...nanArr];
+            }
         } else {
             // 按string 排序
+            const nanArr: any[] = []; // 非数字
+            const numArr: any[] = []; // 数字
+
+            for (let i = 0; i < targetDataSource.length; i++) {
+                const row = targetDataSource[i];
+                if (row[sortField] === null || row[sortField] === '') {
+                    nanArr.push(row);
+                } else {
+                    numArr.push(row);
+                }
+            }
             if (order === 'asc') {
-                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+                targetDataSource = [...nanArr, ...numArr];
             } else {
-                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+                targetDataSource = [...numArr, ...nanArr];
+            }
+            if (option.emptyValueSortToBottom) {
+                // '--'不进入排序，一直排在最后
+                targetDataSource = [...numArr, ...nanArr];
             }
         }
     }

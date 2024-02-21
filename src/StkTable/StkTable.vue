@@ -285,6 +285,8 @@ const props = withDefaults(
         fixedColShadow?: boolean;
         /** 优化vue2 滚动 */
         optimizeVue2Scroll?: boolean;
+        /** 排序时null值置于末尾 */
+        emptyValueSortToBottom?: boolean;
     }>(),
     {
         width: '',
@@ -317,6 +319,7 @@ const props = withDefaults(
         autoResize: true,
         fixedColShadow: false,
         optimizeVue2Scroll: false,
+        emptyValueSortToBottom: false,
     },
 );
 
@@ -325,7 +328,7 @@ const emits = defineEmits<{
      * 排序变更触发
      * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], emptyValueSortToBottom: boolean): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -692,11 +695,11 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
     const order = sortSwitchOrder[sortOrderIndex.value];
 
     if (!props.sortRemote || options.force) {
-        dataSourceCopy.value = tableSort(col, order, props.dataSource);
+        dataSourceCopy.value = tableSort(col, order, props.dataSource, props.emptyValueSortToBottom);
     }
     // 只有点击才触发事件
     if (click || options.emit) {
-        emits('sort-change', col, order, toRaw(dataSourceCopy.value));
+        emits('sort-change', col, order, toRaw(dataSourceCopy.value), props.emptyValueSortToBottom);
     }
 }
 
