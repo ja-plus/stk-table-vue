@@ -57,7 +57,7 @@
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="col.dataIndex"
                         :data-col-key="colKeyGen(col)"
-                        :draggable="headerDrag ? 'true' : 'false'"
+                        :draggable="isHeaderDraggable(col) ? 'true' : 'false'"
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
                         :colspan="col.colSpan"
                         :style="getCellStyle(1, col, rowIndex)"
@@ -252,8 +252,8 @@ const props = withDefaults(
         showOverflow?: boolean;
         /** 是否增加行hover class */
         showTrHoverClass?: boolean;
-        /** 表头是否可拖动 */
-        headerDrag?: boolean;
+        /** 表头是否可拖动。支持回调函数。 */
+        headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
         /**
          * 给行附加className<br>
          * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -449,7 +449,7 @@ const { isColResizing, onThResizeMouseDown } = useColResize({
     tableHeaderLast,
 });
 
-const { onThDragStart, onThDragOver, onThDrop } = useThDrag({ emits });
+const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits });
 
 const {
     virtualScroll,
@@ -627,7 +627,7 @@ function rowKeyGen(row: DT) {
  * 列唯一键
  * @param col
  */
-function colKeyGen(col: StkTableColumn<any>) {
+function colKeyGen(col: StkTableColumn<DT>) {
     return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];
 }
 

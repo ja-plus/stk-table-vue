@@ -1,8 +1,10 @@
 ## 0.2.1
-* optimize: `StkTable.vue` 文件script 中 lang `tsx` -> `ts`。方便vue2.7引入使用。
 * feature: 多级表头固定列阴影。
 * feature: `StkTable` expose `getSortColumns`，用于获取当前排序信息。
+* feature: `props.headerDrag` 支持传函数，配置那些列可以被拖动。
 * change: `auto-resize` debounce  `500ms` -> `200ms` 
+* optimize: `StkTable.vue` 文件script 中 lang `tsx` -> `ts`。方便vue2.7引入使用。
+* fix: `headerDarg` 拖动文字节点，控制台报错的问题
 
 ## 0.2.0
 * optimize: 新增 `props.optimizeVue2Scroll` 优化vue2滚动流畅度。

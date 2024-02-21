@@ -145,6 +145,8 @@ export type StkProps = {
   showTrHoverClass?: boolean;
   /** 表头是否可拖动 */
   headerDrag?: boolean;
+  /** 表头是否可拖动。支持回调函数。 */
+  headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
   /**
    * 给行附加className<br>
    * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响

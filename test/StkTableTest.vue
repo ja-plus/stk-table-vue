@@ -92,7 +92,7 @@ const props = ref({
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,
-    headerDrag: true,
+    headerDrag: col => col.dataIndex !== 'name',
     virtual: true,
     virtualX: true,
     noDataFull: true,
