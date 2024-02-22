@@ -64,6 +64,37 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
 }
 
 /**
+ * 分离出空数据和非空数据成两个数组
+ * @param sortOption
+ * @param targetDataSource
+ * @param sortType
+ */
+function separatedData(sortOption: SortOption, targetDataSource: any[], sortType: string) {
+    const nanArr: any[] = [];
+    const numArr: any[] = [];
+
+    for (let i = 0; i < targetDataSource.length; i++) {
+        const row = targetDataSource[i];
+        const sortField = sortOption.sortField || sortOption.dataIndex;
+        let isEmpty;
+        if (sortType === 'number') {
+            isEmpty = row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField]);
+        } else {
+            isEmpty = row[sortField] === null || row[sortField] === '';
+        }
+        if (isEmpty) {
+            nanArr.push(row);
+        } else {
+            numArr.push(row);
+        }
+    }
+    return { nanArr, numArr };
+}
+
+type TableSortOption = {
+    emptyValueSortToBottom?: boolean;
+};
+/**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
  * 使用者在@sort-change事件中自行更改table props 'dataSource'完成排序。
@@ -72,9 +103,11 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
  * @param order 排序方式
  * @param dataSource 排序的数组
  */
-export function tableSort(sortOption: SortOption, order: Order, dataSource: any[]): any[] {
+export function tableSort(sortOption: SortOption, order: Order, dataSource: any[], option: TableSortOption = {}): any[] {
     if (!dataSource?.length) return dataSource || [];
+    option = Object.assign({ emptyValueSortToBottom: false }, option);
     let targetDataSource = [...dataSource];
+
     if (typeof sortOption.sorter === 'function') {
         const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
         if (customSorterData) targetDataSource = customSorterData;
@@ -85,17 +118,7 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
 
         if (sortType === 'number') {
             // 按数字类型排序
-            const nanArr: any[] = []; // 非数字
-            const numArr: any[] = []; // 数字
-
-            for (let i = 0; i < targetDataSource.length; i++) {
-                const row = targetDataSource[i];
-                if (row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField])) {
-                    nanArr.push(row);
-                } else {
-                    numArr.push(row);
-                }
-            }
+            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             // 非数字当作最小值处理
             if (order === 'asc') {
                 numArr.sort((a, b) => +a[sortField] - +b[sortField]);
@@ -104,13 +127,23 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
                 numArr.sort((a, b) => +b[sortField] - +a[sortField]);
                 targetDataSource = [...numArr, ...nanArr];
             }
-            // targetDataSource = [...numArr, ...nanArr]; // 非数字不进入排序，一直排在最后
+            if (option.emptyValueSortToBottom) {
+                // 非数字不进入排序，一直排在最后
+                targetDataSource = [...numArr, ...nanArr];
+            }
         } else {
             // 按string 排序
+            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             if (order === 'asc') {
-                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+                targetDataSource = [...nanArr, ...numArr];
             } else {
-                targetDataSource.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+                targetDataSource = [...numArr, ...nanArr];
+            }
+            if (option.emptyValueSortToBottom) {
+                // '--'不进入排序，一直排在最后
+                targetDataSource = [...numArr, ...nanArr];
             }
         }
     }

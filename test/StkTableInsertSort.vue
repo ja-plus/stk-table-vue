@@ -11,6 +11,7 @@
             :columns="columns"
             :data-source="dataSource"
             sort-remote
+            empty-value-sort-to-bottom
             @sort-change="handleSortChange"
         ></StkTable>
     </div>
@@ -22,26 +23,31 @@ import { nextTick, ref } from 'vue';
 const stkTable = ref();
 
 const columns = [
-    { title: 'name', dataIndex: 'name', width: '200px' },
+    { title: 'name', dataIndex: 'name', width: '200px', sorter: true },
     { title: 'age', dataIndex: 'age', width: '200px', sorter: true, sortType: 'number' },
     { title: 'gender', dataIndex: 'gender', width: '100px' },
 ];
 const dataSource = ref(
     new Array(5).fill(null).map((it, i) => {
         return {
-            name: 'name' + i,
-            age: i,
+            name: i % 2 === 0 ? null : 'name' + i,
+            age: i % 2 === 0 ? null : i,
             gender: i + 1,
         };
     }),
 );
+const innitialDataSource = [...dataSource.value];
 const tableSortStore = {
     dataIndex: '',
     order: '',
     // sortType: 'number',
 };
-function handleSortChange(col, order, data) {
-    dataSource.value = tableSort(col, order, data);
+function handleSortChange(col, order, data, emptyValueSortToBottom) {
+    if (!order) {
+        dataSource.value = [...innitialDataSource];
+    } else {
+        dataSource.value = tableSort(col, order, data, { emptyValueSortToBottom });
+    }
     tableSortStore.dataIndex = col.dataIndex;
     tableSortStore.order = order;
 }
