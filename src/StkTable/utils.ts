@@ -63,6 +63,34 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
     }
 }
 
+/**
+ * 分离出空数据和非空数据成两个数组
+ * @param sortOption
+ * @param targetDataSource
+ * @param sortType
+ */
+function separatedData(sortOption: SortOption, targetDataSource: any[], sortType: string) {
+    const nanArr: any[] = [];
+    const numArr: any[] = [];
+
+    for (let i = 0; i < targetDataSource.length; i++) {
+        const row = targetDataSource[i];
+        const sortField = sortOption.sortField || sortOption.dataIndex;
+        let isEmpty;
+        if (sortType === 'number') {
+            isEmpty = row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField]);
+        } else {
+            isEmpty = row[sortField] === null || row[sortField] === '';
+        }
+        if (isEmpty) {
+            nanArr.push(row);
+        } else {
+            numArr.push(row);
+        }
+    }
+    return { nanArr, numArr };
+}
+
 type TableSortOption = {
     emptyValueSortToBottom?: boolean;
 };
@@ -90,17 +118,7 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
 
         if (sortType === 'number') {
             // 按数字类型排序
-            const nanArr: any[] = []; // 非数字
-            const numArr: any[] = []; // 数字
-
-            for (let i = 0; i < targetDataSource.length; i++) {
-                const row = targetDataSource[i];
-                if (row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField])) {
-                    nanArr.push(row);
-                } else {
-                    numArr.push(row);
-                }
-            }
+            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             // 非数字当作最小值处理
             if (order === 'asc') {
                 numArr.sort((a, b) => +a[sortField] - +b[sortField]);
@@ -115,17 +133,7 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
             }
         } else {
             // 按string 排序
-            const nanArr: any[] = []; // 非数字
-            const numArr: any[] = []; // 数字
-
-            for (let i = 0; i < targetDataSource.length; i++) {
-                const row = targetDataSource[i];
-                if (row[sortField] === null || row[sortField] === '') {
-                    nanArr.push(row);
-                } else {
-                    numArr.push(row);
-                }
-            }
+            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             if (order === 'asc') {
                 numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
                 targetDataSource = [...nanArr, ...numArr];
