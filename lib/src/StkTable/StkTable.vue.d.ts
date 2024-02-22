@@ -111,6 +111,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     fixedColShadow?: boolean | undefined;
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
+    /** 排序时null值置于末尾 */
+    emptyValueSortToBottom?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -142,6 +144,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     autoResize: boolean;
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
+    emptyValueSortToBottom: boolean;
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -168,7 +171,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 获取表格数据 */
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[]) => void;
+    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], emptyValueSortToBottom: boolean) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
     "current-change": (ev: MouseEvent | null, row: any) => void;
     "row-dblclick": (ev: MouseEvent, row: any) => void;
@@ -262,6 +265,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     fixedColShadow?: boolean | undefined;
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
+    /** 排序时null值置于末尾 */
+    emptyValueSortToBottom?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -293,6 +298,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     autoResize: boolean;
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
+    emptyValueSortToBottom: boolean;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -302,7 +308,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[]) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[], emptyValueSortToBottom: boolean) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onCurrent-change"?: ((ev: MouseEvent | null, row: any) => any) | undefined;
     "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
@@ -315,6 +321,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     width: string;
     minWidth: string;
     maxWidth: string;
+    emptyValueSortToBottom: boolean;
     rowHeight: number;
     headless: boolean;
     headerRowHeight: number | null;

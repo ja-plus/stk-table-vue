@@ -695,7 +695,7 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
     const order = sortSwitchOrder[sortOrderIndex.value];
 
     if (!props.sortRemote || options.force) {
-        dataSourceCopy.value = tableSort(col, order, props.dataSource, props.emptyValueSortToBottom);
+        dataSourceCopy.value = tableSort(col, order, props.dataSource, { emptyValueSortToBottom: props.emptyValueSortToBottom });
     }
     // 只有点击才触发事件
     if (click || options.emit) {
