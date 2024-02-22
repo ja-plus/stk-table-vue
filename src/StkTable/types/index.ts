@@ -68,3 +68,9 @@ export type SortState<T> = {
 };
 
 export type UniqKey = string | ((param: any) => string);
+
+/** 排序配置 */
+export type SortConfig = {
+    /** 空值始终排在列表末尾 */
+    emptyToBottom?: boolean;
+};

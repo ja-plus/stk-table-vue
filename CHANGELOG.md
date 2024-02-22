@@ -1,6 +1,6 @@
 ## 0.2.2
-* feature: 排序事件支持可配置空数据是否参与排序。
-* optimize: `props.emptyValueSortToBottom` 配置空数据是否参与排序。
+* feature: `props.sortConfig` 配置排序规则排序。
+    - `props.sortConfig.emptyToBottom`可配置空数据是否参与排序。
 
 ## 0.2.1
 * feature: 多级表头固定列阴影。

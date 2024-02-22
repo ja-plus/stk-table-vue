@@ -178,6 +178,11 @@ export type StkProps = {
   fixedColShadow?: boolean;
   /** 优化vue2 滚动 */
   optimizeVue2Scroll?: boolean;
+  /** 排序配置 */
+  sortConfig?: {
+    /** 空值是否排最下面 */
+    emptyToBottom: false,
+  },
 };
 ```
 #### Emits
@@ -187,7 +192,7 @@ export type StkProps = {
      * 排序变更触发
      * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[]): void;
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig:SortConfig): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```

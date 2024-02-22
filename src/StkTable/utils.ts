@@ -1,5 +1,5 @@
 import { Default_Col_Width } from './const';
-import { Order, SortOption, SortState, StkTableColumn } from './types';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
 
 /**
  * 对有序数组插入新数据
@@ -67,33 +67,30 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
  * 分离出空数据和非空数据成两个数组
  * @param sortOption
  * @param targetDataSource
- * @param sortType
+ * @param isNumber 1 数组
+ * @return [值数组,空数组]
  */
-function separatedData(sortOption: SortOption, targetDataSource: any[], sortType: string) {
-    const nanArr: any[] = [];
-    const numArr: any[] = [];
+function separatedData(sortOption: SortOption, targetDataSource: any[], isNumber?: boolean) {
+    const emptyArr: any[] = [];
+    const valueArr: any[] = [];
 
     for (let i = 0; i < targetDataSource.length; i++) {
         const row = targetDataSource[i];
         const sortField = sortOption.sortField || sortOption.dataIndex;
-        let isEmpty;
-        if (sortType === 'number') {
-            isEmpty = row[sortField] === null || row[sortField] === '' || typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField]);
-        } else {
-            isEmpty = row[sortField] === null || row[sortField] === '';
+        let isEmpty = row[sortField] === null || row[sortField] === '';
+        if (isNumber) {
+            isEmpty ||= typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField]);
         }
+
         if (isEmpty) {
-            nanArr.push(row);
+            emptyArr.push(row);
         } else {
-            numArr.push(row);
+            valueArr.push(row);
         }
     }
-    return { nanArr, numArr };
+    return [valueArr, emptyArr] as const;
 }
 
-type TableSortOption = {
-    emptyValueSortToBottom?: boolean;
-};
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
@@ -103,9 +100,9 @@ type TableSortOption = {
  * @param order 排序方式
  * @param dataSource 排序的数组
  */
-export function tableSort(sortOption: SortOption, order: Order, dataSource: any[], option: TableSortOption = {}): any[] {
+export function tableSort(sortOption: SortOption, order: Order, dataSource: any[], sortConfig: SortConfig = {}): any[] {
     if (!dataSource?.length) return dataSource || [];
-    option = Object.assign({ emptyValueSortToBottom: false }, option);
+    sortConfig = Object.assign({ emptyToBottom: false } as SortConfig, sortConfig);
     let targetDataSource = [...dataSource];
 
     if (typeof sortOption.sorter === 'function') {
@@ -116,35 +113,31 @@ export function tableSort(sortOption: SortOption, order: Order, dataSource: any[
         let { sortType } = sortOption;
         if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
+        const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, sortType === 'number');
+
         if (sortType === 'number') {
             // 按数字类型排序
-            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             // 非数字当作最小值处理
             if (order === 'asc') {
-                numArr.sort((a, b) => +a[sortField] - +b[sortField]);
-                targetDataSource = [...nanArr, ...numArr];
+                valueArr.sort((a, b) => +a[sortField] - +b[sortField]);
+                targetDataSource = [...emptyArr, ...valueArr];
             } else {
-                numArr.sort((a, b) => +b[sortField] - +a[sortField]);
-                targetDataSource = [...numArr, ...nanArr];
-            }
-            if (option.emptyValueSortToBottom) {
-                // 非数字不进入排序，一直排在最后
-                targetDataSource = [...numArr, ...nanArr];
+                valueArr.sort((a, b) => +b[sortField] - +a[sortField]);
+                targetDataSource = [...valueArr, ...emptyArr];
             }
         } else {
             // 按string 排序
-            const { numArr, nanArr } = separatedData(sortOption, targetDataSource, sortType);
             if (order === 'asc') {
-                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
-                targetDataSource = [...nanArr, ...numArr];
+                valueArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
+                targetDataSource = [...emptyArr, ...valueArr];
             } else {
-                numArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
-                targetDataSource = [...numArr, ...nanArr];
+                valueArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
+                targetDataSource = [...valueArr, ...emptyArr];
             }
-            if (option.emptyValueSortToBottom) {
-                // '--'不进入排序，一直排在最后
-                targetDataSource = [...numArr, ...nanArr];
-            }
+        }
+
+        if (sortConfig.emptyToBottom) {
+            targetDataSource = [...valueArr, ...emptyArr];
         }
     }
     return targetDataSource;

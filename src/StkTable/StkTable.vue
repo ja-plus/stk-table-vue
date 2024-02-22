@@ -191,7 +191,7 @@
  */
 import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
-import { Order, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -285,8 +285,8 @@ const props = withDefaults(
         fixedColShadow?: boolean;
         /** 优化vue2 滚动 */
         optimizeVue2Scroll?: boolean;
-        /** 排序时null值置于末尾 */
-        emptyValueSortToBottom?: boolean;
+        /** 排序配置 */
+        sortConfig?: SortConfig;
     }>(),
     {
         width: '',
@@ -319,7 +319,9 @@ const props = withDefaults(
         autoResize: true,
         fixedColShadow: false,
         optimizeVue2Scroll: false,
-        emptyValueSortToBottom: false,
+        sortConfig: () => ({
+            emptyToBottom: false,
+        }),
     },
 );
 
@@ -328,7 +330,7 @@ const emits = defineEmits<{
      * 排序变更触发
      * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], emptyValueSortToBottom: boolean): void;
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -693,13 +695,13 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
     const order = sortSwitchOrder[sortOrderIndex.value];
-
+    const sortConfig = props.sortConfig;
     if (!props.sortRemote || options.force) {
-        dataSourceCopy.value = tableSort(col, order, props.dataSource, { emptyValueSortToBottom: props.emptyValueSortToBottom });
+        dataSourceCopy.value = tableSort(col, order, props.dataSource, sortConfig);
     }
     // 只有点击才触发事件
     if (click || options.emit) {
-        emits('sort-change', col, order, toRaw(dataSourceCopy.value), props.emptyValueSortToBottom);
+        emits('sort-change', col, order, toRaw(dataSourceCopy.value), sortConfig);
     }
 }
 
