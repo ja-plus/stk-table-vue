@@ -286,7 +286,7 @@ const props = withDefaults(
         /** 优化vue2 滚动 */
         optimizeVue2Scroll?: boolean;
         /** 排序配置 */
-        sortConfig?: SortConfig;
+        sortConfig?: SortConfig<DT>;
     }>(),
     {
         width: '',
@@ -330,7 +330,7 @@ const emits = defineEmits<{
      * 排序变更触发
      * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig): void;
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -548,7 +548,15 @@ watch(() => props.fixedColShadow, dealFixedColShadow);
 onMounted(() => {
     initVirtualScroll();
     updateFixedShadow();
+    dealDefaultSorter();
 });
+
+/** 处理默认排序 */
+function dealDefaultSorter() {
+    if (!props.sortConfig.defaultSort) return;
+    const { dataIndex, order } = props.sortConfig.defaultSort;
+    setSorter(dataIndex as string, order);
+}
 
 /**
  * 处理多级表头
@@ -559,7 +567,7 @@ function dealColumns() {
     tableHeaderLast.value = [];
     const copyColumn = props.columns; // do not deep clone
     const deep = howDeepTheHeader(copyColumn);
-    const tempHeaderLast: StkTableColumn<any>[] = [];
+    const tempHeaderLast: StkTableColumn<DT>[] = [];
 
     if (deep > 1 && props.virtualX) {
         console.error('多级表头不支持横向虚拟滚动');
@@ -637,7 +645,7 @@ function colKeyGen(col: StkTableColumn<DT>) {
 }
 
 /** 获取列宽度样式 */
-function getColWidthStyle(col: StkTableColumn<any>) {
+function getColWidthStyle(col: StkTableColumn<DT>) {
     const style: CSSProperties = {
         width: col.width,
         minWidth: col.minWidth,
@@ -662,7 +670,7 @@ function getColWidthStyle(col: StkTableColumn<any>) {
  * @param col
  * @param depth 表头层级
  */
-function getCellStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth?: number): CSSProperties {
+function getCellStyle(tagType: 1 | 2, col: StkTableColumn<DT>, depth?: number): CSSProperties {
     const style: CSSProperties = {
         ...getColWidthStyle(col),
         ...getFixedStyle(tagType, col, depth),
@@ -680,10 +688,11 @@ function getCellStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth?: number):
 
 /**
  * 表头点击排序
- * @param {boolean} options.force sort-remote 开启后是否强制排序
- * @param {boolean} options.emit 是否触发回调
+ * @param click 是否为点击表头触发
+ * @param options.force sort-remote 开启后是否强制排序
+ * @param options.emit 是否触发回调
  */
-function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?: boolean; emit?: boolean } = {}) {
+function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?: boolean; emit?: boolean } = {}) {
     if (!col?.sorter) return;
     options = { force: false, emit: false, ...options };
     if (sortCol.value !== col.dataIndex) {
@@ -694,8 +703,16 @@ function onColumnSort(col?: StkTableColumn<any>, click = true, options: { force?
     if (click) sortOrderIndex.value++;
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
-    const order = sortSwitchOrder[sortOrderIndex.value];
+    let order = sortSwitchOrder[sortOrderIndex.value];
     const sortConfig = props.sortConfig;
+    const defaultSort = sortConfig.defaultSort;
+
+    if (!order && defaultSort) {
+        // 没有排序时变成默认排序
+        order = defaultSort.order;
+        sortOrderIndex.value = sortSwitchOrder.indexOf(order);
+        sortCol.value = defaultSort.dataIndex as string;
+    }
     if (!props.sortRemote || options.force) {
         dataSourceCopy.value = tableSort(col, order, props.dataSource, sortConfig);
     }
@@ -813,16 +830,16 @@ function setCurrentRow(rowKey: string, option = { silent: false }) {
 
 /**
  * 设置表头排序状态
- * @param {string} dataIndex 列字段
- * @param {'asc'|'desc'|null} order
- * @param {object} option.sortOption 指定排序参数
- * @param {boolean} option.sort 是否触发排序
- * @param {boolean} option.silent 是否触发回调
+ * @param dataIndex 列字段
+ * @param order 正序倒序
+ * @param option.sortOption 指定排序参数
+ * @param option.sort 是否触发排序-默认true
+ * @param option.silent 是否禁止触发回调-默认true
  */
-function setSorter(dataIndex: string, order: null | 'asc' | 'desc', option: { sortOption?: SortOption; silent?: boolean; sort?: boolean } = {}) {
+function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortOption<DT>; silent?: boolean; sort?: boolean } = {}) {
     const newOption = { silent: true, sortOption: null, sort: true, ...option };
     sortCol.value = dataIndex;
-    sortOrderIndex.value = sortSwitchOrder.findIndex(it => it === order);
+    sortOrderIndex.value = sortSwitchOrder.indexOf(order);
 
     if (newOption.sort && dataSourceCopy.value?.length) {
         // 如果表格有数据，则进行排序

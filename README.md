@@ -181,7 +181,12 @@ export type StkProps = {
   /** 排序配置 */
   sortConfig?: {
     /** 空值是否排最下面 */
-    emptyToBottom: false,
+    emptyToBottom: boolean,
+    /** 默认排序（1.初始化时触发 2.排序方向为null时触发) */
+    defaultSort?: {
+        dataIndex: keyof T;
+        order: Order;
+    };
   },
 };
 ```
@@ -192,7 +197,7 @@ export type StkProps = {
      * 排序变更触发
      * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig:SortConfig): void;
+    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```

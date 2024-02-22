@@ -1,3 +1,6 @@
+## 0.2.3
+* feature: `props.sortConfig.defaultSort` 控制默认排序。
+
 ## 0.2.2
 * feature: `props.sortConfig` 配置排序规则排序。
     - `props.sortConfig.emptyToBottom`可配置空数据是否参与排序。

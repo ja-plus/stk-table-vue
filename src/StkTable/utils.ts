@@ -67,12 +67,12 @@ function strCompare(a: string, b: string, type: 'number' | 'string'): number {
  * 分离出空数据和非空数据成两个数组
  * @param sortOption
  * @param targetDataSource
- * @param isNumber 1 数组
+ * @param isNumber 1 数字
  * @return [值数组,空数组]
  */
-function separatedData(sortOption: SortOption, targetDataSource: any[], isNumber?: boolean) {
-    const emptyArr: any[] = [];
-    const valueArr: any[] = [];
+function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>, targetDataSource: T[], isNumber?: boolean) {
+    const emptyArr: T[] = [];
+    const valueArr: T[] = [];
 
     for (let i = 0; i < targetDataSource.length; i++) {
         const row = targetDataSource[i];
@@ -96,20 +96,33 @@ function separatedData(sortOption: SortOption, targetDataSource: any[], isNumber
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
  * 使用者在@sort-change事件中自行更改table props 'dataSource'完成排序。
  * TODO: key 唯一值，排序字段相同时，根据唯一值排序。
+ *
+ * sortConfig.defaultSort 会在order为null时生效
  * @param sortOption 列配置
  * @param order 排序方式
  * @param dataSource 排序的数组
  */
-export function tableSort(sortOption: SortOption, order: Order, dataSource: any[], sortConfig: SortConfig = {}): any[] {
+export function tableSort<T extends Record<string, any>>(
+    sortOption: SortOption<T>,
+    order: Order,
+    dataSource: T[],
+    sortConfig: SortConfig<T> = {},
+): T[] {
     if (!dataSource?.length) return dataSource || [];
-    sortConfig = Object.assign({ emptyToBottom: false } as SortConfig, sortConfig);
+    sortConfig = { emptyToBottom: false, ...sortConfig };
     let targetDataSource = [...dataSource];
+    let sortField = sortOption.sortField || sortOption.dataIndex;
+
+    if (!order && sortConfig.defaultSort) {
+        // 默认排序
+        order = sortConfig.defaultSort.order;
+        sortField = sortConfig.defaultSort.dataIndex;
+    }
 
     if (typeof sortOption.sorter === 'function') {
         const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
         if (customSorterData) targetDataSource = customSorterData;
     } else if (order) {
-        const sortField = sortOption.sortField || sortOption.dataIndex;
         let { sortType } = sortOption;
         if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
