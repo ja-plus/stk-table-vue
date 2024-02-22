@@ -1,4 +1,4 @@
-import { Order, SortOption, SortState, StkTableColumn } from './types';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
 /**
  * 对有序数组插入新数据
  * @param sortState
@@ -9,9 +9,6 @@ import { Order, SortOption, SortState, StkTableColumn } from './types';
  * @param targetArray 表格数据
  */
 export declare function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[]): T[];
-type TableSortOption = {
-    emptyValueSortToBottom?: boolean;
-};
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
@@ -21,9 +18,8 @@ type TableSortOption = {
  * @param order 排序方式
  * @param dataSource 排序的数组
  */
-export declare function tableSort(sortOption: SortOption, order: Order, dataSource: any[], option?: TableSortOption): any[];
+export declare function tableSort(sortOption: SortOption, order: Order, dataSource: any[], sortConfig?: SortConfig): any[];
 /** 表头column配置的层级 */
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
 /** 获取列宽 */
 export declare function getColWidth(col: StkTableColumn<any> | null): number;
-export {};

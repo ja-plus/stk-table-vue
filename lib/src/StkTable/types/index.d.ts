@@ -70,4 +70,9 @@ export type SortState<T> = {
     sortType?: 'number' | 'string';
 };
 export type UniqKey = string | ((param: any) => string);
+/** 排序配置 */
+export type SortConfig = {
+    /** 空值始终排在列表末尾 */
+    emptyToBottom?: boolean;
+};
 export {};
