@@ -73,8 +73,8 @@
 
 <script lang="ts" setup>
 import { h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
-import { StkTable, StkTableColumn } from '../src/StkTable/index';
-// import { StkTable } from 'stk-table-vue';
+// import { StkTable, StkTableColumn } from '../src/StkTable/index';
+import { StkTable } from '../lib/stk-table-vue.js';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import FixedMode from './FixedMode.vue';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
@@ -197,8 +197,8 @@ onMounted(() => {
         stkTable.value.setHighlightDimRow(['add0']);
     }, 3000);
     const interval4 = window.setInterval(() => {
-        stkTable.value.setHighlightDimRow(['add0']);
-    }, 3000);
+        stkTable.value.setHighlightDimRow(['add3']);
+    }, 1500);
     intervals.push(interval1, interval2, interval3, interval4);
 });
 

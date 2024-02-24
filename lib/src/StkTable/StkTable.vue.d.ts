@@ -1,4 +1,4 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -11,14 +11,14 @@ declare function setCurrentRow(rowKey: string, option?: {
 }): void;
 /**
  * 设置表头排序状态
- * @param {string} dataIndex 列字段
- * @param {'asc'|'desc'|null} order
- * @param {object} option.sortOption 指定排序参数
- * @param {boolean} option.sort 是否触发排序
- * @param {boolean} option.silent 是否触发回调
+ * @param dataIndex 列字段
+ * @param order 正序倒序
+ * @param option.sortOption 指定排序参数
+ * @param option.sort 是否触发排序-默认true
+ * @param option.silent 是否禁止触发回调-默认true
  */
-declare function setSorter(dataIndex: string, order: null | 'asc' | 'desc', option?: {
-    sortOption?: SortOption;
+declare function setSorter(dataIndex: string, order: Order, option?: {
+    sortOption?: SortOption<DT>;
     silent?: boolean;
     sort?: boolean;
 }): any[];
@@ -61,9 +61,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 表格数据源 */
     dataSource?: any[] | undefined;
     /** 行唯一键 */
-    rowKey?: UniqKey | undefined;
+    rowKey?: UniqKeyProp | undefined;
     /** 列唯一键 */
-    colKey?: UniqKey | undefined;
+    colKey?: UniqKeyProp | undefined;
     /** 空值展示文字 */
     emptyCellText?: string | undefined;
     /** 暂无数据兜底高度是否撑满 */
@@ -112,7 +112,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
-    sortConfig?: SortConfig | undefined;
+    sortConfig?: SortConfig<any> | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -159,7 +159,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
     /** 设置高亮渐暗行 */
-    setHighlightDimRow: (rowKeyValues: (string | number)[]) => void;
+    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[]) => void;
     /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
     /** 获取当前排序状态 */
@@ -173,7 +173,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 获取表格数据 */
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig) => void;
+    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
     "current-change": (ev: MouseEvent | null, row: any) => void;
     "row-dblclick": (ev: MouseEvent, row: any) => void;
@@ -217,9 +217,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 表格数据源 */
     dataSource?: any[] | undefined;
     /** 行唯一键 */
-    rowKey?: UniqKey | undefined;
+    rowKey?: UniqKeyProp | undefined;
     /** 列唯一键 */
-    colKey?: UniqKey | undefined;
+    colKey?: UniqKeyProp | undefined;
     /** 空值展示文字 */
     emptyCellText?: string | undefined;
     /** 暂无数据兜底高度是否撑满 */
@@ -268,7 +268,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
-    sortConfig?: SortConfig | undefined;
+    sortConfig?: SortConfig<any> | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -312,7 +312,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onCurrent-change"?: ((ev: MouseEvent | null, row: any) => any) | undefined;
     "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
@@ -335,8 +335,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: UniqKey;
-    colKey: UniqKey;
+    rowKey: UniqKeyProp;
+    colKey: UniqKeyProp;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -352,7 +352,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     autoResize: boolean | (() => void);
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
-    sortConfig: SortConfig;
+    sortConfig: SortConfig<any>;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;

@@ -63,16 +63,25 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
 };
-export type SortOption = Pick<StkTableColumn<any>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
+export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
+/** 排序状态 */
 export type SortState<T> = {
     dataIndex: T;
     order: null | 'asc' | 'desc';
     sortType?: 'number' | 'string';
 };
-export type UniqKey = string | ((param: any) => string);
+/** 唯一键 */
+export type UniqKey = string | number;
+export type UniqKeyFun = (param: any) => UniqKey;
+export type UniqKeyProp = UniqKey | UniqKeyFun;
 /** 排序配置 */
-export type SortConfig = {
+export type SortConfig<T extends Record<string, any>> = {
     /** 空值始终排在列表末尾 */
     emptyToBottom?: boolean;
+    /** 默认排序（1.初始化时触发 2.排序方向为null时触发) */
+    defaultSort?: {
+        dataIndex: keyof T;
+        order: Order;
+    };
 };
 export {};
