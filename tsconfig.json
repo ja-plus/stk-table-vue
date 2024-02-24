@@ -9,6 +9,7 @@
         "checkJs": false,
         "baseUrl": ".",
         "moduleResolution": "node",
+        "jsxImportSource": "vue",
         "lib": [
             "ESNext",
             "DOM",

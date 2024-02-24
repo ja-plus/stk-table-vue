@@ -49,10 +49,10 @@
         "postcss-preset-env": "^9.3.0",
         "prettier": "^3.1.1",
         "typescript": "^5.3.3",
-        "vite": "^5.0.12",
-        "vite-plugin-dts": "^3.6.4",
+        "vite": "^5.1.4",
+        "vite-plugin-dts": "^3.7.3",
         "vitest": "^1.1.0",
-        "vue": "^3.3.9",
+        "vue": "^3.4.19",
         "vue-eslint-parser": "^9.3.2"
     },
     "dependencies": {

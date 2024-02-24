@@ -4,6 +4,10 @@ Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐
 
 Vue2.7支持引入源码(**ts**)使用。
 
+repo: 
+- [Github](https://github.com/ja-plus/stk-table-vue)
+- [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
+
 ## Bug TODO:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
 
@@ -33,7 +37,6 @@ Vue2.7支持引入源码(**ts**)使用。
 * 鼠标悬浮在表格上，键盘滚动虚拟表格。
   - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
   - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
-* [] 不传row-key 时，自动按序号生成id。
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
