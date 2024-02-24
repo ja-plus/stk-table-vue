@@ -148,7 +148,7 @@
                         [rowClassName(row, i)]: true,
                     }"
                     :style="{
-                        backgroundColor: row._bgc,
+                        backgroundColor: highlightRowStore[rowKeyGen(row)]?.bgc,
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -191,7 +191,7 @@
  */
 import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
-import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from './types/index';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -235,9 +235,9 @@ const props = withDefaults(
         /** 表格数据源 */
         dataSource?: DT[];
         /** 行唯一键 */
-        rowKey?: UniqKey;
+        rowKey?: UniqKeyProp;
         /** 列唯一键 */
-        colKey?: UniqKey;
+        colKey?: UniqKeyProp;
         /** 空值展示文字 */
         emptyCellText?: string;
         /** 暂无数据兜底高度是否撑满 */
@@ -484,7 +484,7 @@ const { getFixedStyle } = useFixedStyle({
 /**
  * 高亮行，高亮单元格
  */
-const { setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer, rowKeyGen });
+const { highlightRowStore, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer });
 
 if (props.autoResize) {
     useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs: 200 });

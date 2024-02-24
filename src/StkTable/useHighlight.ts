@@ -1,22 +1,41 @@
 import { interpolateRgb } from 'd3-interpolate';
-import { Ref, computed } from 'vue';
+import { Ref, computed, ref } from 'vue';
 import { Highlight_Color, Highlight_Color_Change_Freq, Highlight_Duration } from './const';
+import { UniqKey } from './types';
 
 type Params = {
     props: { theme: 'light' | 'dark'; virtual: boolean; dataSource: any[] };
     tableContainer: Ref<HTMLElement | undefined>;
-    rowKeyGen: (p: any) => string;
 };
+
+/** 高亮行保存的东西 */
+type HighlightRowStore = {
+    bgc: string;
+    bgc_progress_ms: number;
+    bgc_progress: number;
+};
+
+/** 高亮行class */
+const HIGHLIGHT_ROW_CLASS = 'highlight-row';
+/** 高连单元格class */
+const HIGHLIGHT_CELL_CLASS = 'highlight-cell';
+
 /**
  * 高亮单元格，行
  * row中新增_bgc_progress_ms 属性控制高亮状态,_bgc控制颜色
  */
-export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
-    const highlightInter = computed(() => {
-        return interpolateRgb(Highlight_Color[props.theme].from, Highlight_Color[props.theme].to);
-    });
-    /** 存放高亮行的对象*/
-    const highlightDimRows = new Set<any>();
+export function useHighlight({ props, tableContainer }: Params) {
+    /**
+     * 高亮行记录 key-rowKey, value-obj
+     */
+    const highlightRowStore = ref<Record<UniqKey, HighlightRowStore>>({});
+
+    const highlightFrom = Highlight_Color[props.theme].from;
+    const highlightTo = Highlight_Color[props.theme].to;
+    const highlightInter = computed(() => interpolateRgb(highlightFrom, highlightTo));
+
+    /** 存放高亮行的key*/
+    const highlightDimRowKeys = new Set<UniqKey>();
     /** 高亮后渐暗的行定时器 */
     const highlightDimRowsTimeout = new Map();
     /** 高亮后渐暗的单元格定时器 */
@@ -36,9 +55,8 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
         const recursion = () => {
             window.setTimeout(() => {
                 const nowTs = Date.now();
-                const needDeleteRows: any = [];
 
-                highlightDimRows.forEach(row => {
+                highlightDimRowKeys.forEach(rowKeyValue => {
                     //   const rowKeyValue = rowKeyGen(row);
                     //   const rowEl = tableContainer.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]`);
                     //   if (rowEl && row._bgc_progress === 0) {
@@ -47,21 +65,18 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
                     //     void rowEl.offsetHeight; // reflow
                     //     rowEl.classList.add('highlight-row-transition');
                     //   }
-
+                    const highlightItem = highlightRowStore.value[rowKeyValue];
                     /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-                    const progress = (nowTs - row._bgc_progress_ms) / Highlight_Duration;
-                    //   row._bgc_progress = progress;
+                    const progress = (nowTs - highlightItem.bgc_progress_ms) / Highlight_Duration;
                     if (0 < progress && progress < 1) {
-                        row._bgc = highlightInter.value(progress);
+                        highlightItem.bgc = highlightInter.value(progress);
                     } else {
-                        row._bgc = ''; // 清空颜色
-                        needDeleteRows.push(row);
+                        highlightItem.bgc = ''; // 清空颜色
+                        highlightDimRowKeys.delete(rowKeyValue);
                     }
                 });
-                needDeleteRows.forEach((row: any) => highlightDimRows.delete(row));
-                // TODO: shallowRef 时，需要手动更新
 
-                if (highlightDimRows.size > 0) {
+                if (highlightDimRowKeys.size > 0) {
                     // 还有高亮的行,则下一次循环
                     recursion();
                 } else {
@@ -78,16 +93,16 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
         // TODO: 支持动态计算高亮颜色。不易实现。需记录每一个单元格的颜色情况。
         const cellEl = tableContainer.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
         if (!cellEl) return;
-        if (cellEl.classList.contains('highlight-cell')) {
-            cellEl.classList.remove('highlight-cell');
+        if (cellEl.classList.contains(HIGHLIGHT_CELL_CLASS)) {
+            cellEl.classList.remove(HIGHLIGHT_CELL_CLASS);
             void cellEl.offsetHeight; // 通知浏览器重绘
         }
-        cellEl.classList.add('highlight-cell');
+        cellEl.classList.add(HIGHLIGHT_CELL_CLASS);
         window.clearTimeout(highlightDimCellsTimeout.get(rowKeyValue));
         highlightDimCellsTimeout.set(
             rowKeyValue,
             window.setTimeout(() => {
-                cellEl.classList.remove('highlight-cell');
+                cellEl.classList.remove(HIGHLIGHT_CELL_CLASS);
                 highlightDimCellsTimeout.delete(rowKeyValue);
             }, Highlight_Duration),
         );
@@ -97,18 +112,19 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
      * 高亮一行
      * @param rowKeyValues
      */
-    function setHighlightDimRow(rowKeyValues: Array<string | number>) {
+    function setHighlightDimRow(rowKeyValues: UniqKey[]) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
         if (props.virtual) {
             // --------虚拟滚动用js计算颜色渐变的高亮方案
             const nowTs = Date.now(); // 重置渐变进度
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
-                const row = props.dataSource.find((it: any) => rowKeyGen(it) === rowKeyValue);
-                if (!row) continue;
-                row._bgc_progress_ms = nowTs;
-                // row._bgc_progress = 0;
-                highlightDimRows.add(row);
+                highlightRowStore.value[rowKeyValue] = {
+                    bgc: '',
+                    bgc_progress: 0,
+                    bgc_progress_ms: nowTs,
+                };
+                highlightDimRowKeys.add(rowKeyValue);
             }
             calcHighlightLoop();
         } else {
@@ -121,8 +137,8 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
                 const rowKeyValue = rowKeyValues[i];
                 const rowEl = tableContainer.value?.querySelector<HTMLTableRowElement>(`[data-row-key="${rowKeyValue}"]`);
                 if (!rowEl) continue;
-                if (rowEl.classList.contains('highlight-row')) {
-                    rowEl.classList.remove('highlight-row');
+                if (rowEl.classList.contains(HIGHLIGHT_ROW_CLASS)) {
+                    rowEl.classList.remove(HIGHLIGHT_ROW_CLASS);
                     needRepaint = true;
                 }
                 rowElTemp.push(rowEl);
@@ -131,7 +147,7 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
                 highlightDimRowsTimeout.set(
                     rowKeyValue,
                     window.setTimeout(() => {
-                        rowEl.classList.remove('highlight-row');
+                        rowEl.classList.remove(HIGHLIGHT_ROW_CLASS);
                         highlightDimRowsTimeout.delete(rowKeyValue); // 回收内存
                     }, Highlight_Duration),
                 );
@@ -139,11 +155,12 @@ export function useHighlight({ props, tableContainer, rowKeyGen }: Params) {
             if (needRepaint) {
                 void tableContainer.value?.offsetWidth; //强制浏览器重绘
             }
-            rowElTemp.forEach(el => el.classList.add('highlight-row')); // 统一添加动画
+            rowElTemp.forEach(el => el.classList.add(HIGHLIGHT_ROW_CLASS)); // 统一添加动画
         }
     }
 
     return {
+        highlightRowStore,
         setHighlightDimRow,
         setHighlightDimCell,
     };

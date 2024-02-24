@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts" setup>
-import { h, nextTick, onMounted, ref, shallowRef } from 'vue';
+import { h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from 'stk-table-vue';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
@@ -184,17 +184,28 @@ let scrollTimeout = 0;
 const stkTable = ref();
 const stkTableParent = ref();
 
+let intervals: number[] = [];
 onMounted(() => {
     new DragResize(stkTableParent.value);
-    setInterval(() => {
+    const interval1 = window.setInterval(() => {
         stkTable.value.setHighlightDimCell('add1', 'age');
     }, 2500);
-    setInterval(() => {
+    const interval2 = window.setInterval(() => {
         stkTable.value.setHighlightDimCell('add2', 'gender');
     }, 2000);
-    setInterval(() => {
+    const interval3 = window.setInterval(() => {
         stkTable.value.setHighlightDimRow(['add0']);
     }, 3000);
+    const interval4 = window.setInterval(() => {
+        stkTable.value.setHighlightDimRow(['add0']);
+    }, 3000);
+    intervals.push(interval1, interval2, interval3, interval4);
+});
+
+onBeforeUnmount(() => {
+    intervals.forEach(n => {
+        window.clearInterval(n);
+    });
 });
 
 // function handleHeightInput(e) {

@@ -68,7 +68,10 @@ export type SortState<T> = {
     sortType?: 'number' | 'string';
 };
 
-export type UniqKey = string | ((param: any) => string);
+/** 唯一键 */
+export type UniqKey = string | number;
+export type UniqKeyFun = (param: any) => UniqKey;
+export type UniqKeyProp = UniqKey | UniqKeyFun;
 
 /** 排序配置 */
 export type SortConfig<T extends Record<string, any>> = {

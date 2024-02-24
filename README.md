@@ -5,7 +5,8 @@ Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐
 Vue2.7支持引入源码(**ts**)使用。
 
 ## Bug TODO:
-* [] props.dataSource 为 shallowRef 时，高亮行不生效。(2024.02.21)
+* [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
+
 ## Feature TODO:
 * [x] 高亮行，单元格。
 * [x] 虚拟滚动。
@@ -22,7 +23,7 @@ Vue2.7支持引入源码(**ts**)使用。
 * [x] 表头拖动调整列宽。
 * [x] 排序
   - [x] 基本表头点击排序。
-  - [] 支持配置 `null` | `undefined` 永远排最后。
+  - [x] 支持配置 `null` | `undefined` 永远排最后。
   - [] 支持配置 string 使用 `String.prototype.localCompare` 排序。
 * 多级表头。
   - [x] 支持最多`2级`表头。
@@ -126,9 +127,9 @@ export type StkProps = {
   /** 表格数据源 */
   dataSource?: any[];
   /** 行唯一键 */
-  rowKey?: UniqKey;
+  rowKey?: UniqKeyProp;
   /** 列唯一键 */
-  colKey?: UniqKey;
+  colKey?: UniqKeyProp;
   /** 空值展示文字 */
   emptyCellText?: string;
   /** 暂无数据兜底高度是否撑满 */
