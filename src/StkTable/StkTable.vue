@@ -470,7 +470,7 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
-} = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast });
+} = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
 const { getFixedStyle } = useFixedStyle({
     props,

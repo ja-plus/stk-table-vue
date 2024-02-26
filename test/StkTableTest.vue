@@ -73,8 +73,8 @@
 
 <script lang="ts" setup>
 import { h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
-// import { StkTable, StkTableColumn } from '../src/StkTable/index';
-import { StkTable } from '../lib/stk-table-vue.js';
+import { StkTable, StkTableColumn } from '../src/StkTable/index';
+// import { StkTable } from '../lib/stk-table-vue.js';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import FixedMode from './FixedMode.vue';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序

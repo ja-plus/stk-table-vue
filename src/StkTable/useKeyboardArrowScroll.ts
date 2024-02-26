@@ -44,11 +44,15 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
-        const { scrollTop, rowHeight, pageSize } = virtualScroll.value;
+        const { scrollTop, rowHeight, containerHeight } = virtualScroll.value;
         const { scrollLeft } = virtualScrollX.value;
         const { headless, headerRowHeight } = props;
-        /**表头高度 */
+
+        // 这里不用virtualScroll 中的pageSize，因为我需要上一页的最后一条放在下一页的第一条
         const headerHeight = headless ? 0 : tableHeaders.value.length * (headerRowHeight || rowHeight);
+        /** 表体的page */
+        const bodyPageSize = Math.floor((containerHeight - headerHeight) / rowHeight);
+
         if (e.code === SCROLL_CODES[0]) {
             scrollTo(scrollTop - rowHeight, null);
         } else if (e.code === SCROLL_CODES[1]) {
@@ -58,9 +62,9 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         } else if (e.code === SCROLL_CODES[3]) {
             scrollTo(null, scrollLeft - rowHeight);
         } else if (e.code === SCROLL_CODES[4]) {
-            scrollTo(scrollTop - rowHeight * pageSize - headerHeight, null);
+            scrollTo(scrollTop - rowHeight * bodyPageSize + headerHeight, null);
         } else if (e.code === SCROLL_CODES[5]) {
-            scrollTo(scrollTop + rowHeight * pageSize - headerHeight, null);
+            scrollTo(scrollTop + rowHeight * bodyPageSize - headerHeight, null);
         }
     }
 

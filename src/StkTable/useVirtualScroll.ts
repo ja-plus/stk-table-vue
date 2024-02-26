@@ -4,10 +4,11 @@ import { StkTableColumn } from './types';
 import { getColWidth } from './utils';
 
 type Option<DT extends Record<string, any>> = {
-    tableContainer: Ref<HTMLElement | undefined>;
     props: any;
+    tableContainer: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: Ref<StkTableColumn<DT>[]>;
+    tableHeaders: Ref<StkTableColumn<DT>[][]>;
 };
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -49,7 +50,13 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
  * @param param0
  * @returns
  */
-export function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainer, dataSourceCopy, tableHeaderLast }: Option<DT>) {
+export function useVirtualScroll<DT extends Record<string, any>>({
+    props,
+    tableContainer,
+    dataSourceCopy,
+    tableHeaderLast,
+    tableHeaders,
+}: Option<DT>) {
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
@@ -140,10 +147,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({ props, tableC
         } else {
             containerHeight = offsetHeight || Default_Table_Height;
         }
-        Object.assign(virtualScroll.value, {
-            containerHeight,
-            pageSize: Math.ceil(containerHeight / rowHeight) + 1, // 这里最终+1，因为headless=true无头时，需要上下各预渲染一行。
-        });
+        const { headless, headerRowHeight } = props;
+        let pageSize = Math.ceil(containerHeight / rowHeight);
+        if (!headless) {
+            /** 表头高度占几行表体高度数 */
+            const headerToBodyRowHeightCount = Math.floor((tableHeaders.value.length * (headerRowHeight || rowHeight)) / rowHeight);
+            pageSize -= headerToBodyRowHeightCount; //减去表头行数
+        }
+        Object.assign(virtualScroll.value, { containerHeight, pageSize });
         updateVirtualScrollY(scrollTop);
     }
 

@@ -1,3 +1,7 @@
+## 0.2.4
+* fix: `PageUp`/`PageDown` 按键翻页会大于一页的情况。
+* optimize: 优化虚拟滚动 pageSize(减去表头高度)
+
 ## 0.2.3
 * feature: `props.sortConfig.defaultSort` 控制默认排序。
 * bugfix: 修复 `props.dataSource` 为 `shallowRef` 时，高亮行异常的问题。
