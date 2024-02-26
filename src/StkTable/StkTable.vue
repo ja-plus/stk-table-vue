@@ -832,7 +832,7 @@ function setCurrentRow(rowKey: string, option = { silent: false }) {
  * 设置表头排序状态
  * @param dataIndex 列字段
  * @param order 正序倒序
- * @param option.sortOption 指定排序参数
+ * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  */
