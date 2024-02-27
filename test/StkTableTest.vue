@@ -22,6 +22,7 @@
         <label><input v-model="props.virtual" type="checkbox" />virtual</label>
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
     </div>
+    <StkTableHugeData></StkTableHugeData>
     <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
             ref="stkTable"
@@ -81,6 +82,7 @@ import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import DragResize from './utils/DragResize';
 import DocTable from './DocTable.vue';
+import StkTableHugeData from './StkTableHugeData.vue';
 
 const props = ref({
     rowKey: 'name',
