@@ -1,6 +1,7 @@
 ## 0.2.4
 * fix: `PageUp`/`PageDown` 按键翻页会大于一页的情况。
 * optimize: 优化虚拟滚动 pageSize(减去表头高度)
+* fix: `props.stripe` 时，虚拟滚动导致斑马纹错位问题。
 
 ## 0.2.3
 * feature: `props.sortConfig.defaultSort` 控制默认排序。

@@ -22,7 +22,7 @@
         <label><input v-model="props.virtual" type="checkbox" />virtual</label>
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
     </div>
-    <StkTableHugeData></StkTableHugeData>
+    <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
             ref="stkTable"

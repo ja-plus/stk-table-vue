@@ -179,9 +179,28 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
         const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
-        const startIndex = Math.floor(sTop / rowHeight);
-        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
+        let startIndex = Math.floor(sTop / rowHeight);
+        if (props.stripe) {
+            startIndex -= 1; //预渲染1行
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        if (props.stripe && startIndex !== 0) {
+            const scrollRows = Math.abs(oldStartIndex - startIndex);
+            // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
+            if (scrollRows < 2) {
+                return;
+            } else if (scrollRows % 2) {
+                startIndex -= 1; // 奇数-1变成偶数
+            }
+        }
         let endIndex = startIndex + pageSize;
+        if (props.stripe) {
+            // 由于上方预渲染一行，这里也要预渲染1+1行
+            endIndex += 2;
+        }
+        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
         if (endIndex > dataSourceCopy.value.length) {
             endIndex = dataSourceCopy.value.length; // 溢出index修正
         }
