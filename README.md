@@ -40,6 +40,7 @@ repo:
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
+* [] `props.emptyCellText` 支持传入函数。
 
 
 ## Usage
@@ -191,6 +192,11 @@ export type StkProps = {
         dataIndex: keyof T;
         order: Order;
     };
+    /**
+     * string排序是否使用 String.prototype.localCompare
+     * 默认true (历史设计问题，为了兼容，默认true)
+     */
+    stringLocaleCompare?: boolean;
   },
 };
 ```

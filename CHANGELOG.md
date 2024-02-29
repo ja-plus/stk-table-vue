@@ -1,7 +1,10 @@
 ## 0.2.4
-* fix: `PageUp`/`PageDown` 按键翻页会大于一页的情况。
+* feature: `props.sortConfig.stringLocaleCompare` 控制是否使用 Array.prototype.localeCompare 排序字符串。默认true。
 * optimize: 优化虚拟滚动 pageSize(减去表头高度)
+* fix: `PageUp`/`PageDown` 按键翻页会大于一页的情况。
 * fix: `props.stripe` 时，虚拟滚动导致斑马纹错位问题。
+* fix: `props.theme` 改变时，高亮颜色有误的问题。
+* change: `insertToOrderedArray` 新增参数 `sortConfig`对齐 `tableSort` 方法。
 
 ## 0.2.3
 * feature: `props.sortConfig.defaultSort` 控制默认排序。
@@ -10,6 +13,7 @@
 ## 0.2.2
 * feature: `props.sortConfig` 配置排序规则排序。
     - `props.sortConfig.emptyToBottom`可配置空数据是否参与排序。
+    - `tableSort` 方法新增 `sortConfig` 参数。
 
 ## 0.2.1
 * feature: 多级表头固定列阴影。

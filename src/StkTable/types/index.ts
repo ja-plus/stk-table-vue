@@ -82,4 +82,9 @@ export type SortConfig<T extends Record<string, any>> = {
         dataIndex: keyof T;
         order: Order;
     };
+    /**
+     * string排序是否使用 String.prototype.localCompare
+     * 默认true (&$&应该false)
+     */
+    stringLocaleCompare?: boolean;
 };

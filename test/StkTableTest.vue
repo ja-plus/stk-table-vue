@@ -299,7 +299,7 @@ function addRow(num = 1, unshift = false) {
     const tmpIndex: Record<string, any>[] = [];
     for (let i = 0; i < num; i++) {
         const data = {
-            name: 'add' + addIndex,
+            name: addIndex + 'add',
             age: Math.round(Math.random() * 100),
             email: 'add@sa.com',
             gender: Number(Math.random() * 100 - 50).toFixed(2),

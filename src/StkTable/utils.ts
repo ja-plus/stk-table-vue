@@ -1,6 +1,15 @@
 import { Default_Col_Width } from './const';
 import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
 
+/** 是否空值 */
+function isEmptyValue(val: any, isNumber?: boolean) {
+    let isEmpty = val === null || val === '';
+    if (isNumber) {
+        isEmpty ||= typeof val === 'boolean' || Number.isNaN(+val);
+    }
+    return isEmpty;
+}
+
 /**
  * 对有序数组插入新数据
  * @param sortState
@@ -10,15 +19,30 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './type
  * @param newItem 要插入的数据
  * @param targetArray 表格数据
  */
-export function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[]) {
+export function insertToOrderedArray<T extends object>(
+    sortState: SortState<keyof T>,
+    newItem: any,
+    targetArray: T[],
+    sortConfig: SortConfig<T> = {},
+) {
     const { dataIndex, order } = sortState;
+    sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;
     if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
+    const isNumber = sortType === 'number';
     const data = [...targetArray];
+
     if (!order) {
+        // 没有排序的情况，插入在最上方
         data.unshift(newItem);
         return data;
     }
+
+    if (sortConfig.emptyToBottom && isEmptyValue(data)) {
+        // 空值排在最下方
+        data.push(newItem);
+    }
+
     // 二分插入
     let sIndex = 0;
     let eIndex = data.length - 1;
@@ -27,7 +51,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<keyo
         // console.log(sIndex, eIndex);
         const midIndex = Math.floor((sIndex + eIndex) / 2);
         const midVal: any = data[midIndex][dataIndex];
-        const compareRes = strCompare(midVal, targetVal, sortType);
+        const compareRes = strCompare(midVal, targetVal, isNumber, sortConfig.stringLocaleCompare);
         if (compareRes === 0) {
             //midVal == targetVal
             sIndex = midIndex;
@@ -47,27 +71,34 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<keyo
 }
 /**
  * 字符串比较
- * @param  a
- * @param  b
- * @param  type 类型
+ * @param a
+ * @param b
+ * @param type 类型
+ * @param isNumber 是否是数字类型
+ * @param localeCompare 是否 使用Array.prototype.localeCompare
  * @return {-1|0|1}
  */
-function strCompare(a: string, b: string, type: 'number' | 'string'): number {
-    // if (typeof a === 'number' && typeof b === 'number') type = 'number';
-    if (type === 'number') {
-        if (+a > +b) return 1;
-        else if (+a === +b) return 0;
-        else return -1;
-    } else {
+function strCompare(a: string, b: string, isNumber: boolean, localeCompare = false): number {
+    let _a: number | string = a;
+    let _b: number | string = b;
+    if (isNumber) {
+        // 是数字就转数字
+        _a = +a;
+        _b = +b;
+    } else if (localeCompare) {
+        // 字符串才可以localeCompare
         return String(a).localeCompare(b);
     }
+    if (_a > _b) return 1;
+    else if (_a === _b) return 0;
+    else return -1;
 }
 
 /**
- * 分离出空数据和非空数据成两个数组
+ * 分离出空数据和非空数据成两个数组。NaN视为空数据。
  * @param sortOption
  * @param targetDataSource
- * @param isNumber 1 数字
+ * @param isNumber 是否数字
  * @return [值数组,空数组]
  */
 function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>, targetDataSource: T[], isNumber?: boolean) {
@@ -77,11 +108,7 @@ function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>,
     for (let i = 0; i < targetDataSource.length; i++) {
         const row = targetDataSource[i];
         const sortField = sortOption.sortField || sortOption.dataIndex;
-        let isEmpty = row[sortField] === null || row[sortField] === '';
-        if (isNumber) {
-            isEmpty ||= typeof row[sortField] === 'boolean' || Number.isNaN(+row[sortField]);
-        }
-
+        const isEmpty = isEmptyValue(row[sortField], isNumber);
         if (isEmpty) {
             emptyArr.push(row);
         } else {
@@ -127,30 +154,18 @@ export function tableSort<T extends Record<string, any>>(
         if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
         const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, sortType === 'number');
+        const isNumber = sortType === 'number';
 
-        if (sortType === 'number') {
-            // 按数字类型排序
-            // 非数字当作最小值处理
-            if (order === 'asc') {
-                valueArr.sort((a, b) => +a[sortField] - +b[sortField]);
-                targetDataSource = [...emptyArr, ...valueArr];
-            } else {
-                valueArr.sort((a, b) => +b[sortField] - +a[sortField]);
-                targetDataSource = [...valueArr, ...emptyArr];
-            }
+        if (order === 'asc') {
+            valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, sortConfig.stringLocaleCompare));
         } else {
-            // 按string 排序
-            if (order === 'asc') {
-                valueArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]));
-                targetDataSource = [...emptyArr, ...valueArr];
-            } else {
-                valueArr.sort((a, b) => String(a[sortField]).localeCompare(b[sortField]) * -1);
-                targetDataSource = [...valueArr, ...emptyArr];
-            }
+            valueArr.sort((a, b) => strCompare(b[sortField], a[sortField], isNumber, sortConfig.stringLocaleCompare));
         }
 
-        if (sortConfig.emptyToBottom) {
+        if (order === 'desc' || sortConfig.emptyToBottom) {
             targetDataSource = [...valueArr, ...emptyArr];
+        } else {
+            targetDataSource = [...emptyArr, ...valueArr];
         }
     }
     return targetDataSource;

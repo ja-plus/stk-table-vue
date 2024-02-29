@@ -239,7 +239,7 @@ const props = withDefaults(
         /** 列唯一键 */
         colKey?: UniqKeyProp;
         /** 空值展示文字 */
-        emptyCellText?: string;
+        emptyCellText?: string; //TODO: 支持传入方法
         /** 暂无数据兜底高度是否撑满 */
         noDataFull?: boolean;
         /** 是否展示暂无数据 */
@@ -321,6 +321,7 @@ const props = withDefaults(
         optimizeVue2Scroll: false,
         sortConfig: () => ({
             emptyToBottom: false,
+            stringLocaleCompare: true,
         }),
     },
 );

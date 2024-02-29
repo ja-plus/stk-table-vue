@@ -30,9 +30,9 @@ export function useHighlight({ props, tableContainer }: Params) {
      */
     const highlightRowStore = ref<Record<UniqKey, HighlightRowStore>>({});
 
-    const highlightFrom = Highlight_Color[props.theme].from;
-    const highlightTo = Highlight_Color[props.theme].to;
-    const highlightInter = computed(() => interpolateRgb(highlightFrom, highlightTo));
+    const highlightFrom = computed(() => Highlight_Color[props.theme].from);
+    const highlightTo = computed(() => Highlight_Color[props.theme].to);
+    const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
 
     /** 存放高亮行的key*/
     const highlightDimRowKeys = new Set<UniqKey>();

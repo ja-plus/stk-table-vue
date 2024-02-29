@@ -54,11 +54,11 @@ function handleSortChange(col, order, data, sortConfig) {
     tableSortStore.dataIndex = col.dataIndex;
     tableSortStore.order = order;
 }
+let count = dataSource.value.length;
 function addRow() {
     const random = Math.random() * 10;
-    // const random = 5.961156089701742;
-    // const random = 2.1578705526783915;
     const item = {
+        id: count++,
         name: 'name' + random,
         age: random,
         gender: random,
@@ -67,7 +67,7 @@ function addRow() {
     // dataSource.value = [...dataSource.value];
     dataSource.value = insertToOrderedArray(tableSortStore, item, dataSource.value);
     nextTick(() => {
-        stkTable.value.setHighlightDimRow([item.age]);
+        stkTable.value.setHighlightDimRow([item.id]);
     });
 }
 </script>
