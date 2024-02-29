@@ -179,6 +179,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
         const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
+        // 先更新滚动条位置记录，其他地方可能有依赖。(stripe 时ArrowUp/Down滚动依赖)
+        virtualScroll.value.scrollTop = sTop;
         let startIndex = Math.floor(sTop / rowHeight);
         if (props.stripe) {
             startIndex -= 1; //预渲染1行
@@ -214,13 +216,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             // 向上滚动
             Object.assign(virtualScroll.value, {
                 startIndex,
-                offsetTop,
                 endIndex,
-                scrollTop: sTop,
+                offsetTop,
             });
         } else {
             // vue2向下滚动优化
-            Object.assign(virtualScroll.value, { endIndex, scrollTop: sTop });
+            virtualScroll.value.endIndex = endIndex;
             vue2ScrollYTimeout = window.setTimeout(() => {
                 Object.assign(virtualScroll.value, { startIndex, offsetTop });
             }, VUE2_SCROLL_TIMEOUT_MS);
