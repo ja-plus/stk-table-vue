@@ -4,9 +4,9 @@ import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { getColWidth } from './utils';
 
-type Options = {
+type Options<T extends Record<string, any>> = {
     props: any;
-    tableHeaderLast: Ref<StkTableColumn<any>[]>;
+    tableHeaders: Ref<StkTableColumn<T>[][]>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
@@ -17,33 +17,52 @@ type Options = {
  * @param param0
  * @returns
  */
-export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight }: Options) {
+export function useFixedStyle<DT extends Record<string, any>>({
+    props,
+    tableHeaders,
+    virtualScroll,
+    virtualScrollX,
+    virtualX_on,
+    virtualX_offsetRight,
+}: Options<DT>) {
     const fixedColumnsPositionStore = computed(() => {
-        const store: Record<string, number> = {};
-        const cols = [...tableHeaderLast.value];
-        let left = 0;
-        /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
-        let rightStartIndex = 0;
-        for (let i = 0; i < cols.length; i++) {
-            const item = cols[i];
-            if (item.fixed === 'left') {
-                store[item.dataIndex] = left;
-                left += getColWidth(item);
+        /** dataIndex 作为唯一标识 */
+        const colKeyStore: Record<string, number> = {};
+        /** 没有dataIndex 的多级表头列，使用对象引用做标识 */
+        const refStore = new WeakMap<StkTableColumn<DT>, number>();
+        tableHeaders.value.forEach(cols => {
+            let left = 0;
+            /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
+            let rightStartIndex = 0;
+            for (let i = 0; i < cols.length; i++) {
+                const item = cols[i];
+                if (item.fixed === 'left') {
+                    if (item.dataIndex) {
+                        colKeyStore[item.dataIndex] = left;
+                    } else {
+                        refStore.set(item, left);
+                    }
+                    left += getColWidth(item);
+                }
+                if (!rightStartIndex && item.fixed === 'right') {
+                    rightStartIndex = i;
+                }
             }
-            if (!rightStartIndex && item.fixed === 'right') {
-                rightStartIndex = i;
+            let right = 0;
+            for (let i = cols.length - 1; i >= rightStartIndex; i--) {
+                const item = cols[i];
+                if (item.fixed === 'right') {
+                    if (item.dataIndex) {
+                        colKeyStore[item.dataIndex] = right;
+                    } else {
+                        refStore.set(item, right);
+                    }
+                    right += getColWidth(item);
+                }
             }
-        }
-        let right = 0;
-        for (let i = cols.length - 1; i >= rightStartIndex; i--) {
-            const item = cols[i];
-            if (item.fixed === 'right') {
-                store[item.dataIndex] = right;
-                right += getColWidth(item);
-            }
-        }
+        });
 
-        return store;
+        return { refStore, colKeyStore };
     });
     /**
      * 固定列的style
@@ -52,9 +71,10 @@ export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualSc
      * @param depth 深度。tagType = 1时使用
      */
     function getFixedStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth = 0): CSSProperties {
-        const { fixed, dataIndex } = col;
+        const { fixed } = col;
         const isFixedLeft = fixed === 'left';
         const style: CSSProperties = {};
+        const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
         // TD
         if (Is_Legacy_Mode) {
             style.position = 'relative';
@@ -83,10 +103,11 @@ export function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualSc
                     style.right = `${virtualX_offsetRight.value}px`;
                 }
             } else {
+                const lr = (col.dataIndex ? colKeyStore[col.dataIndex] : refStore.get(col)) + 'px';
                 if (isFixedLeft) {
-                    style.left = fixedColumnsPositionStore.value[dataIndex] + 'px';
+                    style.left = lr;
                 } else {
-                    style.right = fixedColumnsPositionStore.value[dataIndex] + 'px';
+                    style.right = lr;
                 }
             }
         }

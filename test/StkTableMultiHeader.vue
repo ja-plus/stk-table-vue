@@ -10,7 +10,6 @@ const columns = [
             {
                 dataIndex: 'lv2',
                 title: 'Lv 2',
-                width: '100px',
                 children: [
                     { dataIndex: 'lv2_1', title: 'Lv 2.1', width: '100px' },
                     { dataIndex: 'lv2_2', title: 'Lv 2.2', width: '100px' },
@@ -34,6 +33,7 @@ const columns = [
     {
         dataIndex: 'right',
         title: 'Right',
+        fixed: 'right',
         children: [
             { dataIndex: 'right-1', title: 'right-1', width: '50px', fixed: 'right' },
             { dataIndex: 'right-2', title: 'right-2', width: '100px', fixed: 'right' },

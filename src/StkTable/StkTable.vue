@@ -200,7 +200,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { howDeepTheHeader, tableSort } from './utils';
+import { getColWidth, howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -473,9 +473,9 @@ const {
     updateVirtualScrollX,
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
-const { getFixedStyle } = useFixedStyle({
+const { getFixedStyle } = useFixedStyle<DT>({
     props,
-    tableHeaderLast,
+    tableHeaders,
     virtualScroll,
     virtualScrollX,
     virtualX_on,
@@ -588,6 +588,7 @@ function dealColumns() {
         }
         /** 所有子节点数量 */
         let allChildrenLen = 0;
+        let allChildrenWidthSum = 0;
         arr.forEach(col => {
             // TODO: 继承父节点固定列配置
             // if (parentFixed) {
@@ -597,10 +598,15 @@ function dealColumns() {
             col.__PARENT__ = parent;
             /** 一列中的子节点数量 */
             let colChildrenLen = 1;
+            /** 多级表头的父节点宽度，通过叶子节点宽度计算得到 */
+            let colWidth = 0;
             if (col.children) {
                 // DFS
-                colChildrenLen = flat(col.children, col, depth + 1 /* , col.fixed */);
+                const [len, widthSum] = flat(col.children, col, depth + 1 /* , col.fixed */);
+                colChildrenLen = len;
+                colWidth = widthSum;
             } else {
+                colWidth = getColWidth(col);
                 tempHeaderLast.push(col); // 没有children的列作为colgroup
             }
             // 回溯
@@ -613,9 +619,13 @@ function dealColumns() {
             if (colSpan !== 1) {
                 col.colSpan = colSpan;
             }
+            if (!col.width) {
+                col.width = colWidth + 'px';
+            }
             allChildrenLen += colChildrenLen;
+            allChildrenWidthSum += colWidth;
         });
-        return allChildrenLen;
+        return [allChildrenLen, allChildrenWidthSum];
     }
 
     flat(copyColumn, null);

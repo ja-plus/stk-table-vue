@@ -4,6 +4,7 @@
 * fix: `PageUp`/`PageDown` 按键翻页会大于一页的情况。
 * fix: `props.stripe` 时，虚拟滚动导致斑马纹错位问题。
 * fix: `props.theme` 改变时，高亮颜色有误的问题。
+* fix: 多级表头，父级表头设置 `fixed` 也可以固定。
 * change: `insertToOrderedArray` 新增参数 `sortConfig`对齐 `tableSort` 方法。
 
 ## 0.2.3
