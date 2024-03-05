@@ -105,7 +105,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'Name',
         dataIndex: 'name',
         fixed: 'left',
-        width: '200px',
+        width: 200,
         headerClassName: 'my-th',
         className: 'my-td',
         sorter: true,
@@ -117,7 +117,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'Age',
         dataIndex: 'age',
         fixed: 'left',
-        width: '100px', // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
+        width: 100, // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
         sorter(data, { order, column }) {
             // console.log(data, order, column);
             if (order === 'desc') return data.sort((a, b) => b.age - a.age);
@@ -131,7 +131,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'Gender',
         dataIndex: 'gender',
         // fixed: 'right',
-        width: '150px',
+        width: 150,
         // minWidth: '150px',
         sorter: true,
         sortType: 'number', // 指定为数字排序
@@ -139,7 +139,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     {
         title: 'Email(sortBy:name)',
         dataIndex: 'email',
-        width: '150px',
+        width: 150,
         sorter: true,
         sortField: 'name',
     },
@@ -151,13 +151,13 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     {
         dataIndex: 'R',
         title: 'R',
-        width: '50px',
+        width: 50,
         fixed: 'right',
     },
     {
         title: 'Operate',
         dataIndex: 'Operate',
-        width: '150px',
+        width: 150,
         fixed: 'right',
         // customCell() {
         //     return (

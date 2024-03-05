@@ -184,8 +184,18 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
 
 /** 获取列宽 */
 export function getColWidth(col: StkTableColumn<any> | null): number {
-    if (typeof col?.width === 'number') {
-        return Math.floor(col.width ?? Default_Col_Width);
+    const val = col?.width ?? Default_Col_Width;
+    if (typeof val === 'number') {
+        return Math.floor(val);
     }
-    return parseInt(col?.width ?? Default_Col_Width);
+    return parseInt(val);
+}
+
+/** 获取列宽配置。用于支持列宽配置数字 */
+export function getColWidthStr(col: StkTableColumn<any> | null | undefined, key: 'width' | 'minWidth' | 'maxWidth' = 'width') {
+    const val = col?.[key];
+    if (typeof val === 'number') {
+        return val + 'px';
+    }
+    return val;
 }

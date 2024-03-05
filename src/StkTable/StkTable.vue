@@ -200,7 +200,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { getColWidth, howDeepTheHeader, tableSort } from './utils';
+import { getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -619,7 +619,8 @@ function dealColumns() {
             if (colSpan !== 1) {
                 col.colSpan = colSpan;
             }
-            if (!col.width) {
+            if (!props.fixedMode && col.width === void 0) {
+                // 列赋值默认列宽。由于有些场景不需要设置width。
                 col.width = colWidth + 'px';
             }
             allChildrenLen += colChildrenLen;
@@ -657,17 +658,17 @@ function colKeyGen(col: StkTableColumn<DT>) {
 
 /** 获取列宽度样式 */
 function getColWidthStyle(col: StkTableColumn<DT>) {
+    const width = getColWidthStr(col);
+    const minWidth = getColWidthStr(col, 'minWidth');
+    const maxWidth = getColWidthStr(col, 'maxWidth');
     const style: CSSProperties = {
-        width: col.width,
-        minWidth: col.minWidth,
-        maxWidth: col.maxWidth,
+        width,
+        minWidth: minWidth ?? width,
+        maxWidth: maxWidth ?? width,
     };
     if (props.colResizable) {
-        style.minWidth = col.width;
-        style.maxWidth = col.width;
-    } else {
-        style.minWidth = col.minWidth === void 0 ? col.width : col.minWidth;
-        style.maxWidth = col.maxWidth === void 0 ? col.width : col.maxWidth;
+        style.minWidth = width;
+        style.maxWidth = width;
     }
 
     return style;
