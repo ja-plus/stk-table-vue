@@ -198,6 +198,8 @@ export type StkProps = {
      */
     stringLocaleCompare?: boolean;
   },
+  /** 隐藏头部title。可传入dataIndex数组 */
+  hideHeaderTitle?: boolean | string[];
 };
 ```
 #### Emits
@@ -413,3 +415,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
   ]
 </script>
 ```
+
+## Special Example
+### 鼠标悬浮表头时，不展示title
+* 将 `StkTableColumn` 中的 `title` 字段置为 "" 空字符串。这样th中就没有title了。
+* 使用 `StkTableColumn` 中的 `customHeaderCell` 属性中，自定义表头渲染。

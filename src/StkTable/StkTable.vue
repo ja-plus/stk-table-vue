@@ -61,7 +61,7 @@
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
                         :colspan="col.colSpan"
                         :style="getCellStyle(1, col, rowIndex)"
-                        :title="col.title"
+                        :title="getHeaderTitle(col)"
                         :class="[
                             col.sorter ? 'sortable' : '',
                             col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
@@ -287,6 +287,8 @@ const props = withDefaults(
         optimizeVue2Scroll?: boolean;
         /** 排序配置 */
         sortConfig?: SortConfig<DT>;
+        /** 隐藏头部title。可传入dataIndex数组 */
+        hideHeaderTitle?: boolean | string[];
     }>(),
     {
         width: '',
@@ -323,6 +325,7 @@ const props = withDefaults(
             emptyToBottom: false,
             stringLocaleCompare: true,
         }),
+        hideHeaderTitle: false,
     },
 );
 
@@ -696,6 +699,15 @@ function getCellStyle(tagType: 1 | 2, col: StkTableColumn<DT>, depth?: number): 
     }
 
     return style;
+}
+
+/** th title */
+function getHeaderTitle(col: StkTableColumn<DT>): string {
+    // 不展示title
+    if (props.hideHeaderTitle === true || (Array.isArray(props.hideHeaderTitle) && props.hideHeaderTitle.includes(col.dataIndex))) {
+        return '';
+    }
+    return col.title || '';
 }
 
 /**
