@@ -1,4 +1,4 @@
-## 0.2.4
+## 0.2.5
 * feature: `props.sortConfig.stringLocaleCompare` 控制是否使用 Array.prototype.localeCompare 排序字符串。默认true。
 * feature: `props.hideHeaderTitle` 控制th的 title 属性是否展示。
 * optimize: 优化虚拟滚动 pageSize(减去表头高度)

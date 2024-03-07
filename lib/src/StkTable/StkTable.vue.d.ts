@@ -13,7 +13,7 @@ declare function setCurrentRow(rowKey: string, option?: {
  * 设置表头排序状态
  * @param dataIndex 列字段
  * @param order 正序倒序
- * @param option.sortOption 指定排序参数
+ * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  */
@@ -113,6 +113,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
     sortConfig?: SortConfig<any> | undefined;
+    /** 隐藏头部title。可传入dataIndex数组 */
+    hideHeaderTitle?: boolean | string[] | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -146,7 +148,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     optimizeVue2Scroll: boolean;
     sortConfig: () => {
         emptyToBottom: boolean;
+        stringLocaleCompare: boolean;
     };
+    hideHeaderTitle: boolean;
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -269,6 +273,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
     sortConfig?: SortConfig<any> | undefined;
+    /** 隐藏头部title。可传入dataIndex数组 */
+    hideHeaderTitle?: boolean | string[] | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -302,7 +308,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     optimizeVue2Scroll: boolean;
     sortConfig: () => {
         emptyToBottom: boolean;
+        stringLocaleCompare: boolean;
     };
+    hideHeaderTitle: boolean;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -353,6 +361,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
     sortConfig: SortConfig<any>;
+    hideHeaderTitle: boolean | string[];
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;

@@ -1,10 +1,11 @@
 import { Ref, ShallowRef } from 'vue';
 import { StkTableColumn } from './types';
 type Option<DT extends Record<string, any>> = {
-    tableContainer: Ref<HTMLElement | undefined>;
     props: any;
+    tableContainer: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: Ref<StkTableColumn<DT>[]>;
+    tableHeaders: Ref<StkTableColumn<DT>[][]>;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -41,7 +42,7 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainer, dataSourceCopy, tableHeaderLast }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainer, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;

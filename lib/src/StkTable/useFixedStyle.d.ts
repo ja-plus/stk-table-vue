@@ -1,9 +1,9 @@
 import { CSSProperties, Ref } from 'vue';
 import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
-type Options = {
+type Options<T extends Record<string, any>> = {
     props: any;
-    tableHeaderLast: Ref<StkTableColumn<any>[]>;
+    tableHeaders: Ref<StkTableColumn<T>[][]>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
@@ -14,7 +14,7 @@ type Options = {
  * @param param0
  * @returns
  */
-export declare function useFixedStyle({ props, tableHeaderLast, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight }: Options): {
+export declare function useFixedStyle<DT extends Record<string, any>>({ props, tableHeaders, virtualScroll, virtualScrollX, virtualX_on, virtualX_offsetRight, }: Options<DT>): {
     getFixedStyle: (tagType: 1 | 2, col: StkTableColumn<any>, depth?: number) => CSSProperties;
 };
 export {};

@@ -8,7 +8,7 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './type
  * @param newItem 要插入的数据
  * @param targetArray 表格数据
  */
-export declare function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[]): T[];
+export declare function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[], sortConfig?: SortConfig<T>): T[];
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
@@ -25,3 +25,5 @@ export declare function tableSort<T extends Record<string, any>>(sortOption: Sor
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
 /** 获取列宽 */
 export declare function getColWidth(col: StkTableColumn<any> | null): number;
+/** 获取列宽配置。用于支持列宽配置数字 */
+export declare function getColWidthStr(col: StkTableColumn<any> | null | undefined, key?: 'width' | 'minWidth' | 'maxWidth'): string | undefined;
