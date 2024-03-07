@@ -41,6 +41,7 @@ repo:
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
 * [x] `props.emptyCellText` 支持传入函数。
+* [] 支持配置高亮参数。
 
 
 ## Usage
@@ -345,6 +346,30 @@ export type StkTableColumn<T extends Record<string, any>> = {
 };
 ```
 
+
+### StkTableColumn.SortConfig
+```ts
+/** 排序配置 */
+export type SortConfig<T extends Record<string, any>> = {
+    /** 空值始终排在列表末尾 */
+    emptyToBottom?: boolean;
+    /**
+     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
+     * 类似onMounted时，调用setSorter点了下表头。
+     */
+    defaultSort?: {
+        dataIndex: keyof T;
+        order: Order;
+        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        silent?: boolean;
+    };
+    /**
+     * string排序是否使用 String.prototype.localCompare
+     * 默认true (&$&应该false)
+     */
+    stringLocaleCompare?: boolean;
+};
+```
 
 ### Example
 ```vue

@@ -567,8 +567,8 @@ onMounted(() => {
 /** 处理默认排序 */
 function dealDefaultSorter() {
     if (!props.sortConfig.defaultSort) return;
-    const { dataIndex, order } = props.sortConfig.defaultSort;
-    setSorter(dataIndex as string, order);
+    const { dataIndex, order, silent } = { silent: false, ...props.sortConfig.defaultSort };
+    setSorter(dataIndex as string, order, { force: false, silent });
 }
 
 /**
@@ -868,8 +868,9 @@ function setCurrentRow(rowKey: string, option = { silent: false }) {
  * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
+ * @param option.force 是否触发排序-默认true
  */
-function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortOption<DT>; silent?: boolean; sort?: boolean } = {}) {
+function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
     const newOption = { silent: true, sortOption: null, sort: true, ...option };
     sortCol.value = dataIndex;
     sortOrderIndex.value = sortSwitchOrder.indexOf(order);
@@ -877,7 +878,7 @@ function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortO
     if (newOption.sort && dataSourceCopy.value?.length) {
         // 如果表格有数据，则进行排序
         const column = newOption.sortOption || tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
-        if (column) onColumnSort(column, false, { force: true, emit: !newOption.silent });
+        if (column) onColumnSort(column, false, { force: option.force ?? true, emit: !newOption.silent });
         else console.warn('Can not find column by dataIndex:', sortCol.value);
     }
     return dataSourceCopy.value;

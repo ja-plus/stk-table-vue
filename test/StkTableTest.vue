@@ -28,12 +28,18 @@
             ref="stkTable"
             v-bind="props"
             v-model:columns="columns"
+            row-key="name"
             :row-height="28"
             :header-row-height="36"
             :hide-header-title="['age']"
             :empty-cell-text="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
             fixed-col-shadow
-            row-key="name"
+            :sort-config="{
+                defaultSort: {
+                    dataIndex: 'age',
+                    order: 'desc',
+                },
+            }"
             :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"
             @current-change="onCurrentChange"
@@ -84,7 +90,7 @@ import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import DragResize from './utils/DragResize';
 import DocTable from './DocTable.vue';
-import StkTableHugeData from './StkTableHugeData.vue';
+// import StkTableHugeData from './StkTableHugeData.vue';
 
 const props = ref({
     rowKey: 'name',
@@ -192,16 +198,16 @@ let intervals: number[] = [];
 onMounted(() => {
     new DragResize(stkTableParent.value);
     const interval1 = window.setInterval(() => {
-        stkTable.value.setHighlightDimCell('add1', 'age');
+        stkTable.value.setHighlightDimCell('1add', 'age');
     }, 2500);
     const interval2 = window.setInterval(() => {
-        stkTable.value.setHighlightDimCell('add2', 'gender');
+        stkTable.value.setHighlightDimCell('2add', 'gender');
     }, 2000);
     const interval3 = window.setInterval(() => {
-        stkTable.value.setHighlightDimRow(['add0']);
+        stkTable.value.setHighlightDimRow(['0add']);
     }, 3000);
     const interval4 = window.setInterval(() => {
-        stkTable.value.setHighlightDimRow(['add3']);
+        stkTable.value.setHighlightDimRow(['3add']);
     }, 1500);
     intervals.push(interval1, interval2, interval3, interval4);
 });

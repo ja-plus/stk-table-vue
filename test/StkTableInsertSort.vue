@@ -13,10 +13,7 @@
             sort-remote
             :sort-config="{
                 emptyToBottom: true,
-                defaultSort: {
-                    dataIndex: 'age',
-                    order: 'desc',
-                },
+                defaultSort: defaultSort,
             }"
             @sort-change="handleSortChange"
         ></StkTable>
@@ -44,9 +41,12 @@ const dataSource = ref(
         };
     }),
 );
+const defaultSort = {
+    dataIndex: 'age',
+    order: 'desc',
+};
 const tableSortStore = {
-    dataIndex: '',
-    order: '',
+    ...defaultSort,
     // sortType: 'number',
 };
 function handleSortChange(col, order, data, sortConfig) {

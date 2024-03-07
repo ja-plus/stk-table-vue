@@ -77,10 +77,15 @@ export type UniqKeyProp = UniqKey | UniqKeyFun;
 export type SortConfig<T extends Record<string, any>> = {
     /** 空值始终排在列表末尾 */
     emptyToBottom?: boolean;
-    /** 默认排序（1.初始化时触发 2.排序方向为null时触发) */
+    /**
+     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
+     * 类似onMounted时，调用setSorter点了下表头。
+     */
     defaultSort?: {
         dataIndex: keyof T;
         order: Order;
+        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        silent?: boolean;
     };
     /**
      * string排序是否使用 String.prototype.localCompare

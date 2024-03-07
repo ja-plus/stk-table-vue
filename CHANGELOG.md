@@ -1,5 +1,7 @@
 ## 0.2.6
 * feature: `props.emptyCellText` 支持传入函数 ({row, col}) => string;
+* feature: `props.sortConfig.defaultSort` 添加 `silent` 属性，表示是否触发 `sort-change`事件。默认false。表示触发。
+    - fix: 此配置用于修复defaultSort不触发sort-change 的问题。
 
 ## 0.2.5
 * feature: `props.sortConfig.stringLocaleCompare` 控制是否使用 Array.prototype.localeCompare 排序字符串。默认true。
