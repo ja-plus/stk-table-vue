@@ -40,7 +40,7 @@ repo:
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
-* [] `props.emptyCellText` 支持传入函数。
+* [x] `props.emptyCellText` 支持传入函数。
 
 
 ## Usage
@@ -135,7 +135,7 @@ export type StkProps = {
   /** 列唯一键 */
   colKey?: UniqKeyProp;
   /** 空值展示文字 */
-  emptyCellText?: string;
+  emptyCellText?: string | ((option: { row: DT; col: StkTableColumn<DT> }) => string);
   /** 暂无数据兜底高度是否撑满 */
   noDataFull?: boolean;
   /** 是否展示暂无数据 */
@@ -148,8 +148,6 @@ export type StkProps = {
   showOverflow?: boolean;
   /** 是否增加行hover class */
   showTrHoverClass?: boolean;
-  /** 表头是否可拖动 */
-  headerDrag?: boolean;
   /** 表头是否可拖动。支持回调函数。 */
   headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
   /**

@@ -31,6 +31,7 @@
             :row-height="28"
             :header-row-height="36"
             :hide-header-title="['age']"
+            :empty-cell-text="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
             fixed-col-shadow
             row-key="name"
             :auto-resize="() => console.log('auto-resize')"

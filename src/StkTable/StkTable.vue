@@ -167,7 +167,7 @@
                     >
                         <component :is="col.customCell" v-if="col.customCell" :col="col" :row="row" :cell-value="row[col.dataIndex]" />
                         <div v-else class="table-cell-wrapper" :title="row[col.dataIndex]">
-                            {{ row[col.dataIndex] ?? emptyCellText }}
+                            {{ row[col.dataIndex] ?? getEmptyCellText(col, row) }}
                         </div>
                     </td>
                 </tr>
@@ -189,7 +189,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { CSSProperties, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
 import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -239,7 +239,7 @@ const props = withDefaults(
         /** 列唯一键 */
         colKey?: UniqKeyProp;
         /** 空值展示文字 */
-        emptyCellText?: string; //TODO: 支持传入方法
+        emptyCellText?: string | ((option: { row: DT; col: StkTableColumn<DT> }) => string);
         /** 暂无数据兜底高度是否撑满 */
         noDataFull?: boolean;
         /** 是否展示暂无数据 */
@@ -258,7 +258,7 @@ const props = withDefaults(
          * 给行附加className<br>
          * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
          */
-        rowClassName?: (row: any, i: number) => string;
+        rowClassName?: (row: DT, i: number) => string;
         /**
          * 列宽是否可拖动<br>
          * **不要设置**列minWidth，**必须**设置width<br>
@@ -445,6 +445,15 @@ const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
+
+/** 空单元格占位字符 */
+const getEmptyCellText = computed(() => {
+    if (typeof props.emptyCellText === 'string') {
+        return () => props.emptyCellText;
+    } else {
+        return (col: StkTableColumn<DT>, row: DT) => (props.emptyCellText as any)({ row, col });
+    }
+});
 
 /** rowKey缓存 */
 const rowKeyGenStore = new WeakMap();
