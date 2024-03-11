@@ -16,9 +16,11 @@ declare function setCurrentRow(rowKey: string, option?: {
  * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
+ * @param option.force 是否触发排序-默认true
  */
 declare function setSorter(dataIndex: string, order: Order, option?: {
     sortOption?: SortOption<DT>;
+    force?: boolean;
     silent?: boolean;
     sort?: boolean;
 }): any[];
@@ -65,7 +67,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 列唯一键 */
     colKey?: UniqKeyProp | undefined;
     /** 空值展示文字 */
-    emptyCellText?: string | undefined;
+    emptyCellText?: string | ((option: {
+        row: any;
+        col: StkTableColumn<any>;
+    }) => string) | undefined;
     /** 暂无数据兜底高度是否撑满 */
     noDataFull?: boolean | undefined;
     /** 是否展示暂无数据 */
@@ -225,7 +230,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 列唯一键 */
     colKey?: UniqKeyProp | undefined;
     /** 空值展示文字 */
-    emptyCellText?: string | undefined;
+    emptyCellText?: string | ((option: {
+        row: any;
+        col: StkTableColumn<any>;
+    }) => string) | undefined;
     /** 暂无数据兜底高度是否撑满 */
     noDataFull?: boolean | undefined;
     /** 是否展示暂无数据 */
@@ -345,7 +353,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     dataSource: any[];
     rowKey: UniqKeyProp;
     colKey: UniqKeyProp;
-    emptyCellText: string;
+    emptyCellText: string | ((option: {
+        row: any;
+        col: StkTableColumn<any>;
+    }) => string);
     noDataFull: boolean;
     showNoData: boolean;
     sortRemote: boolean;
