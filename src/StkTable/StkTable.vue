@@ -67,7 +67,7 @@
                             col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
                             showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
-                            getFixedColClass(col),
+                            fixedColClassMap.get(colKeyGen(col)),
                         ]"
                         @click="
                             e => {
@@ -161,7 +161,7 @@
                         v-for="col in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
-                        :class="[col.className, showOverflow ? 'text-overflow' : '', getFixedColClass(col)]"
+                        :class="[col.className, showOverflow ? 'text-overflow' : '', fixedColClassMap.get(colKeyGen(col))]"
                         :style="getCellStyle(2, col)"
                         @click="e => onCellClick(e, row, col)"
                     >
@@ -513,8 +513,9 @@ useKeyboardArrowScroll(tableContainer, {
 });
 
 /** 固定列处理 */
-const { getFixedColClass, dealFixedColShadow, updateFixedShadow } = useFixedCol({
+const { fixedColClassMap, dealFixedColShadow, updateFixedShadow } = useFixedCol({
     props,
+    colKeyGen,
     tableContainer,
     tableHeaderLast,
 });

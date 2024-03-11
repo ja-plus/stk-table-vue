@@ -34,12 +34,6 @@
             :hide-header-title="['age']"
             :empty-cell-text="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
             fixed-col-shadow
-            :sort-config="{
-                defaultSort: {
-                    dataIndex: 'age',
-                    order: 'desc',
-                },
-            }"
             :auto-resize="() => console.log('auto-resize')"
             :data-source="dataSource"
             @current-change="onCurrentChange"

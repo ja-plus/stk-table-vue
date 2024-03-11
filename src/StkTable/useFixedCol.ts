@@ -1,8 +1,9 @@
-import { ref, Ref } from 'vue';
+import { computed, ref, Ref, shallowRef } from 'vue';
 import { StkTableColumn } from './types';
 
 type Params<T extends Record<string, any>> = {
     props: any;
+    colKeyGen: (col: StkTableColumn<T>) => string;
     tableHeaderLast: Ref<StkTableColumn<T>[]>;
     tableContainer: Ref<HTMLDivElement | undefined>;
 };
@@ -11,7 +12,7 @@ type Params<T extends Record<string, any>> = {
  * 固定列处理
  * @returns
  */
-export function useFixedCol<DT extends Record<string, any>>({ props, tableHeaderLast, tableContainer }: Params<DT>) {
+export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaderLast, tableContainer }: Params<DT>) {
     /** 固定列阴影 */
     const fixedShadow = ref<{
         /** 是否展示左侧固定列阴影 */
@@ -23,12 +24,31 @@ export function useFixedCol<DT extends Record<string, any>>({ props, tableHeader
         showR: false,
     });
     /** 保存需要出现阴影的列 */
-    let fixedShadowCols: StkTableColumn<DT>[] = [];
+    const fixedShadowCols = shallowRef<StkTableColumn<DT>[]>([]);
+
+    const fixedColClassMap = computed(() => {
+        const colMap = new Map();
+        props.columns.forEach((col: any) => {
+            const { showR, showL } = fixedShadow.value;
+            const showShadow =
+                props.fixedColShadow &&
+                col.fixed &&
+                ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
+                fixedShadowCols.value.includes(col);
+            const classObj = {
+                'fixed-cell': col.fixed,
+                ['fixed-cell--' + col.fixed]: col.fixed,
+                'fixed-cell--shadow': showShadow,
+            };
+            colMap.set(colKeyGen(col), classObj);
+        });
+        return colMap;
+    });
 
     /** 处理固定列阴影 */
     function dealFixedColShadow() {
         if (!props.fixedColShadow) return;
-        fixedShadowCols = [];
+        fixedShadowCols.value = [];
         // 找到最右边的固定列 findLast
         let lastLeftCol = null;
         for (let i = tableHeaderLast.value.length - 1; i >= 0; i--) {
@@ -42,7 +62,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, tableHeader
         let node: any = { __PARENT__: lastLeftCol };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
-                fixedShadowCols.push(node);
+                fixedShadowCols.value.push(node);
             }
         }
 
@@ -51,25 +71,9 @@ export function useFixedCol<DT extends Record<string, any>>({ props, tableHeader
         node = { __PARENT__: lastRightCol };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
-                fixedShadowCols.push(node);
+                fixedShadowCols.value.push(node);
             }
         }
-    }
-
-    /** 固定列class */
-    function getFixedColClass(col: StkTableColumn<DT>): Record<string, boolean> {
-        const { showR, showL } = fixedShadow.value;
-        const showShadow =
-            props.fixedColShadow &&
-            col.fixed &&
-            ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
-            fixedShadowCols.includes(col);
-        const classObj = {
-            'fixed-cell': col.fixed,
-            ['fixed-cell--' + col.fixed]: col.fixed,
-            'fixed-cell--shadow': showShadow,
-        };
-        return classObj;
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
@@ -82,7 +86,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, tableHeader
 
     return {
         /** 固定列class */
-        getFixedColClass,
+        fixedColClassMap,
         /** 处理固定列阴影 */
         dealFixedColShadow,
         /** 滚动条变化时，更新需要展示阴影的列 */
