@@ -76,6 +76,9 @@ export function useHighlight({ props, tableContainer }: Params) {
                     }
                 });
 
+                // $*$ 兼容vue2响应
+                highlightRowStore.value = { ...highlightRowStore.value };
+
                 if (highlightDimRowKeys.size > 0) {
                     // 还有高亮的行,则下一次循环
                     recursion();
