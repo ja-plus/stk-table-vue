@@ -670,6 +670,7 @@ function colKeyGen(col: StkTableColumn<DT>) {
     return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];
 }
 
+/** 单元格样式 */
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
@@ -684,10 +685,8 @@ const cellStyleMap = computed(() => {
                 style.minWidth = width;
                 style.maxWidth = width;
             } else {
-                const minWidth = getColWidthStr(col, 'minWidth');
-                const maxWidth = getColWidthStr(col, 'maxWidth');
-                style.minWidth = minWidth ?? width;
-                style.maxWidth = maxWidth ?? width;
+                style.minWidth = getColWidthStr(col, 'minWidth') ?? width;
+                style.maxWidth = getColWidthStr(col, 'maxWidth') ?? width;
             }
 
             const thStyle = {

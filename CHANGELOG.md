@@ -2,6 +2,7 @@
 * feature: `setHighlightDimRow` 新增第二参数 options.useCss 表示强制使用css 关键帧动画。否则在虚拟滚动情况下，默认js计算高亮。
 * fix: 高亮开始值不应设置为空。
 * optimize: 优化 `getFixedColClass`。
+* optimize: 优化 `getCellStyle`。
 
 ## 0.2.6
 * feature: `props.emptyCellText` 支持传入函数 ({row, col}) => string;
