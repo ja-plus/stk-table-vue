@@ -3,7 +3,7 @@
     "version": "0.2.5",
     "description": "Simple realtime virtual table for vue3&vue2.7",
     "main": "./lib/stk-table-vue.js",
-    "types": "./lib/StkTable/index.d.ts",
+    "types": "./lib/src/StkTable/index.d.ts",
     "packageManager": "pnpm@8.14.3",
     "directories": {
         "test": "test"
