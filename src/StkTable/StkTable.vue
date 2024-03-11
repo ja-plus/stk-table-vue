@@ -485,14 +485,13 @@ const {
     updateVirtualScrollX,
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
-const { getFixedStyle, fixedStyleMap } = useFixedStyle<DT>({
+const { getFixedStyle } = useFixedStyle<DT>({
     props,
     tableHeaders,
     virtualScroll,
     virtualScrollX,
     virtualX_on,
     virtualX_offsetRight,
-    colKeyGen,
 });
 
 /**
@@ -674,7 +673,7 @@ function colKeyGen(col: StkTableColumn<DT>) {
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
-    tableHeaders.value.forEach(cols => {
+    tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
             const colKey = colKeyGen(col);
             const width = getColWidthStr(col);
@@ -691,12 +690,12 @@ const cellStyleMap = computed(() => {
 
             const thStyle = {
                 ...style,
-                ...fixedStyleMap.value[TagType.TH].get(colKey),
+                ...getFixedStyle(TagType.TH, col, depth),
                 textAlign: col.headerAlign,
             };
             const tdStyle = {
                 ...style,
-                ...fixedStyleMap.value[TagType.TD].get(colKey),
+                ...getFixedStyle(TagType.TD, col, depth),
                 textAlign: col.align,
             };
 

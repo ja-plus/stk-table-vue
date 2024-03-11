@@ -11,7 +11,6 @@ type Options<T extends Record<string, any>> = {
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
     virtualX_offsetRight: Ref<number>;
-    colKeyGen: (col: StkTableColumn<T>) => string;
 };
 /**
  * 固定列style
@@ -25,7 +24,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
     virtualScrollX,
     virtualX_on,
     virtualX_offsetRight,
-    colKeyGen,
 }: Options<DT>) {
     const fixedColumnsPositionStore = computed(() => {
         /** dataIndex 作为唯一标识 */
@@ -67,23 +65,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
         return { refStore, colKeyStore };
     });
 
-    const fixedStyleMap = computed(() => {
-        const thMap = new Map();
-        const tdMap = new Map();
-        tableHeaders.value.forEach((cols, depth) => {
-            cols.forEach(col => {
-                const colKey = colKeyGen(col);
-                const thStyle = getFixedStyle(TagType.TH, col, depth);
-                const tdStyle = getFixedStyle(TagType.TD, col, depth);
-                thMap.set(colKey, thStyle);
-                tdMap.set(colKey, tdStyle);
-            });
-        });
-        return {
-            [TagType.TH]: thMap,
-            [TagType.TD]: tdMap,
-        };
-    });
     /**
      * 固定列的style
      * @param tagType 1-th 2-td
@@ -137,7 +118,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
     }
 
     return {
-        fixedStyleMap,
         getFixedStyle,
     };
 }
