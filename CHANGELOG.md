@@ -1,6 +1,10 @@
+## 0.2.8
+* fix: 多级表头 `fixedColClassMap` 异常
+
 ## 0.2.7
 * feature: `setHighlightDimRow` 新增第二参数 options.useCss 表示强制使用css 关键帧动画。否则在虚拟滚动情况下，默认js计算高亮。
 * optimize: 使用 computed 优化 `getCellStyle`。
+* optimize: 使用 computed 优化 `getFixedColClass`。
 * fix: 高亮开始值不应设置为空。
 
 ## 0.2.6

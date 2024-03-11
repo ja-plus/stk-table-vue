@@ -4,6 +4,7 @@ import { StkTableColumn } from './types';
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: (col: StkTableColumn<T>) => string;
+    tableHeaders: Ref<StkTableColumn<T>[][]>;
     tableHeaderLast: Ref<StkTableColumn<T>[]>;
     tableContainer: Ref<HTMLDivElement | undefined>;
 };
@@ -12,7 +13,7 @@ type Params<T extends Record<string, any>> = {
  * 固定列处理
  * @returns
  */
-export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaderLast, tableContainer }: Params<DT>) {
+export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaders, tableHeaderLast, tableContainer }: Params<DT>) {
     /** 固定列阴影 */
     const fixedShadow = ref<{
         /** 是否展示左侧固定列阴影 */
@@ -28,19 +29,21 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
 
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
-        props.columns.forEach((col: any) => {
-            const { showR, showL } = fixedShadow.value;
-            const showShadow =
-                props.fixedColShadow &&
-                col.fixed &&
-                ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
-                fixedShadowCols.value.includes(col);
-            const classObj = {
-                'fixed-cell': col.fixed,
-                ['fixed-cell--' + col.fixed]: col.fixed,
-                'fixed-cell--shadow': showShadow,
-            };
-            colMap.set(colKeyGen(col), classObj);
+        tableHeaders.value.forEach(cols => {
+            cols.forEach(col => {
+                const { showR, showL } = fixedShadow.value;
+                const showShadow =
+                    props.fixedColShadow &&
+                    col.fixed &&
+                    ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
+                    fixedShadowCols.value.includes(col);
+                const classObj = {
+                    'fixed-cell': col.fixed,
+                    ['fixed-cell--' + col.fixed]: col.fixed,
+                    'fixed-cell--shadow': showShadow,
+                };
+                colMap.set(colKeyGen(col), classObj);
+            });
         });
         return colMap;
     });

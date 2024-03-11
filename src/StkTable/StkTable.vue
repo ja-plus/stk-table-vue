@@ -517,6 +517,7 @@ const { fixedColClassMap, dealFixedColShadow, updateFixedShadow } = useFixedCol(
     props,
     colKeyGen,
     tableContainer,
+    tableHeaders,
     tableHeaderLast,
 });
 
