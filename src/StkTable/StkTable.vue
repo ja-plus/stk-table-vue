@@ -60,7 +60,7 @@
                         :draggable="isHeaderDraggable(col) ? 'true' : 'false'"
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
                         :colspan="col.colSpan"
-                        :style="getCellStyle(1, col, rowIndex)"
+                        :style="cellStyleMap[TagType.TH].get(colKeyGen(col))"
                         :title="getHeaderTitle(col)"
                         :class="[
                             col.sorter ? 'sortable' : '',
@@ -135,7 +135,7 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left" style="padding: 0"></td>
                     <template v-if="fixedMode && headless">
-                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="getCellStyle(2, col)"></td
+                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td
                     ></template>
                 </tr>
                 <tr
@@ -162,7 +162,7 @@
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
                         :class="[col.className, showOverflow ? 'text-overflow' : '', fixedColClassMap.get(colKeyGen(col))]"
-                        :style="getCellStyle(2, col)"
+                        :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                         @click="e => onCellClick(e, row, col)"
                     >
                         <component :is="col.customCell" v-if="col.customCell" :col="col" :row="row" :cell-value="row[col.dataIndex]" />
@@ -191,7 +191,7 @@
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { Default_Row_Height } from './const';
-import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -485,13 +485,14 @@ const {
     updateVirtualScrollX,
 } = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
-const { getFixedStyle } = useFixedStyle<DT>({
+const { getFixedStyle, fixedStyleMap } = useFixedStyle<DT>({
     props,
     tableHeaders,
     virtualScroll,
     virtualScrollX,
     virtualX_on,
     virtualX_offsetRight,
+    colKeyGen,
 });
 
 /**
@@ -669,47 +670,46 @@ function colKeyGen(col: StkTableColumn<DT>) {
     return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];
 }
 
-/** 获取列宽度样式 */
-function getColWidthStyle(col: StkTableColumn<DT>) {
-    const width = getColWidthStr(col);
-    const minWidth = getColWidthStr(col, 'minWidth');
-    const maxWidth = getColWidthStr(col, 'maxWidth');
-    const style: CSSProperties = {
-        width,
-        minWidth: minWidth ?? width,
-        maxWidth: maxWidth ?? width,
+const cellStyleMap = computed(() => {
+    const thMap = new Map();
+    const tdMap = new Map();
+    tableHeaders.value.forEach(cols => {
+        cols.forEach(col => {
+            const colKey = colKeyGen(col);
+            const width = getColWidthStr(col);
+            const style: CSSProperties = {
+                width,
+            };
+            if (props.colResizable) {
+                style.minWidth = width;
+                style.maxWidth = width;
+            } else {
+                const minWidth = getColWidthStr(col, 'minWidth');
+                const maxWidth = getColWidthStr(col, 'maxWidth');
+                style.minWidth = minWidth ?? width;
+                style.maxWidth = maxWidth ?? width;
+            }
+
+            const thStyle = {
+                ...style,
+                ...fixedStyleMap.value[TagType.TH].get(colKey),
+                textAlign: col.headerAlign,
+            };
+            const tdStyle = {
+                ...style,
+                ...fixedStyleMap.value[TagType.TD].get(colKey),
+                textAlign: col.align,
+            };
+
+            thMap.set(colKey, thStyle);
+            tdMap.set(colKey, tdStyle);
+        });
+    });
+    return {
+        [TagType.TH]: thMap,
+        [TagType.TD]: tdMap,
     };
-    if (props.colResizable) {
-        style.minWidth = width;
-        style.maxWidth = width;
-    }
-
-    return style;
-}
-
-/**
- * 性能优化，缓存style行内样式
- *
- * FIXME: col变化时仍从缓存拿style。watch col?
- * @param tagType 1-th 2-td
- * @param col
- * @param depth 表头层级
- */
-function getCellStyle(tagType: 1 | 2, col: StkTableColumn<DT>, depth?: number): CSSProperties {
-    const style: CSSProperties = {
-        ...getColWidthStyle(col),
-        ...getFixedStyle(tagType, col, depth),
-    };
-    if (tagType === 1) {
-        // TH
-        style.textAlign = col.headerAlign;
-    } else if (tagType === 2) {
-        // TD
-        style.textAlign = col.align;
-    }
-
-    return style;
-}
+});
 
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {

@@ -1,6 +1,6 @@
 import { CSSProperties, Ref, computed } from 'vue';
 import { Is_Legacy_Mode } from './const';
-import { StkTableColumn } from './types';
+import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { getColWidth } from './utils';
 
@@ -11,6 +11,7 @@ type Options<T extends Record<string, any>> = {
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
     virtualX_offsetRight: Ref<number>;
+    colKeyGen: (col: StkTableColumn<T>) => string;
 };
 /**
  * 固定列style
@@ -24,6 +25,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
     virtualScrollX,
     virtualX_on,
     virtualX_offsetRight,
+    colKeyGen,
 }: Options<DT>) {
     const fixedColumnsPositionStore = computed(() => {
         /** dataIndex 作为唯一标识 */
@@ -64,24 +66,42 @@ export function useFixedStyle<DT extends Record<string, any>>({
 
         return { refStore, colKeyStore };
     });
+
+    const fixedStyleMap = computed(() => {
+        const thMap = new Map();
+        const tdMap = new Map();
+        tableHeaders.value.forEach((cols, depth) => {
+            cols.forEach(col => {
+                const colKey = colKeyGen(col);
+                const thStyle = getFixedStyle(TagType.TH, col, depth);
+                const tdStyle = getFixedStyle(TagType.TD, col, depth);
+                thMap.set(colKey, thStyle);
+                tdMap.set(colKey, tdStyle);
+            });
+        });
+        return {
+            [TagType.TH]: thMap,
+            [TagType.TD]: tdMap,
+        };
+    });
     /**
      * 固定列的style
      * @param tagType 1-th 2-td
      * @param col
      * @param depth 深度。tagType = 1时使用
      */
-    function getFixedStyle(tagType: 1 | 2, col: StkTableColumn<any>, depth = 0): CSSProperties {
+    function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties {
         const { fixed } = col;
         const isFixedLeft = fixed === 'left';
         const style: CSSProperties = {};
         const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
-        // TD
+
         if (Is_Legacy_Mode) {
             style.position = 'relative';
         } else {
             style.position = 'sticky';
         }
-        if (tagType === 1) {
+        if (tagType === TagType.TH) {
             // TH
             if (Is_Legacy_Mode) {
                 style.top = virtualScroll.value.scrollTop + depth * props.rowHeight + 'px';
@@ -90,6 +110,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
             }
             style.zIndex = isFixedLeft ? '5' : '4'; // 保证固定列高于其他单元格
         } else {
+            // TD
             style.zIndex = isFixedLeft ? '3' : '2';
         }
 
@@ -116,6 +137,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
     }
 
     return {
+        fixedStyleMap,
         getFixedStyle,
     };
 }
