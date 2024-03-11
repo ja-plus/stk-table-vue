@@ -202,13 +202,13 @@ onMounted(() => {
     }, 2500);
     const interval2 = window.setInterval(() => {
         stkTable.value.setHighlightDimCell('2add', 'gender');
-    }, 2000);
+    }, 1200);
     const interval3 = window.setInterval(() => {
         stkTable.value.setHighlightDimRow(['0add']);
     }, 3000);
     const interval4 = window.setInterval(() => {
         stkTable.value.setHighlightDimRow(['3add']);
-    }, 1500);
+    }, 1000);
     intervals.push(interval1, interval2, interval3, interval4);
 });
 

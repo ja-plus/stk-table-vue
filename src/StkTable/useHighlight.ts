@@ -114,16 +114,17 @@ export function useHighlight({ props, tableContainer }: Params) {
     /**
      * 高亮一行
      * @param rowKeyValues
+     * @param option.useCss 虚拟滚动时，高亮由js控制。如果仍想使用css 关键帧控制，则配置此项
      */
-    function setHighlightDimRow(rowKeyValues: UniqKey[]) {
+    function setHighlightDimRow(rowKeyValues: UniqKey[], option: { useCss?: boolean } = {}) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
-        if (props.virtual) {
+        if (props.virtual && !option.useCss) {
             // --------虚拟滚动用js计算颜色渐变的高亮方案
             const nowTs = Date.now(); // 重置渐变进度
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
                 highlightRowStore.value[rowKeyValue] = {
-                    bgc: '',
+                    bgc: highlightFrom.value,
                     bgc_progress: 0,
                     bgc_progress_ms: nowTs,
                 };
