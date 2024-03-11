@@ -3,6 +3,7 @@ import { StkTableColumn } from './types';
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: (col: StkTableColumn<T>) => string;
+    tableHeaders: Ref<StkTableColumn<T>[][]>;
     tableHeaderLast: Ref<StkTableColumn<T>[]>;
     tableContainer: Ref<HTMLDivElement | undefined>;
 };
@@ -10,7 +11,7 @@ type Params<T extends Record<string, any>> = {
  * 固定列处理
  * @returns
  */
-export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaderLast, tableContainer }: Params<DT>): {
+export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaders, tableHeaderLast, tableContainer }: Params<DT>): {
     /** 固定列class */
     fixedColClassMap: import("vue").ComputedRef<Map<any, any>>;
     /** 处理固定列阴影 */
