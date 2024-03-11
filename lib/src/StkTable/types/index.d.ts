@@ -94,4 +94,9 @@ export type SortConfig<T extends Record<string, any>> = {
      */
     stringLocaleCompare?: boolean;
 };
+/** th td类型 */
+export declare const enum TagType {
+    TH = 0,
+    TD = 1
+}
 export {};

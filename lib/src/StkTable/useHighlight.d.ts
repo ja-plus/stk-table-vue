@@ -20,7 +20,9 @@ type HighlightRowStore = {
  */
 export declare function useHighlight({ props, tableContainer }: Params): {
     highlightRowStore: Ref<Record<UniqKey, HighlightRowStore>>;
-    setHighlightDimRow: (rowKeyValues: UniqKey[]) => void;
+    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
+        useCss?: boolean;
+    }) => void;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
 };
 export {};

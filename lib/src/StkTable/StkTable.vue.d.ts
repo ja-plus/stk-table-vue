@@ -168,7 +168,9 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
     /** 设置高亮渐暗行 */
-    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[]) => void;
+    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
+        useCss?: boolean | undefined;
+    }) => void;
     /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
     /** 获取当前排序状态 */
