@@ -185,23 +185,23 @@ const dataSource = shallowRef<any>(
 
 let scrollTimeout = 0;
 
-const stkTable = ref();
+const stkTable = ref<InstanceType<typeof StkTable>>();
 const stkTableParent = ref();
 
 let intervals: number[] = [];
 onMounted(() => {
     new DragResize(stkTableParent.value);
     const interval1 = window.setInterval(() => {
-        stkTable.value.setHighlightDimCell('1add', 'age');
+        stkTable.value?.setHighlightDimCell('1add', 'age');
     }, 2500);
     const interval2 = window.setInterval(() => {
-        stkTable.value.setHighlightDimCell('2add', 'gender');
+        stkTable.value?.setHighlightDimCell('2add', 'gender');
     }, 1200);
     const interval3 = window.setInterval(() => {
-        stkTable.value.setHighlightDimRow(['0add']);
+        stkTable.value?.setHighlightDimRow(['0add'], { useCss: true });
     }, 3000);
     const interval4 = window.setInterval(() => {
-        stkTable.value.setHighlightDimRow(['3add']);
+        stkTable.value?.setHighlightDimRow(['3add'], { useCss: true });
     }, 1000);
     intervals.push(interval1, interval2, interval3, interval4);
 });

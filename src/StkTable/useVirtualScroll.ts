@@ -239,12 +239,16 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         let offsetLeft = 0;
 
         let colWidthSum = 0;
+        let leftColWidthSum = 0;
         for (let colIndex = 0; colIndex < headerLength; colIndex++) {
             startIndex++;
             const col = tableHeaderLast.value[colIndex];
-            // fixed left 不进入计算列宽
-            if (col.fixed === 'left') continue;
             const colWidth = getColWidth(col);
+            // fixed left 不进入计算列宽
+            if (col.fixed === 'left') {
+                leftColWidthSum += colWidth;
+                continue;
+            }
             colWidthSum += colWidth;
             // 列宽（非固定列）加到超过scrollLeft的时候，表示startIndex从上一个开始下标
             if (colWidthSum >= sLeft) {
@@ -255,13 +259,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
         // -----
         colWidthSum = 0;
+        const containerWidth = virtualScrollX.value.containerWidth - leftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLast.value[colIndex];
             colWidthSum += getColWidth(col);
             // 列宽大于容器宽度则停止
-            if (colWidthSum >= virtualScrollX.value.containerWidth) {
-                endIndex = colIndex + 1; // TODO:预渲染的列数
+            if (colWidthSum >= containerWidth) {
+                endIndex = colIndex + 1; // 由于slice[start,end)，要加1
                 break;
             }
         }
