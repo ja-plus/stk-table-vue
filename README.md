@@ -12,7 +12,9 @@ repo:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
 
 ## Feature TODO:
-* [x] 高亮行，单元格。
+* [x] 高亮行，单元格。使用css keyframe实现。
+  - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css keyframe实现 。
+  - [] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
@@ -29,19 +31,19 @@ repo:
   - [x] 基本表头点击排序。
   - [x] 支持配置 `null` | `undefined` 永远排最后。
   - [] 支持配置 string 使用 `String.prototype.localCompare` 排序。
-* 多级表头。
+* [x] 多级表头。
   - [x] 支持最多`2级`表头。
   - [x] 支持更多级表头。
   - [] 横向虚拟滚动。
 * [x] 支持table-layout: fixed 配置。
-* 鼠标悬浮在表格上，键盘滚动虚拟表格。
+* [x] 鼠标悬浮在表格上，键盘滚动虚拟表格。
   - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
   - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
 * [x] `props.emptyCellText` 支持传入函数。
-* [] 支持配置高亮参数。
+
 
 
 ## Usage
