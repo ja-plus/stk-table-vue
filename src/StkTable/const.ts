@@ -1,18 +1,23 @@
-export const Default_Col_Width = '100';
+export const DEFAULT_COL_WIDTH = '100';
 
-export const Default_Table_Height = 100;
-export const Default_Table_Width = 200;
-export const Default_Row_Height = 28;
+export const DEFAULT_TABLE_HEIGHT = 100;
+export const DEFAULT_TABLE_WIDTH = 200;
+export const DEFAULT_ROW_HEIGHT = 28;
 
 /** 高亮背景色 */
-export const Highlight_Color = {
+export const HIGHLIGHT_COLOR = {
     light: { from: '#71a2fd', to: '#fff' },
     dark: { from: '#1e4c99', to: '#181c21' },
 };
 /** 高亮持续时间 */
-export const Highlight_Duration = 2000;
+export const HIGHLIGHT_DURATION = 2000;
 /** 高亮变更频率 */
-export const Highlight_Color_Change_Freq = 100;
+export const HIGHLIGHT_FREQ = 100;
+
+/** 高亮行class */
+export const HIGHLIGHT_ROW_CLASS = 'highlight-row';
+/** 高连单元格class */
+export const HIGHLIGHT_CELL_CLASS = 'highlight-cell';
 
 let _chromeVersion = 0;
 try {
@@ -24,4 +29,4 @@ try {
     console.error('Cannot get Chrome version', e);
 }
 /** 是否兼容低版本模式 */
-export const Is_Legacy_Mode = _chromeVersion < 56;
+export const IS_LEGACY_MODE = _chromeVersion < 56;

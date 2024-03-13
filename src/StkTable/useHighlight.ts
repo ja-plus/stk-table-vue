@@ -1,10 +1,10 @@
 import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed, ref } from 'vue';
-import { Highlight_Color, Highlight_Color_Change_Freq, Highlight_Duration } from './const';
-import { UniqKey } from './types';
+import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS } from './const';
+import { HighlightConfig, UniqKey } from './types';
 
 type Params = {
-    props: { theme: 'light' | 'dark'; virtual: boolean; dataSource: any[] };
+    props: any;
     tableContainer: Ref<HTMLElement | undefined>;
 };
 
@@ -15,23 +15,28 @@ type HighlightRowStore = {
     bgc_progress: number;
 };
 
-/** 高亮行class */
-const HIGHLIGHT_ROW_CLASS = 'highlight-row';
-/** 高连单元格class */
-const HIGHLIGHT_CELL_CLASS = 'highlight-cell';
-
 /**
  * 高亮单元格，行
  * row中新增_bgc_progress_ms 属性控制高亮状态,_bgc控制颜色
  */
 export function useHighlight({ props, tableContainer }: Params) {
+    const config: HighlightConfig = props.highlightConfig;
     /**
      * 高亮行记录 key-rowKey, value-obj
      */
     const highlightRowStore = ref<Record<UniqKey, HighlightRowStore>>({});
-
-    const highlightFrom = computed(() => Highlight_Color[props.theme].from);
-    const highlightTo = computed(() => Highlight_Color[props.theme].to);
+    /** 持续时间 */
+    const duration = config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION;
+    /** 频率 */
+    const frequency = config.fps ? 1000 / config.fps : HIGHLIGHT_FREQ;
+    const highlightColor = {
+        light: Object.assign(HIGHLIGHT_COLOR.light, config.color?.light),
+        dark: Object.assign(HIGHLIGHT_COLOR.dark, config.color?.dark),
+    };
+    /** 高亮开始 */
+    const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
+    /** 高亮结束 */
+    const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
     const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
 
     /** 存放高亮行的key*/
@@ -67,7 +72,7 @@ export function useHighlight({ props, tableContainer }: Params) {
                     //   }
                     const highlightItem = highlightRowStore.value[rowKeyValue];
                     /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-                    const progress = (nowTs - highlightItem.bgc_progress_ms) / Highlight_Duration;
+                    const progress = (nowTs - highlightItem.bgc_progress_ms) / duration;
                     if (0 < progress && progress < 1) {
                         highlightItem.bgc = highlightInter.value(progress);
                     } else {
@@ -86,39 +91,46 @@ export function useHighlight({ props, tableContainer }: Params) {
                     // 没有则停止循环
                     calcHighlightDimLoop = false;
                 }
-            }, Highlight_Color_Change_Freq);
+            }, frequency);
         };
         recursion();
     }
 
-    /** 高亮一个单元格 */
-    function setHighlightDimCell(rowKeyValue: string, dataIndex: string) {
+    /**
+     *  高亮一个单元格
+     * @param rowKeyValue 一行的key
+     * @param dataIndex 列key
+     * @param option.className 高亮类名
+     */
+    function setHighlightDimCell(rowKeyValue: string, dataIndex: string, option: { className?: string } = {}) {
         // TODO: 支持动态计算高亮颜色。不易实现。需记录每一个单元格的颜色情况。
         const cellEl = tableContainer.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
+        const opt = { className: HIGHLIGHT_CELL_CLASS, ...option };
         if (!cellEl) return;
-        if (cellEl.classList.contains(HIGHLIGHT_CELL_CLASS)) {
-            cellEl.classList.remove(HIGHLIGHT_CELL_CLASS);
+        if (cellEl.classList.contains(opt.className)) {
+            cellEl.classList.remove(opt.className);
             void cellEl.offsetHeight; // 通知浏览器重绘
         }
-        cellEl.classList.add(HIGHLIGHT_CELL_CLASS);
+        cellEl.classList.add(opt.className);
         window.clearTimeout(highlightDimCellsTimeout.get(rowKeyValue));
         highlightDimCellsTimeout.set(
             rowKeyValue,
             window.setTimeout(() => {
-                cellEl.classList.remove(HIGHLIGHT_CELL_CLASS);
+                cellEl.classList.remove(opt.className);
                 highlightDimCellsTimeout.delete(rowKeyValue);
-            }, Highlight_Duration),
+            }, duration),
         );
     }
 
     /**
      * 高亮一行
-     * @param rowKeyValues
+     * @param rowKeyValues 行唯一键的数组
      * @param option.useCss 虚拟滚动时，高亮由js控制。如果仍想使用css 关键帧控制，则配置此项
      */
-    function setHighlightDimRow(rowKeyValues: UniqKey[], option: { useCss?: boolean } = {}) {
+    function setHighlightDimRow(rowKeyValues: UniqKey[], option: { useCss?: boolean; className?: string } = {}) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
-        if (props.virtual && !option.useCss) {
+        const { className, useCss } = { className: HIGHLIGHT_ROW_CLASS, useCss: false, ...option };
+        if (props.virtual && !useCss) {
             // --------虚拟滚动用js计算颜色渐变的高亮方案
             const nowTs = Date.now(); // 重置渐变进度
             for (let i = 0; i < rowKeyValues.length; i++) {
@@ -141,8 +153,8 @@ export function useHighlight({ props, tableContainer }: Params) {
                 const rowKeyValue = rowKeyValues[i];
                 const rowEl = tableContainer.value?.querySelector<HTMLTableRowElement>(`[data-row-key="${rowKeyValue}"]`);
                 if (!rowEl) continue;
-                if (rowEl.classList.contains(HIGHLIGHT_ROW_CLASS)) {
-                    rowEl.classList.remove(HIGHLIGHT_ROW_CLASS);
+                if (rowEl.classList.contains(className)) {
+                    rowEl.classList.remove(className);
                     needRepaint = true;
                 }
                 rowElTemp.push(rowEl);
@@ -151,20 +163,21 @@ export function useHighlight({ props, tableContainer }: Params) {
                 highlightDimRowsTimeout.set(
                     rowKeyValue,
                     window.setTimeout(() => {
-                        rowEl.classList.remove(HIGHLIGHT_ROW_CLASS);
+                        rowEl.classList.remove(className);
                         highlightDimRowsTimeout.delete(rowKeyValue); // 回收内存
-                    }, Highlight_Duration),
+                    }, duration),
                 );
             }
             if (needRepaint) {
                 void tableContainer.value?.offsetWidth; //强制浏览器重绘
             }
-            rowElTemp.forEach(el => el.classList.add(HIGHLIGHT_ROW_CLASS)); // 统一添加动画
+            rowElTemp.forEach(el => el.classList.add(className)); // 统一添加动画
         }
     }
 
     return {
         highlightRowStore,
+        highlightFrom,
         setHighlightDimRow,
         setHighlightDimCell,
     };

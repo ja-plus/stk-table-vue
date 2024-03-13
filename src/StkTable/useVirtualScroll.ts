@@ -1,5 +1,5 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
-import { Default_Table_Height, Default_Table_Width } from './const';
+import { DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { StkTableColumn } from './types';
 import { getColWidth } from './utils';
 
@@ -145,7 +145,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (typeof height === 'number') {
             containerHeight = height;
         } else {
-            containerHeight = offsetHeight || Default_Table_Height;
+            containerHeight = offsetHeight || DEFAULT_TABLE_HEIGHT;
         }
         const { headless, headerRowHeight } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
@@ -162,7 +162,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (!props.virtualX) return;
         const { offsetWidth, scrollLeft } = tableContainer.value || {};
         // scrollTo(null, 0);
-        virtualScrollX.value.containerWidth = offsetWidth || Default_Table_Width;
+        virtualScrollX.value.containerWidth = offsetWidth || DEFAULT_TABLE_WIDTH;
         updateVirtualScrollX(scrollLeft);
     }
     /**

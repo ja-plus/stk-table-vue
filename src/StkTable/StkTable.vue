@@ -15,12 +15,16 @@
             'border-body-v': props.bordered === 'body-v',
             stripe: props.stripe,
         }"
-        :style="
+        :style="[
             virtual && {
                 '--row-height': virtualScroll.rowHeight + 'px',
                 '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
-            }
-        "
+            },
+            {
+                '--highlight-color': props.highlightConfig.color && highlightFrom,
+                '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
+            },
+        ]"
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
@@ -190,8 +194,8 @@
  * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { Default_Row_Height } from './const';
-import { Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
+import { DEFAULT_ROW_HEIGHT } from './const';
+import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -289,6 +293,8 @@ const props = withDefaults(
         sortConfig?: SortConfig<DT>;
         /** 隐藏头部title。可传入dataIndex数组 */
         hideHeaderTitle?: boolean | string[];
+        /** 高亮配置 */
+        highlightConfig?: HighlightConfig;
     }>(),
     {
         width: '',
@@ -298,7 +304,7 @@ const props = withDefaults(
         maxWidth: '',
         headless: false,
         theme: 'light',
-        rowHeight: Default_Row_Height,
+        rowHeight: DEFAULT_ROW_HEIGHT,
         headerRowHeight: null,
         virtual: false,
         virtualX: false,
@@ -326,6 +332,7 @@ const props = withDefaults(
             stringLocaleCompare: true,
         }),
         hideHeaderTitle: false,
+        highlightConfig: () => ({}),
     },
 );
 
@@ -497,7 +504,7 @@ const { getFixedStyle } = useFixedStyle<DT>({
 /**
  * 高亮行，高亮单元格
  */
-const { highlightRowStore, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer });
+const { highlightRowStore, highlightFrom, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer });
 
 if (props.autoResize) {
     useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs: 200 });

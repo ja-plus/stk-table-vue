@@ -101,6 +101,13 @@ const props = ref({
     noDataFull: true,
     headless: false,
     bordered: true,
+    highlightConfig: {
+        fps: 2,
+        // color: {
+        //     dark: { from: '#fff' },
+        // },
+        duration: 3,
+    },
 });
 const columns = shallowRef<StkTableColumn<any>[]>([
     {
@@ -198,12 +205,18 @@ onMounted(() => {
         stkTable.value?.setHighlightDimCell('2add', 'gender');
     }, 1200);
     const interval3 = window.setInterval(() => {
-        stkTable.value?.setHighlightDimRow(['0add'], { useCss: true });
+        stkTable.value?.setHighlightDimRow(['0add']);
     }, 3000);
     const interval4 = window.setInterval(() => {
         stkTable.value?.setHighlightDimRow(['3add'], { useCss: true });
     }, 1000);
-    intervals.push(interval1, interval2, interval3, interval4);
+    const interval5 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimRow(['5add'], { useCss: true, className: 'special-highlight-row' });
+    }, 1600);
+    const interval6 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('6add', 'name', { className: 'special-highlight-cell' });
+    }, 2300);
+    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6);
 });
 
 onBeforeUnmount(() => {
@@ -258,7 +271,7 @@ function onTableScroll(e, data) {
     }, 200);
 }
 function handleClearSorter() {
-    stkTable.value.resetSorter();
+    stkTable.value?.resetSorter();
 }
 function handleClearTableData() {
     dataSource.value = [];
@@ -319,7 +332,7 @@ function addRow(num = 1, unshift = false) {
 
     nextTick(() => {
         const rowKeys = tmpIndex.map(it => it.name);
-        stkTable.value.setHighlightDimRow(rowKeys);
+        stkTable.value?.setHighlightDimRow(rowKeys);
     });
 }
 function addColumn(num = 1) {
@@ -349,5 +362,21 @@ function deleteColumn(num = 1) {
     .stk-table {
         flex: 1;
     }
+}
+@keyframes my-highlight-row {
+    from {
+        background-color: #bd7201;
+    }
+}
+@keyframes my-highlight-cell {
+    from {
+        background-color: #5fa95f;
+    }
+}
+:deep(.special-highlight-row) {
+    animation: my-highlight-row 2s linear;
+}
+:deep(.special-highlight-cell) {
+    animation: my-highlight-cell 1s linear;
 }
 </style>

@@ -1,4 +1,6 @@
 ## 0.2.9
+* feature: 新增`props.highlightConfig` 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
+* feature: `highlightDimRow` `highlightDimCell` 方法增加参数`option.className` 用于自定义高亮类。
 * optimize: 横向虚拟滚动计算优化。在有左侧固定列时，横向虚拟区间范围缩小。
 
 ## 0.2.8

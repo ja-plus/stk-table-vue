@@ -14,7 +14,8 @@ repo:
 ## Feature TODO:
 * [x] 高亮行，单元格。使用css keyframe实现。
   - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css keyframe实现 。
-  - [] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
+  - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
+  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
@@ -55,8 +56,8 @@ import { StkTable } from 'stk-table-vue'
 import { ref } from 'vue'
 const stkTable = ref<InstanceType<typeof StkTable>>();
 // highlight
-stkTable.value.setHighlightDimRow([rowId]);// highlight row
-stkTable.value.setHighlightDimCell(rowId, colId) // highlight cell
+stkTable.value.setHighlightDimRow([rowId]，{useCss:false,className:'custom-class-name'});// highlight row
+stkTable.value.setHighlightDimCell(rowId, colId,{className:'custom-class-name'}) // highlight cell
 </script>
 
 <template>
@@ -201,6 +202,18 @@ export type StkProps = {
   },
   /** 隐藏头部title。可传入dataIndex数组 */
   hideHeaderTitle?: boolean | string[];
+  /** 高亮配置 */
+  highlightConfig?: {
+    /** 高亮持续时间(s) */
+    duration?: number;
+    /** 高亮背景色 */
+    color?: {
+        light?: { from: string; to: string };
+        dark?: { from: string; to: string };
+    };
+    /** 高亮帧率(虚拟滚动生效) */
+    fps?: number;
+  };
 };
 ```
 #### Emits

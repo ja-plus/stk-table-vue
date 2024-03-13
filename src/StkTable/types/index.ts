@@ -99,3 +99,16 @@ export const enum TagType {
     TH,
     TD,
 }
+
+/** 高亮配置 */
+export type HighlightConfig = {
+    /** 高亮持续时间(s) */
+    duration?: number;
+    /** 高亮背景色 */
+    color?: {
+        light?: { from: string; to: string };
+        dark?: { from: string; to: string };
+    };
+    /** 高亮帧率(虚拟滚动生效) */
+    fps?: number;
+};

@@ -23,6 +23,7 @@
     --bg-border-bottom: linear-gradient(0deg, var(--border-color) var(--border-width), transparent var(--border-width));
     --bg-border-left: linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
     --highlight-color: #71a2fd;
+    --highlight-duration: 2s;
     /* 斑马纹颜色*/
     --stripe-bgc: #fafafc;
 
@@ -211,7 +212,7 @@
             }
 
             &.highlight-cell {
-                animation: stk-table-dim 2s linear;
+                animation: stk-table-dim var(--highlight-duration) linear;
             }
 
             &.text-overflow {
@@ -351,7 +352,7 @@
 
                 /* td inherit tr bgc*/
                 &.highlight-row {
-                    animation: stk-table-dim 2s linear;
+                    animation: stk-table-dim var(--highlight-duration) linear;
                 }
 
                 /* &.highlight-row-transition {

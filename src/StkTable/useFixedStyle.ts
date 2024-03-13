@@ -1,5 +1,5 @@
 import { CSSProperties, Ref, computed } from 'vue';
-import { Is_Legacy_Mode } from './const';
+import { IS_LEGACY_MODE } from './const';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { getColWidth } from './utils';
@@ -77,14 +77,14 @@ export function useFixedStyle<DT extends Record<string, any>>({
         const style: CSSProperties = {};
         const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
 
-        if (Is_Legacy_Mode) {
+        if (IS_LEGACY_MODE) {
             style.position = 'relative';
         } else {
             style.position = 'sticky';
         }
         if (tagType === TagType.TH) {
             // TH
-            if (Is_Legacy_Mode) {
+            if (IS_LEGACY_MODE) {
                 style.top = virtualScroll.value.scrollTop + depth * props.rowHeight + 'px';
             } else {
                 style.top = depth * props.rowHeight + 'px';
@@ -96,7 +96,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
         }
 
         if (fixed === 'left' || fixed === 'right') {
-            if (Is_Legacy_Mode) {
+            if (IS_LEGACY_MODE) {
                 if (isFixedLeft) {
                     if (virtualX_on.value) style.left = virtualScrollX.value.scrollLeft - virtualScrollX.value.offsetLeft + 'px';
                     else style.left = virtualScrollX.value.scrollLeft + 'px';
