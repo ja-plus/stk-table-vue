@@ -216,7 +216,10 @@ onMounted(() => {
     const interval6 = window.setInterval(() => {
         stkTable.value?.setHighlightDimCell('6add', 'name', { className: 'special-highlight-cell' });
     }, 2300);
-    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6);
+    const interval7 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('7add', 'age', { className: 'special-highlight-cell-red' });
+    }, 2600);
+    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7);
 });
 
 onBeforeUnmount(() => {
@@ -373,10 +376,18 @@ function deleteColumn(num = 1) {
         background-color: #5fa95f;
     }
 }
+@keyframes my-highlight-cell-red {
+    from {
+        background-color: #b14949;
+    }
+}
 :deep(.special-highlight-row) {
     animation: my-highlight-row 2s linear;
 }
 :deep(.special-highlight-cell) {
     animation: my-highlight-cell 1s linear;
+}
+:deep(.special-highlight-cell-red) {
+    animation: my-highlight-cell-red 1.5s linear;
 }
 </style>
