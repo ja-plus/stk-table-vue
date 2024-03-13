@@ -14,8 +14,8 @@ repo:
 ## Feature TODO:
 * [x] 高亮行，单元格。使用css keyframe实现。
   - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css keyframe实现 。
-  - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
-  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。
+  - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。(`v0.2.9`)
+  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
@@ -42,8 +42,8 @@ repo:
   - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
-  - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。
-* [x] `props.emptyCellText` 支持传入函数。
+  - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
+* [x] `props.emptyCellText` 支持传入函数。(`v0.2.6`)
 
 
 

@@ -1,4 +1,4 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -120,6 +120,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     sortConfig?: SortConfig<any> | undefined;
     /** 隐藏头部title。可传入dataIndex数组 */
     hideHeaderTitle?: boolean | string[] | undefined;
+    /** 高亮配置 */
+    highlightConfig?: HighlightConfig | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -156,6 +158,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         stringLocaleCompare: boolean;
     };
     hideHeaderTitle: boolean;
+    highlightConfig: () => {};
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -166,10 +169,13 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置当前选中行 */
     setCurrentRow: typeof setCurrentRow;
     /** 设置高亮渐暗单元格 */
-    setHighlightDimCell: (rowKeyValue: string, dataIndex: string) => void;
+    setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
+        className?: string | undefined;
+    }) => void;
     /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
         useCss?: boolean | undefined;
+        className?: string | undefined;
     }) => void;
     /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
@@ -285,6 +291,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     sortConfig?: SortConfig<any> | undefined;
     /** 隐藏头部title。可传入dataIndex数组 */
     hideHeaderTitle?: boolean | string[] | undefined;
+    /** 高亮配置 */
+    highlightConfig?: HighlightConfig | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -321,6 +329,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         stringLocaleCompare: boolean;
     };
     hideHeaderTitle: boolean;
+    highlightConfig: () => {};
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -375,6 +384,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     optimizeVue2Scroll: boolean;
     sortConfig: SortConfig<any>;
     hideHeaderTitle: boolean | string[];
+    highlightConfig: HighlightConfig;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;

@@ -1,9 +1,9 @@
-export declare const Default_Col_Width = "100";
-export declare const Default_Table_Height = 100;
-export declare const Default_Table_Width = 200;
-export declare const Default_Row_Height = 28;
+export declare const DEFAULT_COL_WIDTH = "100";
+export declare const DEFAULT_TABLE_HEIGHT = 100;
+export declare const DEFAULT_TABLE_WIDTH = 200;
+export declare const DEFAULT_ROW_HEIGHT = 28;
 /** 高亮背景色 */
-export declare const Highlight_Color: {
+export declare const HIGHLIGHT_COLOR: {
     light: {
         from: string;
         to: string;
@@ -14,8 +14,12 @@ export declare const Highlight_Color: {
     };
 };
 /** 高亮持续时间 */
-export declare const Highlight_Duration = 2000;
+export declare const HIGHLIGHT_DURATION = 2000;
 /** 高亮变更频率 */
-export declare const Highlight_Color_Change_Freq = 100;
+export declare const HIGHLIGHT_FREQ = 100;
+/** 高亮行class */
+export declare const HIGHLIGHT_ROW_CLASS = "highlight-row";
+/** 高连单元格class */
+export declare const HIGHLIGHT_CELL_CLASS = "highlight-cell";
 /** 是否兼容低版本模式 */
-export declare const Is_Legacy_Mode: boolean;
+export declare const IS_LEGACY_MODE: boolean;
