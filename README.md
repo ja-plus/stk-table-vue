@@ -12,8 +12,8 @@ repo:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
 
 ## Feature TODO:
-* [x] 高亮行，单元格。使用css keyframe实现。
-  - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css keyframe实现 。
+* [x] 高亮行，单元格。使用css @keyframes实现。
+  - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css @keyframe实现 。
   - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。(`v0.2.9`)
   - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
 * [x] 虚拟滚动。
@@ -458,6 +458,9 @@ export type SortConfig<T extends Record<string, any>> = {
 ### 鼠标悬浮表头时，不展示title
 * 将 `StkTableColumn` 中的 `title` 字段置为 "" 空字符串。这样th中就没有title了。
 * 使用 `StkTableColumn` 中的 `customHeaderCell` 属性中，自定义表头渲染。
+### 虚拟滚动高亮性能
+* 虚拟滚动下，高亮默认由js计算背景实现。好处是滚动不影响高亮状态。
+* 在虚拟滚动下，高亮强制使用css @keyframes 实现动画。`setHighlightDimRow`/`setHighlightCellRow` 最后一个参数传入 `{useCss: true}` 即可。
 
 
 ## Other
