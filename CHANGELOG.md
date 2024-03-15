@@ -1,3 +1,7 @@
+## 0.2.10
+* optimize: 不适合的td z-index
+* optimize: `tr` 添加 `transform:translateZ(0)`, 用于提升合成层，提升高亮行性能。
+
 ## 0.2.9
 * feature: 新增`props.highlightConfig` 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。
 * feature: `highlightDimRow` `highlightDimCell` 方法增加参数`option.className` 用于自定义高亮类。

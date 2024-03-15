@@ -71,8 +71,10 @@ export function useFixedStyle<DT extends Record<string, any>>({
      * @param col
      * @param depth 深度。tagType = 1时使用
      */
-    function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties {
+    function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties | null {
         const { fixed } = col;
+        if (!fixed) return null;
+
         const isFixedLeft = fixed === 'left';
         const style: CSSProperties = {};
         const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
@@ -89,10 +91,10 @@ export function useFixedStyle<DT extends Record<string, any>>({
             } else {
                 style.top = depth * props.rowHeight + 'px';
             }
-            style.zIndex = isFixedLeft ? '5' : '4'; // 保证固定列高于其他单元格
+            style.zIndex = isFixedLeft ? '3' : '2'; // 保证固定列高于其他单元格
         } else {
             // TD
-            style.zIndex = isFixedLeft ? '3' : '2';
+            style.zIndex = isFixedLeft ? '2' : '1';
         }
 
         if (fixed === 'left' || fixed === 'right') {
