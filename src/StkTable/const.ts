@@ -30,3 +30,5 @@ try {
 }
 /** 是否兼容低版本模式 */
 export const IS_LEGACY_MODE = _chromeVersion < 56;
+
+export const STK_ID_PREFIX = 'stk';

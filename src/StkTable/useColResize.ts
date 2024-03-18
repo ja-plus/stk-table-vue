@@ -18,17 +18,17 @@ type ColResizeState<DT extends Record<string, any>> = {
 type Params<DT extends Record<string, any>> = {
     props: any;
     emits: any;
-    tableContainer: Ref<HTMLElement | undefined>;
+    tableContainerRef: Ref<HTMLElement | undefined>;
     tableHeaderLast: Ref<StkTableColumn<DT>[]>;
-    colResizeIndicator: Ref<HTMLElement | undefined>;
+    colResizeIndicatorRef: Ref<HTMLElement | undefined>;
     colKeyGen: (p: any) => string;
 };
 
 /** 列宽拖动 */
 export function useColResize<DT extends Record<string, any>>({
-    tableContainer,
+    tableContainerRef,
     tableHeaderLast,
-    colResizeIndicator,
+    colResizeIndicatorRef,
     props,
     emits,
     colKeyGen,
@@ -71,12 +71,12 @@ export function useColResize<DT extends Record<string, any>>({
      * @param isPrev 是否要上一列
      */
     function onThResizeMouseDown(e: MouseEvent, col: StkTableColumn<DT>, isPrev = false) {
-        if (!tableContainer.value) return;
+        if (!tableContainerRef.value) return;
         e.stopPropagation();
         e.preventDefault();
         const { clientX } = e;
-        const { scrollLeft, scrollTop } = tableContainer.value;
-        const { left } = tableContainer.value.getBoundingClientRect();
+        const { scrollLeft, scrollTop } = tableContainerRef.value;
+        const { left } = tableContainerRef.value.getBoundingClientRect();
         /** 列下标 */
         let colIndex = tableHeaderLast.value.findIndex(it => colKeyGen(it) === colKeyGen(col));
         if (isPrev) {
@@ -97,8 +97,8 @@ export function useColResize<DT extends Record<string, any>>({
         });
 
         // 展示指示线，更新其位置
-        if (colResizeIndicator.value) {
-            const style = colResizeIndicator.value.style;
+        if (colResizeIndicatorRef.value) {
+            const style = colResizeIndicatorRef.value.style;
             style.display = 'block';
             style.left = offsetTableX + 'px';
             style.top = scrollTop + 'px';
@@ -122,8 +122,8 @@ export function useColResize<DT extends Record<string, any>>({
         }
 
         const offsetTableX = startOffsetTableX + moveX;
-        if (!colResizeIndicator.value) return;
-        colResizeIndicator.value.style.left = offsetTableX + 'px';
+        if (!colResizeIndicatorRef.value) return;
+        colResizeIndicatorRef.value.style.left = offsetTableX + 'px';
     }
 
     /**
@@ -146,8 +146,8 @@ export function useColResize<DT extends Record<string, any>>({
         emits('update:columns', [...props.columns]);
 
         // 隐藏指示线
-        if (colResizeIndicator.value) {
-            const style = colResizeIndicator.value.style;
+        if (colResizeIndicatorRef.value) {
+            const style = colResizeIndicatorRef.value.style;
             style.display = 'none';
             style.left = '0';
             style.top = '0';

@@ -5,7 +5,7 @@ import { getColWidth } from './utils';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
-    tableContainer: Ref<HTMLElement | undefined>;
+    tableContainerRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: Ref<StkTableColumn<DT>[]>;
     tableHeaders: Ref<StkTableColumn<DT>[][]>;
@@ -52,7 +52,7 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
  */
 export function useVirtualScroll<DT extends Record<string, any>>({
     props,
-    tableContainer,
+    tableContainerRef,
     dataSourceCopy,
     tableHeaderLast,
     tableHeaders,
@@ -138,7 +138,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
      */
     function initVirtualScrollY(height?: number) {
         if (!virtual_on.value) return;
-        const { offsetHeight, scrollTop } = tableContainer.value || {};
+        const { offsetHeight, scrollTop } = tableContainerRef.value || {};
         const { rowHeight } = virtualScroll.value;
         let containerHeight: number;
         // FIXME: 可能多次获取offsetHeight 会导致浏览器频繁重排
@@ -160,7 +160,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     function initVirtualScrollX() {
         if (!props.virtualX) return;
-        const { offsetWidth, scrollLeft } = tableContainer.value || {};
+        const { offsetWidth, scrollLeft } = tableContainerRef.value || {};
         // scrollTo(null, 0);
         virtualScrollX.value.containerWidth = offsetWidth || DEFAULT_TABLE_WIDTH;
         updateVirtualScrollX(scrollLeft);

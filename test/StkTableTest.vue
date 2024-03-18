@@ -102,7 +102,7 @@ const props = ref({
     headless: false,
     bordered: true,
     highlightConfig: {
-        fps: 2,
+        fps: 30,
         // color: {
         //     dark: { from: '#fff' },
         // },

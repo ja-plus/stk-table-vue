@@ -1,6 +1,6 @@
 <template>
     <div
-        ref="tableContainer"
+        ref="tableContainerRef"
         class="stk-table"
         :class="{
             virtual,
@@ -35,7 +35,7 @@
           :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
         ></div>
       -->
-        <div v-show="colResizable" ref="colResizeIndicator" class="column-resize-indicator"></div>
+        <div v-show="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <!-- 表格主体 -->
         <table
             class="stk-table-main"
@@ -144,15 +144,13 @@
                 </tr>
                 <tr
                     v-for="(row, i) in virtual_dataSourcePart"
+                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : i)"
                     :key="rowKey ? rowKeyGen(row) : i"
                     :data-row-key="rowKey ? rowKeyGen(row) : i"
                     :class="{
                         active: rowKey ? rowKeyGen(row) === rowKeyGen(currentItem) : row === currentItem,
                         hover: rowKey ? rowKeyGen(row) === currentHover : row === currentHover,
                         [rowClassName(row, i)]: true,
-                    }"
-                    :style="{
-                        backgroundColor: highlightRowStore[rowKeyGen(row)]?.bgc,
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -204,10 +202,12 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
+import { createStkTableId, getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
+/** 自己生成实例id */
+const stkTableId = createStkTableId();
 /**
  * props 不能放在单独的文件中。vue2.7 compiler 构建会出错。
  */
@@ -414,8 +414,8 @@ const emits = defineEmits<{
 //     empty(): void;
 // }>();
 
-const tableContainer = ref<HTMLDivElement>();
-const colResizeIndicator = ref<HTMLDivElement>();
+const tableContainerRef = ref<HTMLDivElement>();
+const colResizeIndicatorRef = ref<HTMLDivElement>();
 /** 当前选中的一行*/
 const currentItem = ref<DT | null>(null);
 /**
@@ -469,8 +469,8 @@ const { isColResizing, onThResizeMouseDown } = useColResize({
     props,
     emits,
     colKeyGen,
-    colResizeIndicator,
-    tableContainer,
+    colResizeIndicatorRef,
+    tableContainerRef,
     tableHeaderLast,
 });
 
@@ -490,7 +490,7 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
-} = useVirtualScroll({ tableContainer, props, dataSourceCopy, tableHeaderLast, tableHeaders });
+} = useVirtualScroll({ tableContainerRef, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
 const { getFixedStyle } = useFixedStyle<DT>({
     props,
@@ -504,14 +504,14 @@ const { getFixedStyle } = useFixedStyle<DT>({
 /**
  * 高亮行，高亮单元格
  */
-const { highlightRowStore, highlightFrom, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, tableContainer });
+const { highlightFrom, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, stkTableId, tableContainerRef });
 
 if (props.autoResize) {
-    useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs: 200 });
+    useAutoResize({ tableContainerRef, initVirtualScroll, props, debounceMs: 200 });
 }
 
 /** 键盘箭头滚动 */
-useKeyboardArrowScroll(tableContainer, {
+useKeyboardArrowScroll(tableContainerRef, {
     props,
     scrollTo,
     virtualScroll,
@@ -523,7 +523,7 @@ useKeyboardArrowScroll(tableContainer, {
 const { fixedColClassMap, dealFixedColShadow, updateFixedShadow } = useFixedCol({
     props,
     colKeyGen,
-    tableContainer,
+    tableContainerRef,
     tableHeaders,
     tableHeaderLast,
 });
@@ -904,9 +904,9 @@ function resetSorter() {
  * @param left 传null 则不变动位置
  */
 function scrollTo(top: number | null = 0, left: number | null = 0) {
-    if (!tableContainer.value) return;
-    if (top !== null) tableContainer.value.scrollTop = top;
-    if (left !== null) tableContainer.value.scrollLeft = left;
+    if (!tableContainerRef.value) return;
+    if (top !== null) tableContainerRef.value.scrollTop = top;
+    if (left !== null) tableContainerRef.value.scrollLeft = left;
 }
 
 /** 获取当前状态的表格数据 */

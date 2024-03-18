@@ -2,7 +2,7 @@ import { Ref, onBeforeUnmount, onMounted, watch } from 'vue';
 
 type Options = {
     props: any;
-    tableContainer: Ref<HTMLElement | undefined>;
+    tableContainerRef: Ref<HTMLElement | undefined>;
     initVirtualScroll: () => void;
     /** 防抖延时 */
     debounceMs: number;
@@ -11,7 +11,7 @@ type Options = {
  * 窗口变化自动重置虚拟滚动
  * @param param0
  */
-export function useAutoResize({ tableContainer, initVirtualScroll, props, debounceMs }: Options) {
+export function useAutoResize({ tableContainerRef, initVirtualScroll, props, debounceMs }: Options) {
     let resizeObserver: ResizeObserver | null = null;
 
     onMounted(() => {
@@ -24,9 +24,9 @@ export function useAutoResize({ tableContainer, initVirtualScroll, props, deboun
 
     function initResizeObserver() {
         if (window.ResizeObserver) {
-            if (!tableContainer.value) {
+            if (!tableContainerRef.value) {
                 const watchDom = watch(
-                    () => tableContainer,
+                    () => tableContainerRef,
                     () => {
                         initResizeObserver();
                         watchDom();
@@ -35,7 +35,7 @@ export function useAutoResize({ tableContainer, initVirtualScroll, props, deboun
                 return;
             }
             resizeObserver = new ResizeObserver(resizeCallback);
-            resizeObserver.observe(tableContainer.value);
+            resizeObserver.observe(tableContainerRef.value);
         } else {
             window.addEventListener('resize', resizeCallback);
         }

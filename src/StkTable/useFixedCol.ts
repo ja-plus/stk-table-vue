@@ -6,14 +6,14 @@ type Params<T extends Record<string, any>> = {
     colKeyGen: (col: StkTableColumn<T>) => string;
     tableHeaders: Ref<StkTableColumn<T>[][]>;
     tableHeaderLast: Ref<StkTableColumn<T>[]>;
-    tableContainer: Ref<HTMLDivElement | undefined>;
+    tableContainerRef: Ref<HTMLDivElement | undefined>;
 };
 
 /**
  * 固定列处理
  * @returns
  */
-export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaders, tableHeaderLast, tableContainer }: Params<DT>) {
+export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaders, tableHeaderLast, tableContainerRef }: Params<DT>) {
     /** 固定列阴影 */
     const fixedShadow = ref<{
         /** 是否展示左侧固定列阴影 */
@@ -82,7 +82,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow() {
         if (!props.fixedColShadow) return;
-        const { clientWidth, scrollWidth, scrollLeft } = tableContainer.value as HTMLDivElement;
+        const { clientWidth, scrollWidth, scrollLeft } = tableContainerRef.value as HTMLDivElement;
         fixedShadow.value.showL = Boolean(scrollLeft);
         fixedShadow.value.showR = Math.abs(scrollWidth - scrollLeft - clientWidth) > 0.5;
     }

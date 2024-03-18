@@ -1,4 +1,4 @@
-import { DEFAULT_COL_WIDTH } from './const';
+import { DEFAULT_COL_WIDTH, STK_ID_PREFIX } from './const';
 import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
 
 /** 是否空值 */
@@ -198,4 +198,14 @@ export function getColWidthStr(col: StkTableColumn<any> | null | undefined, key:
         return val + 'px';
     }
     return val;
+}
+
+/** 创建组件唯一标识 */
+export function createStkTableId() {
+    if (!window.__STK_TB_ID_COUNT__) {
+        window.__STK_TB_ID_COUNT__ = 0;
+    }
+    window.__STK_TB_ID_COUNT__ += 1;
+
+    return STK_ID_PREFIX + window.__STK_TB_ID_COUNT__.toString(36);
 }

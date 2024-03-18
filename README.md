@@ -43,7 +43,6 @@ repo:
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
-* [x] `props.emptyCellText` 支持传入函数。(`v0.2.6`)
 
 
 
