@@ -1,4 +1,4 @@
-import { CSSProperties, Ref, computed } from 'vue';
+import { CSSProperties, Ref, ShallowRef, computed } from 'vue';
 import { IS_LEGACY_MODE } from './const';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
@@ -6,7 +6,7 @@ import { getColWidth } from './utils';
 
 type Options<T extends Record<string, any>> = {
     props: any;
-    tableHeaders: Ref<StkTableColumn<T>[][]>;
+    tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
@@ -73,7 +73,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
      */
     function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties | null {
         const { fixed } = col;
-        if (!fixed) return null;
+        if (tagType === TagType.TD && !fixed) return null;
 
         const isFixedLeft = fixed === 'left';
         const style: CSSProperties = {};
@@ -84,6 +84,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
         } else {
             style.position = 'sticky';
         }
+
         if (tagType === TagType.TH) {
             // TH
             if (IS_LEGACY_MODE) {

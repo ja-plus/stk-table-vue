@@ -1,4 +1,4 @@
-import { Ref, onBeforeUnmount, onMounted } from 'vue';
+import { Ref, ShallowRef, onBeforeUnmount, onMounted } from 'vue';
 import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
@@ -10,7 +10,7 @@ type Options<DT extends Record<string, any>> = {
     scrollTo: (y: number | null, x: number | null) => void;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
-    tableHeaders: Ref<StkTableColumn<DT>[][]>;
+    tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
 };
 /**
  * 按下键盘箭头滚动。只有悬浮在表体上才能生效键盘。

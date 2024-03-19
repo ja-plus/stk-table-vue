@@ -1,4 +1,4 @@
-import { Ref, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Ref, ShallowRef, onBeforeUnmount, onMounted, ref } from 'vue';
 import { StkTableColumn } from './types';
 import { getColWidth } from './utils';
 
@@ -19,7 +19,7 @@ type Params<DT extends Record<string, any>> = {
     props: any;
     emits: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
-    tableHeaderLast: Ref<StkTableColumn<DT>[]>;
+    tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     colResizeIndicatorRef: Ref<HTMLElement | undefined>;
     colKeyGen: (p: any) => string;
 };

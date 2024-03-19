@@ -1,14 +1,14 @@
 <template>
     <div>
         <h2>API</h2>
-        <StkTable theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
+        <StkTable style="position: initial; overflow: unset" theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
     </div>
 </template>
 <script lang="ts" setup>
 import { StkTable } from '../src/StkTable';
 
 const docTableColumns = [
-    { title: '字段', dataIndex: 'key' },
+    { title: '字段', dataIndex: 'key', fixed: 'left' },
     { title: '描述', dataIndex: 'desc' },
     { title: '取值', dataIndex: 'value' },
     { title: '默认', dataIndex: 'defaultValue' },

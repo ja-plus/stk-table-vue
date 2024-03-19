@@ -1,11 +1,11 @@
-import { computed, ref, Ref, shallowRef } from 'vue';
+import { computed, ref, Ref, ShallowRef, shallowRef } from 'vue';
 import { StkTableColumn } from './types';
 
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: (col: StkTableColumn<T>) => string;
-    tableHeaders: Ref<StkTableColumn<T>[][]>;
-    tableHeaderLast: Ref<StkTableColumn<T>[]>;
+    tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
+    tableHeaderLast: ShallowRef<StkTableColumn<T>[]>;
     tableContainerRef: Ref<HTMLDivElement | undefined>;
 };
 

@@ -7,8 +7,8 @@ type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
-    tableHeaderLast: Ref<StkTableColumn<DT>[]>;
-    tableHeaders: Ref<StkTableColumn<DT>[][]>;
+    tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
+    tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
 };
 
 /** 暂存纵向虚拟滚动的数据 */

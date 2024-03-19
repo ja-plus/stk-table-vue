@@ -35,7 +35,7 @@
           :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
         ></div>
       -->
-        <div v-show="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
+        <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <!-- 表格主体 -->
         <table
             class="stk-table-main"
@@ -424,7 +424,7 @@ const currentItem = ref<DT | null>(null);
  */
 const currentItemKey = ref<any>(null);
 /** 当前hover的行 */
-const currentHover = ref<DT | null>(null);
+const currentHover = ref<any | null>(null);
 
 /** 排序的列dataIndex*/
 let sortCol = ref<string | null>();
@@ -444,9 +444,9 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
  * ]
  * ```
  */
-const tableHeaders = ref<StkTableColumn<DT>[][]>([]);
+const tableHeaders = shallowRef<StkTableColumn<DT>[][]>([]);
 /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
-const tableHeaderLast = ref<StkTableColumn<DT>[]>([]);
+const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
@@ -586,7 +586,6 @@ function dealDefaultSorter() {
 function dealColumns() {
     // reset
     tableHeaders.value = [];
-    tableHeaderLast.value = [];
     const copyColumn = props.columns; // do not deep clone
     const deep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
@@ -595,9 +594,8 @@ function dealColumns() {
         console.error('多级表头不支持横向虚拟滚动');
     }
 
-    // 展开columns
-
     /**
+     * 展开columns
      * @param arr
      * @param depth 深度
      * @param parent 父节点引用，用于构建双向链表。
@@ -651,6 +649,8 @@ function dealColumns() {
     }
 
     flat(copyColumn, null);
+
+    // tableHeaders.value = [...tableHeaders.value];
 
     tableHeaderLast.value = tempHeaderLast;
     dealFixedColShadow();
