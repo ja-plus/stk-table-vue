@@ -213,6 +213,11 @@ export type StkProps = {
     /** 高亮帧率(虚拟滚动生效) */
     fps?: number;
   };
+  /** 序号列配置 */
+  seqConfig?: {
+    /** 序号列起始下标 用于适配分页 */
+    startIndex?: number;
+  };
 };
 ```
 #### Emits

@@ -146,14 +146,14 @@
                     ></template>
                 </tr>
                 <tr
-                    v-for="(row, i) in virtual_dataSourcePart"
-                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : i)"
-                    :key="rowKey ? rowKeyGen(row) : i"
-                    :data-row-key="rowKey ? rowKeyGen(row) : i"
+                    v-for="(row, rowIndex) in virtual_dataSourcePart"
+                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : rowIndex)"
+                    :key="rowKey ? rowKeyGen(row) : rowIndex"
+                    :data-row-key="rowKey ? rowKeyGen(row) : rowIndex"
                     :class="{
                         active: rowKey ? rowKeyGen(row) === rowKeyGen(currentItem) : row === currentItem,
                         hover: rowKey ? rowKeyGen(row) === currentHover : row === currentHover,
-                        [rowClassName(row, i)]: true,
+                        [rowClassName(row, rowIndex)]: true,
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -163,24 +163,34 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="virtual-x-left" style="padding: 0"></td>
                     <td
-                        v-for="col in virtualX_columnPart"
+                        v-for="(col, colIndex) in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
                         :class="[
                             col.className,
-                            showOverflow ? 'text-overflow' : '',
                             fixedColClassMap.get(colKeyGen(col)),
+                            showOverflow ? 'text-overflow' : '',
                             col.type === 'seq' ? 'seq-column' : '',
                         ]"
                         :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                         @click="e => onCellClick(e, row, col)"
                     >
-                        <component :is="col.customCell" v-if="col.customCell" :col="col" :row="row" :cell-value="row[col.dataIndex]" />
-                        <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
-                            {{ (props.seqConfig.startIndex || 0) + i + 1 }}
-                        </div>
-                        <div v-else class="table-cell-wrapper" :title="row[col.dataIndex]">
-                            {{ row[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                        <component
+                            :is="col.customCell"
+                            v-if="col.customCell"
+                            :col="col"
+                            :row="row"
+                            :row-index="rowIndex"
+                            :col-index="colIndex"
+                            :cell-value="row[col.dataIndex]"
+                        />
+                        <div v-else class="table-cell-wrapper" :title="!col.type ? row[col.dataIndex] : ''">
+                            <template v-if="col.type === 'seq'">
+                                {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
+                            </template>
+                            <template v-else>
+                                {{ row[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                            </template>
                         </div>
                     </td>
                 </tr>

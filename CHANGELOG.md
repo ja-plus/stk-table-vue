@@ -1,4 +1,6 @@
-## 0.2.10
+## 0.3.0
+* feature: `StkTableColumn` 新增 `type`字段，配置 `seq` 表示为序号列。
+    - 新增 `props.seqConfig.startIndex` 控制序号列开始序号。
 * optimize: 不适合的td z-index
 * optimize: `tr` 添加 `transform:translateZ(0)`, 用于提升合成层，提升高亮行性能。
 * optimize: `setHighlightDimRow` 使用 `document.getElementById` 实现。优化渲染性能。
