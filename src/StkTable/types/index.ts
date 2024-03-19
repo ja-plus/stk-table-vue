@@ -57,6 +57,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     children?: StkTableColumn<T>[];
     /** 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
+    /** 序号列 */
+    type?: 'seq';
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
@@ -111,4 +113,10 @@ export type HighlightConfig = {
     };
     /** 高亮帧率(虚拟滚动生效) */
     fps?: number;
+};
+
+/** 序号列配置 */
+export type SeqConfig = {
+    /** 序号列起始下标 用于适配分页 */
+    startIndex?: number;
 };

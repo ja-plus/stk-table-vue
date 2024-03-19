@@ -29,6 +29,7 @@
             v-bind="props"
             v-model:columns="columns"
             row-key="name"
+            :seq-config="seqConfig"
             :row-height="28"
             :header-row-height="36"
             :hide-header-title="['age']"
@@ -86,6 +87,9 @@ import DragResize from './utils/DragResize';
 import DocTable from './DocTable.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
 
+const seqConfig = {
+    startIndex: 20,
+};
 const props = ref({
     rowKey: 'name',
     theme: 'dark' as 'dark' | 'light',
@@ -110,6 +114,16 @@ const props = ref({
     },
 });
 const columns = shallowRef<StkTableColumn<any>[]>([
+    {
+        type: 'seq',
+        title: '序号',
+        align: 'right',
+        fixed: 'left',
+        width: 50,
+        // customCell: props => {
+        //     return h('span', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, props.col.title + '(render) text-overflow,');
+        // },
+    },
     {
         title: 'Name',
         dataIndex: 'name',

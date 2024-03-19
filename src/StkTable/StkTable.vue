@@ -85,6 +85,9 @@
                     >
                         <div class="table-header-cell-wrapper">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" />
+                            <template v-else-if="col.type === 'seq'">
+                                <span class="table-header-title">{{ col.title }}</span>
+                            </template>
                             <template v-else>
                                 <slot name="tableHeader" :col="col">
                                     <span class="table-header-title">{{ col.title }}</span>
@@ -163,11 +166,19 @@
                         v-for="col in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
-                        :class="[col.className, showOverflow ? 'text-overflow' : '', fixedColClassMap.get(colKeyGen(col))]"
+                        :class="[
+                            col.className,
+                            showOverflow ? 'text-overflow' : '',
+                            fixedColClassMap.get(colKeyGen(col)),
+                            col.type === 'seq' ? 'seq-column' : '',
+                        ]"
                         :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                         @click="e => onCellClick(e, row, col)"
                     >
                         <component :is="col.customCell" v-if="col.customCell" :col="col" :row="row" :cell-value="row[col.dataIndex]" />
+                        <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
+                            {{ (props.seqConfig.startIndex || 0) + i + 1 }}
+                        </div>
                         <div v-else class="table-cell-wrapper" :title="row[col.dataIndex]">
                             {{ row[col.dataIndex] ?? getEmptyCellText(col, row) }}
                         </div>
@@ -193,7 +204,7 @@
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT } from './const';
-import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp, SeqConfig } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -295,6 +306,8 @@ const props = withDefaults(
         hideHeaderTitle?: boolean | string[];
         /** 高亮配置 */
         highlightConfig?: HighlightConfig;
+        /** 序号列配置 */
+        seqConfig?: SeqConfig;
     }>(),
     {
         width: '',
@@ -333,6 +346,7 @@ const props = withDefaults(
         }),
         hideHeaderTitle: false,
         highlightConfig: () => ({}),
+        seqConfig: () => ({}),
     },
 );
 
