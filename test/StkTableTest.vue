@@ -116,6 +116,7 @@ const props = ref({
 const columns = shallowRef<StkTableColumn<any>[]>([
     {
         type: 'seq',
+        dataIndex: 'seq',
         title: '序号',
         align: 'right',
         fixed: 'left',
@@ -349,7 +350,7 @@ function addRow(num = 1, unshift = false) {
 
     nextTick(() => {
         const rowKeys = tmpIndex.map(it => it.name);
-        stkTable.value?.setHighlightDimRow(rowKeys);
+        stkTable.value?.setHighlightDimRow(rowKeys, { useCss: true });
     });
 }
 function addColumn(num = 1) {

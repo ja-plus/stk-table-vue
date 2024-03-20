@@ -57,9 +57,20 @@ repo:
 import { StkTable } from 'stk-table-vue'
 import { ref } from 'vue'
 const stkTable = ref<InstanceType<typeof StkTable>>();
-// highlight
-stkTable.value.setHighlightDimRow([rowId]，{useCss:false,className:'custom-class-name'});// highlight row
-stkTable.value.setHighlightDimCell(rowId, colId,{className:'custom-class-name'}) // highlight cell
+
+// highlight row
+stkTable.value.setHighlightDimRow([rowKey]，{
+  useCss: false,// 是否使用css @keyframe实现。虚拟滚动下默认false。
+  className: 'custom-class-name',// useCss 为true时生效。
+  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+  duration: 2000,// 动画时长。default 2000。useCss：true状态下，用于移除class。useCss:false 状态下，用于js计算颜色。
+});
+ // highlight cell
+stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
+  className:'custom-class-name',// 全部使用css实现
+  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],
+  duration: 2000,// 动画时长。default 2000。useCss：true状态下，用于移除class。useCss:false 状态下，用于js计算颜色。
+})
 </script>
 
 <template>
