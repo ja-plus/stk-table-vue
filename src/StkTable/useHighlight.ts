@@ -1,4 +1,4 @@
-import { interpolateRgb } from 'd3-interpolate';
+// import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed } from 'vue';
 import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS, IS_LEGACY_MODE } from './const';
 import { HighlightConfig, UniqKey } from './types';
@@ -18,7 +18,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     /** 持续时间 */
     const highlightDuration = config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION;
     /** 高亮频率（仅虚拟滚动生效） */
-    const highlightFrequency = config.fps ? 1000 / config.fps : HIGHLIGHT_FREQ;
+    // const highlightFrequency = config.fps ? 1000 / config.fps : HIGHLIGHT_FREQ;
     const highlightColor = {
         light: Object.assign(HIGHLIGHT_COLOR.light, config.color?.light),
         dark: Object.assign(HIGHLIGHT_COLOR.dark, config.color?.dark),
@@ -27,7 +27,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
     /** 高亮结束 */
     const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
-    const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
+    // const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
 
     type HighlightDimRowStore = {
         /** 动画开始时间戳 */
@@ -60,28 +60,29 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         if (calcHighlightDimLoop) return;
         calcHighlightDimLoop = true;
         const recursion = () => {
-            window.setTimeout(() => {
-                const nowTs = Date.now();
+            window.requestAnimationFrame(
+                () => {
+                    const nowTs = Date.now();
+                    highlightDimRows.forEach((store, rowKeyValue) => {
+                        const { ts, duration } = store;
+                        const timeOffset = nowTs - ts;
+                        if (nowTs - ts < duration) {
+                            updateRowBgc(rowKeyValue, store, timeOffset);
+                        } else {
+                            highlightDimRows.delete(rowKeyValue);
+                        }
+                    });
 
-                highlightDimRows.forEach((store, rowKeyValue) => {
-                    const { ts, duration } = store;
-                    const timeOffset = nowTs - ts;
-                    if (nowTs - ts < duration) {
-                        updateRowBgc(rowKeyValue, store, timeOffset);
+                    if (highlightDimRows.size > 0) {
+                        // 还有高亮的行,则下一次循环
+                        recursion();
                     } else {
-                        highlightDimRows.delete(rowKeyValue);
+                        // 没有则停止循环
+                        calcHighlightDimLoop = false;
+                        highlightDimRows.clear();
                     }
-                });
-
-                if (highlightDimRows.size > 0) {
-                    // 还有高亮的行,则下一次循环
-                    recursion();
-                } else {
-                    // 没有则停止循环
-                    calcHighlightDimLoop = false;
-                    highlightDimRows.clear();
-                }
-            }, highlightFrequency);
+                } /* , highlightFrequency */,
+            );
         };
         recursion();
     }
@@ -137,12 +138,12 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         };
         if (props.virtual && !useCss) {
             // --------虚拟滚动用js计算颜色渐变的高亮方案
-            const nowTs = Date.now(); // 重置渐变进度
+            const nowTs = Date.now();
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
                 const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
                 highlightDimRows.set(rowKeyValue, store);
-                updateRowBgc(rowKeyValue, store, duration);
+                updateRowBgc(rowKeyValue, store, 0);
             }
             calcRowHighlightLoop();
         } else if (option.className) {
@@ -192,7 +193,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     }
 
     /**
-     *  $*$ 使用css @keyframes动画，实现高亮单元格动画
+     * $*$ 使用css @keyframes动画，实现高亮单元格动画
      * 此方案作为兼容方式。v0.3.0 将使用Element.animate 接口实现动画。
      */
     function highlightCellsInCssKeyFrame(cellEl: HTMLElement, rowKeyValue: UniqKey, className: string, duration: number) {
@@ -215,7 +216,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      *  更新行状态
      * @param rowKeyValue 行唯一键
      * @param store highlightDimRowStore 的引用对象
-     * @param timeOffset 动画时长
+     * @param timeOffset 距动画开始经过的时长
      */
     function updateRowBgc(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
         const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
@@ -230,13 +231,8 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         if (!visible) {
             store.visible = true; // 标记为可见
             /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-            const progress = 1 - timeOffset / initialDuration;
-            const bgc = highlightInter.value(progress);
-            // 修改动画开始背景
-            if (Array.isArray(keyframe) && keyframe.length > 0) {
-                keyframe[0].backgroundColor = bgc;
-            }
-            rowEl.animate(keyframe, { duration: timeOffset });
+            const iterationStart = timeOffset / initialDuration;
+            rowEl.animate(keyframe, { duration: initialDuration - timeOffset, iterationStart });
         }
     }
 

@@ -116,7 +116,10 @@ export type HighlightConfig = {
         light?: { from: string; to: string };
         dark?: { from: string; to: string };
     };
-    /** 高亮帧率(虚拟滚动生效) */
+    /**
+     * 高亮帧率(虚拟滚动生效)
+     * @deprecated
+     */
     fps?: number;
 };
 
