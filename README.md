@@ -16,7 +16,7 @@ repo:
   - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css @keyframe实现 。
   - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。(`v0.2.9`)
   - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
-  - [] 使用 `Web Animations API` 实现高亮。
+  - [x] 使用 `Web Animations API` 实现高亮。
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
