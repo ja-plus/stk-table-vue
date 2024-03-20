@@ -16,6 +16,7 @@ repo:
   - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css @keyframe实现 。
   - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。(`v0.2.9`)
   - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
+  - [] 使用 `Web Animations API` 实现高亮。
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
@@ -43,6 +44,8 @@ repo:
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
+* [x] 支持配置序号列。`StkTableColumn['type']`。(`v0.3.0`)
+
 
 
 
@@ -328,6 +331,11 @@ defineExpose({
 type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
+    /**
+     * 列类型
+     * - seq 序号列
+     */
+    type?: 'seq';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */

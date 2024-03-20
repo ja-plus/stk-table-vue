@@ -10,6 +10,11 @@ export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: { col:
 
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
+    /**
+     * 列类型
+     * - seq 序号列
+     */
+    type?: 'seq';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -57,8 +62,6 @@ export type StkTableColumn<T extends Record<string, any>> = {
     children?: StkTableColumn<T>[];
     /** 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
-    /** 序号列 */
-    type?: 'seq';
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
