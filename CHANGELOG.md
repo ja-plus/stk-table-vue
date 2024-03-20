@@ -3,6 +3,7 @@
     - 新增 `props.seqConfig.startIndex` 控制序号列开始序号。
 * feature: `setHighlightDimRow`/`setHighlightDimCell` 使用 Element.animate 实现。
     - 方法最后一个参数 `option` 新增属性 `keyframe:Parameters<Animatable["animate"]>['0'] `& `duration:number`
+    - 虚拟滚动时的高亮行动画，也变更为 animate API 实现。
 * optimize: 不适合的td z-index
 * optimize: `tr` 添加 `transform:translateZ(0)`, 用于提升合成层，提升高亮行性能。
 * optimize: `setHighlightDimRow` 使用 `document.getElementById` 实现。优化渲染性能。

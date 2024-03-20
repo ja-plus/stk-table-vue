@@ -29,12 +29,22 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
     const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
 
+    type HighlightDimRowStore = {
+        /** 动画开始时间戳 */
+        readonly ts: number;
+        /** 行是否可见 */
+        visible: boolean;
+        /** 动画关键帧 */
+        keyframe: Parameters<Animatable['animate']>['0'];
+        /** 动画初始持续时间 */
+        readonly duration: number;
+    };
     /**
      * 存放高亮行的状态
      * @key 行唯一键
      * @value 记录高亮开始时间
      */
-    const highlightDimRows = new Map<UniqKey, number>();
+    const highlightDimRows = new Map<UniqKey, HighlightDimRowStore>();
     /** 高亮后渐暗的行定时器 */
     const highlightDimRowsTimeout = new Map();
     /** 高亮后渐暗的单元格定时器 */
@@ -49,29 +59,18 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     function calcRowHighlightLoop() {
         if (calcHighlightDimLoop) return;
         calcHighlightDimLoop = true;
-        // js计算gradient
         const recursion = () => {
             window.setTimeout(() => {
                 const nowTs = Date.now();
 
-                highlightDimRows.forEach((highlightStart, rowKeyValue) => {
-                    //   const rowKeyValue = rowKeyGen(row);
-                    //   const rowEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]`);
-                    //   if (rowEl && row._bgc_progress === 0) {
-                    //     // 开始css transition 补间
-                    //     rowEl.classList.remove('highlight-row-transition');
-                    //     void rowEl.offsetHeight; // reflow
-                    //     rowEl.classList.add('highlight-row-transition');
-                    //   }
-                    /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-                    const progress = (nowTs - highlightStart) / highlightDuration;
-                    let bgc = '';
-                    if (0 < progress && progress < 1) {
-                        bgc = highlightInter.value(progress);
+                highlightDimRows.forEach((store, rowKeyValue) => {
+                    const { ts, duration } = store;
+                    const timeOffset = nowTs - ts;
+                    if (nowTs - ts < duration) {
+                        updateRowBgc(rowKeyValue, store, timeOffset);
                     } else {
                         highlightDimRows.delete(rowKeyValue);
                     }
-                    updateRowBgc(rowKeyValue, bgc);
                 });
 
                 if (highlightDimRows.size > 0) {
@@ -141,8 +140,9 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             const nowTs = Date.now(); // 重置渐变进度
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
-                highlightDimRows.set(rowKeyValue, nowTs);
-                updateRowBgc(rowKeyValue, highlightFrom.value);
+                const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
+                highlightDimRows.set(rowKeyValue, store);
+                updateRowBgc(rowKeyValue, store, duration);
             }
             calcRowHighlightLoop();
         } else if (option.className) {
@@ -211,11 +211,33 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         );
     }
 
-    /** 更新行状态 */
-    function updateRowBgc(rowKeyValue: UniqKey, color: string) {
+    /**
+     *  更新行状态
+     * @param rowKeyValue 行唯一键
+     * @param store highlightDimRowStore 的引用对象
+     * @param timeOffset 动画时长
+     */
+    function updateRowBgc(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
         const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
-        if (!rowEl) return;
-        rowEl.style.backgroundColor = color;
+        const { visible, keyframe, duration: initialDuration } = store;
+        if (!rowEl) {
+            if (visible) {
+                store.visible = false; // 标记为不可见
+            }
+            return;
+        }
+        // 只有元素 不可见 -> 可见 时才需要更新
+        if (!visible) {
+            store.visible = true; // 标记为可见
+            /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
+            const progress = 1 - timeOffset / initialDuration;
+            const bgc = highlightInter.value(progress);
+            // 修改动画开始背景
+            if (Array.isArray(keyframe) && keyframe.length > 0) {
+                keyframe[0].backgroundColor = bgc;
+            }
+            rowEl.animate(keyframe, { duration: timeOffset });
+        }
     }
 
     return {
