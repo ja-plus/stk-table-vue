@@ -541,6 +541,7 @@ useKeyboardArrowScroll(tableContainerRef, {
     virtualScroll,
     virtualScrollX,
     tableHeaders,
+    virtual_on,
 });
 
 /** 固定列处理 */

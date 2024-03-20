@@ -5,6 +5,7 @@
 * optimize: `tr` 添加 `transform:translateZ(0)`, 用于提升合成层，提升高亮行性能。
 * optimize: `setHighlightDimRow` 使用 `document.getElementById` 实现。优化渲染性能。
 * optimize: StkTable.vue 中 变量`tableHeader`/`tableHeaderLast` 转为 `shallowRef` 优化
+* fix: **非**虚拟滚动时，键盘上下按键及`PageUp`/`PageDown`无法滚动问题。
 
 ## 0.2.9
 * feature: 新增`props.highlightConfig` 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。

@@ -1,4 +1,4 @@
-import { Ref, ShallowRef, onBeforeUnmount, onMounted } from 'vue';
+import { ComputedRef, Ref, ShallowRef, onBeforeUnmount, onMounted, watch } from 'vue';
 import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
@@ -11,6 +11,7 @@ type Options<DT extends Record<string, any>> = {
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
+    virtual_on: ComputedRef<boolean>;
 };
 /**
  * 按下键盘箭头滚动。只有悬浮在表体上才能生效键盘。
@@ -19,24 +20,35 @@ type Options<DT extends Record<string, any>> = {
  */
 export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     targetElement: Ref<HTMLElement | undefined>,
-    { props, scrollTo, virtualScroll, virtualScrollX, tableHeaders }: Options<DT>,
+    { props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on }: Options<DT>,
 ) {
     /** 检测鼠标是否悬浮在表格体上 */
     let isMouseOver = false;
+    watch(virtual_on, val => {
+        if (!val) {
+            removeListeners();
+        } else {
+            addEventListeners();
+        }
+    });
 
-    onMounted(() => {
+    onMounted(addEventListeners);
+
+    onBeforeUnmount(removeListeners);
+
+    function addEventListeners() {
         window.addEventListener('keydown', handleKeydown);
         targetElement.value?.addEventListener('mouseenter', handleMouseEnter);
         targetElement.value?.addEventListener('mouseleave', handleMouseLeave);
         targetElement.value?.addEventListener('mousedown', handleMouseDown);
-    });
+    }
 
-    onBeforeUnmount(() => {
+    function removeListeners() {
         window.removeEventListener('keydown', handleKeydown);
         targetElement.value?.removeEventListener('mouseenter', handleMouseEnter);
         targetElement.value?.removeEventListener('mouseleave', handleMouseLeave);
         targetElement.value?.removeEventListener('mousedown', handleMouseDown);
-    });
+    }
 
     /** 键盘按下事件 */
     function handleKeydown(e: KeyboardEvent) {
