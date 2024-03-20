@@ -105,7 +105,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     function setHighlightDimCell(
         rowKeyValue: string,
         dataIndex: string,
-        option: { className?: string; keyframe?: Keyframe[]; duration?: number } = {},
+        option: { className?: string; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
     ) {
         // TODO: 支持动态计算高亮颜色。不易实现。需记录每一个单元格的颜色情况。
         const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
@@ -128,7 +128,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      */
     function setHighlightDimRow(
         rowKeyValues: UniqKey[],
-        option: { useCss?: boolean; className?: string; keyframe?: Keyframe[]; duration?: number } = {},
+        option: { useCss?: boolean; className?: string; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
     ) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
         const { className, useCss, keyframe, duration } = {
@@ -142,7 +142,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
                 highlightDimRows.set(rowKeyValue, nowTs);
-                updateRowBgc(rowKeyValue, (keyframe[0].backgroundColor as string) || highlightFrom.value);
+                updateRowBgc(rowKeyValue, highlightFrom.value);
             }
             calcRowHighlightLoop();
         } else if (option.className) {

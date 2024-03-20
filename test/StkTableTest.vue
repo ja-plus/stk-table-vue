@@ -350,7 +350,18 @@ function addRow(num = 1, unshift = false) {
 
     nextTick(() => {
         const rowKeys = tmpIndex.map(it => it.name);
-        stkTable.value?.setHighlightDimRow(rowKeys, { useCss: true });
+        if (num === 1) {
+            stkTable.value?.setHighlightDimRow(rowKeys, {
+                useCss: true,
+                keyframe: [
+                    { backgroundColor: '#1e4c99', transform: 'translateX(100px)', opacity: 0.7, easing: 'ease-out' },
+                    { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1, easing: 'ease-out' },
+                ],
+                duration: 500,
+            });
+        } else {
+            stkTable.value?.setHighlightDimRow(rowKeys, { useCss: true });
+        }
     });
 }
 function addColumn(num = 1) {
