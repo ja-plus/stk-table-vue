@@ -223,7 +223,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { createStkTableId, getCalculatedColWidth, getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
+import { createStkTableId, getCalculatedColWidth, getColWidth, transformWidthToStr, howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -710,7 +710,7 @@ const cellStyleMap = computed(() => {
     tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
             const colKey = colKeyGen(col);
-            const width = props.virtualX ? getCalculatedColWidth(col) + 'px' : getColWidthStr(col, 'width');
+            const width = props.virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
                 width,
             };
@@ -719,8 +719,8 @@ const cellStyleMap = computed(() => {
                 style.minWidth = width;
                 style.maxWidth = width;
             } else {
-                style.minWidth = getColWidthStr(col, 'minWidth') ?? width;
-                style.maxWidth = getColWidthStr(col, 'maxWidth') ?? width;
+                style.minWidth = transformWidthToStr(col.minWidth) ?? width;
+                style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
             }
 
             const thStyle = {

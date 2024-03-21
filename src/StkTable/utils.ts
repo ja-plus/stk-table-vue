@@ -182,9 +182,13 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
     return Math.max(...levels);
 }
 
-/** 获取列宽 */
+/**
+ * 获取列宽
+ *
+ * 关于列宽的操作往往在横向滚动中使用。既然已经有横向滚动了，则列宽会被压缩至minWidth，所以优先取minWidth
+ */
 export function getColWidth(col: StkTableColumn<any> | null): number {
-    const val = col?.width ?? DEFAULT_COL_WIDTH;
+    const val = col?.minWidth ?? col?.width ?? DEFAULT_COL_WIDTH;
     if (typeof val === 'number') {
         return Math.floor(val);
     }
@@ -196,13 +200,12 @@ export function getCalculatedColWidth(col: StkTableColumn<any> | null) {
     return col?.__WIDTH__ ?? +DEFAULT_COL_WIDTH;
 }
 
-/** 获取列宽配置。用于支持列宽配置数字 */
-export function getColWidthStr(col: StkTableColumn<any> | null, key: 'width' | 'minWidth' | 'maxWidth' = 'width') {
-    const val = col?.[key];
-    if (typeof val === 'number') {
-        return val + 'px';
+/** number列宽+px */
+export function transformWidthToStr(width?: string | number) {
+    if (typeof width === 'number') {
+        return width + 'px';
     }
-    return val;
+    return width;
 }
 
 /** 创建组件唯一标识 */
