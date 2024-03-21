@@ -232,7 +232,13 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             store.visible = true; // 标记为可见
             /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
             const iterationStart = timeOffset / initialDuration;
-            rowEl.animate(keyframe, { duration: initialDuration - timeOffset, iterationStart });
+            rowEl.animate(keyframe, {
+                duration: initialDuration - timeOffset,
+                /** 从什么时候开始，0-1 */
+                iterationStart,
+                /** 持续多久 0-1 */
+                iterations: 1 - iterationStart,
+            });
         }
     }
 
