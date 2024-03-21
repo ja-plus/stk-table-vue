@@ -148,7 +148,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param options.method css-使用css渲染，animation-使用animation api。默认css;
      * @param option.className 自定义css动画的class。
      * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
-     * @param option.duration 动画时长。useCss：true状态下，用于移除class。useCss:false 状态下，用于js计算颜色。
+     * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
     function setHighlightDimCell(
         rowKeyValue: string,
@@ -177,7 +177,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色
      * @param option.className 自定义css动画的class。
      * @param option.keyframe 同Keyframe,无法控制帧率。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
-     * @param option.duration 动画时长。useCss：true状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。useCss:false 状态下，用于js计算颜色。
+     * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
      */
     function setHighlightDimRow(
         rowKeyValues: UniqKey[],
