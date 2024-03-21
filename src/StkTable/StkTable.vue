@@ -253,7 +253,7 @@ const props = withDefaults(
         headerRowHeight?: number | null;
         /** 虚拟滚动 */
         virtual?: boolean;
-        /** x轴虚拟滚动 */
+        /** x轴虚拟滚动(必须设置列宽)*/
         virtualX?: boolean;
         /** 表格列配置 */
         columns?: StkTableColumn<DT>[];
