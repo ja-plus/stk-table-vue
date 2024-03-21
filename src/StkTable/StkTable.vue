@@ -21,8 +21,8 @@
                 '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
             },
             {
-                '--highlight-color': props.highlightConfig.color && highlightFrom,
                 '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
+                '--highlight-easing': highlightSteps ? `steps(${highlightSteps})` : '',
             },
         ]"
         @scroll="onTableScroll"
@@ -528,7 +528,7 @@ const { getFixedStyle } = useFixedStyle<DT>({
 /**
  * 高亮行，高亮单元格
  */
-const { highlightFrom, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, stkTableId, tableContainerRef });
+const { highlightSteps, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, stkTableId, tableContainerRef });
 
 if (props.autoResize) {
     useAutoResize({ tableContainerRef, initVirtualScroll, props, debounceMs: 200 });

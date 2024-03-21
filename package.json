@@ -55,5 +55,6 @@
         "vue-eslint-parser": "^9.3.2"
     },
     "dependencies": {
+        "d3-interpolate": "^3.0.1"
     }
 }

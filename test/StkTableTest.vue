@@ -108,11 +108,8 @@ const props = ref({
     headless: false,
     bordered: true,
     highlightConfig: {
-        fps: 30,
-        // color: {
-        //     dark: { from: '#fff' },
-        // },
-        duration: 2,
+        fps: 10,
+        duration: 1,
     },
 });
 const columns = shallowRef<StkTableColumn<any>[]>([
@@ -215,28 +212,28 @@ const stkTableParent = ref();
 let intervals: number[] = [];
 onMounted(() => {
     new DragResize(stkTableParent.value);
-    // const interval1 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimCell('1add', 'age');
-    // }, 2500);
-    // const interval2 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimCell('2add', 'gender');
-    // }, 1200);
-    // const interval3 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimRow(['0add']);
-    // }, 3000);
-    // const interval4 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimRow(['3add'], { useCss: true });
-    // }, 1000);
-    // const interval5 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimRow(['5add'], { useCss: true, className: 'special-highlight-row' });
-    // }, 1600);
-    // const interval6 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimCell('6add', 'name', { className: 'special-highlight-cell' });
-    // }, 2300);
-    // const interval7 = window.setInterval(() => {
-    //     stkTable.value?.setHighlightDimCell('7add', 'age', { className: 'special-highlight-cell-red' });
-    // }, 2600);
-    // intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7);
+    const interval1 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('1add', 'age');
+    }, 2500);
+    const interval2 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('2add', 'gender');
+    }, 1200);
+    const interval3 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimRow(['0add']);
+    }, 3000);
+    const interval4 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimRow(['3add'], { useCss: true });
+    }, 1000);
+    const interval5 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimRow(['5add'], { useCss: true, className: 'special-highlight-row' });
+    }, 1600);
+    const interval6 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('6add', 'name', { className: 'special-highlight-cell' });
+    }, 2300);
+    const interval7 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('7add', 'age', { className: 'special-highlight-cell-red' });
+    }, 2600);
+    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7);
 });
 
 onBeforeUnmount(() => {
@@ -356,19 +353,19 @@ function addRow(num = 1, unshift = false) {
             if (unshift) {
                 stkTable.value?.setHighlightDimRow(rowKeys, {
                     // useCss: true,
-                    keyframe: [
-                        { backgroundColor: '#1e4c99', transform: 'rotateX(90deg)', opacity: 0, easing: 'ease-out' },
-                        { backgroundColor: '#1B1B24', transform: 'rotateX(0)', opacity: 1, easing: 'ease-out' },
-                    ],
+                    // keyframe: [
+                    //     { backgroundColor: '#1e4c99', transform: 'rotateX(90deg)', opacity: 0, easing: 'ease-out' },
+                    //     { backgroundColor: '#1B1B24', transform: 'rotateX(0)', opacity: 1, easing: 'ease-out' },
+                    // ],
                     duration: 300,
                 });
             } else {
                 stkTable.value?.setHighlightDimRow(rowKeys, {
                     // useCss: true,
-                    keyframe: [
-                        { backgroundColor: '#1e4c99', transform: 'translateX(200px)', opacity: 0, easing: 'ease-out' },
-                        { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1, easing: 'ease-out' },
-                    ],
+                    // keyframe: [
+                    //     { backgroundColor: '#1e4c99', transform: 'translateX(200px)', opacity: 0, easing: 'ease-out' },
+                    //     { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1, easing: 'ease-out' },
+                    // ],
                     duration: 1000,
                 });
             }

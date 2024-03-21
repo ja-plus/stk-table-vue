@@ -409,6 +409,51 @@ export type SortConfig<T extends Record<string, any>> = {
 };
 ```
 
+### setHighlightDimCell & setHighlightDimRow
+#### setHighlightDimCell
+```ts
+  setHighlightDimCell(
+    rowKeyValues: UniqKey[],
+      option: {
+        method?: 'css' | 'animation' | 'js';
+        /** @deprecated 请使用method */
+        useCss?: boolean;
+        className?: string;
+        keyframe?: Parameters<Animatable['animate']>['0'];
+        duration?: number;
+    } = {},
+    )
+```
+#### setHighlightDimRow
+```ts
+  setHighlightDimRow(
+    rowKeyValues: UniqKey[],
+      option: {
+        method?: 'css' | 'animation' | 'js';  
+        /** @deprecated 请使用method */
+        useCss?: boolean;
+        className?: string;
+        keyframe?: Parameters<Animatable['animate']>['0'];
+        duration?: number;
+    }
+  )
+```
+#### option
+| key |value| desc |
+| ---- | ---- | ---- |
+| method | `css` `animation` `js` | 设置高亮方式。虚拟滚动默认js。否则css |
+| ~~useCss~~  `deprecated` | `boolean`| ~~是否使用css~~ |
+| className | `string` | 设置高亮样式。method == 'css' 生效 |
+| keyframe | `Parameters<Animatable['animate']>['0']` | 设置高亮动画。method == 'animation' 生效。 |
+| duration | `number` | 设置高亮动画持续时间。 |
+
+##### option.method
+| `option.method`| desc |
+| ---- | ---- |
+| css | 使用css class 实现高亮。 |
+| animation | 使用 animation api 实现高亮。 |
+| js | 使用 js 循环计算颜色实现高亮。虚拟滚动默认使用js。 |
+
 ### Example
 ```vue
 <template>
