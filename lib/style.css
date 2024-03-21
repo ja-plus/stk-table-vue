@@ -21,6 +21,7 @@
   --bg-border-left:linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --highlight-color:#71a2fd;
   --highlight-duration:2s;
+  --highlight-easing:linear;
   --stripe-bgc:#fafafc;
   --sort-arrow-color:#757699;
   --sort-arrow-hover-color:#8f90b5;
@@ -149,12 +150,15 @@
   background-color:inherit;
 }
 .stk-table .stk-table-main td.highlight-cell{
-  animation:stk-table-dim var(--highlight-duration) linear;
+  animation:stk-table-dim var(--highlight-duration) var(--highlight-easing);
 }
 .stk-table .stk-table-main td.text-overflow .table-cell-wrapper{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+.stk-table .stk-table-main td.seq-column{
+  text-align:center;
 }
 .stk-table .stk-table-main .fixed-cell--left{
   --shadow-rotate:90deg;
@@ -246,9 +250,10 @@
 .stk-table .stk-table-main tbody tr{
   background-color:var(--td-bgc);
   height:var(--row-height);
+  transform:translateZ(0);
 }
 .stk-table .stk-table-main tbody tr.highlight-row{
-  animation:stk-table-dim var(--highlight-duration) linear;
+  animation:stk-table-dim var(--highlight-duration) var(--highlight-easing);
 }
 .stk-table .stk-table-main tbody tr.hover,
 .stk-table .stk-table-main tbody tr:hover{

@@ -15,6 +15,11 @@ export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: {
 }) => VNode;
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
+    /**
+     * 列类型
+     * - seq 序号列
+     */
+    type?: 'seq';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -62,6 +67,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     children?: StkTableColumn<T>[];
     /** 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
+    /** 保存计算的宽度。横向虚拟滚动用。 */
+    __WIDTH__?: number;
 };
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 /** 排序状态 */
@@ -103,18 +110,12 @@ export declare const enum TagType {
 export type HighlightConfig = {
     /** 高亮持续时间(s) */
     duration?: number;
-    /** 高亮背景色 */
-    color?: {
-        light?: {
-            from: string;
-            to: string;
-        };
-        dark?: {
-            from: string;
-            to: string;
-        };
-    };
-    /** 高亮帧率(虚拟滚动生效) */
+    /** 高亮帧率 */
     fps?: number;
+};
+/** 序号列配置 */
+export type SeqConfig = {
+    /** 序号列起始下标 用于适配分页 */
+    startIndex?: number;
 };
 export {};

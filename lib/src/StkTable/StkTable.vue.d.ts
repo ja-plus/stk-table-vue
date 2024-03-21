@@ -1,4 +1,4 @@
-import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -56,7 +56,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
-    /** x轴虚拟滚动 */
+    /** x轴虚拟滚动(必须设置列宽)*/
     virtualX?: boolean | undefined;
     /** 表格列配置 */
     columns?: StkTableColumn<any>[] | undefined;
@@ -122,6 +122,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     hideHeaderTitle?: boolean | string[] | undefined;
     /** 高亮配置 */
     highlightConfig?: HighlightConfig | undefined;
+    /** 序号列配置 */
+    seqConfig?: SeqConfig | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -159,6 +161,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     };
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
+    seqConfig: () => {};
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -171,11 +174,17 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
         className?: string | undefined;
+        method?: "css" | "animation" | undefined;
+        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
+        duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
+        method?: "css" | "animation" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;
+        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined; /** v-model:columns col resize 时更新宽度*/
+        duration?: number | undefined;
     }) => void;
     /** 表格排序列dataIndex */
     sortCol: import("vue").Ref<string | null | undefined>;
@@ -227,7 +236,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
     virtual?: boolean | undefined;
-    /** x轴虚拟滚动 */
+    /** x轴虚拟滚动(必须设置列宽)*/
     virtualX?: boolean | undefined;
     /** 表格列配置 */
     columns?: StkTableColumn<any>[] | undefined;
@@ -293,6 +302,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     hideHeaderTitle?: boolean | string[] | undefined;
     /** 高亮配置 */
     highlightConfig?: HighlightConfig | undefined;
+    /** 序号列配置 */
+    seqConfig?: SeqConfig | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -330,6 +341,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     };
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
+    seqConfig: () => {};
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -385,6 +397,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     sortConfig: SortConfig<any>;
     hideHeaderTitle: boolean | string[];
     highlightConfig: HighlightConfig;
+    seqConfig: SeqConfig;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
