@@ -1,12 +1,19 @@
 ## 0.3.0
 * feature: `StkTableColumn` 新增 `type`字段，配置 `seq` 表示为序号列。
     - 新增 `props.seqConfig.startIndex` 控制序号列开始序号。
-* feature: `setHighlightDimRow`/`setHighlightDimCell` 使用 Element.animate 实现。
-    - 方法最后一个参数 `option` 新增属性 `keyframe:Parameters<Animatable["animate"]>['0'] `& `duration:number`
-* optimize: 不适合的td z-index
+* feature: `setHighlightDimRow`/`setHighlightDimCell`。
+    - ⭐**break change**:最后参数option，deprecated -> `option.useCss`，使用 `option.method` 代替。
+    - 新增 `option.method` 
+        - 取值 `animation` 时使用 [Animation API](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API) 实现。
+    - 新增 `option.keyframe`：使用 Animation Api设置动画 `option.method` = `animation` 时生效。
+    - 新增 `option.duration`: 动画持续时间。
+    - 新增 `option.className`: 用于自定义高亮类。`option.method` = `css` 时生效。
+* optimize: 不合适的 td z-index
 * optimize: `tr` 添加 `transform:translateZ(0)`, 用于提升合成层，提升高亮行性能。
 * optimize: `setHighlightDimRow` 使用 `document.getElementById` 实现。优化渲染性能。
 * optimize: StkTable.vue 中 变量`tableHeader`/`tableHeaderLast` 转为 `shallowRef` 优化
+* change: 移除`props.highlightConfig.color`，用于可自行通过css改变颜色。新增的 Animation API，可实现颜色修改。
+* change: 虚拟滚动下，默认高亮帧率 10 -> 30。
 * fix: **非**虚拟滚动时，键盘上下按键及`PageUp`/`PageDown`无法滚动问题。
 * fix: **非**横向虚拟滚动时，列宽不设置为变为默认列宽的问题。
 * fix: **非**虚拟滚动时，列固定计算应优先使用 `minWidth` 计算，非 `width`。

@@ -60,16 +60,17 @@ const stkTable = ref<InstanceType<typeof StkTable>>();
 
 // highlight row
 stkTable.value.setHighlightDimRow([rowKey]，{
-  useCss: false,// 是否使用css @keyframe实现。虚拟滚动下默认false。
+  method: 'css'|'js'|'animation',// 是否使用css @keyframe实现。虚拟滚动下默认false。
   className: 'custom-class-name',// useCss 为true时生效。
   keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
-  duration: 2000,// 动画时长。default 2000。useCss：true状态下，用于移除class。useCss:false 状态下，用于js计算颜色。
+  duration: 2000,// 动画时长。
 });
  // highlight cell
 stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
-  className:'custom-class-name',// 全部使用css实现
-  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],
-  duration: 2000,// 动画时长。default 2000。useCss：true状态下，用于移除class。useCss:false 状态下，用于js计算颜色。
+  method: 'css'|'animation',
+  className:'custom-class-name',// method css 时生效。
+  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}], // method animation 时生效。
+  duration: 2000,// 动画时长。
 })
 </script>
 
@@ -408,6 +409,51 @@ export type SortConfig<T extends Record<string, any>> = {
     stringLocaleCompare?: boolean;
 };
 ```
+
+### setHighlightDimCell & setHighlightDimRow
+#### setHighlightDimCell
+```ts
+  setHighlightDimCell(
+    rowKeyValues: UniqKey[],
+      option: {
+        method?: 'css' | 'animation' | 'js';
+        /** @deprecated 请使用method */
+        useCss?: boolean;
+        className?: string;
+        keyframe?: Parameters<Animatable['animate']>['0'];
+        duration?: number;
+    } = {},
+    )
+```
+#### setHighlightDimRow
+```ts
+  setHighlightDimRow(
+    rowKeyValues: UniqKey[],
+      option: {
+        method?: 'css' | 'animation' | 'js';  
+        /** @deprecated 请使用method */
+        useCss?: boolean;
+        className?: string;
+        keyframe?: Parameters<Animatable['animate']>['0'];
+        duration?: number;
+    }
+  )
+```
+#### option
+| key |value| desc |
+| ---- | ---- | ---- |
+| method | `css` `animation` `js` | 设置高亮方式。虚拟滚动默认js。否则css |
+| ~~useCss~~  `deprecated` | `boolean`| ~~是否使用css~~ |
+| className | `string` | 设置高亮样式。method == 'css' 生效 |
+| keyframe | `Parameters<Animatable['animate']>['0']` | 设置高亮动画。method == 'animation' 生效。 |
+| duration | `number` | 设置高亮动画持续时间。 method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。|
+
+##### option.method
+| `option.method`| desc |
+| ---- | ---- |
+| css | 使用css class 实现高亮。 |
+| animation | 使用 animation api 实现高亮。 |
+| js | 使用 js 循环计算颜色实现高亮。虚拟滚动默认使用js。 |
 
 ### Example
 ```vue

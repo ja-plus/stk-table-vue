@@ -12,7 +12,7 @@ export const HIGHLIGHT_COLOR = {
 /** 高亮持续时间 */
 export const HIGHLIGHT_DURATION = 2000;
 /** 高亮变更频率 */
-export const HIGHLIGHT_FREQ = 100;
+export const HIGHLIGHT_FREQ = 1000 / 30;
 
 /** 高亮行class */
 export const HIGHLIGHT_ROW_CLASS = 'highlight-row';
