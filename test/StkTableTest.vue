@@ -54,6 +54,7 @@
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
     </div>
     <StkTableMultiHeader></StkTableMultiHeader>
+    <StkTableSimple></StkTableSimple>
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -85,6 +86,7 @@ import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import DragResize from './utils/DragResize';
 import DocTable from './DocTable.vue';
+import StkTableSimple from './StkTableSimple.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
 
 const seqConfig = {
@@ -141,7 +143,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'Age',
         dataIndex: 'age',
         fixed: 'left',
-        width: 100, // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
+        // width: 100, // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
         sorter(data, { order, column }) {
             // console.log(data, order, column);
             if (order === 'desc') return data.sort((a, b) => b.age - a.age);

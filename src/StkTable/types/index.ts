@@ -62,6 +62,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     children?: StkTableColumn<T>[];
     /** 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
+    /** 保存计算的宽度。横向虚拟滚动用。 */
+    __WIDTH__?: number;
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;

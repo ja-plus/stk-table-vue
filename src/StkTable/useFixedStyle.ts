@@ -2,7 +2,7 @@ import { CSSProperties, Ref, ShallowRef, computed } from 'vue';
 import { IS_LEGACY_MODE } from './const';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
-import { getColWidth } from './utils';
+import { getCalculatedColWidth } from './utils';
 
 type Options<T extends Record<string, any>> = {
     props: any;
@@ -42,7 +42,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
                     } else {
                         refStore.set(item, left);
                     }
-                    left += getColWidth(item);
+                    left += getCalculatedColWidth(item);
                 }
                 if (!rightStartIndex && item.fixed === 'right') {
                     rightStartIndex = i;
@@ -57,7 +57,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
                     } else {
                         refStore.set(item, right);
                     }
-                    right += getColWidth(item);
+                    right += getCalculatedColWidth(item);
                 }
             }
         });

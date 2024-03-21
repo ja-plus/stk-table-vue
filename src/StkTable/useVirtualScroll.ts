@@ -1,7 +1,7 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { StkTableColumn } from './types';
-import { getColWidth } from './utils';
+import { getCalculatedColWidth } from './utils';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
@@ -93,7 +93,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     });
 
     const virtualX_on = computed(() => {
-        return props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getColWidth(col)), 0) > virtualScrollX.value.containerWidth + 100;
+        return (
+            props.virtualX &&
+            tableHeaderLast.value.reduce((sum, col) => (sum += getCalculatedColWidth(col)), 0) > virtualScrollX.value.containerWidth + 100
+        );
     });
 
     const virtualX_columnPart = computed(() => {
@@ -126,7 +129,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         for (let i = virtualScrollX.value.endIndex; i < tableHeaderLast.value.length; i++) {
             const col = tableHeaderLast.value[i];
             if (col.fixed !== 'right') {
-                width += getColWidth(col);
+                width += getCalculatedColWidth(col);
             }
         }
         return width;
@@ -243,7 +246,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         for (let colIndex = 0; colIndex < headerLength; colIndex++) {
             startIndex++;
             const col = tableHeaderLast.value[colIndex];
-            const colWidth = getColWidth(col);
+            const colWidth = getCalculatedColWidth(col);
             // fixed left 不进入计算列宽
             if (col.fixed === 'left') {
                 leftColWidthSum += colWidth;
@@ -263,7 +266,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLast.value[colIndex];
-            colWidthSum += getColWidth(col);
+            colWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= containerWidth) {
                 endIndex = colIndex + 1; // 由于slice[start,end)，要加1

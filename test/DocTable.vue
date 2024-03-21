@@ -5,9 +5,9 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { StkTable } from '../src/StkTable';
+import { StkTable, StkTableColumn } from '../src/StkTable';
 
-const docTableColumns = [
+const docTableColumns: StkTableColumn<any>[] = [
     { title: '字段', dataIndex: 'key', fixed: 'left' },
     { title: '描述', dataIndex: 'desc' },
     { title: '取值', dataIndex: 'value' },

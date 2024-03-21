@@ -214,7 +214,7 @@
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT } from './const';
-import { HighlightConfig, Order, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp, SeqConfig } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -223,7 +223,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { createStkTableId, getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
+import { createStkTableId, getCalculatedColWidth, getColWidth, getColWidthStr, howDeepTheHeader, tableSort } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -560,6 +560,10 @@ watch(
         initVirtualScrollX();
     },
 );
+watch(
+    () => props.virtualX,
+    () => dealColumns(),
+);
 
 dealColumns();
 
@@ -663,10 +667,7 @@ function dealColumns() {
             if (colSpan !== 1) {
                 col.colSpan = colSpan;
             }
-            if (!props.fixedMode && col.width === void 0) {
-                // 列赋值默认列宽。由于有些场景不需要设置width。
-                col.width = colWidth + 'px';
-            }
+            col.__WIDTH__ = colWidth; //记录计算的列宽
             allChildrenLen += colChildrenLen;
             allChildrenWidthSum += colWidth;
         });
@@ -709,11 +710,12 @@ const cellStyleMap = computed(() => {
     tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
             const colKey = colKeyGen(col);
-            const width = getColWidthStr(col);
+            const width = props.virtualX ? getCalculatedColWidth(col) + 'px' : getColWidthStr(col, 'width');
             const style: CSSProperties = {
                 width,
             };
             if (props.colResizable) {
+                // 如果要调整列宽，列宽必须固定。
                 style.minWidth = width;
                 style.maxWidth = width;
             } else {

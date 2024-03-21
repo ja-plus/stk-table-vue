@@ -191,8 +191,13 @@ export function getColWidth(col: StkTableColumn<any> | null): number {
     return parseInt(val);
 }
 
+/** 获取计算后的宽度 */
+export function getCalculatedColWidth(col: StkTableColumn<any> | null) {
+    return col?.__WIDTH__ ?? +DEFAULT_COL_WIDTH;
+}
+
 /** 获取列宽配置。用于支持列宽配置数字 */
-export function getColWidthStr(col: StkTableColumn<any> | null | undefined, key: 'width' | 'minWidth' | 'maxWidth' = 'width') {
+export function getColWidthStr(col: StkTableColumn<any> | null, key: 'width' | 'minWidth' | 'maxWidth' = 'width') {
     const val = col?.[key];
     if (typeof val === 'number') {
         return val + 'px';
