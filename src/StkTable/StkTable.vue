@@ -22,7 +22,7 @@
             },
             {
                 '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
-                '--highlight-easing': highlightSteps ? `steps(${highlightSteps})` : '',
+                '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
             },
         ]"
         @scroll="onTableScroll"

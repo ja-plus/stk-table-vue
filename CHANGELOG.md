@@ -1,3 +1,6 @@
+## 0.3.1
+* fix: `.highlight-row` `.highlight-cell` class 浏览器兼容。
+
 ## 0.3.0
 * feature: `StkTableColumn` 新增 `type`字段，配置 `seq` 表示为序号列。
     - 新增 `props.seqConfig.startIndex` 控制序号列开始序号。

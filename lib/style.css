@@ -21,7 +21,7 @@
   --bg-border-left:linear-gradient(90deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --highlight-color:#71a2fd;
   --highlight-duration:2s;
-  --highlight-easing:linear;
+  --highlight-timing-function:linear;
   --stripe-bgc:#fafafc;
   --sort-arrow-color:#757699;
   --sort-arrow-hover-color:#8f90b5;
@@ -150,7 +150,8 @@
   background-color:inherit;
 }
 .stk-table .stk-table-main td.highlight-cell{
-  animation:stk-table-dim var(--highlight-duration) var(--highlight-easing);
+  animation:stk-table-dim var(--highlight-duration);
+  animation-timing-function:var(--highlight-timing-function);
 }
 .stk-table .stk-table-main td.text-overflow .table-cell-wrapper{
   white-space:nowrap;
@@ -253,7 +254,8 @@
   transform:translateZ(0);
 }
 .stk-table .stk-table-main tbody tr.highlight-row{
-  animation:stk-table-dim var(--highlight-duration) var(--highlight-easing);
+  animation:stk-table-dim var(--highlight-duration);
+  animation-timing-function:var(--highlight-timing-function);
 }
 .stk-table .stk-table-main tbody tr.hover,
 .stk-table .stk-table-main tbody tr:hover{
