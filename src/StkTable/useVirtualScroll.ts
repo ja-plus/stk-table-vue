@@ -200,9 +200,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 startIndex -= 1; // 奇数-1变成偶数
             }
         }
-        let endIndex = startIndex + pageSize;
+        let endIndex = startIndex + pageSize + 1; //预渲染一行 TODO: 是否需要预渲染一行
         if (props.stripe) {
-            // 由于上方预渲染一行，这里也要预渲染1+1行
+            // 由于stripe上方预渲染-1行，这里也要预渲染1+1行
             endIndex += 2;
         }
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度

@@ -1,5 +1,6 @@
 ## 0.3.1
 * fix: `.highlight-row` `.highlight-cell` class 浏览器兼容。
+* fix: 纵向滚动预渲染1行。，防止特殊高度情况，表格滚动下方有空白。
 
 ## 0.3.0
 * feature: `StkTableColumn` 新增 `type`字段，配置 `seq` 表示为序号列。
