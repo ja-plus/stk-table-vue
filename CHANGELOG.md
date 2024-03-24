@@ -1,3 +1,8 @@
+## 0.3.2
+* feature: 单元格事件
+    - `props.cellHover`启用td hover状态
+    - 新增 `cell-mouseenter` `cell-mouseleave` `cell-mouseover` 事件。
+
 ## 0.3.1
 * fix: `.highlight-row` `.highlight-cell` class 浏览器兼容。
 * fix: 纵向滚动预渲染1行。，防止特殊高度情况，表格滚动下方有空白。

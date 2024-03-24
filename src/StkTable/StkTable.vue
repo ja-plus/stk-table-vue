@@ -151,8 +151,8 @@
                     :key="rowKey ? rowKeyGen(row) : rowIndex"
                     :data-row-key="rowKey ? rowKeyGen(row) : rowIndex"
                     :class="{
-                        active: rowKey ? rowKeyGen(row) === rowKeyGen(currentItem) : row === currentItem,
-                        hover: rowKey ? rowKeyGen(row) === currentHover : row === currentHover,
+                        active: rowKey ? rowKeyGen(row) === rowKeyGen(currentRow) : row === currentRow,
+                        hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, rowIndex)]: true,
                     }"
                     @click="e => onRowClick(e, row)"
@@ -166,14 +166,20 @@
                         v-for="(col, colIndex) in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
+                        :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                         :class="[
                             col.className,
                             fixedColClassMap.get(colKeyGen(col)),
-                            showOverflow ? 'text-overflow' : '',
                             col.type === 'seq' ? 'seq-column' : '',
+                            {
+                                'td-hover': props.cellHover,
+                                'text-overflow': showOverflow,
+                            },
                         ]"
-                        :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                         @click="e => onCellClick(e, row, col)"
+                        @mouseenter="e => onCellMouseEnter(e, row, col)"
+                        @mouseleave="e => onCellMouseLeave(e, row, col)"
+                        @mouseover="e => onCellMouseOver(e, row, col)"
                     >
                         <component
                             :is="col.customCell"
@@ -277,6 +283,8 @@ const props = withDefaults(
         showOverflow?: boolean;
         /** 是否增加行hover class */
         showTrHoverClass?: boolean;
+        /** 是否高亮鼠标悬浮的单元格 */
+        cellHover?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
         /**
@@ -342,6 +350,7 @@ const props = withDefaults(
         showHeaderOverflow: false,
         showOverflow: false,
         showTrHoverClass: false,
+        cellHover: false,
         headerDrag: false,
         rowClassName: () => '',
         colResizable: false,
@@ -397,6 +406,21 @@ const emits = defineEmits<{
      */
     (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
+     * 单元格鼠标进入事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseenter', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格鼠标移出事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseleave', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格悬浮事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseover', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
      * 表头单元格点击事件
      * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
      */
@@ -441,14 +465,18 @@ const emits = defineEmits<{
 const tableContainerRef = ref<HTMLDivElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
 /** 当前选中的一行*/
-const currentItem = ref<DT | null>(null);
+const currentRow = ref<DT | null>(null);
 /**
  * 保存当前选中行的key<br>
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
  */
-const currentItemKey = ref<any>(null);
-/** 当前hover的行 */
-const currentHover = ref<any | null>(null);
+const currentRowKey = ref<any>(null);
+/** 当前hover行 */
+let currentHoverRow: DT = null;
+/** 当前hover的行的key */
+const currentHoverRowKey = ref(null);
+/** 当前hover的列的key */
+// const currentColHoverKey = ref(null);
 
 /** 排序的列dataIndex*/
 let sortCol = ref<string | null>();
@@ -792,9 +820,9 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
 function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
     // 选中同一行不触发current-change 事件
-    if (props.rowKey ? currentItemKey.value === rowKeyGen(row) : currentItem.value === row) return;
-    currentItem.value = row;
-    currentItemKey.value = rowKeyGen(row);
+    if (props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row) return;
+    currentRow.value = row;
+    currentRowKey.value = rowKeyGen(row);
     emits('current-change', e, row);
 }
 
@@ -820,6 +848,23 @@ function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
 /** 表头单元格单击 */
 function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
     emits('header-cell-click', e, col);
+}
+
+/** td mouseenter */
+function onCellMouseEnter(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    // currentColHoverKey.value = colKeyGen(col);
+    emits('cell-mouseenter', e, row, col);
+}
+
+/** td mouseleave */
+function onCellMouseLeave(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    // currentColHoverKey.value = null;
+    emits('cell-mouseleave', e, row, col);
+}
+
+/** td mouseover event */
+function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    emits('cell-mouseover', e, row, col);
 }
 
 /**
@@ -876,9 +921,9 @@ function onTableScroll(e: Event) {
 
 /** tr hover事件 */
 function onTrMouseOver(_e: MouseEvent, row: DT) {
-    if (props.showTrHoverClass) {
-        currentHover.value = rowKeyGen(row);
-    }
+    if (currentHoverRow === row) return;
+    currentHoverRow = row;
+    currentHoverRowKey.value = rowKeyGen(row);
 }
 
 /**
@@ -888,10 +933,10 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
  */
 function setCurrentRow(rowKey: string, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
-    currentItem.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
-    currentItemKey.value = rowKeyGen(currentItem.value);
+    currentRow.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
+    currentRowKey.value = rowKeyGen(currentRow.value);
     if (!option.silent) {
-        emits('current-change', null, currentItem.value);
+        emits('current-change', null, currentRow.value);
     }
 }
 

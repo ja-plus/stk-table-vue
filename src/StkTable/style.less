@@ -14,6 +14,7 @@
     --border-color: #e8e8f4;
     --border-width: 1px;
     --td-bgc: #fff;
+    --td-hover-color: #71a2fd;
     --th-bgc: #fafafc;
     --th-color: #272841;
     --tr-active-bgc: rgb(230, 247, 255);
@@ -53,6 +54,7 @@
         --th-bgc: #202029;
         --th-color: #C0C0D1;
         --td-bgc: #1b1b24;
+        --td-hover-color: #71a2fd;
         --border-color: #292933;
         --tr-active-bgc: #283f63;
         --tr-hover-bgc: #1a2b46;
@@ -373,6 +375,10 @@
                 &.active {
                     background-color: var(--tr-active-bgc);
                 }
+            }
+
+            .td-hover:hover{
+                box-shadow: inset 0 0 0 2px var(--td-hover-color);
             }
 
         }

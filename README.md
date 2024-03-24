@@ -45,6 +45,7 @@ repo:
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
 * [x] 支持配置序号列。`StkTableColumn['type']`。(`v0.3.0`)
+* [x] `props.cellHover`单元格悬浮样式。(`v0.3.2`)
 
 
 
@@ -166,6 +167,8 @@ export type StkProps = {
   showOverflow?: boolean;
   /** 是否增加行hover class */
   showTrHoverClass?: boolean;
+  /** 是否高亮鼠标悬浮的单元格 */
+  cellHover?: boolean;
   /** 表头是否可拖动。支持回调函数。 */
   headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
   /**
@@ -269,6 +272,21 @@ export type StkProps = {
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
      */
     (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格鼠标进入事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseenter', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格鼠标移出事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseleave', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格悬浮事件
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mouseover', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
      * 表头单元格点击事件
      * ```(ev: MouseEvent, col: StkTableColumn<DT>)```

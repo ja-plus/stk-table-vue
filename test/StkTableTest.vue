@@ -21,6 +21,7 @@
         <label><input v-model="props.stripe" type="checkbox" />stripe</label>
         <label><input v-model="props.virtual" type="checkbox" />virtual</label>
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
+        <label><input v-model="props.cellHover" type="checkbox" />cellHover</label>
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
@@ -47,6 +48,7 @@
             @header-cell-click="onHeaderCellClick"
             @scroll="onTableScroll"
             @col-order-change="onColOrderChange"
+            @cell-mouseover="onCellMouseOver"
         ></StkTable>
     </div>
     <div>
@@ -98,6 +100,7 @@ const props = ref({
     stripe: true,
     showOverflow: false,
     showHeaderOverflow: false,
+    cellHover: true,
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,
@@ -388,6 +391,10 @@ function addColumn(num = 1) {
 }
 function deleteColumn(num = 1) {
     columns.value = columns.value.slice(0, -1 * num);
+}
+
+function onCellMouseOver(e, row, col) {
+    console.log('onCellMouseOver', e, row, col.dataIndex);
 }
 </script>
 
