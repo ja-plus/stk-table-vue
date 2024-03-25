@@ -32,7 +32,7 @@ repo:
 * [x] 排序
   - [x] 基本表头点击排序。
   - [x] 支持配置 `null` | `undefined` 永远排最后。
-  - [] 支持配置 string 使用 `String.prototype.localCompare` 排序。
+  - [x] 支持配置 string 使用 `String.prototype.localCompare` 排序。
 * [x] 多级表头。
   - [x] 支持最多`2级`表头。
   - [x] 支持更多级表头。
