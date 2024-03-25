@@ -133,7 +133,6 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         dataIndex: 'name',
         fixed: 'left',
         width: 200,
-        headerClassName: 'my-th',
         className: 'my-td',
         sorter: true,
         customHeaderCell: props => {
@@ -144,6 +143,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'Age',
         dataIndex: 'age',
         fixed: 'left',
+        headerClassName: 'my-th-orange',
         // width: 100, // 为确保横向滚动准确，列宽一定要固定，minWidth,maxWidth要相等
         sorter(data, { order, column }) {
             // console.log(data, order, column);
@@ -157,6 +157,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     {
         title: 'Gender',
         dataIndex: 'gender',
+        headerClassName: 'my-th-cyan',
         // fixed: 'right',
         width: 150,
         // minWidth: '150px',
@@ -445,5 +446,14 @@ function onCellMouseOver(e, row, col) {
 }
 :deep(.special-highlight-cell-red) {
     animation: my-highlight-cell-red 1.5s linear;
+}
+
+:deep(.my-th-orange) {
+    background-color: #ff9900;
+    color: #fff;
+}
+:deep(.my-th-cyan) {
+    background-color: #0099ff;
+    color: #fff;
 }
 </style>
