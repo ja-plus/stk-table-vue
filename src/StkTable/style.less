@@ -147,18 +147,16 @@
         }
     }
 
+    /* 斑马纹*/
     &.stripe {
 
-        /* 斑马纹*/
-        tbody {
-            tr:nth-child(odd) {
-                background-color: var(--stripe-bgc);
-            }
+        tbody tr:nth-child(odd) {
+            background-color: var(--stripe-bgc);
         }
     }
 
-     /**虚拟滚动模式 */
-     &.virtual {
+    /**虚拟滚动模式 */
+    &.virtual {
 
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
@@ -191,6 +189,99 @@
         }
     }
 
+    th,
+    td {
+        z-index: 1;
+        font-size: 14px;
+        box-sizing: border-box;
+        padding: 0 var(--cell-padding-x);
+    }
+
+    th {
+        color: var(--th-color);
+        background-color: inherit;
+
+        &.sortable {
+            cursor: pointer;
+        }
+
+        &.text-overflow {
+            .table-header-cell-wrapper {
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .table-header-title {
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        &:not(.sorter-desc):not(.sorter-asc):hover .table-header-sorter {
+            .arrow-up {
+                fill: var(--sort-arrow-hover-color);
+            }
+
+            .arrow-down {
+                fill: var(--sort-arrow-hover-color);
+            }
+        }
+
+        &.sorter-desc .table-header-sorter {
+            display: initial;
+
+            .arrow-up {
+                fill: var(--sort-arrow-active-sub-color);
+            }
+
+            .arrow-down {
+                fill: var(--sort-arrow-active-color);
+            }
+        }
+
+        &.sorter-asc .table-header-sorter {
+            display: initial;
+
+            .arrow-up {
+                fill: var(--sort-arrow-active-color);
+            }
+
+            .arrow-down {
+                fill: var(--sort-arrow-active-sub-color);
+            }
+        }
+
+    }
+
+    thead {
+        tr {
+            background-color: var(--th-bgc);
+            height: var(--header-row-height);
+
+            &:first-child th {
+                position: sticky;
+                top: 0;
+            }
+        }
+    }
+
+    /* stk-table-main 这层为了增加选择器优先级，防止被斑马纹颜色覆盖*/
+    .stk-table-main tbody tr {
+        background-color: var(--td-bgc);
+        height: var(--row-height);
+        /** 一行分层，有利于高亮行重绘*/
+        transform: translateZ(0);
+
+        &:hover {
+            background-color: var(--tr-hover-bgc);
+        }
+
+        &.active {
+            background-color: var(--tr-active-bgc);
+        }
+    }
+
+
     /** 列宽调整指示器 */
     .column-resize-indicator {
         width: 0;
@@ -212,34 +303,6 @@
         &.fixed-mode {
             table-layout: fixed;
             min-width: min-content;
-        }
-    }
-
-    th,
-    td {
-        z-index: 1;
-        font-size: 14px;
-        box-sizing: border-box;
-        padding: 0 var(--cell-padding-x);
-    }
-
-    th {
-        color: var(--th-color);
-
-        &.sortable {
-            cursor: pointer;
-        }
-
-        &.text-overflow {
-            .table-header-cell-wrapper {
-                white-space: nowrap;
-                overflow: hidden;
-            }
-
-            .table-header-title {
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
         }
     }
 
@@ -296,57 +359,6 @@
         background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
     }
 
-    thead {
-        tr {
-            background-color: var(--th-bgc);
-            height: var(--header-row-height);
-
-            &:first-child th {
-                position: sticky;
-                top: 0;
-            }
-        }
-    }
-
-    th {
-        background-color: inherit;
-        &:not(.sorter-desc):not(.sorter-asc):hover .table-header-sorter {
-            .arrow-up {
-                fill: var(--sort-arrow-hover-color);
-            }
-
-            .arrow-down {
-                fill: var(--sort-arrow-hover-color);
-            }
-        }
-
-        &.sorter-desc .table-header-sorter {
-            display: initial;
-
-            .arrow-up {
-                fill: var(--sort-arrow-active-sub-color);
-            }
-
-            .arrow-down {
-                fill: var(--sort-arrow-active-color);
-            }
-        }
-
-        &.sorter-asc .table-header-sorter {
-            display: initial;
-
-            .arrow-up {
-                fill: var(--sort-arrow-active-color);
-            }
-
-            .arrow-down {
-                fill: var(--sort-arrow-active-sub-color);
-            }
-        }
-
-
-    }
-
     .table-header-cell-wrapper {
         max-width: 100%;
         /*最大宽度不超过列宽*/
@@ -397,25 +409,6 @@
 
     .td-hover:hover {
         box-shadow: inset 0 0 0 2px var(--td-hover-color);
-    }
-
-    tbody {
-
-        tr {
-            background-color: var(--td-bgc);
-            height: var(--row-height);
-            /** 一行分层，有利于高亮行重绘*/
-            transform: translateZ(0);
-
-            &:hover {
-                background-color: var(--tr-hover-bgc);
-            }
-
-            &.active {
-                background-color: var(--tr-active-bgc);
-            }
-        }
-
     }
 
     .stk-table-no-data {

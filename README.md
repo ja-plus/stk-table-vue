@@ -249,9 +249,9 @@ export type StkProps = {
     (e: 'row-click', ev: MouseEvent, row: DT): void;
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
-     * ```(ev: MouseEvent | null, row: DT)```
+     * ```(ev: MouseEvent | null, row: DT, data: { select: boolean })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT, data: { select: boolean }): void;
     /**
      * 行双击事件
      * ```(ev: MouseEvent, row: DT)```

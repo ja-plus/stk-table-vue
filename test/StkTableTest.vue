@@ -253,8 +253,8 @@ onBeforeUnmount(() => {
 //         stkTable.value?.initVirtualScroll();
 //     });
 // }
-function onCurrentChange(e, row) {
-    console.log('current-change', e, row);
+function onCurrentChange(e, row, data) {
+    console.log('current-change', e, row, data);
 }
 function onRowMenu(e, row) {
     console.log('row-menu:', e, row);
@@ -449,11 +449,11 @@ function onCellMouseOver(e, row, col) {
 }
 
 :deep(.my-th-orange) {
-    background-color: #ff9900;
+    background-color: #d76110;
     color: #fff;
 }
 :deep(.my-th-cyan) {
-    background-color: #0099ff;
+    background-color: #1492ca;
     color: #fff;
 }
 </style>

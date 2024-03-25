@@ -382,9 +382,9 @@ const emits = defineEmits<{
     (e: 'row-click', ev: MouseEvent, row: DT): void;
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
-     * ```(ev: MouseEvent | null, row: DT)```
+     * ```(ev: MouseEvent | null, row: DT, data: { select: boolean })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT, data: { select: boolean }): void;
     /**
      * 行双击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -819,11 +819,16 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
 
 function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
-    // 选中同一行不触发current-change 事件
-    if (props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row) return;
-    currentRow.value = row;
-    currentRowKey.value = rowKeyGen(row);
-    emits('current-change', e, row);
+    // 选中同一行，取消当前选中行。
+    if (props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row) {
+        currentRow.value = null;
+        currentRowKey.value = null;
+        emits('current-change', e, row, { select: false });
+    } else {
+        currentRow.value = row;
+        currentRowKey.value = rowKeyGen(row);
+        emits('current-change', e, row, { select: true });
+    }
 }
 
 function onRowDblclick(e: MouseEvent, row: DT) {
@@ -928,7 +933,7 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 
 /**
  * 选中一行，
- * @param {string} rowKey
+ * @param {string} rowKey selected rowKey, null to unselect
  * @param {boolean} option.silent 是否触发回调
  */
 function setCurrentRow(rowKey: string, option = { silent: false }) {
@@ -936,7 +941,7 @@ function setCurrentRow(rowKey: string, option = { silent: false }) {
     currentRow.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
     currentRowKey.value = rowKeyGen(currentRow.value);
     if (!option.silent) {
-        emits('current-change', null, currentRow.value);
+        emits('current-change', /** no Event */ null, currentRow.value, { select: Boolean(currentRowKey.value) });
     }
 }
 
