@@ -7,6 +7,7 @@
         <button @click="addRow(1, true)">unshiftRow</button>
         <button @click="addColumn()">addColumn</button>
         <button @click="deleteColumn()">deleteColumn</button>
+        <button @click="startUnshiftRow">startUnshiftRow</button>
         <button @click="props.theme === 'light' ? (props.theme = 'dark') : (props.theme = 'light')">theme:{{ props.theme }}</button>
         <label><input v-model="props.showOverflow" type="checkbox" />showOverflow</label>
         <label><input v-model="props.showHeaderOverflow" type="checkbox" />showHeaderOverflow</label>
@@ -276,19 +277,19 @@ function onHeaderCellClick(e, row) {
 function onTableScroll(e, data) {
     const { startIndex, endIndex } = data;
 
-    window.clearTimeout(scrollTimeout);
-    scrollTimeout = window.setTimeout(() => {
-        console.log(startIndex, endIndex);
-        for (let i = startIndex; i < endIndex; i++) {
-            const item = dataSource.value[i];
-            if (!item.name) {
-                dataSource.value[i] = {
-                    name: 'name' + i,
-                };
-            }
-        }
-        dataSource.value = [...dataSource.value];
-    }, 200);
+    // window.clearTimeout(scrollTimeout);
+    // scrollTimeout = window.setTimeout(() => {
+    //     console.log(startIndex, endIndex);
+    //     for (let i = startIndex; i < endIndex; i++) {
+    //         const item = dataSource.value[i];
+    //         if (!item.name) {
+    //             dataSource.value[i] = {
+    //                 name: 'name' + i,
+    //             };
+    //         }
+    //     }
+    //     dataSource.value = [...dataSource.value];
+    // }, 200);
 }
 function handleClearSorter() {
     stkTable.value?.resetSorter();
@@ -391,6 +392,18 @@ function addColumn(num = 1) {
 }
 function deleteColumn(num = 1) {
     columns.value = columns.value.slice(0, -1 * num);
+}
+
+let unshiftRowInterval = 0;
+function startUnshiftRow() {
+    if (unshiftRowInterval) {
+        window.clearInterval(unshiftRowInterval);
+        unshiftRowInterval = 0;
+        return;
+    }
+    unshiftRowInterval = window.setInterval(() => {
+        addRow(1, true);
+    }, 100);
 }
 
 function onCellMouseOver(e, row, col) {
