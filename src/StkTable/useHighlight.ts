@@ -114,7 +114,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
                     const progress = (nowTs - highlightStart) / highlightDuration;
                     let bgc = '';
-                    if (0 < progress && progress < 1) {
+                    if (0 <= progress && progress <= 1) {
                         bgc = highlightInter.value(progress);
                     } else {
                         highlightDimRowsJs.delete(rowKeyValue);
@@ -128,7 +128,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                 } else {
                     // 没有则停止循环
                     calcHighlightDimLoopJs = false;
-                    highlightDimRowsJs.clear();
+                    highlightDimRowsJs.clear(); // TODO: 是否需要 清除
                 }
             }, highlightFrequency);
         };
@@ -198,13 +198,13 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             ...option,
         };
 
-        const nowTs = Date.now();
         if (method === 'css' || useCss) {
             // -------- use css keyframe
             highlightRowsInCssKeyframe(rowKeyValues, className, duration);
         } else if (method === 'animation') {
             if (props.virtual) {
                 // -------- 用animation 接口实现动画
+                const nowTs = Date.now();
                 for (let i = 0; i < rowKeyValues.length; i++) {
                     const rowKeyValue = rowKeyValues[i];
                     const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
@@ -222,6 +222,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             }
         } else if (method === 'js') {
             // -------- 用js计算颜色渐变的高亮方案
+            const nowTs = Date.now();
             for (let i = 0; i < rowKeyValues.length; i++) {
                 const rowKeyValue = rowKeyValues[i];
                 highlightDimRowsJs.set(rowKeyValue, nowTs);
