@@ -394,7 +394,7 @@ function deleteColumn(num = 1) {
 }
 
 function onCellMouseOver(e, row, col) {
-    console.log('onCellMouseOver', e, row, col.dataIndex);
+    // console.log('onCellMouseOver', e, row, col.dataIndex);
 }
 </script>
 
