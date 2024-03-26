@@ -155,6 +155,33 @@
         }
     }
 
+    /* 单元格悬浮 */
+    &.cell-hover tbody td:hover {
+        box-shadow: inset 0 0 0 2px var(--td-hover-color);
+    }
+
+    /* td 溢出*/
+    &.text-overflow {
+        .table-cell-wrapper {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    /* th 溢出*/
+    &.header-text-overflow {
+        .table-header-cell-wrapper {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .table-header-title {
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
     /**虚拟滚动模式 */
     &.virtual {
 
@@ -203,18 +230,6 @@
 
         &.sortable {
             cursor: pointer;
-        }
-
-        &.text-overflow {
-            .table-header-cell-wrapper {
-                white-space: nowrap;
-                overflow: hidden;
-            }
-
-            .table-header-title {
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
         }
 
         &:not(.sorter-desc):not(.sorter-asc):hover .table-header-sorter {
@@ -317,15 +332,6 @@
         /* 必须分开些，否则var(step(x))不兼容旧浏览器*/
     }
 
-    /* th td 溢出*/
-    .text-overflow {
-        .table-cell-wrapper {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
-
     .seq-column {
         text-align: center;
     }
@@ -405,10 +411,6 @@
         animation: stk-table-dim var(--highlight-duration);
         /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
         animation-timing-function: var(--highlight-timing-function);
-    }
-
-    .td-hover:hover {
-        box-shadow: inset 0 0 0 2px var(--td-hover-color);
     }
 
     .stk-table-no-data {

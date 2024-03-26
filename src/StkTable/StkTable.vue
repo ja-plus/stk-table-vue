@@ -14,6 +14,9 @@
             'border-v': props.bordered === 'v',
             'border-body-v': props.bordered === 'body-v',
             stripe: props.stripe,
+            'cell-hover': props.cellHover,
+            'text-overflow': props.showOverflow,
+            'header-text-overflow': props.showHeaderOverflow,
         }"
         :style="[
             virtual && {
@@ -69,7 +72,6 @@
                         :class="[
                             col.sorter ? 'sortable' : '',
                             col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
-                            showHeaderOverflow ? 'text-overflow' : '',
                             col.headerClassName,
                             fixedColClassMap.get(colKeyGen(col)),
                         ]"
@@ -167,15 +169,7 @@
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
                         :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                        :class="[
-                            col.className,
-                            fixedColClassMap.get(colKeyGen(col)),
-                            col.type === 'seq' ? 'seq-column' : '',
-                            {
-                                'td-hover': props.cellHover,
-                                'text-overflow': showOverflow,
-                            },
-                        ]"
+                        :class="[col.className, fixedColClassMap.get(colKeyGen(col)), col.type === 'seq' ? 'seq-column' : '']"
                         @click="e => onCellClick(e, row, col)"
                         @mouseenter="e => onCellMouseEnter(e, row, col)"
                         @mouseleave="e => onCellMouseLeave(e, row, col)"
