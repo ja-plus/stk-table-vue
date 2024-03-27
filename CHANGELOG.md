@@ -5,6 +5,7 @@
 * change: 点击行后，再次点击取消噶奥良。
     - current-change 新增参数，{select: boolean} 表示是否选中。
 * change: 减少css选择器层级。th background-color 变更为inherit。
+* change: `tr` 移除 `transform:translateZ(0)` 进行分层。有需要时用户可以手动添加样式分层。
 * fix: 高亮行时，有概率不触发高亮的问题。
 
 ## 0.3.1
