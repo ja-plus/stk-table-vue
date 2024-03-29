@@ -116,7 +116,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 if (col.fixed === 'right') rightCols.push(col);
             }
 
-            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex + 1);
+            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex);
 
             return leftCols.concat(mainColumns).concat(rightCols);
         }
@@ -271,10 +271,11 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             colWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= containerWidth) {
-                endIndex = colIndex;
+                endIndex = colIndex + 1; // slice endIndex + 1
                 break;
             }
         }
+
         endIndex = Math.min(endIndex, headerLength);
 
         if (vue2ScrollXTimeout) {
