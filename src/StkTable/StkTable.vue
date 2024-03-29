@@ -17,6 +17,7 @@
             'cell-hover': props.cellHover,
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
+            'legacy-mode': IS_LEGACY_MODE,
         }"
         :style="[
             virtual && {
@@ -213,7 +214,7 @@
  * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT } from './const';
+import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE } from './const';
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -893,7 +894,7 @@ function onTableScroll(e: Event) {
     const isXScroll = scrollLeft !== vScrollLeft;
 
     // 纵向滚动有变化
-    if (isYScroll && virtual_on.value) {
+    if (isYScroll) {
         updateVirtualScrollY(scrollTop);
     }
 

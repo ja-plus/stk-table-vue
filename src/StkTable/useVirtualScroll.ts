@@ -184,6 +184,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方可能有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
+
+        // 非虚拟滚动不往下执行
+        if (!virtual_on.value) return;
+
         let startIndex = Math.floor(sTop / rowHeight);
         if (props.stripe) {
             startIndex -= 1; //预渲染1行

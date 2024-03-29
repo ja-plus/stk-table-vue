@@ -7,6 +7,7 @@
 * change: 减少css选择器层级。th background-color 变更为inherit。
 * change: `tr` 移除 `transform:translateZ(0)` 进行分层。有需要时用户可以手动添加样式分层。
 * fix: 高亮行时，有概率不触发高亮的问题。
+* fix: 修复 legacy 模式下固定表头固定列问题。
 
 ## 0.3.1
 * fix: `.highlight-row` `.highlight-cell` class 浏览器兼容。

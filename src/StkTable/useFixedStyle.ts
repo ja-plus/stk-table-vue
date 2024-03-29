@@ -88,7 +88,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
         if (tagType === TagType.TH) {
             // TH
             if (IS_LEGACY_MODE) {
-                style.top = virtualScroll.value.scrollTop + depth * props.rowHeight + 'px';
+                style.top = virtualScroll.value.scrollTop + 'px';
             } else {
                 style.top = depth * props.rowHeight + 'px';
             }
