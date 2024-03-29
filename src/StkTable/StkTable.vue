@@ -17,7 +17,6 @@
             'cell-hover': props.cellHover,
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
-            'legacy-mode': IS_LEGACY_MODE,
         }"
         :style="[
             virtual && {
@@ -214,7 +213,7 @@
  * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE } from './const';
+import { DEFAULT_ROW_HEIGHT } from './const';
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -224,7 +223,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { createStkTableId, getCalculatedColWidth, getColWidth, transformWidthToStr, howDeepTheHeader, tableSort } from './utils';
+import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils';
 
 /** Generic stands for DataType */
 type DT = any;

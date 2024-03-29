@@ -6,6 +6,7 @@
     - current-change 新增参数，{select: boolean} 表示是否选中。
 * change: 减少css选择器层级。th background-color 变更为inherit。
 * change: `tr` 移除 `transform:translateZ(0)` 进行分层。有需要时用户可以手动添加样式分层。
+* change: remove `tbody` `position:relative`。
 * fix: 高亮行时，有概率不触发高亮的问题。
 * fix: 修复 legacy 模式下固定表头固定列问题。
 
