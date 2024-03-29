@@ -206,9 +206,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             endIndex += 1;
         }
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度
-        if (endIndex > dataSourceCopy.value.length) {
-            endIndex = dataSourceCopy.value.length; // 溢出index修正
-        }
+        endIndex = Math.min(endIndex, dataSourceCopy.value.length); // 溢出index修正
         if (vue2ScrollYTimeout) {
             window.clearTimeout(vue2ScrollYTimeout);
         }
@@ -273,9 +271,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 break;
             }
         }
-        if (endIndex > headerLength) {
-            endIndex = headerLength;
-        }
+        endIndex = Math.min(endIndex, headerLength);
 
         if (vue2ScrollXTimeout) {
             window.clearTimeout(vue2ScrollXTimeout);
