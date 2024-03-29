@@ -83,7 +83,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     const virtual_dataSourcePart = computed(() => {
         if (!virtual_on.value) return dataSourceCopy.value;
         const { startIndex, endIndex } = virtualScroll.value;
-        return dataSourceCopy.value.slice(startIndex, endIndex);
+        return dataSourceCopy.value.slice(startIndex, endIndex + 1);
     });
 
     const virtual_offsetBottom = computed(() => {
@@ -116,7 +116,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 if (col.fixed === 'right') rightCols.push(col);
             }
 
-            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex);
+            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex + 1);
 
             return leftCols.concat(mainColumns).concat(rightCols);
         }
@@ -200,10 +200,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 startIndex -= 1; // 奇数-1变成偶数
             }
         }
-        let endIndex = startIndex + pageSize + 1; //预渲染一行 TODO: 是否需要预渲染一行
+        let endIndex = startIndex + pageSize;
         if (props.stripe) {
             // 由于stripe上方预渲染-1行，这里也要预渲染1+1行
-            endIndex += 2;
+            endIndex += 1;
         }
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度
         if (endIndex > dataSourceCopy.value.length) {
@@ -269,7 +269,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             colWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= containerWidth) {
-                endIndex = colIndex + 1; // 由于slice[start,end)，要加1
+                endIndex = colIndex;
                 break;
             }
         }
