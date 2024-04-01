@@ -1,3 +1,6 @@
+## 0.3.3
+* feature: 新增`props.cellFixedMode` 配置，设置为`relative` 时，将使用 `position:relative` 实现固定列固定头。
+
 ## 0.3.2
 * feature: 单元格事件
     - `props.cellHover`启用td hover状态

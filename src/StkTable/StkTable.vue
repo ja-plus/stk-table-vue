@@ -212,7 +212,7 @@
  * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
  * [] highlight-row 颜色不能恢复到active的颜色
  */
-import { CSSProperties, computed, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT } from './const';
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -320,6 +320,12 @@ const props = withDefaults(
         highlightConfig?: HighlightConfig;
         /** 序号列配置 */
         seqConfig?: SeqConfig;
+        /**
+         * 固定头，固定列实现方式。
+         *
+         * 低版本浏览器只能为'relative', 设置为relative时如果列宽会变动则谨慎使用。
+         */
+        cellFixedMode?: 'sticky' | 'relative';
     }>(),
     {
         width: '',
@@ -360,6 +366,7 @@ const props = withDefaults(
         hideHeaderTitle: false,
         highlightConfig: () => ({}),
         seqConfig: () => ({}),
+        cellFixedMode: 'sticky',
     },
 );
 
@@ -579,15 +586,16 @@ watch(
     () => props.columns,
     () => {
         dealColumns();
-        initVirtualScrollX();
+        nextTick(initVirtualScrollX);
     },
 );
 watch(
     () => props.virtualX,
-    () => dealColumns(),
+    () => {
+        dealColumns();
+        nextTick(initVirtualScrollX);
+    },
 );
-
-dealColumns();
 
 watch(
     () => props.dataSource,
@@ -617,6 +625,8 @@ watch(
 );
 
 watch(() => props.fixedColShadow, dealFixedColShadow);
+
+dealColumns();
 
 onMounted(() => {
     initVirtualScroll();

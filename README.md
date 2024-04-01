@@ -231,6 +231,12 @@ export type StkProps = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
   };
+  /**
+   * 固定头，固定列实现方式。
+   *
+   * 低版本浏览器只能为'relative', 设置为relative时如果列宽会变动则谨慎使用。
+   */
+  cellFixedMode?: 'sticky' | 'relative';
 };
 ```
 
@@ -545,6 +551,9 @@ export type SortConfig<T extends Record<string, any>> = {
 * 在虚拟滚动下高亮强制使用css @keyframes 实现动画。`setHighlightDimRow`/`setHighlightCellRow` 最后一个参数传入 `{method: 'css'}` 即可。（滚动后动画会中断） 
 * 指定 `{method:'animation'}` 在虚拟滚动下使用animation api实现动画。好处是动画流畅，且滚动后动画不中断。
 * 配置 `props.highlightConfig.fps` 指定高亮帧率。降低帧率有利于性能。
+### 性能
+* 配置 `props.cellFixedMode` 为 `relative` 时，将使用相对定位实现固定列与固定表头，相较于`sticky`的实现，渲染合成层更少，性能更好。
+* 问题：若开启了纵向虚拟滚动，不开启横向虚拟滚动，且不设置某些列宽时。如果纵向滚动导致某些列宽变化，则会导致右侧固定列计算错误。
 
 ## Other
 * `$*$` 兼容注释

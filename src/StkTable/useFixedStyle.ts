@@ -79,15 +79,21 @@ export function useFixedStyle<DT extends Record<string, any>>({
         const style: CSSProperties = {};
         const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
 
-        if (IS_LEGACY_MODE) {
-            style.position = 'relative';
-        } else {
-            style.position = 'sticky';
+        /** 是否是relative模式完成固定列 */
+        let isRelativeMode = true;
+        if (props.cellFixedMode === 'sticky') {
+            isRelativeMode = false;
         }
+
+        if (IS_LEGACY_MODE) {
+            // 低版本浏览器只能为固定列设置position: sticky
+            isRelativeMode = true;
+        }
+        style.position = isRelativeMode ? 'relative' : 'sticky';
 
         if (tagType === TagType.TH) {
             // TH
-            if (IS_LEGACY_MODE) {
+            if (isRelativeMode) {
                 style.top = virtualScroll.value.scrollTop + 'px';
             } else {
                 style.top = depth * props.rowHeight + 'px';
@@ -99,13 +105,14 @@ export function useFixedStyle<DT extends Record<string, any>>({
         }
 
         if (fixed === 'left' || fixed === 'right') {
-            if (IS_LEGACY_MODE) {
+            if (isRelativeMode) {
+                const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
                 if (isFixedLeft) {
-                    if (virtualX_on.value) style.left = virtualScrollX.value.scrollLeft - virtualScrollX.value.offsetLeft + 'px';
-                    else style.left = virtualScrollX.value.scrollLeft + 'px';
+                    style.left = scrollLeft - (virtualX_on.value ? offsetLeft : 0) + 'px';
                 } else {
-                    // TODO:计算右侧距离
-                    style.right = `${virtualX_offsetRight.value}px`;
+                    // fixed right
+                    const scrollRight = scrollWidth - containerWidth - scrollLeft;
+                    style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
                 }
             } else {
                 const lr = (col.dataIndex ? colKeyStore[col.dataIndex] : refStore.get(col)) + 'px';

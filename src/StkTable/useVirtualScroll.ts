@@ -30,8 +30,10 @@ export type VirtualScrollStore = {
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
-    /** 容器宽度 */
+    /** 父容器宽度 */
     containerWidth: number;
+    /** 滚动容器的宽度 */
+    scrollWidth: number;
     /** 开始位置 */
     startIndex: number;
     /** 结束始位置 */
@@ -69,6 +71,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     const virtualScrollX = ref<VirtualScrollXStore>({
         containerWidth: 0,
+        scrollWidth: 0,
         startIndex: 0,
         endIndex: 0,
         offsetLeft: 0,
@@ -162,10 +165,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     }
 
     function initVirtualScrollX() {
-        if (!props.virtualX) return;
-        const { offsetWidth, scrollLeft } = tableContainerRef.value || {};
-        // scrollTo(null, 0);
-        virtualScrollX.value.containerWidth = offsetWidth || DEFAULT_TABLE_WIDTH;
+        const { clientWidth, scrollLeft, scrollWidth } = tableContainerRef.value || {};
+        virtualScrollX.value.containerWidth = clientWidth || DEFAULT_TABLE_WIDTH;
+        virtualScrollX.value.scrollWidth = scrollWidth || DEFAULT_TABLE_WIDTH;
         updateVirtualScrollX(scrollLeft);
     }
     /**
@@ -237,6 +239,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 通过横向滚动条位置，计算横向虚拟滚动的参数 */
     function updateVirtualScrollX(sLeft = 0) {
+        if (!props.virtualX) return;
         const headerLength = tableHeaderLast.value?.length;
         const { scrollLeft } = virtualScrollX.value;
         if (!headerLength) return;
