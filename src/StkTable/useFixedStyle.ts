@@ -75,7 +75,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
         const { fixed } = col;
         if (tagType === TagType.TD && !fixed) return null;
 
-        const isFixedLeft = fixed === 'left';
         const style: CSSProperties = {};
         const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
 
@@ -89,8 +88,23 @@ export function useFixedStyle<DT extends Record<string, any>>({
             // 低版本浏览器只能为固定列设置position: sticky
             isRelativeMode = true;
         }
-        style.position = isRelativeMode ? 'relative' : 'sticky';
 
+        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
+        const scrollRight = scrollWidth - containerWidth - scrollLeft;
+
+        if (virtualScrollX.value.scrollLeft === 0 && fixed === 'left' && tagType === TagType.TD) {
+            // 滚动条在最左侧时，左侧固定列不需要，防止分层
+            style.position = void 0;
+        } else if (scrollRight === 0 && fixed === 'right' && tagType === TagType.TD) {
+            // 滚动条在最右侧时，右侧固定列不需要，防止分层
+            style.position = void 0;
+        } else if (isRelativeMode) {
+            style.position = 'relative';
+        } else {
+            style.position = 'sticky';
+        }
+
+        const isFixedLeft = fixed === 'left';
         if (tagType === TagType.TH) {
             // TH
             if (isRelativeMode) {
@@ -101,17 +115,17 @@ export function useFixedStyle<DT extends Record<string, any>>({
             style.zIndex = isFixedLeft ? '3' : '2'; // 保证固定列高于其他单元格
         } else {
             // TD
-            style.zIndex = isFixedLeft ? '2' : '1';
+            if (isFixedLeft) {
+                style.zIndex = '2';
+            }
         }
 
         if (fixed === 'left' || fixed === 'right') {
             if (isRelativeMode) {
-                const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
                 if (isFixedLeft) {
                     style.left = scrollLeft - (virtualX_on.value ? offsetLeft : 0) + 'px';
                 } else {
                     // fixed right
-                    const scrollRight = scrollWidth - containerWidth - scrollLeft;
                     style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
                 }
             } else {

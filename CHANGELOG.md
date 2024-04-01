@@ -1,5 +1,7 @@
 ## 0.3.3
 * feature: 新增`props.cellFixedMode` 配置，设置为`relative` 时，将使用 `position:relative` 实现固定列固定头。
+* optimize: 滚动条在最左边或最右边时，对应的固定列不分层。去除 `position:sticky`
+* change: 非固定列单元格 `z-index` 原为 1 调整为 不设置。
 
 ## 0.3.2
 * feature: 单元格事件
