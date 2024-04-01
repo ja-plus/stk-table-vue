@@ -116,28 +116,8 @@
             background-image: var(--bg-border-right), var(--bg-border-bottom);
         }
 
-        thead {
-            tr {
-                &:first-child th {
-                    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-                }
-
-            }
-        }
-
-
-        &.virtual-x {
-            .virtual-x-left {
-                background: none;
-                pointer-events: none;
-            }
-
-            .virtual-x-right {
-                padding: 0;
-                background: none;
-                pointer-events: none;
-            }
-
+        thead tr:first-child th {
+            background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
         }
     }
 
@@ -191,26 +171,18 @@
             max-height: var(--header-row-height);
         }
 
-        tbody {
-            td {
-                height: var(--row-height);
-                line-height: 1;
+        tbody td {
+            height: var(--row-height);
+            line-height: 1;
 
-                .table-cell-wrapper {
-                    max-height: var(--row-height);
-                    overflow: hidden;
-                }
+            .table-cell-wrapper {
+                max-height: var(--row-height);
+                overflow: hidden;
             }
         }
 
         .padding-top-tr td {
             height: 0;
-        }
-    }
-
-    &.virtual-x {
-        .virtual-x-left {
-            padding: 0;
         }
     }
 
@@ -292,6 +264,13 @@
         &.active {
             background-color: var(--tr-active-bgc);
         }
+    }
+
+    .virtual-x-left,
+    .virtual-x-right {
+        padding: 0;
+        background: none;
+        pointer-events: none;
     }
 
 

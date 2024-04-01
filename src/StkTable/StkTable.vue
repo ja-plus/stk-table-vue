@@ -142,7 +142,7 @@
             <tbody>
                 <tr v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
-                    <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left" style="padding: 0"></td>
+                    <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left"></td>
                     <template v-if="fixedMode && headless">
                         <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td
                     ></template>
@@ -163,7 +163,7 @@
                     @mouseover="e => onTrMouseOver(e, row)"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
-                    <td v-if="virtualX_on" class="virtual-x-left" style="padding: 0"></td>
+                    <td v-if="virtualX_on" class="virtual-x-left"></td>
                     <td
                         v-for="(col, colIndex) in virtualX_columnPart"
                         :key="col.dataIndex"
