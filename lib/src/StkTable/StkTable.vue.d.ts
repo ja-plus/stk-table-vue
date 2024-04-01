@@ -3,7 +3,7 @@ import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, S
 type DT = any;
 /**
  * 选中一行，
- * @param {string} rowKey
+ * @param {string} rowKey selected rowKey, null to unselect
  * @param {boolean} option.silent 是否触发回调
  */
 declare function setCurrentRow(rowKey: string, option?: {
@@ -83,6 +83,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showOverflow?: boolean | undefined;
     /** 是否增加行hover class */
     showTrHoverClass?: boolean | undefined;
+    /** 是否高亮鼠标悬浮的单元格 */
+    cellHover?: boolean | undefined;
     /** 表头是否可拖动。支持回调函数。 */
     headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
     /**
@@ -147,6 +149,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showHeaderOverflow: boolean;
     showOverflow: boolean;
     showTrHoverClass: boolean;
+    cellHover: boolean;
     headerDrag: boolean;
     rowClassName: () => "";
     colResizable: boolean;
@@ -183,7 +186,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         method?: "css" | "animation" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;
-        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined; /** v-model:columns col resize 时更新宽度*/
+        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
     }) => void;
     /** 表格排序列dataIndex */
@@ -201,11 +204,16 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
 }, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
-    "current-change": (ev: MouseEvent | null, row: any) => void;
+    "current-change": (ev: MouseEvent | null, row: any, data: {
+        select: boolean;
+    }) => void;
     "row-dblclick": (ev: MouseEvent, row: any) => void;
     "header-row-menu": (ev: MouseEvent) => void;
     "row-menu": (ev: MouseEvent, row: any) => void;
     "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
     scroll: (ev: Event, data: {
         startIndex: number;
@@ -263,6 +271,8 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showOverflow?: boolean | undefined;
     /** 是否增加行hover class */
     showTrHoverClass?: boolean | undefined;
+    /** 是否高亮鼠标悬浮的单元格 */
+    cellHover?: boolean | undefined;
     /** 表头是否可拖动。支持回调函数。 */
     headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
     /**
@@ -327,6 +337,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showHeaderOverflow: boolean;
     showOverflow: boolean;
     showTrHoverClass: boolean;
+    cellHover: boolean;
     headerDrag: boolean;
     rowClassName: () => "";
     colResizable: boolean;
@@ -353,11 +364,16 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
-    "onCurrent-change"?: ((ev: MouseEvent | null, row: any) => any) | undefined;
+    "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
+        select: boolean;
+    }) => any) | undefined;
     "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
     "onRow-menu"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
 }, {
@@ -386,6 +402,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     showHeaderOverflow: boolean;
     showOverflow: boolean;
     showTrHoverClass: boolean;
+    cellHover: boolean;
     headerDrag: boolean | ((col: StkTableColumn<any>) => boolean);
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
