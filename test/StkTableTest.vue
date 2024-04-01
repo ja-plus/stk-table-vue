@@ -31,6 +31,7 @@
             v-bind="props"
             v-model:columns="columns"
             row-key="name"
+            cell-fixed-mode="sticky"
             :seq-config="seqConfig"
             :row-height="28"
             :header-row-height="36"
