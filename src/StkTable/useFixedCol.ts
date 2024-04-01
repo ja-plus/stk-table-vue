@@ -1,9 +1,9 @@
-import { computed, ref, Ref, ShallowRef, shallowRef } from 'vue';
-import { StkTableColumn } from './types';
+import { computed, ComputedRef, ref, Ref, ShallowRef, shallowRef } from 'vue';
+import { StkTableColumn, UniqKey } from './types';
 
 type Params<T extends Record<string, any>> = {
     props: any;
-    colKeyGen: (col: StkTableColumn<T>) => string;
+    colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
     tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
     tableHeaderLast: ShallowRef<StkTableColumn<T>[]>;
     tableContainerRef: Ref<HTMLDivElement | undefined>;
@@ -42,7 +42,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
                     ['fixed-cell--' + col.fixed]: col.fixed,
                     'fixed-cell--shadow': showShadow,
                 };
-                colMap.set(colKeyGen(col), classObj);
+                colMap.set(colKeyGen.value(col), classObj);
             });
         });
         return colMap;

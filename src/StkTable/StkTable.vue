@@ -214,7 +214,7 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT } from './const';
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKey, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -505,6 +505,18 @@ const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
+/**
+ * 列唯一键
+ * @param col
+ */
+const colKeyGen = computed(() => {
+    if (typeof props.colKey === 'function') {
+        return (col: StkTableColumn<DT>) => (props.colKey as (col: StkTableColumn<DT>) => string)(col);
+    } else {
+        return (col: StkTableColumn<DT>) => (col as any)[props.colKey as string];
+    }
+});
+
 /**高亮帧间隔 
 const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
@@ -729,21 +741,13 @@ function rowKeyGen(row: DT) {
     return key;
 }
 
-/**
- * 列唯一键
- * @param col
- */
-function colKeyGen(col: StkTableColumn<DT>) {
-    return typeof props.colKey === 'function' ? props.colKey(col) : (col as any)[props.colKey];
-}
-
 /** 单元格样式 */
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
     tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
-            const colKey = colKeyGen(col);
+            const colKey = colKeyGen.value(col);
             const width = props.virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
                 width,

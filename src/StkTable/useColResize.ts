@@ -1,5 +1,5 @@
-import { Ref, ShallowRef, onBeforeUnmount, onMounted, ref } from 'vue';
-import { StkTableColumn } from './types';
+import { ComputedRef, Ref, ShallowRef, onBeforeUnmount, onMounted, ref } from 'vue';
+import { StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils';
 
 type ColResizeState<DT extends Record<string, any>> = {
@@ -21,7 +21,7 @@ type Params<DT extends Record<string, any>> = {
     tableContainerRef: Ref<HTMLElement | undefined>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     colResizeIndicatorRef: Ref<HTMLElement | undefined>;
-    colKeyGen: (p: any) => string;
+    colKeyGen: ComputedRef<(p: any) => UniqKey>;
 };
 
 /** 列宽拖动 */
@@ -78,7 +78,7 @@ export function useColResize<DT extends Record<string, any>>({
         const { scrollLeft, scrollTop } = tableContainerRef.value;
         const { left } = tableContainerRef.value.getBoundingClientRect();
         /** 列下标 */
-        let colIndex = tableHeaderLast.value.findIndex(it => colKeyGen(it) === colKeyGen(col));
+        let colIndex = tableHeaderLast.value.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
         if (isPrev) {
             // 上一列
             colIndex -= 1;
@@ -139,7 +139,7 @@ export function useColResize<DT extends Record<string, any>>({
         let width = getCalculatedColWidth(lastCol) + moveX;
         if (width < props.colMinWidth) width = props.colMinWidth;
 
-        const curCol = tableHeaderLast.value.find(it => colKeyGen(it) === colKeyGen(lastCol));
+        const curCol = tableHeaderLast.value.find(it => colKeyGen.value(it) === colKeyGen.value(lastCol));
         if (!curCol) return;
         curCol.width = width + 'px';
 
