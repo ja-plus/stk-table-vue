@@ -1,6 +1,6 @@
 import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed } from 'vue';
-import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS, IS_LEGACY_MODE } from './const';
+import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS } from './const';
 import { HighlightConfig, UniqKey } from './types';
 
 type Params = {

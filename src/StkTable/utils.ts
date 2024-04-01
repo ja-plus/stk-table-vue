@@ -5,7 +5,7 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './type
 function isEmptyValue(val: any, isNumber?: boolean) {
     let isEmpty = val === null || val === '';
     if (isNumber) {
-        isEmpty ||= typeof val === 'boolean' || Number.isNaN(+val);
+        isEmpty = isEmpty || typeof val === 'boolean' || Number.isNaN(+val);
     }
     return isEmpty;
 }
