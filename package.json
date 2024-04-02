@@ -17,8 +17,13 @@
     "keywords": [
         "virtual table",
         "vue",
+        "vue2",
+        "vue3",
         "highlight",
-        "sticky"
+        "sticky",
+        "virtual",
+        "table",
+        "list"
     ],
     "files": [
         "lib",
