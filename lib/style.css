@@ -88,15 +88,6 @@
 .stk-table.border thead tr:first-child th{
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
-.stk-table.border.virtual-x .virtual-x-left{
-  background:none;
-  pointer-events:none;
-}
-.stk-table.border.virtual-x .virtual-x-right{
-  padding:0;
-  background:none;
-  pointer-events:none;
-}
 .stk-table.border-body-v tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
@@ -135,9 +126,6 @@
 }
 .stk-table.virtual .padding-top-tr td{
   height:0;
-}
-.stk-table.virtual-x .virtual-x-left{
-  padding:0;
 }
 .stk-table th,
 .stk-table td{
@@ -196,6 +184,12 @@
 }
 .stk-table .stk-table-main tbody tr.active{
   background-color:var(--tr-active-bgc);
+}
+.stk-table .virtual-x-left,
+.stk-table .virtual-x-right{
+  padding:0;
+  background:none;
+  pointer-events:none;
 }
 .stk-table .column-resize-indicator{
   width:0;

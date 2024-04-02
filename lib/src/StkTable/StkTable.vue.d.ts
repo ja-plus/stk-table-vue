@@ -1,4 +1,4 @@
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKey, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -126,6 +126,14 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     highlightConfig?: HighlightConfig | undefined;
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
+    /**
+     * 固定头，固定列实现方式。
+     *
+     * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+     *
+     * 低版本浏览器只能为'relative',
+     */
+    cellFixedMode?: "sticky" | "relative" | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -165,6 +173,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
     seqConfig: () => {};
+    cellFixedMode: string;
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -182,7 +191,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
-    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
+    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
         method?: "css" | "animation" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;
@@ -314,6 +323,14 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     highlightConfig?: HighlightConfig | undefined;
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
+    /**
+     * 固定头，固定列实现方式。
+     *
+     * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+     *
+     * 低版本浏览器只能为'relative',
+     */
+    cellFixedMode?: "sticky" | "relative" | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -353,6 +370,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
     seqConfig: () => {};
+    cellFixedMode: string;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -415,6 +433,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     hideHeaderTitle: boolean | string[];
     highlightConfig: HighlightConfig;
     seqConfig: SeqConfig;
+    cellFixedMode: "sticky" | "relative";
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;

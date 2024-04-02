@@ -26,8 +26,10 @@ export type VirtualScrollStore = {
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
-    /** 容器宽度 */
+    /** 父容器宽度 */
     containerWidth: number;
+    /** 滚动容器的宽度 */
+    scrollWidth: number;
     /** 开始位置 */
     startIndex: number;
     /** 结束始位置 */
@@ -54,6 +56,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
     }>;
     virtualScrollX: Ref<{
         containerWidth: number;
+        scrollWidth: number;
         startIndex: number;
         endIndex: number;
         offsetLeft: number;
