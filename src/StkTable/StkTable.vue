@@ -18,14 +18,12 @@
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
         }"
-        :style="[
-            {
-                '--row-height': virtualScroll.rowHeight + 'px',
-                '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
-                '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
-                '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
-            },
-        ]"
+        :style="{
+            '--row-height': virtualScroll.rowHeight + 'px',
+            '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
+            '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
+            '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
+        }"
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >

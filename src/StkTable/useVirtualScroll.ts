@@ -146,13 +146,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (!virtual_on.value) return;
         const { offsetHeight, scrollTop } = tableContainerRef.value || {};
         const { rowHeight } = virtualScroll.value;
-        let containerHeight: number;
-        // FIXME: 可能多次获取offsetHeight 会导致浏览器频繁重排
-        if (typeof height === 'number') {
-            containerHeight = height;
-        } else {
-            containerHeight = offsetHeight || DEFAULT_TABLE_HEIGHT;
-        }
+        const containerHeight = height ?? (offsetHeight || DEFAULT_TABLE_HEIGHT);
         const { headless, headerRowHeight } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
         if (!headless) {
@@ -191,25 +185,19 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (!virtual_on.value) return;
 
         let startIndex = Math.floor(sTop / rowHeight);
-        if (props.stripe) {
-            startIndex -= 1; //预渲染1行
-        }
         if (startIndex < 0) {
             startIndex = 0;
         }
         if (props.stripe && startIndex !== 0) {
             const scrollRows = Math.abs(oldStartIndex - startIndex);
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
-            if (scrollRows < 2) {
-                return;
-            } else if (scrollRows % 2) {
+            if (scrollRows % 2) {
                 startIndex -= 1; // 奇数-1变成偶数
             }
         }
         let endIndex = startIndex + pageSize;
         if (props.stripe) {
-            // 由于stripe上方预渲染-1行，这里也要预渲染1+1行
-            endIndex += 1;
+            endIndex += 1; // 斑马纹下多渲染一些
         }
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度
         endIndex = Math.min(endIndex, dataSourceCopy.value.length); // 溢出index修正
