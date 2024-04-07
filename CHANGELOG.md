@@ -1,5 +1,5 @@
 ## 0.3.4
-
+* fix: 修复非虚拟滚动时，设置 `props.rowHeight` 与 `props.headerRowHeight` 无效的问题。但仍会被内容撑开。
 
 ## 0.3.3
 * feature: 新增`props.cellFixedMode` 配置，设置为`relative` 时，将使用 `position:relative` 实现固定列固定头。
