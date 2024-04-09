@@ -37,7 +37,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     };
 
     /** css 高亮的次数，用于css animation steps() */
-    const highlightSteps = highlightDuration / highlightFrequency;
+    const highlightSteps = Math.round(highlightDuration / highlightFrequency);
     /** 高亮开始 */
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
     /** 高亮结束 */
