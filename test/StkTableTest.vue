@@ -27,8 +27,8 @@
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
-            ref="stkTable"
             v-bind="props"
+            ref="stkTable"
             v-model:columns="columns"
             row-key="name"
             cell-fixed-mode="sticky"

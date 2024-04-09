@@ -1,4 +1,5 @@
 ## 0.3.4
+* optimize: 横向虚拟滚动时，最右侧预渲染列是否出现算法更精准。
 * fix: 修复非虚拟滚动时，设置 `props.rowHeight` 与 `props.headerRowHeight` 无效的问题。但仍会被内容撑开。
 * fix: 修复 `props.stripe` 为true时，autoResize 有时会失效的问题。
 

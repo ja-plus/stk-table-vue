@@ -229,17 +229,22 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     function updateVirtualScrollX(sLeft = 0) {
         if (!props.virtualX) return;
         const headerLength = tableHeaderLast.value?.length;
-        const { scrollLeft } = virtualScrollX.value;
         if (!headerLength) return;
+
+        const { scrollLeft } = virtualScrollX.value;
         let startIndex = 0;
         let offsetLeft = 0;
-
+        /** 列宽累加 */
         let colWidthSum = 0;
+        /** 固定左侧列宽 */
         let leftColWidthSum = 0;
+        /** 横向滚动时，第一列的剩余宽度 */
+        let leftFirstColRestWidth = 0;
+
         for (let colIndex = 0; colIndex < headerLength; colIndex++) {
-            startIndex++;
             const col = tableHeaderLast.value[colIndex];
             const colWidth = getCalculatedColWidth(col);
+            startIndex++;
             // fixed left 不进入计算列宽
             if (col.fixed === 'left') {
                 leftColWidthSum += colWidth;
@@ -250,11 +255,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             if (colWidthSum >= sLeft) {
                 offsetLeft = colWidthSum - colWidth;
                 startIndex--;
+                leftFirstColRestWidth = colWidthSum - sLeft;
                 break;
             }
         }
         // -----
-        colWidthSum = 0;
+        colWidthSum = leftFirstColRestWidth;
         const containerWidth = virtualScrollX.value.containerWidth - leftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
