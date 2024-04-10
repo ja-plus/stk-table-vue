@@ -369,7 +369,7 @@ function addRow(num = 1, unshift = false) {
                 stkTable.value?.setHighlightDimRow(rowKeys, {
                     method: 'animation',
                     keyframe: [
-                        { backgroundColor: '#1e4c99', transform: 'translateX(200px)', opacity: 0, easing: 'ease-out' },
+                        { backgroundColor: '#1e4c99', transform: 'translateX(200px)', opacity: 0, easing: 'cubic-bezier(.11,.1,.03,.98)' },
                         { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1 },
                     ],
                     duration: 1000,
