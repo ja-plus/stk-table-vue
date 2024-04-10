@@ -223,7 +223,7 @@ export type StkProps = {
   highlightConfig?: {
     /** 高亮持续时间(s) */
     duration?: number;
-    /** 高亮帧率(虚拟滚动生效) */
+    /** 高亮帧率*/
     fps?: number;
   };
   /** 序号列配置 */
@@ -562,3 +562,7 @@ export type SortConfig<T extends Record<string, any>> = {
 
 ## Other
 * `$*$` 兼容注释
+
+
+### Planed removal APi
+* `setHighlightDimRow` 中的 `method="js"`。观察animation Api 是否足够满足使用场景。若足够满足计划在后期移除，并且可以移除 `d3-interpolate` 依赖。

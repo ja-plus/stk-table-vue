@@ -370,7 +370,7 @@ function addRow(num = 1, unshift = false) {
                     method: 'animation',
                     keyframe: [
                         { backgroundColor: '#1e4c99', transform: 'translateX(200px)', opacity: 0, easing: 'ease-out' },
-                        { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1, easing: 'ease-out' },
+                        { backgroundColor: '#1B1B24', transform: 'translateX(0)', opacity: 1 },
                     ],
                     duration: 1000,
                 });

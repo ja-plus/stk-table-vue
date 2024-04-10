@@ -26,18 +26,17 @@ type HighlightDimRowStore = {
 export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const config: HighlightConfig = props.highlightConfig;
 
-    /** 持续时间 */
-    const highlightDuration = config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION;
-    /** 高亮频率（仅虚拟滚动生效） */
-    const highlightFrequency = config.fps ? 1000 / config.fps : HIGHLIGHT_FREQ;
     /** 高亮颜色 */
     const highlightColor = {
         light: HIGHLIGHT_COLOR.light,
         dark: HIGHLIGHT_COLOR.dark,
     };
-
-    /** css 高亮的次数，用于css animation steps() */
-    const highlightSteps = Math.round(highlightDuration / highlightFrequency);
+    /** 持续时间 */
+    const highlightDuration = config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION;
+    /** 高亮频率*/
+    const highlightFrequency = config.fps && config.fps > 0 ? 1000 / config.fps : null;
+    /** 高亮帧数（非帧率），用于 timing-function: steps() */
+    const highlightSteps = highlightFrequency ? Math.round(highlightDuration / highlightFrequency) : null;
     /** 高亮开始 */
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
     /** 高亮结束 */
@@ -65,6 +64,15 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const highlightDimRowsTimeout = new Map();
     /** 高亮后渐暗的单元格定时器 */
     const highlightDimCellsTimeout = new Map();
+
+    /** 高亮函数的默认参数 */
+    const defaultHighlightDimOption = (() => {
+        const keyframe: PropertyIndexedKeyframes = { backgroundColor: [highlightFrom.value, highlightTo.value] };
+        if (highlightSteps) {
+            keyframe.easing = `steps(${highlightSteps})`;
+        }
+        return { duration: highlightDuration, keyframe };
+    })();
 
     /**
      * 计算高亮渐暗颜色的循环
@@ -130,22 +138,16 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     calcHighlightDimLoopJs = false;
                     highlightDimRowsJs.clear(); // TODO: 是否需要 清除
                 }
-            }, highlightFrequency);
+            }, highlightFrequency || HIGHLIGHT_FREQ);
         };
         recursion();
     }
 
-    /** 高亮函数的默认参数 */
-    const defaultHighlightDimOption = {
-        keyframe: [{ backgroundColor: highlightFrom.value }, { backgroundColor: highlightTo.value }],
-        duration: highlightDuration,
-    };
-
     /**
-     *  高亮一个单元格
+     * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
      * @param rowKeyValue 一行的key
      * @param dataIndex 列key
-     * @param options.method css-使用css渲染，animation-使用animation api。默认css;
+     * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
      * @param option.className 自定义css动画的class。
      * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
@@ -153,13 +155,12 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     function setHighlightDimCell(
         rowKeyValue: string,
         dataIndex: string,
-        option: { className?: string; method?: 'css' | 'animation'; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
+        option: { className?: string; method?: 'animation' | 'css'; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
     ) {
-        // TODO: 支持动态计算高亮颜色。不易实现。需记录每一个单元格的颜色情况。
         const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
-            method: 'css',
+            method: 'animation',
             ...defaultHighlightDimOption,
             ...option,
         };
@@ -174,15 +175,15 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     /**
      * 高亮一行
      * @param rowKeyValues 行唯一键的数组
-     * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色
+     * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
      * @param option.className 自定义css动画的class。
-     * @param option.keyframe 同Keyframe,无法控制帧率。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+     * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
      */
     function setHighlightDimRow(
         rowKeyValues: UniqKey[],
         option: {
-            method?: 'css' | 'animation' | 'js';
+            method?: 'animation' | 'css' | 'js';
             /** @deprecated 请使用method */
             useCss?: boolean;
             className?: string;
@@ -193,7 +194,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
         const { className, method, useCss, keyframe, duration } = {
             className: HIGHLIGHT_ROW_CLASS,
-            method: props.virtual ? 'js' : 'css',
+            method: 'animation',
             ...defaultHighlightDimOption,
             ...option,
         };
@@ -234,7 +235,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
 
     /**
      * 使用css @keyframes动画，实现高亮行动画
-     * 此方案作为兼容方式。v0.3.0 将使用Element.animate 接口实现动画。
+     * 此方案作为兼容方式。v0.3.4 将使用Element.animate 接口实现动画。
      */
     function highlightRowsInCssKeyframe(rowKeyValues: UniqKey[], className: string, duration: number) {
         /**是否需要重绘 */
@@ -267,7 +268,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
 
     /**
      * 使用css @keyframes动画，实现高亮单元格动画
-     * 此方案作为兼容方式。v0.3.0 将使用Element.animate 接口实现动画。
+     * 此方案作为兼容方式。v0.3.4 将使用Element.animate 接口实现动画。
      */
     function highlightCellsInCssKeyFrame(cellEl: HTMLElement, rowKeyValue: UniqKey, className: string, duration: number) {
         if (cellEl.classList.contains(className)) {
