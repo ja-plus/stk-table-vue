@@ -186,13 +186,13 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
         className?: string | undefined;
-        method?: "css" | "animation" | undefined;
+        method?: "animation" | "css" | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
-        method?: "css" | "animation" | "js" | undefined;
+        method?: "animation" | "css" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;

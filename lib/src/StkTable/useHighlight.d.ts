@@ -9,9 +9,9 @@ type Params = {
  * 高亮单元格，行
  */
 export declare function useHighlight({ props, stkTableId, tableContainerRef }: Params): {
-    highlightSteps: number;
+    highlightSteps: number | null;
     setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
-        method?: 'css' | 'animation' | 'js';
+        method?: 'animation' | 'css' | 'js';
         /** @deprecated 请使用method */
         useCss?: boolean;
         className?: string;
@@ -20,7 +20,7 @@ export declare function useHighlight({ props, stkTableId, tableContainerRef }: P
     }) => void;
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
         className?: string;
-        method?: 'css' | 'animation';
+        method?: 'animation' | 'css';
         keyframe?: Parameters<Animatable['animate']>['0'];
         duration?: number;
     }) => void;
