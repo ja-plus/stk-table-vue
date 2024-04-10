@@ -1,3 +1,6 @@
+## 0.3.5
+
+
 ## 0.3.4
 
 * feature: `setHighlightDimRow`/`setHighlightDimCell` 参数 `options.method`在 `animation` 的情况下支持控制帧率。

@@ -32,7 +32,7 @@
     "author": "japlus",
     "repository": {
         "type": "git",
-        "url": "https://gitee.com/japlus/stk-table-vue"
+        "url": "https://github.com/ja-plus/stk-table-vue"
     },
     "license": "MIT",
     "devDependencies": {
