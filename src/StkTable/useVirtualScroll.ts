@@ -143,10 +143,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({
      * @param {number} [height] 虚拟滚动的高度
      */
     function initVirtualScrollY(height?: number) {
+        if (typeof height !== 'number') {
+            console.warn('initVirtualScrollY: height must be a number');
+            height = 0;
+        }
         if (!virtual_on.value) return;
         const { offsetHeight, scrollTop } = tableContainerRef.value || {};
         const { rowHeight } = virtualScroll.value;
-        const containerHeight = height ?? (offsetHeight || DEFAULT_TABLE_HEIGHT);
+        const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
         const { headless, headerRowHeight } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
         if (!headless) {
