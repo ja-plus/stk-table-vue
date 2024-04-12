@@ -143,7 +143,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
      * @param {number} [height] 虚拟滚动的高度
      */
     function initVirtualScrollY(height?: number) {
-        if (typeof height !== 'number') {
+        if (height !== void 0 && typeof height !== 'number') {
             console.warn('initVirtualScrollY: height must be a number');
             height = 0;
         }
