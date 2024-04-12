@@ -549,16 +549,19 @@ export type SortConfig<T extends Record<string, any>> = {
 ### 鼠标悬浮表头时，不展示title
 * 将 `StkTableColumn` 中的 `title` 字段置为 "" 空字符串。这样th中就没有title了。
 * 使用 `StkTableColumn` 中的 `customHeaderCell` 属性中，自定义表头渲染。
-### 性能
-#### highlight
-* 在虚拟滚动下高亮强制使用 `css @keyframes` 实现动画。`setHighlightDimRow`/`setHighlightCellRow` 最后一个参数传入 `{method: 'css'}` 即可。（滚动后动画会中断） 
-* 指定 `{method:'animation'}` 在虚拟滚动下使用animation api实现动画。好处是动画流畅，且滚动后动画不中断。坏处是不支持帧率配置。
+
+## Performance optimization
+### highlight
 * 配置 `props.highlightConfig.fps` 指定高亮帧率。降低帧率有利于性能。
-#### relative fixed
+### relative fixed
 * 配置 `props.cellFixedMode` 为 `relative` 时，将使用相对定位实现固定列与固定表头，相较于`sticky`的实现，渲染合成层更少。
 * 问题：若开启了纵向虚拟滚动，不开启横向虚拟滚动，且不设置某些列宽时。如果纵向滚动导致某些列宽变化，则会导致右侧固定列计算错误。
-#### tr 分层
-* 通过css选择器将 stk-table tbody tr 配置 `transform:translateZ(0)` 对每行 tr 进行分层。在 `customCell` 较多且复杂时，尝试开启此功能可能对性能有帮助。
+### tr 分层
+* 通过css选择器将 stk-table tbody tr 配置 `transform:translateZ(0)` 对每行 tr 进行分层。对性能有帮助。
+  - 提升合成层可能导致黑底红字字体颜色发生变化。
+  - 以下情况尝试开启此功能。
+    - 在 `customCell` 较多且复杂时。
+    - 大量 highlight 动画时。
 
 ## Other
 * `$*$` 兼容注释
