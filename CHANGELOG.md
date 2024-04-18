@@ -1,3 +1,7 @@
+## 0.3.6
+
+* fix:
+
 ## 0.3.5
 
 * fix: `initVirtualScrollY` 入参为 0 时应当去获取容器高度。

@@ -29,6 +29,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
 
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
+        const fixedShadowColsValue = fixedShadowCols.value;
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {
                 const { showR, showL } = fixedShadow.value;
@@ -36,7 +37,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
                     props.fixedColShadow &&
                     col.fixed &&
                     ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
-                    fixedShadowCols.value.includes(col);
+                    fixedShadowColsValue.includes(col);
                 const classObj = {
                     'fixed-cell': col.fixed,
                     ['fixed-cell--' + col.fixed]: col.fixed,
@@ -51,11 +52,13 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
     /** 处理固定列阴影 */
     function dealFixedColShadow() {
         if (!props.fixedColShadow) return;
-        fixedShadowCols.value = [];
+        const fixedShadowColsTemp = [];
+
         // 找到最右边的固定列 findLast
         let lastLeftCol = null;
-        for (let i = tableHeaderLast.value.length - 1; i >= 0; i--) {
-            const col = tableHeaderLast.value[i];
+        const tableHeaderLastValue = tableHeaderLast.value;
+        for (let i = tableHeaderLastValue.length - 1; i >= 0; i--) {
+            const col = tableHeaderLastValue[i];
             if (col.fixed === 'left') {
                 lastLeftCol = col;
                 break;
@@ -65,18 +68,20 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
         let node: any = { __PARENT__: lastLeftCol };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
-                fixedShadowCols.value.push(node);
+                fixedShadowColsTemp.push(node);
             }
         }
 
         // 找到最左边的固定列
-        const lastRightCol = tableHeaderLast.value.find(it => it.fixed === 'right');
+        const lastRightCol = tableHeaderLastValue.find(it => it.fixed === 'right');
         node = { __PARENT__: lastRightCol };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
-                fixedShadowCols.value.push(node);
+                fixedShadowColsTemp.push(node);
             }
         }
+        // trigger
+        fixedShadowCols.value = fixedShadowColsTemp;
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */

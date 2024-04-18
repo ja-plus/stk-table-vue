@@ -210,7 +210,7 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT } from './const';
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKey, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -219,7 +219,7 @@ import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils';
+import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -596,14 +596,14 @@ watch(
     () => props.columns,
     () => {
         dealColumns();
-        nextTick(initVirtualScrollX);
+        initVirtualScrollX();
     },
 );
 watch(
     () => props.virtualX,
     () => {
         dealColumns();
-        nextTick(initVirtualScrollX);
+        initVirtualScrollX();
     },
 );
 
@@ -656,7 +656,8 @@ function dealDefaultSorter() {
  */
 function dealColumns() {
     // reset
-    tableHeaders.value = [];
+    let tableHeadersTemp: StkTableColumn<DT>[][] = [];
+    // tableHeaders.value = [];
     const copyColumn = props.columns; // do not deep clone
     const deep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
@@ -673,8 +674,8 @@ function dealColumns() {
      * @param parentFixed 父节点固定列继承。
      */
     function flat(arr: StkTableColumn<DT>[], parent: StkTableColumn<DT> | null, depth = 0 /* , parentFixed: 'left' | 'right' | null = null */) {
-        if (!tableHeaders.value[depth]) {
-            tableHeaders.value[depth] = [];
+        if (!tableHeadersTemp[depth]) {
+            tableHeadersTemp[depth] = [];
         }
         /** 所有子节点数量 */
         let allChildrenLen = 0;
@@ -700,7 +701,7 @@ function dealColumns() {
                 tempHeaderLast.push(col); // 没有children的列作为colgroup
             }
             // 回溯
-            tableHeaders.value[depth].push(col);
+            tableHeadersTemp[depth].push(col);
             const rowSpan = col.children ? 1 : deep - depth;
             const colSpan = colChildrenLen;
             if (rowSpan !== 1) {
@@ -718,7 +719,7 @@ function dealColumns() {
 
     flat(copyColumn, null);
 
-    // tableHeaders.value = [...tableHeaders.value];
+    tableHeaders.value = tableHeadersTemp;
 
     tableHeaderLast.value = tempHeaderLast;
     dealFixedColShadow();

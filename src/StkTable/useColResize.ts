@@ -77,12 +77,13 @@ export function useColResize<DT extends Record<string, any>>({
         const { clientX } = e;
         const { scrollLeft, scrollTop } = tableContainerRef.value;
         const { left } = tableContainerRef.value.getBoundingClientRect();
+        const tableHeaderLastValue = tableHeaderLast.value;
         /** 列下标 */
-        let colIndex = tableHeaderLast.value.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
+        let colIndex = tableHeaderLastValue.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
         if (isPrev) {
             // 上一列
             colIndex -= 1;
-            col = tableHeaderLast.value[colIndex];
+            col = tableHeaderLastValue[colIndex];
         }
         const offsetTableX = clientX - left + scrollLeft;
 
@@ -175,7 +176,5 @@ export function useColResize<DT extends Record<string, any>>({
     return {
         isColResizing,
         onThResizeMouseDown,
-        onThResizeMouseMove,
-        onThResizeMouseUp,
     };
 }

@@ -1,5 +1,5 @@
-import { DEFAULT_COL_WIDTH, STK_ID_PREFIX } from './const';
-import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
+import { DEFAULT_COL_WIDTH, STK_ID_PREFIX } from '../const';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
 
 /** 是否空值 */
 function isEmptyValue(val: any, isNumber?: boolean) {

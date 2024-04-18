@@ -103,34 +103,37 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     });
 
     const virtualX_columnPart = computed(() => {
+        const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
             // 虚拟横向滚动，固定列要一直保持存在
             const leftCols = [];
             const rightCols = [];
             const { startIndex, endIndex } = virtualScrollX.value;
+
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
             for (let i = 0; i < startIndex; i++) {
-                const col = tableHeaderLast.value[i];
+                const col = tableHeaderLastValue[i];
                 if (col.fixed === 'left') leftCols.push(col);
             }
             // 右侧固定列，如果在右边不可见区。则需要拿出来放在后面
-            for (let i = endIndex; i < tableHeaderLast.value.length; i++) {
-                const col = tableHeaderLast.value[i];
+            for (let i = endIndex; i < tableHeaderLastValue.length; i++) {
+                const col = tableHeaderLastValue[i];
                 if (col.fixed === 'right') rightCols.push(col);
             }
 
-            const mainColumns = tableHeaderLast.value.slice(startIndex, endIndex);
+            const mainColumns = tableHeaderLastValue.slice(startIndex, endIndex);
 
             return leftCols.concat(mainColumns).concat(rightCols);
         }
-        return tableHeaderLast.value;
+        return tableHeaderLastValue;
     });
 
     const virtualX_offsetRight = computed(() => {
         if (!virtualX_on.value) return 0;
         let width = 0;
-        for (let i = virtualScrollX.value.endIndex; i < tableHeaderLast.value.length; i++) {
-            const col = tableHeaderLast.value[i];
+        const tableHeaderLastValue = tableHeaderLast.value;
+        for (let i = virtualScrollX.value.endIndex; i < tableHeaderLastValue.length; i++) {
+            const col = tableHeaderLastValue[i];
             if (col.fixed !== 'right') {
                 width += getCalculatedColWidth(col);
             }
@@ -232,7 +235,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     /** 通过横向滚动条位置，计算横向虚拟滚动的参数 */
     function updateVirtualScrollX(sLeft = 0) {
         if (!props.virtualX) return;
-        const headerLength = tableHeaderLast.value?.length;
+        const tableHeaderLastValue = tableHeaderLast.value;
+        const headerLength = tableHeaderLastValue?.length;
         if (!headerLength) return;
 
         const { scrollLeft } = virtualScrollX.value;
@@ -246,7 +250,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         let leftFirstColRestWidth = 0;
 
         for (let colIndex = 0; colIndex < headerLength; colIndex++) {
-            const col = tableHeaderLast.value[colIndex];
+            const col = tableHeaderLastValue[colIndex];
             const colWidth = getCalculatedColWidth(col);
             startIndex++;
             // fixed left 不进入计算列宽
@@ -268,7 +272,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const containerWidth = virtualScrollX.value.containerWidth - leftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
-            const col = tableHeaderLast.value[colIndex];
+            const col = tableHeaderLastValue[colIndex];
             colWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
             if (colWidthSum >= containerWidth) {
