@@ -8,7 +8,10 @@ type Sorter<T> = boolean | ((data: T[], option: {
 export type CustomCellFunc<T extends Record<string, any>> = (props: {
     row: T;
     col: StkTableColumn<T>;
+    /** row[col.dataIndex] 的值 */
     cellValue: any;
+    rowIndex: number;
+    colIndex: number;
 }) => VNode;
 export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: {
     col: StkTableColumn<T>;
