@@ -1,6 +1,6 @@
 ## 0.3.6
 
-* fix:
+* fix: 列数从多变少时，virtualScrollX.endIndex 超出数组长度的问题。
 
 ## 0.3.5
 

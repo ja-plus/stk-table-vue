@@ -596,14 +596,22 @@ watch(
     () => props.columns,
     () => {
         dealColumns();
-        initVirtualScrollX();
+        // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
+        nextTick(() => {
+            initVirtualScrollX();
+            dealFixedColShadow();
+        });
     },
 );
 watch(
     () => props.virtualX,
     () => {
         dealColumns();
-        initVirtualScrollX();
+        // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
+        nextTick(() => {
+            initVirtualScrollX();
+            dealFixedColShadow();
+        });
     },
 );
 
@@ -637,6 +645,7 @@ watch(
 watch(() => props.fixedColShadow, dealFixedColShadow);
 
 dealColumns();
+dealFixedColShadow();
 
 onMounted(() => {
     initVirtualScroll();
@@ -657,7 +666,6 @@ function dealDefaultSorter() {
 function dealColumns() {
     // reset
     let tableHeadersTemp: StkTableColumn<DT>[][] = [];
-    // tableHeaders.value = [];
     const copyColumn = props.columns; // do not deep clone
     const deep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
@@ -720,9 +728,7 @@ function dealColumns() {
     flat(copyColumn, null);
 
     tableHeaders.value = tableHeadersTemp;
-
     tableHeaderLast.value = tempHeaderLast;
-    dealFixedColShadow();
 }
 
 /**

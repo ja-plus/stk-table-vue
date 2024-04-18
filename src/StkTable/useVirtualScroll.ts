@@ -108,17 +108,22 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             // 虚拟横向滚动，固定列要一直保持存在
             const leftCols = [];
             const rightCols = [];
+            /**
+             * 存在问题：
+             * table columns 从多到少时。比方原来的start=5,end=10，现在start=4,end=8。这时候endIndex就超出数组范围了。
+             * FIXME: 如果新列数 < endIndex，此时需要重新计算列startIndex和endIndex。
+             */
             const { startIndex, endIndex } = virtualScrollX.value;
 
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
             for (let i = 0; i < startIndex; i++) {
                 const col = tableHeaderLastValue[i];
-                if (col.fixed === 'left') leftCols.push(col);
+                if (col?.fixed === 'left') leftCols.push(col);
             }
             // 右侧固定列，如果在右边不可见区。则需要拿出来放在后面
             for (let i = endIndex; i < tableHeaderLastValue.length; i++) {
                 const col = tableHeaderLastValue[i];
-                if (col.fixed === 'right') rightCols.push(col);
+                if (col?.fixed === 'right') rightCols.push(col);
             }
 
             const mainColumns = tableHeaderLastValue.slice(startIndex, endIndex);
