@@ -1,5 +1,6 @@
 ## 0.3.5
 * fix: `initVirtualScrollY` 入参为 0 时应当去获取容器高度。
+* change: `StkTableColumn.customCell` 当传入函数式组件，其 props 命名更改为 camelCase。（cell-value => cellValue）
 
 
 ## 0.3.4

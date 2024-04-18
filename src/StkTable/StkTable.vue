@@ -176,9 +176,9 @@
                             v-if="col.customCell"
                             :col="col"
                             :row="row"
-                            :row-index="rowIndex"
-                            :col-index="colIndex"
-                            :cell-value="row[col.dataIndex]"
+                            :rowIndex="rowIndex"
+                            :colIndex="colIndex"
+                            :cellValue="row[col.dataIndex]"
                         />
                         <div v-else class="table-cell-wrapper" :title="!col.type ? row[col.dataIndex] : ''">
                             <template v-if="col.type === 'seq'">

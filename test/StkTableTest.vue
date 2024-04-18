@@ -30,15 +30,15 @@
             v-bind="props"
             ref="stkTable"
             v-model:columns="columns"
-            row-key="name"
-            cell-fixed-mode="sticky"
-            :seq-config="seqConfig"
-            :row-height="28"
-            :header-row-height="36"
-            :hide-header-title="['age']"
-            :empty-cell-text="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
-            fixed-col-shadow
-            :auto-resize="() => console.log('auto-resize')"
+            rowKey="name"
+            cellFixedMode="sticky"
+            :seqConfig="seqConfig"
+            :rowHeight="28"
+            :headerRowHeight="36"
+            :hideHeaderTitle="['age']"
+            :emptyCellText="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
+            fixedColShadow
+            :autoResize="() => console.log('auto-resize')"
             :data-source="dataSource"
             @current-change="onCurrentChange"
             @row-menu="onRowMenu"
@@ -138,6 +138,9 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         sorter: true,
         customHeaderCell: props => {
             return h('span', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, props.col.title + '(render) text-overflow,');
+        },
+        customCell: props => {
+            return props.cellValue;
         },
     },
     {
