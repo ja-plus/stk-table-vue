@@ -12,7 +12,5 @@ type Params<DT extends Record<string, any>> = {
 export declare function useColResize<DT extends Record<string, any>>({ tableContainerRef, tableHeaderLast, colResizeIndicatorRef, props, emits, colKeyGen, }: Params<DT>): {
     isColResizing: Ref<boolean>;
     onThResizeMouseDown: (e: MouseEvent, col: StkTableColumn<DT>, isPrev?: boolean) => void;
-    onThResizeMouseMove: (e: MouseEvent) => void;
-    onThResizeMouseUp: (e: MouseEvent) => void;
 };
 export {};

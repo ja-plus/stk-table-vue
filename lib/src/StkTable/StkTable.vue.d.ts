@@ -1,4 +1,4 @@
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKey, UniqKeyProp } from './types/index';
+import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -191,7 +191,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
-    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
+    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
         method?: "animation" | "css" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;

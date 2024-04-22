@@ -1,4 +1,4 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn } from './types';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
 /**
  * 对有序数组插入新数据
  * @param sortState
