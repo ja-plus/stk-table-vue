@@ -1,6 +1,6 @@
 ## 0.3.7
 * fix: `props.stripe` 在虚拟滚动是否开启时表现不同的问题。
-
+* fix: td `line-height` 为 1 导致英文基线下方部分被截断。现设置为默认值。
 ## 0.3.6
 
 * fix: 列数从多变少时，virtualScrollX.endIndex 超出数组长度的问题。
