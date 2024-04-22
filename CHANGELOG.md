@@ -1,3 +1,6 @@
+## 0.3.7
+* fix: `props.stripe` 在虚拟滚动是否开启时表现不同的问题。
+
 ## 0.3.6
 
 * fix: 列数从多变少时，virtualScrollX.endIndex 超出数组长度的问题。

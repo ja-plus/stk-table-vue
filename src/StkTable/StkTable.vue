@@ -136,6 +136,7 @@
           ></td> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
             <tbody>
+                <!-- 由于斑马纹选择器nth-child 原因，占位tr单独包在tbody中 -->
                 <tr v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left"></td>
@@ -143,6 +144,8 @@
                         <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td
                     ></template>
                 </tr>
+            </tbody>
+            <tbody>
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
                     :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : rowIndex)"
@@ -190,6 +193,8 @@
                         </div>
                     </td>
                 </tr>
+            </tbody>
+            <tbody>
                 <tr v-if="virtual_on" :style="{ height: `${virtual_offsetBottom}px` }"></tr>
             </tbody>
         </table>
