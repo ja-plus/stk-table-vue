@@ -67,7 +67,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
 
     /** 高亮函数的默认参数 */
     const defaultHighlightDimOption = (() => {
-        const keyframe: PropertyIndexedKeyframes = { backgroundColor: [highlightFrom.value, highlightTo.value] };
+        const keyframe: PropertyIndexedKeyframes = { backgroundColor: [highlightFrom.value, ''] };
         if (highlightSteps) {
             keyframe.easing = `steps(${highlightSteps})`;
         }
