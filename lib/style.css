@@ -91,7 +91,7 @@
 .stk-table.border-body-v tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
-.stk-table.stripe tbody tr:nth-child(odd){
+.stk-table.stripe tbody tr:nth-child(even){
   background-color:var(--stripe-bgc);
 }
 .stk-table.cell-hover tbody td:hover{
@@ -118,7 +118,6 @@
 }
 .stk-table.virtual tbody td{
   height:var(--row-height);
-  line-height:1;
 }
 .stk-table.virtual tbody td .table-cell-wrapper{
   max-height:var(--row-height);

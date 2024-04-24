@@ -193,7 +193,10 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
         method?: "animation" | "css" | "js" | undefined;
-        useCss?: boolean | undefined;
+        useCss?: boolean | undefined; /**
+         * 表头单元格点击事件
+         * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
+         */
         className?: string | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
