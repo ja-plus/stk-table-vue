@@ -1,10 +1,12 @@
-import { computed, ComputedRef, ref, Ref, ShallowRef, shallowRef } from 'vue';
+import { computed, ComputedRef, Ref, ShallowRef, shallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 import { VirtualScrollXStore } from './useVirtualScroll';
+import { getCalculatedColWidth } from './utils';
 
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
+    getFixedColPosition: ComputedRef<(col: StkTableColumn<T>) => number>;
     tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
     tableHeaderLast: ShallowRef<StkTableColumn<T>[]>;
     tableContainerRef: Ref<HTMLDivElement | undefined>;
@@ -14,17 +16,14 @@ type Params<T extends Record<string, any>> = {
  * 固定列处理
  * @returns
  */
-export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, tableHeaders, tableHeaderLast, tableContainerRef }: Params<DT>) {
-    /** 固定列阴影 */
-    const fixedShadow = ref<{
-        /** 是否展示左侧固定列阴影 */
-        showL: boolean;
-        /** 是否展示右侧固定列阴影 */
-        showR: boolean;
-    }>({
-        showL: false,
-        showR: false,
-    });
+export function useFixedCol<DT extends Record<string, any>>({
+    props,
+    colKeyGen,
+    getFixedColPosition,
+    tableHeaders,
+    tableHeaderLast,
+    tableContainerRef,
+}: Params<DT>) {
     /** 保存需要出现阴影的列 */
     const fixedShadowCols = shallowRef<StkTableColumn<DT>[]>([]);
 
@@ -33,12 +32,7 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
         const fixedShadowColsValue = fixedShadowCols.value;
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {
-                const { showR, showL } = fixedShadow.value;
-                const showShadow =
-                    props.fixedColShadow &&
-                    col.fixed &&
-                    ((showL && col.fixed === 'left') || (showR && col.fixed === 'right')) &&
-                    fixedShadowColsValue.includes(col);
+                const showShadow = props.fixedColShadow && col.fixed && fixedShadowColsValue.includes(col);
                 const classObj = {
                     'fixed-cell': col.fixed,
                     ['fixed-cell--' + col.fixed]: col.fixed,
@@ -50,44 +44,25 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
         return colMap;
     });
 
-    /** 处理固定列阴影 */
-    function dealFixedColShadow() {
-        if (!props.fixedColShadow) return;
+    /** 处理固定列父元素阴影 */
+    function parentShadow(col: StkTableColumn<DT> | null) {
+        if (!props.fixedColShadow) return [];
+        if (!col) return [];
         const fixedShadowColsTemp = [];
-
-        // 找到最右边的固定列 findLast
-        let lastLeftCol = null;
-        const tableHeaderLastValue = tableHeaderLast.value;
-        for (let i = tableHeaderLastValue.length - 1; i >= 0; i--) {
-            const col = tableHeaderLastValue[i];
-            if (col.fixed === 'left') {
-                lastLeftCol = col;
-                break;
-            }
-        }
-        // 处理多级表头列阴影
-        let node: any = { __PARENT__: lastLeftCol };
+        let node: any = { __PARENT__: col };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
                 fixedShadowColsTemp.push(node);
             }
         }
-
-        // 找到最左边的固定列
-        const lastRightCol = tableHeaderLastValue.find(it => it.fixed === 'right');
-        node = { __PARENT__: lastRightCol };
-        while ((node = node.__PARENT__)) {
-            if (node.fixed) {
-                fixedShadowColsTemp.push(node);
-            }
-        }
-        // trigger
-        fixedShadowCols.value = fixedShadowColsTemp;
+        return fixedShadowColsTemp as StkTableColumn<DT>[];
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
         if (!props.fixedColShadow) return;
+
+        const fixedShadowColsTemp: (StkTableColumn<DT> | null)[] = [];
         let clientWidth, scrollWidth, scrollLeft;
         if (virtualScrollX?.value) {
             const { containerWidth: cw, scrollWidth: sw, scrollLeft: sl } = virtualScrollX.value;
@@ -101,15 +76,35 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
             scrollLeft = sl;
         }
 
-        fixedShadow.value.showL = Boolean(scrollLeft);
-        fixedShadow.value.showR = Math.abs(scrollWidth - scrollLeft - clientWidth) > 0.5;
+        /*******
+         * 根据横向滚动位置，计算出哪个列需要展示阴影
+         *****/
+        /** 左侧需要展示阴影的列 */
+        let leftShadowCol: StkTableColumn<DT> | null = null;
+        /** 右侧展示阴影的列 */
+        let rightShadowCol: StkTableColumn<DT> | null = null;
+        let left = 0;
+        /**
+         * 左侧第n个fixed:left 计算要加上前面所有left 的列宽。
+         */
+        tableHeaderLast.value.forEach(col => {
+            const position = getFixedColPosition.value(col);
+            if (col.fixed === 'left' && position + scrollLeft > left) {
+                leftShadowCol = col;
+            }
+            left += getCalculatedColWidth(col);
+            if (!rightShadowCol && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
+                rightShadowCol = col;
+            }
+        });
+        fixedShadowColsTemp.push(leftShadowCol, rightShadowCol, ...parentShadow(leftShadowCol), ...parentShadow(rightShadowCol));
+
+        fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
     }
 
     return {
         /** 固定列class */
         fixedColClassMap,
-        /** 处理固定列阴影 */
-        dealFixedColShadow,
         /** 滚动条变化时，更新需要展示阴影的列 */
         updateFixedShadow,
     };

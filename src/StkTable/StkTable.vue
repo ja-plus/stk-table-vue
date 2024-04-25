@@ -593,9 +593,10 @@ useKeyboardArrowScroll(tableContainerRef, {
 });
 
 /** 固定列处理 */
-const { fixedColClassMap, dealFixedColShadow, updateFixedShadow } = useFixedCol({
+const { fixedColClassMap, updateFixedShadow } = useFixedCol({
     props,
     colKeyGen,
+    getFixedColPosition,
     tableContainerRef,
     tableHeaders,
     tableHeaderLast,
@@ -608,7 +609,7 @@ watch(
         // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
         nextTick(() => {
             initVirtualScrollX();
-            dealFixedColShadow();
+            updateFixedShadow();
         });
     },
 );
@@ -619,7 +620,7 @@ watch(
         // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
         nextTick(() => {
             initVirtualScrollX();
-            dealFixedColShadow();
+            updateFixedShadow();
         });
     },
 );
@@ -652,10 +653,12 @@ watch(
     },
 );
 
-watch(() => props.fixedColShadow, dealFixedColShadow);
+watch(
+    () => props.fixedColShadow,
+    () => updateFixedShadow(),
+);
 
 dealColumns();
-dealFixedColShadow();
 
 onMounted(() => {
     initVirtualScroll();

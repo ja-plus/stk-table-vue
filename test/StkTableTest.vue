@@ -132,7 +132,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     {
         title: 'Name',
         dataIndex: 'name',
-        fixed: 'left',
+        // fixed: 'left',
         width: 200,
         className: 'my-td',
         sorter: true,
@@ -171,6 +171,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     {
         title: 'Email(sortBy:name)',
         dataIndex: 'email',
+        // fixed: 'left',
         width: 150,
         sorter: true,
         sortField: 'name',
@@ -185,6 +186,11 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         title: 'R',
         width: 50,
         fixed: 'right',
+    },
+    {
+        dataIndex: 'R2',
+        title: 'R2',
+        width: 120,
     },
     {
         title: 'Operate',
