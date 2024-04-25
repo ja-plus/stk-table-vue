@@ -1,12 +1,11 @@
-import { CSSProperties, Ref, ShallowRef, computed } from 'vue';
+import { CSSProperties, ComputedRef, Ref } from 'vue';
 import { IS_LEGACY_MODE } from './const';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
-import { getCalculatedColWidth } from './utils';
 
 type Options<T extends Record<string, any>> = {
     props: any;
-    tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
+    getFixedColPosition: ComputedRef<(col: StkTableColumn<T>) => number>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     virtualX_on: Ref<boolean>;
@@ -19,52 +18,12 @@ type Options<T extends Record<string, any>> = {
  */
 export function useFixedStyle<DT extends Record<string, any>>({
     props,
-    tableHeaders,
+    getFixedColPosition,
     virtualScroll,
     virtualScrollX,
     virtualX_on,
     virtualX_offsetRight,
 }: Options<DT>) {
-    const fixedColumnsPositionStore = computed(() => {
-        /** dataIndex 作为唯一标识 */
-        const colKeyStore: Record<string, number> = {};
-        /** 没有dataIndex 的多级表头列，使用对象引用做标识 */
-        const refStore = new WeakMap<StkTableColumn<DT>, number>();
-        tableHeaders.value.forEach(cols => {
-            let left = 0;
-            /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
-            let rightStartIndex = 0;
-            for (let i = 0; i < cols.length; i++) {
-                const item = cols[i];
-                if (item.fixed === 'left') {
-                    if (item.dataIndex) {
-                        colKeyStore[item.dataIndex] = left;
-                    } else {
-                        refStore.set(item, left);
-                    }
-                    left += getCalculatedColWidth(item);
-                }
-                if (!rightStartIndex && item.fixed === 'right') {
-                    rightStartIndex = i;
-                }
-            }
-            let right = 0;
-            for (let i = cols.length - 1; i >= rightStartIndex; i--) {
-                const item = cols[i];
-                if (item.fixed === 'right') {
-                    if (item.dataIndex) {
-                        colKeyStore[item.dataIndex] = right;
-                    } else {
-                        refStore.set(item, right);
-                    }
-                    right += getCalculatedColWidth(item);
-                }
-            }
-        });
-
-        return { refStore, colKeyStore };
-    });
-
     /**
      * 固定列的style
      * @param tagType 1-th 2-td
@@ -76,7 +35,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
         if (tagType === TagType.TD && !fixed) return null;
 
         const style: CSSProperties = {};
-        const { colKeyStore, refStore } = fixedColumnsPositionStore.value;
 
         /** 是否是relative模式完成固定列 */
         let isRelativeMode = true;
@@ -129,7 +87,7 @@ export function useFixedStyle<DT extends Record<string, any>>({
                     style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
                 }
             } else {
-                const lr = (col.dataIndex ? colKeyStore[col.dataIndex] : refStore.get(col)) + 'px';
+                const lr = getFixedColPosition.value(col) + 'px';
                 if (isFixedLeft) {
                     style.left = lr;
                 } else {
@@ -141,7 +99,5 @@ export function useFixedStyle<DT extends Record<string, any>>({
         return style;
     }
 
-    return {
-        getFixedStyle,
-    };
+    return getFixedStyle;
 }

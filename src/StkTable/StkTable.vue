@@ -220,6 +220,7 @@ import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
 import { useFixedStyle } from './useFixedStyle';
+import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
@@ -560,9 +561,12 @@ const {
     updateVirtualScrollX,
 } = useVirtualScroll({ tableContainerRef, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
-const { getFixedStyle } = useFixedStyle<DT>({
+/** 获取固定列的位置 */
+const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeaders });
+
+const getFixedStyle = useFixedStyle<DT>({
     props,
-    tableHeaders,
+    getFixedColPosition,
     virtualScroll,
     virtualScrollX,
     virtualX_on,
