@@ -1,5 +1,6 @@
 import { computed, ComputedRef, ref, Ref, ShallowRef, shallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
+import { VirtualScrollXStore } from './useVirtualScroll';
 
 type Params<T extends Record<string, any>> = {
     props: any;
@@ -85,9 +86,21 @@ export function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, 
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
-    function updateFixedShadow() {
+    function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
         if (!props.fixedColShadow) return;
-        const { clientWidth, scrollWidth, scrollLeft } = tableContainerRef.value as HTMLDivElement;
+        let clientWidth, scrollWidth, scrollLeft;
+        if (virtualScrollX?.value) {
+            const { containerWidth: cw, scrollWidth: sw, scrollLeft: sl } = virtualScrollX.value;
+            clientWidth = cw;
+            scrollWidth = sw;
+            scrollLeft = sl;
+        } else {
+            const { clientWidth: cw, scrollWidth: sw, scrollLeft: sl } = tableContainerRef.value as HTMLDivElement;
+            clientWidth = cw;
+            scrollWidth = sw;
+            scrollLeft = sl;
+        }
+
         fixedShadow.value.showL = Boolean(scrollLeft);
         fixedShadow.value.showR = Math.abs(scrollWidth - scrollLeft - clientWidth) > 0.5;
     }

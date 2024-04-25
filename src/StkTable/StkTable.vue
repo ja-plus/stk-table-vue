@@ -640,7 +640,8 @@ watch(
             const column = tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
             onColumnSort(column, false);
         }
-        updateFixedShadow();
+        // 是否需要
+        // updateFixedShadow();
     },
     {
         deep: false,
@@ -769,19 +770,16 @@ const cellStyleMap = computed(() => {
                 style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
             }
 
-            const thStyle = {
+            thMap.set(colKey, {
                 ...style,
                 ...getFixedStyle(TagType.TH, col, depth),
                 textAlign: col.headerAlign,
-            };
-            const tdStyle = {
+            });
+            tdMap.set(colKey, {
                 ...style,
                 ...getFixedStyle(TagType.TD, col, depth),
                 textAlign: col.align,
-            };
-
-            thMap.set(colKey, thStyle);
-            tdMap.set(colKey, tdStyle);
+            });
         });
     });
     return {
@@ -923,13 +921,13 @@ function onTableScroll(e: Event) {
 
     // 横向滚动有变化
     if (isXScroll) {
-        updateFixedShadow();
         if (virtualX_on.value) {
             updateVirtualScrollX(scrollLeft);
         } else {
             // 非虚拟滚动也记录一下滚动条位置。用于判断isXScroll
             virtualScrollX.value.scrollLeft = scrollLeft;
         }
+        updateFixedShadow(virtualScrollX);
     }
 
     const { startIndex, endIndex } = virtualScroll.value;
