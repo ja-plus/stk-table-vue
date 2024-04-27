@@ -187,7 +187,6 @@
 
     th,
     td {
-        z-index: 1;
         font-size: 14px;
         box-sizing: border-box;
         padding: 0 var(--cell-padding-x);
@@ -196,6 +195,8 @@
     th {
         color: var(--th-color);
         background-color: inherit;
+        /* 保证向上滚动时，表头不被遮挡*/
+        z-index: 1; 
 
         &.sortable {
             cursor: pointer;
@@ -339,6 +340,14 @@
         position: absolute;
         pointer-events: none;
         background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
+    }
+
+    th.fixed-cell--active {
+        z-index: 3;
+    }
+
+    td.fixed-cell--active {
+        z-index: 2;
     }
 
     .table-header-cell-wrapper {

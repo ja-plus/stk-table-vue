@@ -1,10 +1,16 @@
 ## 0.4.0
 
 * feature: 固定列阴影支持 fixed sticky 动态变化。
+  - fix: 固定列层级调整。防止左侧固定列覆盖在右侧固定列上。
+  - change: 现在列不处于固定状态时，不会为其添加z-index。
+  - change: 固定列z-index由行内定于变为css定义。
+  - change: 非固定th 默认 z-index 2 -> 1
+* change: 添加三个tbody的class类名。
+
 
 ## 0.3.7
 
-* fix: `props.stripe` 在虚拟滚动是否开启时表现不同的问题。
+* fix: 新增tbody用于实现虚拟滚动上下距离，解决`props.stripe` 在虚拟滚动是否开启时表现不同的问题。
 * fix: td `line-height` 为 1 导致英文基线下方部分被截断。现设置为默认值。
 * fix: `highlightDim` 方法，修复高亮不返回当前背景颜色的问题。
 

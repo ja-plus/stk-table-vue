@@ -70,12 +70,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
             } else {
                 style.top = depth * props.rowHeight + 'px';
             }
-            style.zIndex = isFixedLeft ? '3' : '2'; // 保证固定列高于其他单元格
-        } else {
-            // TD
-            if (isFixedLeft) {
-                style.zIndex = '2';
-            }
         }
 
         if (fixed === 'left' || fixed === 'right') {

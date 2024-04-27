@@ -135,9 +135,9 @@
             class="perch-td top"
           ></td> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
-            <tbody>
+            <tbody v-if="virtual_on" class="virtual-top">
                 <!-- 由于斑马纹选择器nth-child 原因，占位tr单独包在tbody中 -->
-                <tr v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
+                <tr :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left"></td>
                     <template v-if="fixedMode && headless">
@@ -145,7 +145,7 @@
                     ></template>
                 </tr>
             </tbody>
-            <tbody>
+            <tbody class="stk-tbody-main">
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
                     :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : rowIndex)"
@@ -194,8 +194,8 @@
                     </td>
                 </tr>
             </tbody>
-            <tbody>
-                <tr v-if="virtual_on" :style="{ height: `${virtual_offsetBottom}px` }"></tr>
+            <tbody v-if="virtual_on" class="virtual-bottom">
+                <tr :style="{ height: `${virtual_offsetBottom}px` }"></tr>
             </tbody>
         </table>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
