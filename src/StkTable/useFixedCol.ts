@@ -49,18 +49,26 @@ export function useFixedCol<DT extends Record<string, any>>({
         return colMap;
     });
 
-    /** 处理固定列父元素阴影 */
-    function parentShadow(col: StkTableColumn<DT> | null) {
-        if (!props.fixedColShadow) return [];
+    /**
+     * 返回所有父元素，包括自己
+     *
+     */
+    function getColAndParentCols(col: StkTableColumn<DT> | null, type: 'shadow' | 'active' = 'shadow') {
         if (!col) return [];
-        const fixedShadowColsTemp = [];
+        const fixedShadowColsTemp: StkTableColumn<DT>[] = [];
+        const fixedColsTemp: StkTableColumn<DT>[] = [];
         let node: any = { __PARENT__: col };
         while ((node = node.__PARENT__)) {
             if (node.fixed) {
                 fixedShadowColsTemp.push(node);
             }
+            fixedColsTemp.push(node);
         }
-        return fixedShadowColsTemp as StkTableColumn<DT>[];
+        if (type === 'shadow') {
+            return fixedShadowColsTemp;
+        } else {
+            return fixedColsTemp;
+        }
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
@@ -69,6 +77,7 @@ export function useFixedCol<DT extends Record<string, any>>({
         const fixedColsTemp: StkTableColumn<DT>[] = [];
         const fixedShadowColsTemp: (StkTableColumn<DT> | null)[] = [];
         let clientWidth, scrollWidth, scrollLeft;
+
         if (virtualScrollX?.value) {
             const { containerWidth: cw, scrollWidth: sw, scrollLeft: sl } = virtualScrollX.value;
             clientWidth = cw;
@@ -96,18 +105,17 @@ export function useFixedCol<DT extends Record<string, any>>({
             const position = getFixedColPosition.value(col);
             if (col.fixed === 'left' && position + scrollLeft > left) {
                 leftShadowCol = col;
-                fixedColsTemp.push(col);
+                fixedColsTemp.push(...getColAndParentCols(col, 'active'));
             }
             left += getCalculatedColWidth(col);
             if (!rightShadowCol && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
                 rightShadowCol = col;
             }
             if (rightShadowCol && col.fixed === 'right') {
-                fixedColsTemp.push(col);
+                fixedColsTemp.push(...getColAndParentCols(col, 'active'));
             }
         });
-        fixedShadowColsTemp.push(leftShadowCol, rightShadowCol, ...parentShadow(leftShadowCol), ...parentShadow(rightShadowCol));
-
+        fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
         fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
         fixedCols.value = fixedColsTemp;
     }
