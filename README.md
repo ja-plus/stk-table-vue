@@ -198,7 +198,7 @@ export type StkProps = {
    * 传入方法表示resize后的回调
    */
   autoResize?: boolean | (() => void);
-  /** 是否展示固定列阴影。默认不展示。 */
+  /** 是否展示固定列阴影。为节省性能，默认false。 */
   fixedColShadow?: boolean;
   /** 优化vue2 滚动 */
   optimizeVue2Scroll?: boolean;
