@@ -189,6 +189,7 @@
         th {
             position: relative;
         }
+
         .fixed-cell--active {
             position: relative;
         }
@@ -204,8 +205,11 @@
     th {
         color: var(--th-color);
         background-color: inherit;
-        /* 保证向上滚动时，表头不被遮挡*/
-        z-index: 1;
+        /** 
+         * 保证向上滚动时，表头不被遮挡。
+         * z-index：2 为防止固定列阴影重叠。
+         */
+        z-index: 2;
         position: sticky;
 
         &.sortable {
@@ -356,7 +360,7 @@
     }
 
     td.fixed-cell--active {
-        z-index: 2;
+        z-index: 1;
     }
 
     .table-header-cell-wrapper {

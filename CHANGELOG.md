@@ -4,8 +4,8 @@
   - fix: 固定列层级调整。防止左侧固定列覆盖在右侧固定列上。
   - change: 现在列不处于固定状态时，不会为其添加z-index。
   - change: 固定列z-index由行内定于变为css定义。
-  - change: 非固定th 默认 z-index 2 -> 1
 * change: 添加三个tbody的class类名。
+* fix: 调整z-index ，解决固定列阴影纵向滚动时与表头阴影叠加的问题。
 
 
 ## 0.3.7
