@@ -17,6 +17,7 @@
             'cell-hover': props.cellHover,
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
+            'fixed-relative-mode': isRelativeMode,
         }"
         :style="{
             '--row-height': virtualScroll.rowHeight + 'px',
@@ -214,7 +215,7 @@
  * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT } from './const';
+import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE } from './const';
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -323,11 +324,11 @@ const props = withDefaults(
         /** 序号列配置 */
         seqConfig?: SeqConfig;
         /**
-         * 固定头，固定列实现方式。
+         * 固定头，固定列实现方式。(非响应式)
          *
          * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
          *
-         * 低版本浏览器只能为'relative',
+         * 低版本浏览器强制为'relative',
          */
         cellFixedMode?: 'sticky' | 'relative';
     }>(),
@@ -469,6 +470,10 @@ const emits = defineEmits<{
 
 const tableContainerRef = ref<HTMLDivElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
+
+/** 是否使用 relative 固定头和列 */
+const isRelativeMode = ref(IS_LEGACY_MODE ? true : props.cellFixedMode === 'relative');
+
 /** 当前选中的一行*/
 const currentRow = ref<DT | null>(null);
 /**
@@ -566,6 +571,7 @@ const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeaders });
 
 const getFixedStyle = useFixedStyle<DT>({
     props,
+    isRelativeMode,
     getFixedColPosition,
     virtualScroll,
     virtualScrollX,

@@ -185,6 +185,15 @@
         }
     }
 
+    &.fixed-relative-mode {
+        th {
+            position: relative;
+        }
+        .fixed-cell--active {
+            position: relative;
+        }
+    }
+
     th,
     td {
         font-size: 14px;
@@ -196,7 +205,8 @@
         color: var(--th-color);
         background-color: inherit;
         /* 保证向上滚动时，表头不被遮挡*/
-        z-index: 1; 
+        z-index: 1;
+        position: sticky;
 
         &.sortable {
             cursor: pointer;
@@ -242,11 +252,6 @@
         tr {
             background-color: var(--th-bgc);
             height: var(--header-row-height);
-
-            &:first-child th {
-                position: sticky;
-                top: 0;
-            }
         }
     }
 
@@ -340,6 +345,10 @@
         position: absolute;
         pointer-events: none;
         background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
+    }
+
+    .fixed-cell--active {
+        position: sticky;
     }
 
     th.fixed-cell--active {
