@@ -10,6 +10,7 @@ repo:
 
 ## Bug TODO:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
+* [] 固定列列宽拖动目标。
 
 ## Feature TODO:
 * [x] 高亮行，单元格。使用css @keyframes实现。
@@ -217,7 +218,7 @@ export type StkProps = {
      */
     stringLocaleCompare?: boolean;
   },
-  /** 隐藏头部title。可传入dataIndex数组 */
+  /** 隐藏头部鼠标悬浮title。可传入dataIndex数组 */
   hideHeaderTitle?: boolean | string[];
   /** 高亮配置 */
   highlightConfig?: {
@@ -232,8 +233,8 @@ export type StkProps = {
     startIndex?: number;
   };
   /**
-   * 固定头，固定列实现方式。(非响应式)
-   *
+   * 固定头，固定列实现方式。
+   * [非响应式]
    * relative：固定列只能放在props.columns的两侧。
    * - 如果列宽会变动则谨慎使用。
    * - 多级表头固定列慎用
@@ -464,20 +465,20 @@ export type SortConfig<T extends Record<string, any>> = {
   )
 ```
 #### option
-| key |value| desc |
-| ---- | ---- | ---- |
-| method | `css` `animation` `js` | 设置高亮方式。虚拟滚动默认js。否则css |
-| ~~useCss~~  `deprecated` | `boolean`| ~~是否使用css~~ |
-| className | `string` | 设置高亮样式。method == 'css' 生效 |
-| keyframe | `Parameters<Animatable['animate']>['0']` | 设置高亮动画。method == 'animation' 生效。 |
-| duration | `number` | 设置高亮动画持续时间。 method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。|
+| key |value| default |desc |
+| ---- | ---- | ---- | ---- |
+| method | `css` `animation` `js` | `animation` | 设置高亮方式。 |
+| ~~useCss~~  `deprecated` | `boolean`| false | ~~是否使用css~~ |
+| className | `string` | `highlight-row`/`highlight-cell` | 自定义 css 动画。method == 'css' 生效 |
+| keyframe | `Parameters<Animatable['animate']>['0']` | ... | 自定义高亮动画。method == 'animation' 生效。 |
+| duration | `number` | 2000 | 设置高亮动画持续时间ms。 method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。|
 
 ##### option.method
 | `option.method`| desc |
 | ---- | ---- |
-| css | 使用css class 实现高亮。 |
-| animation | 使用 animation api 实现高亮。 |
-| js | 使用 js 循环计算颜色实现高亮。虚拟滚动默认使用js。 |
+| animation | animation api 实现高亮。(default) |
+| css | css @keyframes 实现高亮。 |
+| js | js 循环计算颜色实现高亮。 |
 
 ### Example
 ```vue
