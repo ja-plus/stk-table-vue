@@ -114,7 +114,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
      * 传入方法表示resize后的回调
      */
     autoResize?: boolean | (() => void) | undefined;
-    /** 是否展示固定列阴影。默认不展示。 */
+    /** 是否展示固定列阴影。为节省性能，默认false。 */
     fixedColShadow?: boolean | undefined;
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
@@ -127,11 +127,13 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
     /**
-     * 固定头，固定列实现方式。
+     * 固定头，固定列实现方式。(非响应式)
      *
-     * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+     * relative：固定列只会放在props.columns的两侧。
+     * - 如果列宽会变动则谨慎使用。
+     * - 多级表头固定列慎用
      *
-     * 低版本浏览器只能为'relative',
+     * 低版本浏览器强制为'relative'，
      */
     cellFixedMode?: "sticky" | "relative" | undefined;
 }>, {
@@ -193,10 +195,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 设置高亮渐暗行 */
     setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
         method?: "animation" | "css" | "js" | undefined;
-        useCss?: boolean | undefined; /**
-         * 表头单元格点击事件
-         * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
-         */
+        useCss?: boolean | undefined;
         className?: string | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
@@ -314,7 +313,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
      * 传入方法表示resize后的回调
      */
     autoResize?: boolean | (() => void) | undefined;
-    /** 是否展示固定列阴影。默认不展示。 */
+    /** 是否展示固定列阴影。为节省性能，默认false。 */
     fixedColShadow?: boolean | undefined;
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean | undefined;
@@ -327,11 +326,13 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
     /**
-     * 固定头，固定列实现方式。
+     * 固定头，固定列实现方式。(非响应式)
      *
-     * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+     * relative：固定列只会放在props.columns的两侧。
+     * - 如果列宽会变动则谨慎使用。
+     * - 多级表头固定列慎用
      *
-     * 低版本浏览器只能为'relative',
+     * 低版本浏览器强制为'relative'，
      */
     cellFixedMode?: "sticky" | "relative" | undefined;
 }>, {

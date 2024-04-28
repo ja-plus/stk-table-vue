@@ -126,9 +126,14 @@
 .stk-table.virtual .padding-top-tr td{
   height:0;
 }
+.stk-table.fixed-relative-mode th{
+  position:relative;
+}
+.stk-table.fixed-relative-mode .fixed-cell--active{
+  position:relative;
+}
 .stk-table th,
 .stk-table td{
-  z-index:1;
   font-size:14px;
   box-sizing:border-box;
   padding:0 var(--cell-padding-x);
@@ -136,6 +141,8 @@
 .stk-table th{
   color:var(--th-color);
   background-color:inherit;
+  z-index:2;
+  position:sticky;
 }
 .stk-table th.sortable{
   cursor:pointer;
@@ -169,10 +176,6 @@
 .stk-table thead tr{
   background-color:var(--th-bgc);
   height:var(--header-row-height);
-}
-.stk-table thead tr:first-child th{
-  position:sticky;
-  top:0;
 }
 .stk-table .stk-table-main tbody tr{
   background-color:var(--td-bgc);
@@ -241,6 +244,15 @@
   position:absolute;
   pointer-events:none;
   background-image:linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to));
+}
+.stk-table .fixed-cell--active{
+  position:sticky;
+}
+.stk-table th.fixed-cell--active{
+  z-index:3;
+}
+.stk-table td.fixed-cell--active{
+  z-index:1;
 }
 .stk-table .table-header-cell-wrapper{
   max-width:100%;
