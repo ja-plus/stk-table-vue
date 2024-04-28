@@ -326,9 +326,11 @@ const props = withDefaults(
         /**
          * 固定头，固定列实现方式。(非响应式)
          *
-         * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+         * relative：固定列只会放在props.columns的两侧。
+         * - 如果列宽会变动则谨慎使用。
+         * - 多级表头固定列慎用
          *
-         * 低版本浏览器强制为'relative',
+         * 低版本浏览器强制为'relative'，
          */
         cellFixedMode?: 'sticky' | 'relative';
     }>(),
@@ -685,7 +687,23 @@ function dealDefaultSorter() {
 function dealColumns() {
     // reset
     let tableHeadersTemp: StkTableColumn<DT>[][] = [];
-    const copyColumn = props.columns; // do not deep clone
+    let copyColumn = props.columns; // do not deep clone
+    // relative 模式下不支持sticky列。因此就放在左右两侧。
+    if (isRelativeMode.value) {
+        let leftCol: StkTableColumn<DT>[] = [];
+        let centerCol: StkTableColumn<DT>[] = [];
+        let rightCol: StkTableColumn<DT>[] = [];
+        copyColumn.forEach(col => {
+            if (col.fixed === 'left') {
+                leftCol.push(col);
+            } else if (col.fixed === 'right') {
+                rightCol.push(col);
+            } else {
+                centerCol.push(col);
+            }
+        });
+        copyColumn = [...leftCol, ...centerCol, ...rightCol];
+    }
     const deep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
 

@@ -5,6 +5,7 @@
   - change: 现在列不处于固定状态时，不会为其添加z-index。
   - change: 固定列z-index由行内定于变为css定义。
 * change: 添加三个tbody的class类名。
+* change: `cellFixedMode` 为relative下，固定列都放在两侧。
 * fix: 调整z-index ，解决固定列阴影纵向滚动时与表头阴影叠加的问题。
 
 

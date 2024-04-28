@@ -234,7 +234,9 @@ export type StkProps = {
   /**
    * 固定头，固定列实现方式。(非响应式)
    *
-   * relative：固定列只能放在props.columns的两侧。如果列宽会变动则谨慎使用。
+   * relative：固定列只能放在props.columns的两侧。
+   * - 如果列宽会变动则谨慎使用。
+   * - 多级表头固定列慎用
    * 
    * 低版本浏览器只能为'relative', 
    */
