@@ -1,3 +1,7 @@
+## 0.4.1
+
+* fix: `firefox`
+
 ## 0.4.0
 
 * feature: 固定列阴影支持 fixed sticky 动态变化。
@@ -117,7 +121,7 @@
 ## 0.2.3
 
 * feature: `props.sortConfig.defaultSort` 控制默认排序。
-* bugfix: 修复 `props.dataSource` 为 `shallowRef` 时，高亮行异常的问题。
+* fix: 修复 `props.dataSource` 为 `shallowRef` 时，高亮行异常的问题。
 
 ## 0.2.2
 

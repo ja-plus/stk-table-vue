@@ -217,3 +217,16 @@ export function createStkTableId() {
 
     return STK_ID_PREFIX + window.__STK_TB_ID_COUNT__.toString(36);
 }
+
+export function getBrowsersVersion(browserName: string) {
+    try {
+        const reg = new RegExp(`${browserName}/\\d+`, 'i');
+        const userAgent = navigator.userAgent.match(reg);
+        if (userAgent) {
+            return +userAgent[0].split('/')[1];
+        }
+    } catch (e) {
+        console.error('Cannot get version', e);
+    }
+    return 100;
+}

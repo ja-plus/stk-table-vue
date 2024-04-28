@@ -8,6 +8,8 @@ repo:
 - [Github](https://github.com/ja-plus/stk-table-vue)
 - [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
 
+[<span style="font-size: 16px;font-weight: bold;">Online Demo</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
+
 ## Bug TODO:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
 * [] 固定列列宽拖动目标。

@@ -1,3 +1,5 @@
+import { getBrowsersVersion } from './utils';
+
 export const DEFAULT_COL_WIDTH = '100';
 
 export const DEFAULT_TABLE_HEIGHT = 100;
@@ -20,16 +22,10 @@ export const HIGHLIGHT_ROW_CLASS = 'highlight-row';
 /** 高连单元格class */
 export const HIGHLIGHT_CELL_CLASS = 'highlight-cell';
 
-let _chromeVersion = 0;
-try {
-    const userAgent = navigator.userAgent.match(/chrome\/\d+/i);
-    if (userAgent) {
-        _chromeVersion = +userAgent[0].split('/')[1];
-    }
-} catch (e) {
-    console.error('Cannot get Chrome version', e);
-}
-/** 是否兼容低版本模式 */
-export const IS_LEGACY_MODE = _chromeVersion < 56;
+const _chromeVersion = getBrowsersVersion('chrome');
+const _firefoxVersion = getBrowsersVersion('firefox');
+
+/** 低版本sticky兼容模式  */
+export const IS_LEGACY_MODE = _chromeVersion < 56 || _firefoxVersion < 59;
 
 export const STK_ID_PREFIX = 'stk';
