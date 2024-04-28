@@ -210,12 +210,11 @@ export function transformWidthToStr(width?: string | number) {
 
 /** 创建组件唯一标识 */
 export function createStkTableId() {
-    if (!window.__STK_TB_ID_COUNT__) {
-        window.__STK_TB_ID_COUNT__ = 0;
-    }
-    window.__STK_TB_ID_COUNT__ += 1;
-
-    return STK_ID_PREFIX + window.__STK_TB_ID_COUNT__.toString(36);
+    let id = window.__STK_TB_ID_COUNT__;
+    if (!id) id = 0;
+    id += 1;
+    window.__STK_TB_ID_COUNT__ = id;
+    return STK_ID_PREFIX + id.toString(36);
 }
 
 export function getBrowsersVersion(browserName: string) {
