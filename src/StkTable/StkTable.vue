@@ -920,21 +920,28 @@ function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
 }
 
 /**
- * 鼠标滚轮事件监听
- * @param {MouseEvent} e
+ * 鼠标滚轮事件监听。代理滚轮事件，防止滚动过快出现白屏。
+ * @param e
  */
-function onTableWheel(e: MouseEvent) {
+function onTableWheel(e: WheelEvent) {
+    e.preventDefault();
     if (isColResizing.value) {
         // 正在调整列宽时，不允许用户滚动
-        e.preventDefault();
         e.stopPropagation();
         return;
     }
+    // #region ---- 控制滚动，防止出现白屏--
+    const dom = tableContainerRef.value;
+    if (!dom) return;
+    const { deltaY, deltaX } = e;
+    if (deltaY) dom.scrollTop += deltaY;
+    if (deltaX) dom.scrollLeft += deltaX;
+    //#endregion
 }
 
 /**
  * 滚动条监听
- * @param {Event} e scrollEvent
+ * @param e scrollEvent
  */
 function onTableScroll(e: Event) {
     if (!e?.target) return;
