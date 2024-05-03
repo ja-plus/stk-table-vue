@@ -21,6 +21,6 @@ export declare const HIGHLIGHT_FREQ: number;
 export declare const HIGHLIGHT_ROW_CLASS = "highlight-row";
 /** 高连单元格class */
 export declare const HIGHLIGHT_CELL_CLASS = "highlight-cell";
-/** 是否兼容低版本模式 */
+/** 低版本sticky兼容模式  */
 export declare const IS_LEGACY_MODE: boolean;
 export declare const STK_ID_PREFIX = "stk";

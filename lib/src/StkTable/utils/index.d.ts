@@ -35,3 +35,4 @@ export declare function getCalculatedColWidth(col: StkTableColumn<any> | null): 
 export declare function transformWidthToStr(width?: string | number): string | undefined;
 /** 创建组件唯一标识 */
 export declare function createStkTableId(): string;
+export declare function getBrowsersVersion(browserName: string): number;
