@@ -1,5 +1,6 @@
 import { Ref, ShallowRef } from 'vue';
 import { StkTableColumn } from './types';
+
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
@@ -62,12 +63,12 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         offsetLeft: number;
         scrollLeft: number;
     }>;
-    virtual_on: import("vue").ComputedRef<any>;
-    virtual_dataSourcePart: import("vue").ComputedRef<DT[]>;
-    virtual_offsetBottom: import("vue").ComputedRef<number>;
-    virtualX_on: import("vue").ComputedRef<any>;
-    virtualX_columnPart: import("vue").ComputedRef<StkTableColumn<DT>[]>;
-    virtualX_offsetRight: import("vue").ComputedRef<number>;
+    virtual_on: import('vue').ComputedRef<any>;
+    virtual_dataSourcePart: import('vue').ComputedRef<DT[]>;
+    virtual_offsetBottom: import('vue').ComputedRef<number>;
+    virtualX_on: import('vue').ComputedRef<any>;
+    virtualX_columnPart: import('vue').ComputedRef<StkTableColumn<DT>[]>;
+    virtualX_offsetRight: import('vue').ComputedRef<number>;
     initVirtualScroll: (height?: number) => void;
     initVirtualScrollY: (height?: number) => void;
     initVirtualScrollX: () => void;

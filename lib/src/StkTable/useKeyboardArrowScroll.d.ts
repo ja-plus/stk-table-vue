@@ -1,6 +1,7 @@
 import { ComputedRef, Ref, ShallowRef } from 'vue';
 import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
+
 type Options<DT extends Record<string, any>> = {
     props: any;
     scrollTo: (y: number | null, x: number | null) => void;

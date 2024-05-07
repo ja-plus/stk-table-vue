@@ -1,4 +1,5 @@
 import { Ref } from 'vue';
+
 type UseTriggerRef<T> = {
     getRef: () => Ref<T>;
     getValue: () => T;

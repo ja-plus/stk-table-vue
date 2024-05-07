@@ -1,4 +1,5 @@
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+
 /** Generic stands for DataType */
 type DT = any;
 /**
@@ -36,7 +37,7 @@ declare function scrollTo(top?: number | null, left?: number | null): void;
 declare function getTableData(): any[];
 /** 获取当前排序列的信息 */
 declare function getSortColumns(): SortState<DT>[];
-declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -193,7 +194,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
-    setHighlightDimRow: (rowKeyValues: import("./types/index").UniqKey[], option?: {
+    setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: {
         method?: "animation" | "css" | "js" | undefined;
         useCss?: boolean | undefined;
         className?: string | undefined;
@@ -201,7 +202,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
         duration?: number | undefined;
     }) => void;
     /** 表格排序列dataIndex */
-    sortCol: import("vue").Ref<string | null | undefined>;
+    sortCol: import('vue').Ref<string | null | undefined>;
     /** 获取当前排序状态 */
     getSortColumns: typeof getSortColumns;
     /** 设置排序 */
@@ -212,7 +213,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     scrollTo: typeof scrollTo;
     /** 获取表格数据 */
     getTableData: typeof getTableData;
-}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
     "current-change": (ev: MouseEvent | null, row: any, data: {
@@ -235,7 +236,7 @@ declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<__
     "th-drag-start": (dragStartKey: string) => void;
     "th-drop": (targetColKey: string) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
-}, string, import("vue").PublicProps, Readonly<import("vue").ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;

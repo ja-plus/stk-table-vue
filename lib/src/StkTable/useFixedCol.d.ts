@@ -1,6 +1,7 @@
 import { ComputedRef, Ref, ShallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 import { VirtualScrollXStore } from './useVirtualScroll';
+
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;

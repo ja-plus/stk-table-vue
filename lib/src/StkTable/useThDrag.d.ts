@@ -1,4 +1,5 @@
 import { StkTableColumn } from './types';
+
 type Params = {
     props: any;
     emits: any;
