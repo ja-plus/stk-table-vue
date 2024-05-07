@@ -15,11 +15,10 @@ repo:
 * [] 固定列列宽拖动目标。
 
 ## Feature TODO:
-* [x] 高亮行，单元格。使用css @keyframes实现。
-  - [x] 虚拟滚动默认通过js计算行高亮背景色，可通过 `useCss` 设置为css @keyframe实现 。
-  - [x] 支持配置高亮参数（持续时间，颜色，频率（虚拟滚动））。(`v0.2.9`)
-  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
+* [x] 高亮行，单元格。
   - [x] 使用 `Web Animations API` 实现高亮。(`v0.3.4` 变更为默认值)
+  - [x] 支持配置高亮参数（持续时间，颜色，频率）。(`v0.2.9`)
+  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
 * [x] 虚拟滚动。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
@@ -29,28 +28,21 @@ repo:
     - [x] sticky column 动态计算阴影位置。(`v0.4.0`)
 * [] 列筛选。
 * [x] 斑马纹。
-  - [x] 虚拟滚动斑马纹。
-* [x] 表头拖动更改顺序。
-* [x] 表头拖动调整列宽。
+* [x] 拖动更改列顺序。
+* [x] 拖动调整列宽。
 * [x] 排序
-  - [x] 基本表头点击排序。
   - [x] 支持配置 `null` | `undefined` 永远排最后。
   - [x] 支持配置 string 使用 `String.prototype.localCompare` 排序。
 * [x] 多级表头。
-  - [x] 支持最多`2级`表头。
-  - [x] 支持更多级表头。
   - [] 横向虚拟滚动。
 * [x] 支持table-layout: fixed 配置。
 * [x] 鼠标悬浮在表格上，键盘滚动虚拟表格。
-  - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight` 按键支持。
-  - [x] 键盘 `PageUp`/ `PageDown` 按键支持。
+  - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight`/`PageUp`/ `PageDown` 按键支持。
 * [] 非虚拟滚动时，大数据分批加载。
 * [x] vue2.7支持（引入源码使用）。
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
 * [x] 支持配置序号列。`StkTableColumn['type']`。(`v0.3.0`)
 * [x] `props.cellHover`单元格悬浮样式。(`v0.3.2`)
-
-
 
 
 ## Usage
@@ -64,15 +56,15 @@ const stkTable = ref<InstanceType<typeof StkTable>>();
 
 // highlight row
 stkTable.value.setHighlightDimRow([rowKey]，{
-  method: 'css'|'js'|'animation',// 是否使用css @keyframe实现。虚拟滚动下默认false。
-  className: 'custom-class-name',// useCss 为true时生效。
+  method: 'css'|'js'|'animation',// 默认 animation。
+  className: 'custom-class-name', // method css 时生效。
   keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
   duration: 2000,// 动画时长。
 });
  // highlight cell
 stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
   method: 'css'|'animation',
-  className:'custom-class-name',// method css 时生效。
+  className:'custom-class-name', // method css 时生效。
   keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}], // method animation 时生效。
   duration: 2000,// 动画时长。
 })
@@ -88,10 +80,10 @@ stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
 vue2.7 支持引入源码使用。依赖`less`。
 ```html
 <script>
-  import { StkTable } from 'stk-table-vue/src/StkTable/index';
+  import { StkTable } from 'stk-table-vue/src/StkTable/index'; // include less
 </script>
 ```
-不要less的话
+Use `css`
 ```html
 <script>
   import { StkTable } from 'stk-table-vue/src/StkTable/StkTable.vue';
@@ -542,7 +534,7 @@ export type SortConfig<T extends Record<string, any>> = {
       customCell: defineComponent({
         setup(){
           //...
-          return () => <div></div>
+          return () => <div></div> // vue jsx
         }
       })
     },
