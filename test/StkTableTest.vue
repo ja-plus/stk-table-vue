@@ -8,6 +8,7 @@
         <button @click="addColumn()">addColumn</button>
         <button @click="deleteColumn()">deleteColumn</button>
         <button @click="startUnshiftRow">startUnshiftRow</button>
+        <button @click="scrollAndDataToLess">less data when scroll bar in middle</button>
         <button @click="props.theme === 'light' ? (props.theme = 'dark') : (props.theme = 'light')">theme:{{ props.theme }}</button>
         <label><input v-model="props.showOverflow" type="checkbox" />showOverflow</label>
         <label><input v-model="props.showHeaderOverflow" type="checkbox" />showHeaderOverflow</label>
@@ -419,6 +420,20 @@ function startUnshiftRow() {
 
 function onCellMouseOver(e, row, col) {
     // console.log('onCellMouseOver', e, row, col.dataIndex);
+}
+
+function scrollAndDataToLess() {
+    addRow(1000);
+    window.setTimeout(() => {
+        // scrollToBottom
+        stkTable.value?.scrollTo(15000, 0);
+        window.setTimeout(() => {
+            // clearDataSource
+            dataSource.value = [];
+            // add 50 Row
+            addRow(50);
+        }, 500);
+    }, 500);
 }
 </script>
 

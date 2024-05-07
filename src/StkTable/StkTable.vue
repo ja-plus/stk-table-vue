@@ -208,11 +208,8 @@
 <script setup lang="ts">
 /**
  * @author JA+
- * 不支持低版本浏览器非虚拟滚动表格的表头固定，列固定，因为会卡。
  * TODO:存在的问题：
  * [] column.dataIndex 作为唯一键，不能重复
- * [] 计算的高亮颜色，挂在数据源上对象上，若多个表格使用同一个数据源对象会有问题。需要深拷贝。(解决方案：获取组件uid)
- * [] highlight-row 颜色不能恢复到active的颜色
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE } from './const';
@@ -653,8 +650,6 @@ watch(
             const column = tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
             onColumnSort(column, false);
         }
-        // 是否需要
-        // updateFixedShadow();
     },
     {
         deep: false,

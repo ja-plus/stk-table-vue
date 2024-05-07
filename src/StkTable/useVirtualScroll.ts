@@ -189,12 +189,20 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
-        // 先更新滚动条位置记录，其他地方可能有依赖。(stripe 时ArrowUp/Down滚动依赖)
+        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, containerHeight } = virtualScroll.value;
+        /** 最大的scrollTop */
+        const maxScrollTop = dataSourceCopy.value.length * rowHeight - containerHeight;
+        if (sTop > maxScrollTop) {
+            /** 用于修复： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
+            sTop = maxScrollTop;
+        }
+        // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
         // 非虚拟滚动不往下执行
-        if (!virtual_on.value) return;
+        if (!virtual_on.value) {
+            return;
+        }
 
         let startIndex = Math.floor(sTop / rowHeight);
         if (startIndex < 0) {
@@ -211,11 +219,21 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (props.stripe) {
             endIndex += 1; // 斑马纹下多渲染一些
         }
-        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
-        endIndex = Math.min(endIndex, dataSourceCopy.value.length); // 溢出index修正
+
+        // 溢出endIndex修正
+        endIndex = Math.min(endIndex, dataSourceCopy.value.length);
+
+        if (startIndex >= endIndex) {
+            // 兜底，不一定会执行到这里
+            startIndex = endIndex - pageSize;
+        }
+
         if (vue2ScrollYTimeout) {
             window.clearTimeout(vue2ScrollYTimeout);
         }
+
+        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
+
         /**
          * 一次滚动大于一页时表示滚动过快，回退优化
          */
