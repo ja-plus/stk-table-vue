@@ -423,7 +423,7 @@ export type SortConfig<T extends Record<string, any>> = {
     };
     /**
      * string排序是否使用 String.prototype.localCompare
-     * 默认true (&$&应该false)
+     * 默认true ($*$应该false)
      */
     stringLocaleCompare?: boolean;
 };
