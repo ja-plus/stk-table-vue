@@ -76,17 +76,17 @@ export function useFixedCol<DT extends Record<string, any>>({
         if (!props.fixedColShadow) return;
         const fixedColsTemp: StkTableColumn<DT>[] = [];
         const fixedShadowColsTemp: (StkTableColumn<DT> | null)[] = [];
-        let clientWidth, scrollWidth, scrollLeft;
+        let clientWidth, /* scrollWidth, */ scrollLeft;
 
         if (virtualScrollX?.value) {
-            const { containerWidth: cw, scrollWidth: sw, scrollLeft: sl } = virtualScrollX.value;
+            const { containerWidth: cw, /* scrollWidth: sw, */ scrollLeft: sl } = virtualScrollX.value;
             clientWidth = cw;
-            scrollWidth = sw;
+            // scrollWidth = sw;
             scrollLeft = sl;
         } else {
-            const { clientWidth: cw, scrollWidth: sw, scrollLeft: sl } = tableContainerRef.value as HTMLDivElement;
+            const { clientWidth: cw, /* scrollWidth: sw, */ scrollLeft: sl } = tableContainerRef.value as HTMLDivElement;
             clientWidth = cw;
-            scrollWidth = sw;
+            // scrollWidth = sw;
             scrollLeft = sl;
         }
 

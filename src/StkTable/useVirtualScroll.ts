@@ -106,8 +106,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
             // 虚拟横向滚动，固定列要一直保持存在
-            const leftCols = [];
-            const rightCols = [];
+            const leftCols: StkTableColumn<DT>[] = [];
+            const rightCols: StkTableColumn<DT>[] = [];
             /**
              * 存在问题：
              * table columns 从多到少时。比方原来的start=5,end=10，现在start=4,end=8。这时候endIndex就超出数组范围了。
