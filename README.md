@@ -144,7 +144,7 @@ export type StkProps = {
   columns?: StkTableColumn<any>[];
   /** 表格数据源 */
   dataSource?: any[];
-  /** 行唯一键 */
+  /** 行唯一键 (行唯一值不能为undefined）*/
   rowKey?: UniqKeyProp;
   /** 列唯一键 */
   colKey?: UniqKeyProp;

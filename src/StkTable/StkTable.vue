@@ -142,8 +142,8 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left"></td>
                     <template v-if="fixedMode && headless">
-                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td
-                    ></template>
+                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                    </template>
                 </tr>
             </tbody>
             <tbody class="stk-tbody-main">
@@ -259,7 +259,7 @@ const props = withDefaults(
         columns?: StkTableColumn<DT>[];
         /** 表格数据源 */
         dataSource?: DT[];
-        /** 行唯一键 */
+        /** 行唯一键 （行唯一值不能为undefined） */
         rowKey?: UniqKeyProp;
         /** 列唯一键 */
         colKey?: UniqKeyProp;
@@ -474,7 +474,7 @@ const colResizeIndicatorRef = ref<HTMLDivElement>();
 const isRelativeMode = ref(IS_LEGACY_MODE ? true : props.cellFixedMode === 'relative');
 
 /** 当前选中的一行*/
-const currentRow = ref<DT | null>(null);
+const currentRow = ref<DT>();
 /**
  * 保存当前选中行的key<br>
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
@@ -771,6 +771,11 @@ function rowKeyGen(row: DT) {
     let key = rowKeyGenStore.get(row);
     if (!key) {
         key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
+
+        if (key === void 0) {
+            // key为undefined时，不应该高亮行。因此重新生成key
+            key = Math.random().toString();
+        }
         rowKeyGenStore.set(row, key);
     }
     return key;
@@ -863,8 +868,8 @@ function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
     // 选中同一行，取消当前选中行。
     if (props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row) {
-        currentRow.value = null;
-        currentRowKey.value = null;
+        currentRow.value = void 0;
+        currentRowKey.value = void 0;
         emits('current-change', e, row, { select: false });
     } else {
         currentRow.value = row;
