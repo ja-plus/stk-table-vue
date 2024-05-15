@@ -182,14 +182,14 @@
                             :row="row"
                             :rowIndex="rowIndex"
                             :colIndex="colIndex"
-                            :cellValue="row[col.dataIndex]"
+                            :cellValue="row?.[col.dataIndex]"
                         />
-                        <div v-else class="table-cell-wrapper" :title="!col.type ? row[col.dataIndex] : ''">
+                        <div v-else class="table-cell-wrapper" :title="!col.type ? row?.[col.dataIndex] : ''">
                             <template v-if="col.type === 'seq'">
                                 {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
                             </template>
                             <template v-else>
-                                {{ row[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
                             </template>
                         </div>
                     </td>
@@ -241,7 +241,7 @@ const props = withDefaults(
         maxWidth?: string;
         /** 斑马线条纹 */
         stripe?: boolean;
-        /** 是否使用 table-layout:fixed */
+        /** 是否使用 table-layout:fixed(低版本浏览器需要设置table) */
         fixedMode?: boolean;
         /** 是否隐藏表头 */
         headless?: boolean;
@@ -770,7 +770,7 @@ function dealColumns() {
  * 行唯一值生成
  */
 function rowKeyGen(row: DT) {
-    if (!row) return;
+    if (!row) return row;
     let key = rowKeyGenStore.get(row);
     if (!key) {
         key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];

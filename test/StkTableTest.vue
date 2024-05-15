@@ -209,7 +209,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
 ]);
 
 const dataSource = shallowRef<any>(
-    [{}, {}],
+    [{}, null],
     // new Array(30).fill(0).map((it, i) => ({
     //     name: 'name' + i,
     //     age: Math.ceil(Math.random() * 100),
