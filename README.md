@@ -562,6 +562,11 @@ export type SortConfig<T extends Record<string, any>> = {
     - 在 `customCell` 较多且复杂时。
     - 大量 highlight 动画时。
 
+## Tips
+### props.fixedMode
+* **低版本浏览器** 需要设置 `props.width`（default: width=fit-content不生效）。否则列宽不设宽度会变为0。
+
+
 ## Other
 * `$*$` 兼容注释
 
