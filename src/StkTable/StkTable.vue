@@ -45,7 +45,7 @@
             }"
         >
             <!-- transform: virtualX_on ? `translateX(${virtualScrollX.offsetLeft}px)` : null, 用transform控制虚拟滚动左边距，sticky会有问题 -->
-            <thead v-if="!headless">
+            <thead v-if="!headless" ref="theadRef">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="e => onHeaderMenu(e)">
                     <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
                     <th
@@ -468,6 +468,7 @@ const emits = defineEmits<{
 // }>();
 
 const tableContainerRef = ref<HTMLDivElement>();
+const theadRef = ref<HTMLElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
 
 /** 是否使用 relative 固定头和列 */
@@ -566,7 +567,7 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
-} = useVirtualScroll({ tableContainerRef, props, dataSourceCopy, tableHeaderLast, tableHeaders });
+} = useVirtualScroll({ tableContainerRef, theadRef, props, dataSourceCopy, tableHeaderLast, tableHeaders });
 
 /** 获取固定列的位置 */
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeaders });
@@ -927,7 +928,6 @@ function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
-    e.preventDefault();
     if (isColResizing.value) {
         // 正在调整列宽时，不允许用户滚动
         e.stopPropagation();
@@ -936,9 +936,26 @@ function onTableWheel(e: WheelEvent) {
     // #region ---- 控制滚动，防止出现白屏--
     const dom = tableContainerRef.value;
     if (!dom) return;
+    const { containerHeight, scrollTop, scrollHeight, rowHeight } = virtualScroll.value;
+    const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
+    /** 是否滚动在下面 */
+    const isScrollBottom = scrollHeight - containerHeight - scrollTop < rowHeight;
+    /** 是否滚动在右侧 */
+    const isScrollRight = scrollWidth - containerWidth - scrollLeft < 100;
     const { deltaY, deltaX } = e;
-    if (deltaY) dom.scrollTop += deltaY;
-    if (deltaX) dom.scrollLeft += deltaX;
+
+    /**
+     * 只有虚拟滚动时，才要用 wheel 代理scroll，防止滚动过快导致的白屏。
+     * 滚动条在边界情况时，not preventDefault 。因为会阻塞父级滚动条滚动。
+     */
+    if (virtual_on && deltaY && scrollTop > 0 && !isScrollBottom) {
+        e.preventDefault();
+        dom.scrollTop += deltaY;
+    }
+    if (virtualX_on && deltaX && scrollLeft > 0 && !isScrollRight) {
+        e.preventDefault();
+        dom.scrollLeft += deltaX;
+    }
     //#endregion
 }
 

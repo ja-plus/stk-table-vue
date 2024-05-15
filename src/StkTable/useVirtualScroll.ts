@@ -6,6 +6,7 @@ import { getCalculatedColWidth } from './utils';
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
+    theadRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
@@ -27,6 +28,8 @@ export type VirtualScrollStore = {
     offsetTop: number;
     /** 纵向滚动条位置，用于判断是横向滚动还是纵向 */
     scrollTop: number;
+    /** 总滚动高度 */
+    scrollHeight: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -55,10 +58,14 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
 export function useVirtualScroll<DT extends Record<string, any>>({
     props,
     tableContainerRef,
+    theadRef,
     dataSourceCopy,
     tableHeaderLast,
     tableHeaders,
 }: Option<DT>) {
+    /** 表头高度 */
+    const tableHeaderHeight = ref(props.headerRowHeight ?? props.rowHeight);
+
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
@@ -67,6 +74,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         endIndex: 0,
         offsetTop: 0,
         scrollTop: 0,
+        scrollHeight: 0,
     });
 
     const virtualScrollX = ref<VirtualScrollXStore>({
@@ -146,6 +154,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         return width;
     });
 
+    /** 表头高度 */
+    function getTableHeaderHeight() {
+        const { headerRowHeight } = props;
+        return theadRef.value?.offsetHeight ?? headerRowHeight * tableHeaders.value.length;
+    }
+
     /**
      * 初始化Y虚拟滚动参数
      * @param {number} [height] 虚拟滚动的高度
@@ -156,17 +170,27 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             height = 0;
         }
         if (!virtual_on.value) return;
-        const { offsetHeight, scrollTop } = tableContainerRef.value || {};
+        const { offsetHeight, scrollHeight } = tableContainerRef.value || {};
+        let scrollTop = tableContainerRef.value?.scrollTop || 0;
+
         const { rowHeight } = virtualScroll.value;
         const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
-        const { headless, headerRowHeight } = props;
+        const { headless } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
+        const headerHeight = getTableHeaderHeight();
+        tableHeaderHeight.value = headerHeight;
         if (!headless) {
             /** 表头高度占几行表体高度数 */
-            const headerToBodyRowHeightCount = Math.floor((tableHeaders.value.length * (headerRowHeight || rowHeight)) / rowHeight);
+            const headerToBodyRowHeightCount = Math.floor(headerHeight) / rowHeight;
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
-        Object.assign(virtualScroll.value, { containerHeight, pageSize });
+        /** 最大的scrollTop */
+        const maxScrollTop = dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight;
+        if (scrollTop > maxScrollTop) {
+            /** 用于修复： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
+            scrollTop = maxScrollTop;
+        }
+        Object.assign(virtualScroll.value, { containerHeight, pageSize, scrollHeight });
         updateVirtualScrollY(scrollTop);
     }
 
@@ -189,13 +213,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, containerHeight } = virtualScroll.value;
-        /** 最大的scrollTop */
-        const maxScrollTop = dataSourceCopy.value.length * rowHeight - containerHeight;
-        if (sTop > maxScrollTop) {
-            /** 用于修复： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
-            sTop = maxScrollTop;
-        }
+        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
