@@ -83,7 +83,7 @@
                         @dragover="onThDragOver"
                     >
                         <div class="table-header-cell-wrapper">
-                            <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" />
+                            <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else-if="col.type === 'seq'">
                                 <span class="table-header-title">{{ col.title }}</span>
                             </template>

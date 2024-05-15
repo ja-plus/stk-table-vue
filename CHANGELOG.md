@@ -1,7 +1,10 @@
 ## 0.4.2
+
+* feature: `CustomHeaderCellProps` 新增 `rowIndex/colIndex`
 * fix: 虚拟滚动，滚动条不在顶部时，表格数据变少导致滚动条位置计算错误。
 * fix: rowKey 为 `undefined` 异常高亮行。
 * fix: row not object 时的兜底。
+* fix: `StkTableColumn.customCell / customHeaderCell` 类型修改，解决 customCell 入参被推断为any的问题。
 
 ## 0.4.1
 
