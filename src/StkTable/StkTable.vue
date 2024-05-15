@@ -641,13 +641,17 @@ watch(
             console.warn('invalid dataSource');
             return;
         }
+        /** 是否需要更新ScrollY，这里由于watch newValue与oldValue 的长度一样，因此需要这样使用 */
         let needInitVirtualScrollY = false;
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
         }
         dataSourceCopy.value = [...val];
         // 数据长度没变则不计算虚拟滚动
-        if (needInitVirtualScrollY) initVirtualScrollY();
+        if (needInitVirtualScrollY) {
+            // 表格渲染后再执行。initVirtualScrollY 中有获取dom的操作。
+            nextTick(() => initVirtualScrollY());
+        }
 
         if (sortCol.value) {
             // 排序
@@ -948,12 +952,16 @@ function onTableWheel(e: WheelEvent) {
      * 只有虚拟滚动时，才要用 wheel 代理scroll，防止滚动过快导致的白屏。
      * 滚动条在边界情况时，not preventDefault 。因为会阻塞父级滚动条滚动。
      */
-    if (virtual_on && deltaY && scrollTop > 0 && !isScrollBottom) {
-        e.preventDefault();
+    if (virtual_on && deltaY) {
+        if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
+            e.preventDefault();
+        }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on && deltaX && scrollLeft > 0 && !isScrollRight) {
-        e.preventDefault();
+    if (virtualX_on && deltaX) {
+        if ((deltaX > 0 && !isScrollRight) || (deltaX < 0 && scrollLeft > 0)) {
+            e.preventDefault();
+        }
         dom.scrollLeft += deltaX;
     }
     //#endregion

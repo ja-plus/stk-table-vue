@@ -157,7 +157,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     /** 表头高度 */
     function getTableHeaderHeight() {
         const { headerRowHeight } = props;
-        return theadRef.value?.offsetHeight ?? headerRowHeight * tableHeaders.value.length;
+        return headerRowHeight * tableHeaders.value.length;
+        // if (props.virtual) {
+        // }
+        // return theadRef.value?.offsetHeight || 0;
     }
 
     /**
