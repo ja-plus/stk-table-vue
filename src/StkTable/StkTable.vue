@@ -473,8 +473,11 @@ const colResizeIndicatorRef = ref<HTMLDivElement>();
 /** 是否使用 relative 固定头和列 */
 const isRelativeMode = ref(IS_LEGACY_MODE ? true : props.cellFixedMode === 'relative');
 
-/** 当前选中的一行*/
-const currentRow = ref<DT>();
+/**
+ * 当前选中的一行
+ * - shallowRef： 使 currentRow.value === row 地址相同。防止rowKeyGen 的WeakMap key不一致。
+ */
+const currentRow = shallowRef<DT>();
 /**
  * 保存当前选中行的key<br>
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。

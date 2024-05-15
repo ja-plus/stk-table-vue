@@ -1,6 +1,6 @@
 ## 0.4.2
 * fix: 虚拟滚动，滚动条不在顶部时，表格数据变少导致滚动条位置计算错误。
-* fix: rowKey 为undefined 时不高亮行。
+* fix: rowKey 为 `undefined` 异常高亮行。
 
 ## 0.4.1
 
