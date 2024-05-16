@@ -8,8 +8,9 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../typ
  * @param sortState.sortType 排序方式
  * @param newItem 要插入的数据
  * @param targetArray 表格数据
+ * @return targetArray 的浅拷贝
  */
-export declare function insertToOrderedArray<T extends object>(sortState: SortState<keyof T>, newItem: any, targetArray: T[], sortConfig?: SortConfig<T>): T[];
+export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: any, targetArray: T[], sortConfig?: SortConfig<T>): T[];
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。

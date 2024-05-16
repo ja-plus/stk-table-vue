@@ -4,6 +4,7 @@ import { StkTableColumn } from './types';
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
+    theadRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
@@ -24,6 +25,8 @@ export type VirtualScrollStore = {
     offsetTop: number;
     /** 纵向滚动条位置，用于判断是横向滚动还是纵向 */
     scrollTop: number;
+    /** 总滚动高度 */
+    scrollHeight: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -45,7 +48,7 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, theadRef, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;
@@ -54,6 +57,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         rowHeight: number;
         offsetTop: number;
         scrollTop: number;
+        scrollHeight: number;
     }>;
     virtualScrollX: Ref<{
         containerWidth: number;

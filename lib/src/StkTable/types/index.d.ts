@@ -6,17 +6,29 @@ type Sorter<T> = boolean | ((data: T[], option: {
     order: Order;
     column: any;
 }) => T[]);
-export type CustomCellFunc<T extends Record<string, any>> = (props: {
+export type CustomCellProps<T extends Record<string, any>> = {
     row: T;
     col: StkTableColumn<T>;
     /** row[col.dataIndex] 的值 */
     cellValue: any;
     rowIndex: number;
     colIndex: number;
-}) => VNode;
-export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: {
+};
+/**
+ * $*$自定义单元格渲染函数
+ * @deprecated
+ */
+export type CustomCellFunc<T extends Record<string, any>> = (props: CustomCellProps<T>) => VNode;
+export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
-}) => VNode;
+    rowIndex: number;
+    colIndex: number;
+};
+/**
+ * $*$自定义表头渲染函数
+ * @deprecated
+ */
+export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: CustomHeaderCellProps<T>) => VNode;
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
@@ -56,17 +68,22 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * 自定义 td 渲染内容。
      *
      * 组件prop入参:
-     * - props.row 一行的记录。
-     * - props.col 列配置
+     * @param props.row 一行的记录。
+     * @param props.col 列配置
+     * @param props.cellValue row[col.dataIndex] 的值
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
      */
-    customCell?: Component | VNode | CustomCellFunc<T>;
+    customCell?: Component<CustomCellProps<T>> | string;
     /**
      * 自定义 th 渲染内容
      *
      * 组件prop入参:
-     * - props.col 列配置
+     * @param props.col 列配置
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
      */
-    customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
+    customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
     /** 父节点引用 */
@@ -77,7 +94,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 /** 排序状态 */
 export type SortState<T> = {
-    dataIndex: T;
+    dataIndex: keyof T;
     order: null | 'asc' | 'desc';
     sortType?: 'number' | 'string';
 };
