@@ -6,6 +6,8 @@
 * fix: row not object 时的兜底。
 * fix: `StkTableColumn.customCell / customHeaderCell` 类型修改，解决 customCell 入参被推断为any的问题。
 * fix: 滚动虚拟滚动表格滚动条到边界情况时，继续滚动不会触发祖先容器的滚动事件。
+* fix: `SortState["dataIndex"]` type should be `keyof T`
+* fix: `emit(e:'current-change')` row type DT => DT | undefined
 
 ## 0.4.1
 

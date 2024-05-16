@@ -99,7 +99,7 @@ export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 
 
 /** 排序状态 */
 export type SortState<T> = {
-    dataIndex: T;
+    dataIndex: keyof T;
     order: null | 'asc' | 'desc';
     sortType?: 'number' | 'string';
 };

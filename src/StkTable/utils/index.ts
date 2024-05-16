@@ -18,13 +18,9 @@ function isEmptyValue(val: any, isNumber?: boolean) {
  * @param sortState.sortType 排序方式
  * @param newItem 要插入的数据
  * @param targetArray 表格数据
+ * @return targetArray 的浅拷贝
  */
-export function insertToOrderedArray<T extends object>(
-    sortState: SortState<keyof T>,
-    newItem: any,
-    targetArray: T[],
-    sortConfig: SortConfig<T> = {},
-) {
+export function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: any, targetArray: T[], sortConfig: SortConfig<T> = {}) {
     const { dataIndex, order } = sortState;
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;

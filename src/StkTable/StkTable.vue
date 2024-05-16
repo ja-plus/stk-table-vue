@@ -226,7 +226,7 @@ import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
-type DT = any;
+type DT = Record<string | number, any>;
 /** 自己生成实例id */
 const stkTableId = createStkTableId();
 /**
@@ -387,9 +387,9 @@ const emits = defineEmits<{
     (e: 'row-click', ev: MouseEvent, row: DT): void;
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
-     * ```(ev: MouseEvent | null, row: DT, data: { select: boolean })```
+     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT, data: { select: boolean }): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
     /**
      * 行双击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -485,14 +485,14 @@ const currentRow = shallowRef<DT>();
  */
 const currentRowKey = ref<any>(null);
 /** 当前hover行 */
-let currentHoverRow: DT = null;
+let currentHoverRow: DT | null = null;
 /** 当前hover的行的key */
 const currentHoverRowKey = ref(null);
 /** 当前hover的列的key */
 // const currentColHoverKey = ref(null);
 
 /** 排序的列dataIndex*/
-let sortCol = ref<string | null>();
+let sortCol = ref<keyof DT>();
 let sortOrderIndex = ref(0);
 
 /** 排序切换顺序 */
@@ -774,7 +774,7 @@ function dealColumns() {
 /**
  * 行唯一值生成
  */
-function rowKeyGen(row: DT) {
+function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
     let key = rowKeyGenStore.get(row);
     if (!key) {
@@ -1052,7 +1052,7 @@ function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortO
 
 /** 重置排序 */
 function resetSorter() {
-    sortCol.value = null;
+    sortCol.value = void 0;
     sortOrderIndex.value = 0;
     dataSourceCopy.value = [...props.dataSource];
 }
@@ -1074,7 +1074,7 @@ function getTableData() {
 }
 
 /** 获取当前排序列的信息 */
-function getSortColumns(): SortState<DT>[] {
+function getSortColumns(): Partial<SortState<DT>>[] {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];
     return [{ dataIndex: sortCol.value, order: sortOrder }];
