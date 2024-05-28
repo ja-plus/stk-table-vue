@@ -86,11 +86,11 @@ vue2.7 支持引入源码使用。依赖`less`。
 Use `css`
 ```html
 <script>
-  import { StkTable } from 'stk-table-vue/src/StkTable/StkTable.vue';
+  import StkTable from 'stk-table-vue/src/StkTable/StkTable.vue';
   import 'stk-table-vue/lib/style.css';
 </script>
 ```
-#### webpack TS 配置参考
+#### webpack TS
 ##### webpack.config.js
 ```js
  rules:[{ 
@@ -436,7 +436,7 @@ export type SortConfig<T extends Record<string, any>> = {
     rowKeyValues: UniqKey[],
       option: {
         method?: 'css' | 'animation' | 'js';
-        /** @deprecated 请使用method */
+        /** @deprecated use method */
         useCss?: boolean;
         className?: string;
         keyframe?: Parameters<Animatable['animate']>['0'];
@@ -450,7 +450,7 @@ export type SortConfig<T extends Record<string, any>> = {
     rowKeyValues: UniqKey[],
       option: {
         method?: 'css' | 'animation' | 'js';  
-        /** @deprecated 请使用method */
+        /** @deprecated use method */
         useCss?: boolean;
         className?: string;
         keyframe?: Parameters<Animatable['animate']>['0'];
