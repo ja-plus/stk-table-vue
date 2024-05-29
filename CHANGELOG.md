@@ -1,6 +1,7 @@
 ## 0.4.3
-* feature: `props.rowHover` 控制是否高亮**悬浮**的行。
-* feature: `props.cellHover` 控制是否高亮**选中**的行。
+* feature: `props.rowHover[true]` 控制是否高亮**悬浮**的行。
+* feature: `props.rowActive[true]` 控制是否高亮**选中**的行。
+* feature: `props.rowCurrentRevokable[true]` 控制选中的行再次点击是否可以取消。
 
 ## 0.4.2
 

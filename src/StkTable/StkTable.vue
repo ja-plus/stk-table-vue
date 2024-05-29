@@ -251,6 +251,12 @@ const props = withDefaults(
         theme?: 'light' | 'dark';
         /** 行高 */
         rowHeight?: number;
+        /** 是否高亮鼠标悬浮的行 */
+        rowHover?: boolean;
+        /** 是否高亮选中的行 */
+        rowActive?: boolean;
+        /** 当前行再次点击否可以取消 */
+        rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
         headerRowHeight?: number | null;
         /** 虚拟滚动 */
@@ -279,10 +285,6 @@ const props = withDefaults(
         showOverflow?: boolean;
         /** 是否增加行hover class $*$ rename*/
         showTrHoverClass?: boolean;
-        /** 是否高亮鼠标悬浮的行 */
-        rowHover?: boolean;
-        /** 是否高亮选中的行 */
-        rowActive?: boolean;
         /** 是否高亮鼠标悬浮的单元格 */
         cellHover?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
@@ -346,6 +348,9 @@ const props = withDefaults(
         headless: false,
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
+        rowHover: true,
+        rowActive: true,
+        rowCurrentRevokable: true,
         headerRowHeight: null,
         virtual: false,
         virtualX: false,
@@ -360,8 +365,6 @@ const props = withDefaults(
         showHeaderOverflow: false,
         showOverflow: false,
         showTrHoverClass: false,
-        rowHover: true,
-        rowActive: true,
         cellHover: false,
         headerDrag: false,
         rowClassName: () => '',
@@ -884,6 +887,10 @@ function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
     const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
     if (isCurrentRow) {
+        if (!props.rowCurrentRevokable) {
+            // 不可取消
+            return;
+        }
         // 点击同一行，取消当前选中行。
         currentRow.value = void 0;
         currentRowKey.value = void 0;

@@ -134,6 +134,12 @@ export type StkProps = {
   theme?: 'light' | 'dark';
   /** 行高 */
   rowHeight?: number;
+  /** 是否高亮鼠标悬浮的行 */
+  rowHover?: boolean;
+  /** 是否高亮选中的行 */
+  rowActive?: boolean;
+  /** 当前行再次点击否可以取消 */
+  rowCurrentRevokable?: boolean;
   /** 表头行高。default = rowHeight */
   headerRowHeight?: number | null;
   /** 虚拟滚动 */
@@ -162,10 +168,7 @@ export type StkProps = {
   showOverflow?: boolean;
   /** 是否增加行hover class */
   showTrHoverClass?: boolean;
-  /** 是否高亮鼠标悬浮的行 */
-  rowHover?: boolean;
-  /** 是否高亮选中的行 */
-  rowActive?: boolean;
+ 
   /** 是否高亮鼠标悬浮的单元格 */
   cellHover?: boolean;
   /** 表头是否可拖动。支持回调函数。 */
