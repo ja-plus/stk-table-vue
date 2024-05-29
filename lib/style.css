@@ -94,6 +94,12 @@
 .stk-table.stripe tbody tr:nth-child(even){
   background-color:var(--stripe-bgc);
 }
+.stk-table.row-hover tbody tr:hover{
+  background-color:var(--tr-hover-bgc);
+}
+.stk-table.row-active tbody tr.active{
+  background-color:var(--tr-active-bgc);
+}
 .stk-table.cell-hover tbody td:hover{
   box-shadow:inset 0 0 0 2px var(--td-hover-color);
 }
@@ -177,15 +183,9 @@
   background-color:var(--th-bgc);
   height:var(--header-row-height);
 }
-.stk-table .stk-table-main tbody tr{
+.stk-table tbody tr{
   background-color:var(--td-bgc);
   height:var(--row-height);
-}
-.stk-table .stk-table-main tbody tr:hover{
-  background-color:var(--tr-hover-bgc);
-}
-.stk-table .stk-table-main tbody tr.active{
-  background-color:var(--tr-active-bgc);
 }
 .stk-table .virtual-x-left,
 .stk-table .virtual-x-right{

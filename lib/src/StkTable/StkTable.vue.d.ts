@@ -53,6 +53,12 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     theme?: "light" | "dark" | undefined;
     /** 行高 */
     rowHeight?: number | undefined;
+    /** 是否高亮鼠标悬浮的行 */
+    rowHover?: boolean | undefined;
+    /** 是否高亮选中的行 */
+    rowActive?: boolean | undefined;
+    /** 当前行再次点击否可以取消 */
+    rowCurrentRevokable?: boolean | undefined;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
@@ -82,7 +88,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     showHeaderOverflow?: boolean | undefined;
     /** 表体溢出是否展示... */
     showOverflow?: boolean | undefined;
-    /** 是否增加行hover class */
+    /** 是否增加行hover class $*$ rename*/
     showTrHoverClass?: boolean | undefined;
     /** 是否高亮鼠标悬浮的单元格 */
     cellHover?: boolean | undefined;
@@ -146,6 +152,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     headless: boolean;
     theme: string;
     rowHeight: number;
+    rowHover: boolean;
+    rowActive: boolean;
+    rowCurrentRevokable: boolean;
     headerRowHeight: null;
     virtual: boolean;
     virtualX: boolean;
@@ -190,10 +199,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
         className?: string | undefined;
         method?: "animation" | "css" | undefined;
-        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined; /**
-         * 选中一行触发。ev返回null表示不是点击事件触发的
-         * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean })```
-         */
+        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
     }) => void;
     /** 设置高亮渐暗行 */
@@ -255,6 +261,12 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     theme?: "light" | "dark" | undefined;
     /** 行高 */
     rowHeight?: number | undefined;
+    /** 是否高亮鼠标悬浮的行 */
+    rowHover?: boolean | undefined;
+    /** 是否高亮选中的行 */
+    rowActive?: boolean | undefined;
+    /** 当前行再次点击否可以取消 */
+    rowCurrentRevokable?: boolean | undefined;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | null | undefined;
     /** 虚拟滚动 */
@@ -284,7 +296,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     showHeaderOverflow?: boolean | undefined;
     /** 表体溢出是否展示... */
     showOverflow?: boolean | undefined;
-    /** 是否增加行hover class */
+    /** 是否增加行hover class $*$ rename*/
     showTrHoverClass?: boolean | undefined;
     /** 是否高亮鼠标悬浮的单元格 */
     cellHover?: boolean | undefined;
@@ -348,6 +360,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     headless: boolean;
     theme: string;
     rowHeight: number;
+    rowHover: boolean;
+    rowActive: boolean;
+    rowCurrentRevokable: boolean;
     headerRowHeight: null;
     virtual: boolean;
     virtualX: boolean;
@@ -412,6 +427,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     stripe: boolean;
     fixedMode: boolean;
     theme: "light" | "dark";
+    rowHover: boolean;
+    rowActive: boolean;
+    rowCurrentRevokable: boolean;
     virtual: boolean;
     virtualX: boolean;
     columns: StkTableColumn<DT>[];
