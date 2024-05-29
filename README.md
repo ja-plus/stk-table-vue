@@ -367,7 +367,6 @@ defineExpose({
 ### StkTableColumn 列配置
 ``` ts
 type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
-/** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 列类型
@@ -385,11 +384,11 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 筛选 */
     sorter?: Sorter<T>;
     /** 列宽。横向虚拟滚动时必须设置。 */
-    width?: string;
+    width?: string | number;
     /** 最小列宽。非x虚拟滚动生效。 */
-    minWidth?: string;
+    minWidth?: string | number;
     /** 最大列宽。非x虚拟滚动生效。 */
-    maxWidth?: string;
+    maxWidth?: string | number;
     /**th class */
     headerClassName?: string;
     /** td class */
@@ -402,12 +401,32 @@ export type StkTableColumn<T extends Record<string, any>> = {
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;
     /** private */ colSpan?: number;
-    /**自定义 td 渲染内容 */
-    customCell?: Component | VNode | CustomCellFunc<T>;
-    /** 自定义 th 渲染内容 */
-    customHeaderCell?: Component | VNode | CustomHeaderCellFunc<T>;
+    /**
+     * 自定义 td 渲染内容。
+     *
+     * 组件prop入参:
+     * @param props.row 一行的记录。
+     * @param props.col 列配置
+     * @param props.cellValue row[col.dataIndex] 的值
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
+     */
+    customCell?: Component<CustomCellProps<T>> | string;
+    /**
+     * 自定义 th 渲染内容
+     *
+     * 组件prop入参:
+     * @param props.col 列配置
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
+     */
+    customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+    /** private 父节点引用 */
+    __PARENT__?: StkTableColumn<T> | null;
+    /** private 保存计算的宽度。横向虚拟滚动用。 */
+    __WIDTH__?: number;
 };
 ```
 

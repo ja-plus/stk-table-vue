@@ -89,9 +89,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
-    /** 父节点引用 */
+    /** private 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
-    /** 保存计算的宽度。横向虚拟滚动用。 */
+    /** private 保存计算的宽度。横向虚拟滚动用。 */
     __WIDTH__?: number;
 };
 
