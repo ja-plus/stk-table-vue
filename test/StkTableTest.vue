@@ -24,6 +24,8 @@
         <label><input v-model="props.virtual" type="checkbox" />virtual</label>
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
         <label><input v-model="props.cellHover" type="checkbox" />cellHover</label>
+        <label><input v-model="props.rowHover" type="checkbox" />rowHover</label>
+        <label><input v-model="props.rowActive" type="checkbox" />rowActiver</label>
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
@@ -103,6 +105,8 @@ const props = ref({
     stripe: true,
     showOverflow: false,
     showHeaderOverflow: false,
+    rowHover: true,
+    rowActive: true,
     cellHover: true,
     sortRemote: false,
     // minWidth: 'auto',

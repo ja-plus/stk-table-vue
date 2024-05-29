@@ -15,6 +15,8 @@
             'border-body-v': props.bordered === 'body-v',
             stripe: props.stripe,
             'cell-hover': props.cellHover,
+            'row-hover': props.rowHover,
+            'row-active': props.rowActive,
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
@@ -275,8 +277,12 @@ const props = withDefaults(
         showHeaderOverflow?: boolean;
         /** 表体溢出是否展示... */
         showOverflow?: boolean;
-        /** 是否增加行hover class */
+        /** 是否增加行hover class $*$ rename*/
         showTrHoverClass?: boolean;
+        /** 是否高亮鼠标悬浮的行 */
+        rowHover?: boolean;
+        /** 是否高亮选中的行 */
+        rowActive?: boolean;
         /** 是否高亮鼠标悬浮的单元格 */
         cellHover?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
@@ -354,6 +360,8 @@ const props = withDefaults(
         showHeaderOverflow: false,
         showOverflow: false,
         showTrHoverClass: false,
+        rowHover: true,
+        rowActive: true,
         cellHover: false,
         headerDrag: false,
         rowClassName: () => '',
@@ -874,8 +882,9 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
 
 function onRowClick(e: MouseEvent, row: DT) {
     emits('row-click', e, row);
-    // 选中同一行，取消当前选中行。
-    if (props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row) {
+    const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
+    if (isCurrentRow) {
+        // 点击同一行，取消当前选中行。
         currentRow.value = void 0;
         currentRowKey.value = void 0;
         emits('current-change', e, row, { select: false });

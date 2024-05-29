@@ -141,6 +141,15 @@
         }
     }
 
+    &.row-hover tbody tr:hover {
+        background-color: var(--tr-hover-bgc);
+    }
+
+
+    &.row-active tbody tr.active {
+        background-color: var(--tr-active-bgc);
+    }
+
     /* 单元格悬浮 */
     &.cell-hover tbody td:hover {
         box-shadow: inset 0 0 0 2px var(--td-hover-color);
@@ -258,28 +267,17 @@
 
     }
 
-    thead {
-        tr {
-            background-color: var(--th-bgc);
-            height: var(--header-row-height);
-        }
+    thead tr {
+        background-color: var(--th-bgc);
+        height: var(--header-row-height);
     }
 
-    /* stk-table-main 这层为了增加选择器优先级，防止被斑马纹颜色覆盖*/
-    .stk-table-main tbody tr {
+
+    tbody tr {
         background-color: var(--td-bgc);
         height: var(--row-height);
-        /** 一行分层，有利于高亮行重绘
-        transform: translateZ(0);*/
-
-        &:hover {
-            background-color: var(--tr-hover-bgc);
-        }
-
-        &.active {
-            background-color: var(--tr-active-bgc);
-        }
     }
+
 
     .virtual-x-left,
     .virtual-x-right {

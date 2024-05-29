@@ -1,3 +1,7 @@
+## 0.4.3
+* feature: `props.rowHover` 控制是否高亮**悬浮**的行。
+* feature: `props.cellHover` 控制是否高亮**选中**的行。
+
 ## 0.4.2
 
 * feature: `CustomHeaderCellProps` 新增 `rowIndex/colIndex`。
