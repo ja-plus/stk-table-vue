@@ -27,6 +27,7 @@
         <label><input v-model="props.rowHover" type="checkbox" />rowHover</label>
         <label><input v-model="props.rowActive" type="checkbox" />rowActive</label>
         <label><input v-model="props.rowCurrentRevokable" type="checkbox" />rowCurrentRevokable</label>
+        <label><input v-model="props.fixedColShadow" type="checkbox" />fixedColShadow</label>
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
@@ -41,7 +42,6 @@
             :headerRowHeight="36"
             :hideHeaderTitle="['age']"
             :emptyCellText="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
-            fixedColShadow
             :autoResize="() => console.log('auto-resize')"
             :data-source="dataSource"
             @current-change="onCurrentChange"
@@ -123,6 +123,7 @@ const props = ref({
         // fps: 10,
         duration: 1,
     },
+    fixedColShadow: true,
 });
 const columns = shallowRef<StkTableColumn<any>[]>([
     {

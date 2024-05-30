@@ -51,29 +51,29 @@ export function useFixedCol<DT extends Record<string, any>>({
 
     /**
      * 返回所有父元素，包括自己
+     * @param col
+     * @param type 1-shadow（阴影） 2-active(被固定的列)
      *
      */
-    function getColAndParentCols(col: StkTableColumn<DT> | null, type: 'shadow' | 'active' = 'shadow') {
+    function getColAndParentCols(col: StkTableColumn<DT> | null, type: 1 | 2 = 1) {
         if (!col) return [];
-        const fixedShadowColsTemp: StkTableColumn<DT>[] = [];
-        const fixedColsTemp: StkTableColumn<DT>[] = [];
+        const colsTemp: StkTableColumn<DT>[] = [];
         let node: any = { __PARENT__: col };
         while ((node = node.__PARENT__)) {
-            if (node.fixed) {
-                fixedShadowColsTemp.push(node);
+            if (type === 1 && node.fixed) {
+                // shadow
+                colsTemp.push(node);
             }
-            fixedColsTemp.push(node);
+            if (type === 2) {
+                // active
+                colsTemp.push(node);
+            }
         }
-        if (type === 'shadow') {
-            return fixedShadowColsTemp;
-        } else {
-            return fixedColsTemp;
-        }
+        return colsTemp;
     }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
-        if (!props.fixedColShadow) return;
         const fixedColsTemp: StkTableColumn<DT>[] = [];
         const fixedShadowColsTemp: (StkTableColumn<DT> | null)[] = [];
         let clientWidth, /* scrollWidth, */ scrollLeft;
@@ -105,18 +105,22 @@ export function useFixedCol<DT extends Record<string, any>>({
             const position = getFixedColPosition.value(col);
             if (col.fixed === 'left' && position + scrollLeft > left) {
                 leftShadowCol = col;
-                fixedColsTemp.push(...getColAndParentCols(col, 'active'));
+                fixedColsTemp.push(...getColAndParentCols(col, 2));
             }
             left += getCalculatedColWidth(col);
             if (!rightShadowCol && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
                 rightShadowCol = col;
             }
             if (rightShadowCol && col.fixed === 'right') {
-                fixedColsTemp.push(...getColAndParentCols(col, 'active'));
+                fixedColsTemp.push(...getColAndParentCols(col, 2));
             }
         });
-        fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
-        fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
+
+        if (props.fixedColShadow) {
+            fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
+            fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
+        }
+
         fixedCols.value = fixedColsTemp;
     }
 

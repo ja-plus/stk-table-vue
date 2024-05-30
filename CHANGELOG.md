@@ -1,6 +1,7 @@
 ## 0.4.4
 
 * fix: `StkTableColumns["customCell"]/StkTableColumns["customHeaderCell"]` prop可选。
+* fix: 未设置 `props.fixedColShadow` 时固定列滚动异常。
 
 ## 0.4.3
 
