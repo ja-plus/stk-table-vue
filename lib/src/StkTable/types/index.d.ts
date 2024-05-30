@@ -1,4 +1,4 @@
-import { Component, VNode } from 'vue';
+import { Component, ConcreteComponent, VNode } from 'vue';
 
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';
@@ -29,6 +29,16 @@ export type CustomHeaderCellProps<T extends Record<string, any>> = {
  * @deprecated
  */
 export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: CustomHeaderCellProps<T>) => VNode;
+/**
+ * 自定义渲染单元格
+ *
+ * `StkTableColumn.customCell` 类型直接定义 `Component<Props>` 如果 Props 属性为必选，则 通过`defineComponent` 创建的组件必须要定义所有的Prop，否则就不适配。但是在函数式组件中是正常使用的。customCell: (props) => {}。
+ *
+ * 如果定义 Props 所有属性均为可选时。`defineComponent` 定义的组件仅需实现个别的 Prop 即可。但是函数式组件的入参props就需要额外判断是否存在。这增加了使用成本。
+ *
+ * 因此这里重新组合了Component类型
+ */
+export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, U extends Record<string, any>> = ConcreteComponent<T> | Exclude<Component<Partial<T>>, ConcreteComponent> | string;
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
@@ -74,7 +84,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.rowIndex 行索引
      * @param props.colIndex 列索引
      */
-    customCell?: Component<CustomCellProps<T>> | string;
+    customCell?: CustomCell<CustomCellProps<T>, T>;
     /**
      * 自定义 th 渲染内容
      *
@@ -83,12 +93,12 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.rowIndex 行索引
      * @param props.colIndex 列索引
      */
-    customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
+    customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
-    /** 父节点引用 */
+    /** private 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
-    /** 保存计算的宽度。横向虚拟滚动用。 */
+    /** private 保存计算的宽度。横向虚拟滚动用。 */
     __WIDTH__?: number;
 };
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
