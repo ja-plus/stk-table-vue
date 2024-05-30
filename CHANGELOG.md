@@ -1,3 +1,7 @@
+## 0.4.4
+
+* fix: `StkTableColumns["customCell"]/StkTableColumns["customHeaderCell"]` prop可选。
+
 ## 0.4.3
 
 * feature: `props.rowHover[true]` 控制是否高亮**悬浮**的行。
