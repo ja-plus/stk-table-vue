@@ -228,7 +228,7 @@ import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
-type DT = Record<string | number, any>;
+type DT = any;
 /** 自己生成实例id */
 const stkTableId = createStkTableId();
 /**

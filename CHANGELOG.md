@@ -1,3 +1,7 @@
+## 0.4.6
+
+* revert: StkTableColumn&lt;DT&gt;, DT type to any.
+
 ## ~~0.4.4~~ 0.4.5
 
 * fix: `StkTableColumns["customCell"]/StkTableColumns["customHeaderCell"]` prop可选。
