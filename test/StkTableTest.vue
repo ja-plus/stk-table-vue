@@ -92,7 +92,7 @@ import { StkTable, StkTableColumn } from '../src/StkTable/index';
 import FixedMode from './FixedMode.vue';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
-import DragResize from './utils/DragResize';
+import DragResize from './utils/DragResize.js';
 import DocTable from './DocTable.vue';
 import StkTableSimple from './StkTableSimple.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
