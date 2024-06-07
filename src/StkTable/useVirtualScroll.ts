@@ -184,7 +184,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         tableHeaderHeight.value = headerHeight;
         if (!headless) {
             /** 表头高度占几行表体高度数 */
-            const headerToBodyRowHeightCount = Math.floor(headerHeight) / rowHeight;
+            const headerToBodyRowHeightCount = Math.floor(headerHeight / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
         /** 最大的scrollTop */

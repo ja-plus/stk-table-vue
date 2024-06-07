@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/attribute-hyphenation -->
 <template>
     <div
         ref="tableContainerRef"
@@ -84,7 +85,7 @@
                         @drop="onThDrop"
                         @dragover="onThDragOver"
                     >
-                        <div class="table-header-cell-wrapper">
+                        <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.rowSpan }">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else-if="col.type === 'seq'">
                                 <span class="table-header-title">{{ col.title }}</span>
@@ -993,7 +994,7 @@ function onTableScroll(e: Event) {
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
     const { scrollTop: vScrollTop } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
-    const isYScroll = scrollTop !== vScrollTop;
+    const isYScroll = Math.abs(scrollTop - vScrollTop) >= props.rowHeight;
     const isXScroll = scrollLeft !== vScrollLeft;
 
     // 纵向滚动有变化

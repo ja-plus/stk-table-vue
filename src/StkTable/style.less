@@ -183,7 +183,7 @@
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
             overflow: hidden;
-            max-height: var(--header-row-height);
+            max-height: calc(var(--header-row-height) * var(--row-span));
         }
 
         tbody td {

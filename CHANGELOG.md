@@ -1,3 +1,9 @@
+## 0.4.7
+
+* fix: virtualScrollY calculate error. which cause error load when props.stripe is true.
+* fix: multi header. `th>div` max-height error.
+* optimize: trigger `updateVirtualY` when scrolled over a row height.
+
 ## 0.4.6
 
 * revert: StkTableColumn&lt;DT&gt;, DT type to any.
