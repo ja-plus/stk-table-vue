@@ -3,7 +3,16 @@ import { StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 /** 翻页按键 */
-const SCROLL_CODES = ['ArrowUp', 'ArrowRight', 'ArrowDown', 'ArrowLeft', 'PageUp', 'PageDown'] as const;
+enum ScrollCodes {
+    ArrowUp = 'ArrowUp',
+    ArrowRight = 'ArrowRight',
+    ArrowDown = 'ArrowDown',
+    ArrowLeft = 'ArrowLeft',
+    PageUp = 'PageUp',
+    PageDown = 'PageDown',
+}
+/** 所有翻页按键数组 */
+const ScrollCodesValues = Object.values(ScrollCodes);
 
 type Options<DT extends Record<string, any>> = {
     props: any;
@@ -52,7 +61,8 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
 
     /** 键盘按下事件 */
     function handleKeydown(e: KeyboardEvent) {
-        if (!SCROLL_CODES.includes(e.code as any)) return;
+        if (!virtual_on.value) return; // 非虚拟滚动使用浏览器默认滚动
+        if (!ScrollCodesValues.includes(e.code as any)) return;
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
@@ -65,17 +75,17 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         /** 表体的page */
         const bodyPageSize = Math.floor((containerHeight - headerHeight) / rowHeight);
 
-        if (e.code === SCROLL_CODES[0]) {
+        if (e.code === ScrollCodes.ArrowUp) {
             scrollTo(scrollTop - rowHeight, null);
-        } else if (e.code === SCROLL_CODES[1]) {
+        } else if (e.code === ScrollCodes.ArrowRight) {
             scrollTo(null, scrollLeft + rowHeight);
-        } else if (e.code === SCROLL_CODES[2]) {
+        } else if (e.code === ScrollCodes.ArrowDown) {
             scrollTo(scrollTop + rowHeight, null);
-        } else if (e.code === SCROLL_CODES[3]) {
+        } else if (e.code === ScrollCodes.ArrowLeft) {
             scrollTo(null, scrollLeft - rowHeight);
-        } else if (e.code === SCROLL_CODES[4]) {
+        } else if (e.code === ScrollCodes.PageUp) {
             scrollTo(scrollTop - rowHeight * bodyPageSize + headerHeight, null);
-        } else if (e.code === SCROLL_CODES[5]) {
+        } else if (e.code === ScrollCodes.PageDown) {
             scrollTo(scrollTop + rowHeight * bodyPageSize - headerHeight, null);
         }
     }
