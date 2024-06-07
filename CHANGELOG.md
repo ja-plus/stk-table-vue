@@ -2,7 +2,9 @@
 
 * fix: virtualScrollY calculate error. which cause error load when props.stripe is true.
 * fix: multi header. `th>div` max-height error.
+* fix: `PageUp`&`PageDown` key function in simple table(not virtual).
 * optimize: trigger `updateVirtualY` when scrolled over a row height.
+* feature: watch props.virtual.
 
 ## 0.4.6
 

@@ -635,6 +635,14 @@ watch(
     },
 );
 watch(
+    () => props.virtual,
+    () => {
+        nextTick(() => {
+            initVirtualScrollY();
+        });
+    },
+);
+watch(
     () => props.virtualX,
     () => {
         dealColumns();
