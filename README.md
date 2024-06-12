@@ -588,6 +588,8 @@ export type SortConfig<T extends Record<string, any>> = {
   - 以下情况尝试开启此功能。
     - 在 `customCell` 较多且复杂时。
     - 大量 highlight 动画时。
+### props.autoResize
+* 手动设置为 `props.autoResize=false`。可取消监听的性能消耗。适用于宽度高度不变的表格。
 
 ## Tips
 ### props.fixedMode

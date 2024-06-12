@@ -37,9 +37,6 @@ export function useFixedStyle<DT extends Record<string, any>>({
 
         const style: CSSProperties = {};
 
-        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
-        const scrollRight = scrollWidth - containerWidth - scrollLeft;
-
         const isFixedLeft = fixed === 'left';
         if (tagType === TagType.TH) {
             // TH
@@ -49,6 +46,9 @@ export function useFixedStyle<DT extends Record<string, any>>({
                 style.top = depth * props.rowHeight + 'px';
             }
         }
+
+        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
+        const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
         if (fixed === 'left' || fixed === 'right') {
             if (isRelativeMode.value) {
