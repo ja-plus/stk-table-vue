@@ -54,7 +54,7 @@
                     <th
                         v-if="virtualX_on"
                         class="vt-x-left"
-                        :style="`minWidth:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
+                        :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
                     ></th>
                     <!-- v for中最后一行才用 切割。TODO:不支持多级表头虚拟横向滚动 -->
                     <th
@@ -114,7 +114,7 @@
                         </div>
                     </th>
                     <!-- 这个th用于横向虚拟滚动表格右边距 width、maxWidth 用于兼容低版本浏览器-->
-                    <th v-if="virtualX_on" class="vt-x-right" :style="`minWidth:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
+                    <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                 </tr>
             </thead>
 
