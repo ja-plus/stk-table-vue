@@ -226,9 +226,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         let startIndex = Math.floor(sTop / rowHeight);
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
+        startIndex = Math.max(0, startIndex - 1);
         if (props.stripe && startIndex !== 0) {
             const scrollRows = Math.abs(oldStartIndex - startIndex);
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
@@ -236,10 +234,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 startIndex -= 1; // 奇数-1变成偶数
             }
         }
-        let endIndex = startIndex + pageSize;
-        if (props.stripe) {
-            endIndex += 1; // 斑马纹下多渲染一些
-        }
+        let endIndex = startIndex + pageSize + 1;
 
         // 溢出endIndex修正
         endIndex = Math.min(endIndex, dataSourceCopy.value.length);
@@ -260,11 +255,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
          */
         if (!props.optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // 向上滚动
-            Object.assign(virtualScroll.value, {
-                startIndex,
-                endIndex,
-                offsetTop,
-            });
+            Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop });
         } else {
             // vue2向下滚动优化
             virtualScroll.value.endIndex = endIndex;
