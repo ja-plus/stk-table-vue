@@ -3,7 +3,6 @@
 * fix: virtualScrollY calculate error. which cause error load when props.stripe is true.
 * fix: multi header. `th>div` max-height error.
 * fix: `PageUp`&`PageDown` key function in simple table(not virtual).
-* optimize: trigger `updateVirtualY` when scrolled over a row height.
 * feature: watch props.virtual.
 * revert: `0.3.7-fix-1` virtual padding in independent tbody -> now revert in main tbody. Because it's not worked property in old vue version or old browser version.
   -  use `vt-on` `vt-off` to resolve the stripe color problem.

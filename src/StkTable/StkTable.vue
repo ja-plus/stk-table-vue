@@ -979,7 +979,7 @@ function onTableScroll(e: Event) {
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
     const { scrollTop: vScrollTop } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
-    const isYScroll = Math.abs(scrollTop - vScrollTop) >= props.rowHeight;
+    const isYScroll = scrollTop !== vScrollTop;
     const isXScroll = scrollLeft !== vScrollLeft;
 
     // 纵向滚动有变化

@@ -164,6 +164,15 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     }
 
     /**
+     * 初始化虚拟滚动参数
+     * @param {number} [height] 虚拟滚动的高度
+     */
+    function initVirtualScroll(height?: number) {
+        initVirtualScrollY(height);
+        initVirtualScrollX();
+    }
+
+    /**
      * 初始化Y虚拟滚动参数
      * @param {number} [height] 虚拟滚动的高度
      */
@@ -203,20 +212,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         virtualScrollX.value.scrollWidth = scrollWidth || DEFAULT_TABLE_WIDTH;
         updateVirtualScrollX(scrollLeft);
     }
-    /**
-     * 初始化虚拟滚动参数
-     * @param {number} [height] 虚拟滚动的高度
-     */
-    function initVirtualScroll(height?: number) {
-        initVirtualScrollY(height);
-        initVirtualScrollX();
-    }
 
     let vue2ScrollYTimeout: null | number = null;
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex } = virtualScroll.value;
+        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
@@ -226,17 +227,18 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         let startIndex = Math.floor(sTop / rowHeight);
-        startIndex = Math.max(0, startIndex - 1);
+        let endIndex = startIndex + pageSize;
+
         if (props.stripe && startIndex !== 0) {
-            const scrollRows = Math.abs(oldStartIndex - startIndex);
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
-            if (scrollRows % 2) {
+            if (startIndex % 2) {
                 startIndex -= 1; // 奇数-1变成偶数
             }
         }
-        let endIndex = startIndex + pageSize + 1;
 
-        // 溢出endIndex修正
+        startIndex = Math.max(0, startIndex);
+
+        // 溢出修正
         endIndex = Math.min(endIndex, dataSourceCopy.value.length);
 
         if (startIndex >= endIndex) {
@@ -246,6 +248,11 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
         if (vue2ScrollYTimeout) {
             window.clearTimeout(vue2ScrollYTimeout);
+        }
+
+        if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
+            // 没有变化，不需要更新
+            return;
         }
 
         const offsetTop = startIndex * rowHeight; // startIndex之前的高度
