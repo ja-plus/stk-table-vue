@@ -134,9 +134,13 @@
     }
 
     /* 斑马纹*/
-    &.stripe {
+    &.stripe .stk-tbody-main {
 
-        tbody tr:nth-child(even) {
+        &.vt-on tr:nth-child(odd) {
+            background-color: var(--stripe-bgc);
+        }
+
+        &.vt-off tr:nth-child(even) {
             background-color: var(--stripe-bgc);
         }
     }
@@ -279,8 +283,8 @@
     }
 
 
-    .virtual-x-left,
-    .virtual-x-right {
+    .vt-x-left,
+    .vt-x-right {
         padding: 0;
         background: none;
         pointer-events: none;

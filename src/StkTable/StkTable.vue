@@ -53,7 +53,7 @@
                     <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
                     <th
                         v-if="virtualX_on"
-                        class="virtual-x-left"
+                        class="vt-x-left"
                         :style="{
                             minWidth: virtualScrollX.offsetLeft + 'px',
                             width: virtualScrollX.offsetLeft + 'px',
@@ -119,7 +119,7 @@
                     <!-- 这个th用于横向虚拟滚动表格右边距 width、maxWidth 用于兼容低版本浏览器-->
                     <th
                         v-if="virtualX_on"
-                        class="virtual-x-right"
+                        class="vt-x-right"
                         :style="{
                             minWidth: virtualX_offsetRight + 'px',
                             width: virtualX_offsetRight + 'px',
@@ -129,27 +129,16 @@
             </thead>
 
             <!-- 用于虚拟滚动表格内容定位 @deprecated 有兼容问题-->
-            <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }">
-          <!==这个tr兼容火狐==>
-          <tr></tr>
-        </tbody> -->
-            <!-- <td
-            v-for="col in virtualX_on ? virtualX_columnPart : tableHeaderLast"
-            :key="col.dataIndex"
-            class="perch-td top"
-          ></td> -->
+            <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
-            <tbody v-if="virtual_on" class="virtual-top">
-                <!-- 由于斑马纹选择器nth-child 原因，占位tr单独包在tbody中 -->
-                <tr :style="{ height: `${virtualScroll.offsetTop}px` }" class="padding-top-tr">
+            <tbody class="stk-tbody-main" :class="virtual_on ? 'vt-on' : 'vt-off'">
+                <tr v-if="virtual_on" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
-                    <td v-if="virtualX_on && fixedMode && headless" class="virtual-x-left"></td>
+                    <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
                         <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                     </template>
                 </tr>
-            </tbody>
-            <tbody class="stk-tbody-main">
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
                     :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : rowIndex)"
@@ -166,7 +155,7 @@
                     @mouseover="e => onTrMouseOver(e, row)"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
-                    <td v-if="virtualX_on" class="virtual-x-left"></td>
+                    <td v-if="virtualX_on" class="vt-x-left"></td>
                     <td
                         v-for="(col, colIndex) in virtualX_columnPart"
                         :key="col.dataIndex"
@@ -197,9 +186,7 @@
                         </div>
                     </td>
                 </tr>
-            </tbody>
-            <tbody v-if="virtual_on" class="virtual-bottom">
-                <tr :style="{ height: `${virtual_offsetBottom}px` }"></tr>
+                <tr v-if="virtual_on" :style="`height: ${virtual_offsetBottom}px`"></tr>
             </tbody>
         </table>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
