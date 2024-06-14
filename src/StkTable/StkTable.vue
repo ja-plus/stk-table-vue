@@ -135,7 +135,7 @@
                     :key="rowKey ? rowKeyGen(row) : rowIndex"
                     :data-row-key="rowKey ? rowKeyGen(row) : rowIndex"
                     :class="{
-                        active: rowKey ? rowKeyGen(row) === rowKeyGen(currentRow) : row === currentRow,
+                        active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, rowIndex)]: true,
                     }"
@@ -1022,10 +1022,15 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
  */
 function setCurrentRow(rowKey: string, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
-    currentRow.value = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
-    currentRowKey.value = rowKeyGen(currentRow.value);
+    const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
+    if (!row) {
+        console.warn('setCurrentRow failed.rowKey:', rowKey);
+        return;
+    }
+    currentRow.value = row;
+    currentRowKey.value = rowKey;
     if (!option.silent) {
-        emits('current-change', /** no Event */ null, currentRow.value, { select: Boolean(currentRowKey.value) });
+        emits('current-change', /** no Event */ null, currentRow.value, { select: true });
     }
 }
 
