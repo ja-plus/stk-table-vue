@@ -856,11 +856,22 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
     const defaultSort = sortConfig.defaultSort;
 
     if (!order && defaultSort) {
+        if (!defaultSort.dataIndex) {
+            console.error('sortConfig.defaultSort.dataIndex is required');
+            return;
+        }
         // 没有排序时变成默认排序
-        order = defaultSort.order;
+        order = defaultSort.order || 'desc';
         sortOrderIndex.value = sortSwitchOrder.indexOf(order);
         sortCol.value = defaultSort.dataIndex as string;
-        col = props.columns.find(item => item.dataIndex === defaultSort.dataIndex) as StkTableColumn<any>;
+        const c = props.columns.find(item => item.dataIndex === defaultSort.dataIndex);
+        if (c) {
+            col = c;
+        } else {
+            console.error('defaultSort.dataIndex not found in columns');
+            col = props.columns[0];
+        }
+        if (!col) return;
     }
     if (!props.sortRemote || options.force) {
         dataSourceCopy.value = tableSort(col, order, props.dataSource, sortConfig);

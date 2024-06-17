@@ -1,5 +1,6 @@
 ## 0.4.9 
 * fix: hover, active style in stripe mode.
+* fix: defaultSort cause  `sort-change` callback param: 'col' not right.
 
 ## ~~0.4.7~~ 0.4.8
 
