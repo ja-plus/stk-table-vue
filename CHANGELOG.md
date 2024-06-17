@@ -1,4 +1,4 @@
-## 0.4.7
+## ~~0.4.7~~ 0.4.8
 
 * fix: virtualScrollY calculate error. which cause error load when props.stripe is true.
 * fix: multi header. `th>div` max-height error.
