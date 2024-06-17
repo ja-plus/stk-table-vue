@@ -860,6 +860,7 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
         order = defaultSort.order;
         sortOrderIndex.value = sortSwitchOrder.indexOf(order);
         sortCol.value = defaultSort.dataIndex as string;
+        col = props.columns.find(item => item.dataIndex === defaultSort.dataIndex) as StkTableColumn<any>;
     }
     if (!props.sortRemote || options.force) {
         dataSourceCopy.value = tableSort(col, order, props.dataSource, sortConfig);
