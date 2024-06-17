@@ -91,16 +91,22 @@
 .stk-table.border-body-v tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
-.stk-table.stripe .stk-tbody-main.vt-on tr:nth-child(odd){
+.stk-table.stripe .stk-tbody-main tr:nth-child(even){
   background-color:var(--stripe-bgc);
 }
-.stk-table.stripe .stk-tbody-main.vt-off tr:nth-child(even){
+.stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
   background-color:var(--stripe-bgc);
 }
-.stk-table.row-hover tbody tr:hover{
+.stk-table.stripe.row-hover .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);
 }
-.stk-table.row-active tbody tr.active{
+.stk-table.stripe.row-active .stk-tbody-main tr.active{
+  background-color:var(--tr-active-bgc);
+}
+.stk-table.row-hover .stk-tbody-main tr:hover{
+  background-color:var(--tr-hover-bgc);
+}
+.stk-table.row-active .stk-tbody-main tr.active{
   background-color:var(--tr-active-bgc);
 }
 .stk-table.cell-hover tbody td:hover{
