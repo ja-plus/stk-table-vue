@@ -134,23 +134,23 @@
     }
 
     /* 斑马纹*/
-    &.stripe .stk-tbody-main {
-
-        &.vt-on tr:nth-child(odd) {
+    &.stripe {
+        .stk-tbody-main tr:nth-child(even) {
             background-color: var(--stripe-bgc);
         }
 
-        &.vt-off tr:nth-child(even) {
+        &.vt-on .stk-tbody-main tr:nth-child(odd) {
             background-color: var(--stripe-bgc);
         }
     }
 
-    &.row-hover tbody tr:hover {
+
+    &.row-hover .stk-tbody-main tr:hover {
         background-color: var(--tr-hover-bgc);
     }
 
 
-    &.row-active tbody tr.active {
+    &.row-active .stk-tbody-main tr.active {
         background-color: var(--tr-active-bgc);
     }
 

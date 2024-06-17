@@ -6,6 +6,7 @@
         :class="{
             virtual,
             'virtual-x': virtualX,
+            'vt-on': virtual_on,
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,
@@ -121,7 +122,7 @@
             <!-- 用于虚拟滚动表格内容定位 @deprecated 有兼容问题-->
             <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
-            <tbody class="stk-tbody-main" :class="virtual_on ? 'vt-on' : 'vt-off'">
+            <tbody class="stk-tbody-main">
                 <tr v-if="virtual_on" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>

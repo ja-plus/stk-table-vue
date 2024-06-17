@@ -1,3 +1,6 @@
+## 0.4.9 
+* fix: hover, active style in stripe mode.
+
 ## ~~0.4.7~~ 0.4.8
 
 * fix: virtualScrollY calculate error. which cause error load when props.stripe is true.
