@@ -104,7 +104,7 @@ function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>,
     for (let i = 0; i < targetDataSource.length; i++) {
         const row = targetDataSource[i];
         const sortField = sortOption.sortField || sortOption.dataIndex;
-        const isEmpty = isEmptyValue(row[sortField], isNumber);
+        const isEmpty = isEmptyValue(row?.[sortField] || row, isNumber); // deal row is null
         if (isEmpty) {
             emptyArr.push(row);
         } else {
@@ -149,8 +149,8 @@ export function tableSort<T extends Record<string, any>>(
         let { sortType } = sortOption;
         if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
-        const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, sortType === 'number');
         const isNumber = sortType === 'number';
+        const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, isNumber);
 
         if (order === 'asc') {
             valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, sortConfig.stringLocaleCompare));

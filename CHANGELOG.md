@@ -1,4 +1,9 @@
+## 0.4.10
+
+* fix: error when sort with null row
+
 ## 0.4.9 
+
 * fix: hover, active style in stripe mode.
 * fix: defaultSort cause  `sort-change` callback param: 'col' not right.
 
