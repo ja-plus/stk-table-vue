@@ -5,14 +5,14 @@ import { getCalculatedColWidth } from './utils';
 type ColResizeState<DT extends Record<string, any>> = {
     /** 当前被拖动的列*/
     currentCol: StkTableColumn<DT> | null;
-    /** 当前被拖动列的下标 */
-    currentColIndex: number;
     /** 最后一个叶子列 */
     lastCol: StkTableColumn<DT> | null;
     /** 鼠标按下开始位置 */
     startX: number;
     /** 鼠标按下时鼠标对于表格的偏移量 */
     startOffsetTableX: 0;
+    /** 是否反向计算，true:左增右减。false:左减右增 */
+    revertMoveX: boolean;
 };
 
 type Params<DT extends Record<string, any>> = {
@@ -22,6 +22,7 @@ type Params<DT extends Record<string, any>> = {
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     colResizeIndicatorRef: Ref<HTMLElement | undefined>;
     colKeyGen: ComputedRef<(p: any) => UniqKey>;
+    fixedCols: Ref<StkTableColumn<DT>[]>;
 };
 
 /** 列宽拖动 */
@@ -32,6 +33,7 @@ export function useColResize<DT extends Record<string, any>>({
     props,
     emits,
     colKeyGen,
+    fixedCols,
 }: Params<DT>) {
     /** 列宽是否在拖动 */
     const isColResizing = ref(false);
@@ -39,10 +41,10 @@ export function useColResize<DT extends Record<string, any>>({
     /** 列宽调整状态 */
     let colResizeState: ColResizeState<DT> = {
         currentCol: null,
-        currentColIndex: 0,
         lastCol: null,
         startX: 0,
         startOffsetTableX: 0,
+        revertMoveX: false,
     };
 
     onMounted(() => {
@@ -68,9 +70,9 @@ export function useColResize<DT extends Record<string, any>>({
      * 拖动开始
      * @param e
      * @param col 当前列配置
-     * @param isPrev 是否要上一列
+     * @param leftHandle 是否是左侧的拖动条
      */
-    function onThResizeMouseDown(e: MouseEvent, col: StkTableColumn<DT>, isPrev = false) {
+    function onThResizeMouseDown(e: MouseEvent, col: StkTableColumn<DT>, leftHandle = false) {
         if (!tableContainerRef.value) return;
         e.stopPropagation();
         e.preventDefault();
@@ -78,23 +80,43 @@ export function useColResize<DT extends Record<string, any>>({
         const { scrollLeft, scrollTop } = tableContainerRef.value;
         const { left } = tableContainerRef.value.getBoundingClientRect();
         const tableHeaderLastValue = tableHeaderLast.value;
+        let revertMoveX = false;
         /** 列下标 */
-        let colIndex = tableHeaderLastValue.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
-        if (isPrev) {
-            // 上一列
-            colIndex -= 1;
-            col = tableHeaderLastValue[colIndex];
+        const colIndex = tableHeaderLastValue.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
+        const fixedIndex = fixedCols.value.indexOf(col);
+        /** 是否正在被固定 */
+        const isFixed = fixedIndex !== -1;
+
+        if (leftHandle) {
+            // 左侧拖动条
+            if (isFixed && col.fixed === 'right') {
+                // 对于固定右侧的列，拖动左侧的把，需要反向计算
+                revertMoveX = true;
+            } else {
+                // 默认拖动右侧的把，取上一列
+                if (colIndex - 1 >= 0) {
+                    col = tableHeaderLastValue[colIndex - 1];
+                }
+            }
+        } else {
+            // 右侧拖动条
+            if (isFixed && col.fixed === 'right') {
+                // 对于固定右侧的列，拖动右侧的把，需要拖动下一固定的列
+                revertMoveX = true;
+                col = fixedCols.value[fixedIndex + 1] || col;
+            }
         }
+
         const offsetTableX = clientX - left + scrollLeft;
 
         // 记录拖动状态
         isColResizing.value = true;
         Object.assign(colResizeState, {
             currentCol: col,
-            currentColIndex: colIndex,
             lastCol: findLastChildCol(col),
             startX: clientX,
             startOffsetTableX: offsetTableX,
+            revertMoveX,
         });
 
         // 展示指示线，更新其位置
@@ -132,9 +154,9 @@ export function useColResize<DT extends Record<string, any>>({
      */
     function onThResizeMouseUp(e: MouseEvent) {
         if (!isColResizing.value) return;
-        const { startX, lastCol } = colResizeState;
+        const { startX, lastCol, revertMoveX } = colResizeState;
         const { clientX } = e;
-        const moveX = clientX - startX;
+        const moveX = revertMoveX ? startX - clientX : clientX - startX;
 
         // 移动量不小于最小列宽
         let width = getCalculatedColWidth(lastCol) + moveX;
@@ -157,10 +179,10 @@ export function useColResize<DT extends Record<string, any>>({
         isColResizing.value = false;
         colResizeState = {
             currentCol: null,
-            currentColIndex: 0,
             lastCol: null,
             startX: 0,
             startOffsetTableX: 0,
+            revertMoveX: false,
         };
     }
 

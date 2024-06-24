@@ -1,5 +1,6 @@
 ## 0.4.10
 
+* optimize: the experience drag resize fixed right cols
 * fix: error when sort with null row
 
 ## 0.4.9 

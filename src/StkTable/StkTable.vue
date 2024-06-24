@@ -532,15 +532,6 @@ const getEmptyCellText = computed(() => {
 /** rowKey缓存 */
 const rowKeyGenStore = new WeakMap();
 
-const { isColResizing, onThResizeMouseDown } = useColResize({
-    props,
-    emits,
-    colKeyGen,
-    colResizeIndicatorRef,
-    tableContainerRef,
-    tableHeaderLast,
-});
-
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits });
 
 const {
@@ -592,13 +583,23 @@ useKeyboardArrowScroll(tableContainerRef, {
 });
 
 /** 固定列处理 */
-const { fixedColClassMap, updateFixedShadow } = useFixedCol({
+const { fixedCols, fixedColClassMap, updateFixedShadow } = useFixedCol({
     props,
     colKeyGen,
     getFixedColPosition,
     tableContainerRef,
     tableHeaders,
     tableHeaderLast,
+});
+
+const { isColResizing, onThResizeMouseDown } = useColResize({
+    props,
+    emits,
+    colKeyGen,
+    colResizeIndicatorRef,
+    tableContainerRef,
+    tableHeaderLast,
+    fixedCols,
 });
 
 watch(

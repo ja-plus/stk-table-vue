@@ -125,6 +125,8 @@ export function useFixedCol<DT extends Record<string, any>>({
     }
 
     return {
+        /** 正在被固定的列 */
+        fixedCols,
         /** 固定列class */
         fixedColClassMap,
         /** 滚动条变化时，更新需要展示阴影的列 */

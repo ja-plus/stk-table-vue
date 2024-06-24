@@ -12,7 +12,7 @@ repo:
 
 ## Bug TODO:
 * [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
-* [] 固定列列宽拖动目标。
+* [x] 右侧固定列列宽拖动目标。（v0.4.10）
 * [] 惯性滚动优化。
 
 ## Feature TODO:
