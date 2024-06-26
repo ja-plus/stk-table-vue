@@ -50,7 +50,7 @@ const tableSortStore = {
     // sortType: 'number',
 };
 function handleSortChange(col, order, data, sortConfig) {
-    console.log('🚀 ~ handleSortChange ~ col:', col, order);
+    console.log('🚀 ~ handleSortChange ~ col:', col, order, sortConfig);
     dataSource.value = tableSort(col, order, data, sortConfig);
     tableSortStore.dataIndex = col.dataIndex;
     tableSortStore.order = order;

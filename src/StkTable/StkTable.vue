@@ -366,10 +366,10 @@ const props = withDefaults(
 
 const emits = defineEmits<{
     /**
-     * 排序变更触发
-     * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
+     * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
+     * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
+    (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -841,7 +841,7 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
  * @param options.force sort-remote 开启后是否强制排序
  * @param options.emit 是否触发回调
  */
-function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?: boolean; emit?: boolean } = {}) {
+function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, options: { force?: boolean; emit?: boolean } = {}) {
     if (!col?.sorter) return;
     options = { force: false, emit: false, ...options };
     if (sortCol.value !== col.dataIndex) {
@@ -865,17 +865,13 @@ function onColumnSort(col?: StkTableColumn<DT>, click = true, options: { force?:
         order = defaultSort.order || 'desc';
         sortOrderIndex.value = sortSwitchOrder.indexOf(order);
         sortCol.value = defaultSort.dataIndex as string;
-        const c = props.columns.find(item => item.dataIndex === defaultSort.dataIndex);
-        if (c) {
-            col = c;
-        } else {
-            console.error('defaultSort.dataIndex not found in columns');
-            col = props.columns[0];
-        }
-        if (!col) return;
+        col = props.columns.find(item => item.dataIndex === defaultSort.dataIndex) || null;
     }
     if (!props.sortRemote || options.force) {
-        dataSourceCopy.value = tableSort(col, order, props.dataSource, sortConfig);
+        const sortOption = col || defaultSort;
+        if (sortOption) {
+            dataSourceCopy.value = tableSort(sortOption, order, props.dataSource, sortConfig);
+        }
     }
     // 只有点击才触发事件
     if (click || options.emit) {
@@ -1031,11 +1027,15 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 
 /**
  * 选中一行，
- * @param {string} rowKey selected rowKey, null to unselect
+ * @param {string} rowKey selected rowKey, undefined to unselect
  * @param {boolean} option.silent 是否触发回调
  */
-function setCurrentRow(rowKey: string, option = { silent: false }) {
+function setCurrentRow(rowKey: string | undefined, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
+    if (rowKey === void 0) {
+        currentRow.value = void 0;
+        currentRowKey.value = void 0;
+    }
     const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
     if (!row) {
         console.warn('setCurrentRow failed.rowKey:', rowKey);

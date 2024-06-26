@@ -251,10 +251,10 @@ export type StkProps = {
 ```js
   {
     /**
-     * 排序变更触发
-     * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
+     * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
+     * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[])```
      */
-    (e: 'sort-change', col: StkTableColumn<DT>, order: Order, data: DT[], sortConfig: SortConfig): void;
+    (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig): void;
     /**
      * 一行点击事件
      * ```(ev: MouseEvent, row: DT)```

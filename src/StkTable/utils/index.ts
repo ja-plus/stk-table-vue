@@ -3,7 +3,7 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../typ
 
 /** 是否空值 */
 function isEmptyValue(val: any, isNumber?: boolean) {
-    let isEmpty = val === null || val === '';
+    let isEmpty = val === null || val === '' || val === void 0;
     if (isNumber) {
         isEmpty = isEmpty || typeof val === 'boolean' || Number.isNaN(+val);
     }
@@ -104,7 +104,7 @@ function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>,
     for (let i = 0; i < targetDataSource.length; i++) {
         const row = targetDataSource[i];
         const sortField = sortOption.sortField || sortOption.dataIndex;
-        const isEmpty = isEmptyValue(row?.[sortField] || row, isNumber); // deal row is null
+        const isEmpty = isEmptyValue(row?.[sortField], isNumber); // deal row is null
         if (isEmpty) {
             emptyArr.push(row);
         } else {
@@ -131,7 +131,8 @@ export function tableSort<T extends Record<string, any>>(
     dataSource: T[],
     sortConfig: SortConfig<T> = {},
 ): T[] {
-    if (!dataSource?.length) return dataSource || [];
+    if (!dataSource?.length || !sortOption) return dataSource || [];
+
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let targetDataSource = [...dataSource];
     let sortField = sortOption.sortField || sortOption.dataIndex;

@@ -2,6 +2,9 @@
 
 * optimize: the experience drag resize fixed right cols
 * fix: error when sort with null row
+* fix: `StkTable.setCurrentRow` param accept `undefined` to clear currentRow
+* change: `emit('sort-change')` col will return null, when defaultSorter.dataIndex cannot find in props.columns
+* change: `props.sortConfig.defaultSort` add prop `sortField` `sortType` `sorter` consistent with `StkTableColumns` fields related to sorting.
 
 ## 0.4.9 
 
