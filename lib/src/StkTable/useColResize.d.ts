@@ -8,10 +8,11 @@ type Params<DT extends Record<string, any>> = {
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     colResizeIndicatorRef: Ref<HTMLElement | undefined>;
     colKeyGen: ComputedRef<(p: any) => UniqKey>;
+    fixedCols: Ref<StkTableColumn<DT>[]>;
 };
 /** 列宽拖动 */
-export declare function useColResize<DT extends Record<string, any>>({ tableContainerRef, tableHeaderLast, colResizeIndicatorRef, props, emits, colKeyGen, }: Params<DT>): {
+export declare function useColResize<DT extends Record<string, any>>({ tableContainerRef, tableHeaderLast, colResizeIndicatorRef, props, emits, colKeyGen, fixedCols, }: Params<DT>): {
     isColResizing: Ref<boolean>;
-    onThResizeMouseDown: (e: MouseEvent, col: StkTableColumn<DT>, isPrev?: boolean) => void;
+    onThResizeMouseDown: (e: MouseEvent, col: StkTableColumn<DT>, leftHandle?: boolean) => void;
 };
 export {};

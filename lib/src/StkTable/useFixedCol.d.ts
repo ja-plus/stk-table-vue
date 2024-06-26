@@ -15,6 +15,8 @@ type Params<T extends Record<string, any>> = {
  * @returns
  */
 export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, getFixedColPosition, tableHeaders, tableHeaderLast, tableContainerRef, }: Params<DT>): {
+    /** 正在被固定的列 */
+    fixedCols: ShallowRef<StkTableColumn<DT>[]>;
     /** 固定列class */
     fixedColClassMap: ComputedRef<Map<any, any>>;
     /** 滚动条变化时，更新需要展示阴影的列 */

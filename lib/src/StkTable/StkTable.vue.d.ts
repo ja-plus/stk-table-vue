@@ -4,10 +4,10 @@ import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, S
 type DT = any;
 /**
  * 选中一行，
- * @param {string} rowKey selected rowKey, null to unselect
+ * @param {string} rowKey selected rowKey, undefined to unselect
  * @param {boolean} option.silent 是否触发回调
  */
-declare function setCurrentRow(rowKey: string, option?: {
+declare function setCurrentRow(rowKey: string | undefined, option?: {
     silent: boolean;
 }): void;
 /**
@@ -198,8 +198,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** 设置高亮渐暗单元格 */
     setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
         className?: string | undefined; /**
-         * 排序变更触发
-         * ```(col: StkTableColumn<DT>, order: Order, data: DT[])```
+         * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
+         * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[])```
          */
         method?: "animation" | "css" | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
@@ -226,7 +226,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** 获取表格数据 */
     getTableData: typeof getTableData;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "sort-change": (col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
+    "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
     "current-change": (ev: MouseEvent | null, row: any, data: {
         select: boolean;
@@ -406,7 +406,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
         select: boolean;
