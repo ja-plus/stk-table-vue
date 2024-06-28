@@ -1,3 +1,7 @@
+## 0.4.11
+
+* fix: `StkTable.setHighlightDimCell` first parameter type accept number
+
 ## 0.4.10
 
 * optimize: the experience drag resize fixed right cols

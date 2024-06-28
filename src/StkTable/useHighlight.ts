@@ -153,7 +153,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
     function setHighlightDimCell(
-        rowKeyValue: string,
+        rowKeyValue: UniqKey,
         dataIndex: string,
         option: { className?: string; method?: 'animation' | 'css'; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
     ) {
