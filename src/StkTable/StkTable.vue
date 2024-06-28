@@ -1028,21 +1028,22 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 /**
  * 选中一行，
  * @param {string} rowKey selected rowKey, undefined to unselect
- * @param {boolean} option.silent 是否触发回调
+ * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
  */
 function setCurrentRow(rowKey: string | undefined, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
     if (rowKey === void 0) {
         currentRow.value = void 0;
         currentRowKey.value = void 0;
+    } else {
+        const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
+        if (!row) {
+            console.warn('setCurrentRow failed.rowKey:', rowKey);
+            return;
+        }
+        currentRow.value = row;
+        currentRowKey.value = rowKey;
     }
-    const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
-    if (!row) {
-        console.warn('setCurrentRow failed.rowKey:', rowKey);
-        return;
-    }
-    currentRow.value = row;
-    currentRowKey.value = rowKey;
     if (!option.silent) {
         emits('current-change', /** no Event */ null, currentRow.value, { select: true });
     }
