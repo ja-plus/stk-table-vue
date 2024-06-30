@@ -85,16 +85,16 @@
 </template>
 
 <script lang="ts" setup>
-import { h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
+import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from '../lib/stk-table-vue.js';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
+import DocTable from './DocTable.vue';
 import FixedMode from './FixedMode.vue';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
-import DragResize from './utils/DragResize.js';
-import DocTable from './DocTable.vue';
 import StkTableSimple from './StkTableSimple.vue';
+import DragResize from './utils/DragResize.js';
 // import StkTableHugeData from './StkTableHugeData.vue';
 
 const seqConfig = {
@@ -125,7 +125,49 @@ const props = ref({
     },
     fixedColShadow: true,
 });
+
+const dataSource = shallowRef<any>(
+    [{}, null],
+    // new Array(30).fill(0).map((it, i) => ({
+    //     name: 'name' + i,
+    //     age: Math.ceil(Math.random() * 100),
+    //     email: 'add@sa.com',
+    //     gender: Number(Math.random() * 100 - 50).toFixed(2),
+    //     address: 'ahshshsshshhs',
+    // })),
+);
+
+const isCheckAll = computed(() => dataSource.value.every(it => it.isChecked));
+
 const columns = shallowRef<StkTableColumn<any>[]>([
+    {
+        dataIndex: 'isChecked',
+        align: 'center',
+        fixed: 'left',
+        width: 50,
+        customHeaderCell: () => {
+            return h('input', {
+                type: 'checkbox',
+                checked: isCheckAll.value,
+                onChange: (e: any) => {
+                    dataSource.value.forEach(it => it && (it.isChecked = e.target.checked));
+                    dataSource.value = [...dataSource.value];
+                },
+            });
+        },
+        customCell: ({ row }) => {
+            return h('input', {
+                type: 'checkbox',
+                checked: row.isCheckAll,
+                onChange: (e: any) => {
+                    if (row) {
+                        row.isChecked = e.target.checked;
+                        dataSource.value = [...dataSource.value];
+                    }
+                },
+            });
+        },
+    },
     {
         type: 'seq',
         dataIndex: 'seq',
@@ -214,18 +256,6 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         // },
     },
 ]);
-
-const dataSource = shallowRef<any>(
-    [{}, null],
-    // new Array(30).fill(0).map((it, i) => ({
-    //     name: 'name' + i,
-    //     age: Math.ceil(Math.random() * 100),
-    //     email: 'add@sa.com',
-    //     gender: Number(Math.random() * 100 - 50).toFixed(2),
-    //     address: 'ahshshsshshhs',
-    // })),
-);
-// .concat(new Array(100).fill({})),
 
 let scrollTimeout = 0;
 
@@ -359,6 +389,7 @@ function addRow(num = 1, unshift = false) {
             email: 'add@sa.com',
             gender: Number(Math.random() * 100 - 50).toFixed(2),
             address: '电力、热力、燃气',
+            isChecked: Math.random() < 0.5,
         };
         if (unshift) {
             dataSource.value.unshift(data);
