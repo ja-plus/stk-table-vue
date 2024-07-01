@@ -1,6 +1,7 @@
 ## 0.4.11
 
 * fix: `StkTable.setHighlightDimCell` first parameter type accept number
+* feat: export strCompare from './utils';
 
 ## 0.4.10
 

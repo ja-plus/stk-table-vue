@@ -74,7 +74,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
  * @param localeCompare 是否 使用Array.prototype.localeCompare
  * @return {-1|0|1}
  */
-function strCompare(a: string, b: string, isNumber: boolean, localeCompare = false): number {
+export function strCompare(a: string, b: string, isNumber: boolean, localeCompare = false): number {
     let _a: number | string = a;
     let _b: number | string = b;
     if (isNumber) {
