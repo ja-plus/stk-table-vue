@@ -137,7 +137,7 @@ const dataSource = shallowRef<any>(
     // })),
 );
 
-const isCheckAll = computed(() => dataSource.value.every(it => it.isChecked));
+const isCheckAll = computed(() => dataSource.value.every(it => it?.isChecked));
 
 const columns = shallowRef<StkTableColumn<any>[]>([
     {
@@ -158,7 +158,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         customCell: ({ row }) => {
             return h('input', {
                 type: 'checkbox',
-                checked: row.isCheckAll,
+                checked: row?.isCheckAll,
                 onChange: (e: any) => {
                     if (row) {
                         row.isChecked = e.target.checked;
