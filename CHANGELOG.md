@@ -1,7 +1,8 @@
 ## 0.4.11
 
-* fix: `StkTable.setHighlightDimCell` first parameter type accept number
+* fix: `StkTable.setHighlightDimCell` first parameter type accept number.
 * feat: export strCompare from './utils';
+* optimize: if not virtual table, need not do auto resize function.
 
 ## 0.4.10
 

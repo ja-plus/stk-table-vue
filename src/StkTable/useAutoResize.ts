@@ -13,9 +13,26 @@ type Options = {
  */
 export function useAutoResize({ tableContainerRef, initVirtualScroll, props, debounceMs }: Options) {
     let resizeObserver: ResizeObserver | null = null;
+    let isObserved = false;
+    watch(
+        () => props.virtual,
+        v => {
+            if (v) initResizeObserver();
+            else removeResizeObserver();
+        },
+    );
+    watch(
+        () => props.virtualX,
+        v => {
+            if (v) initResizeObserver();
+            else removeResizeObserver();
+        },
+    );
 
     onMounted(() => {
-        initResizeObserver();
+        if (props.virtual || props.virtualX) {
+            initResizeObserver();
+        }
     });
 
     onBeforeUnmount(() => {
@@ -23,6 +40,9 @@ export function useAutoResize({ tableContainerRef, initVirtualScroll, props, deb
     });
 
     function initResizeObserver() {
+        if (isObserved) {
+            removeResizeObserver();
+        }
         if (window.ResizeObserver) {
             if (!tableContainerRef.value) {
                 const watchDom = watch(
@@ -39,15 +59,18 @@ export function useAutoResize({ tableContainerRef, initVirtualScroll, props, deb
         } else {
             window.addEventListener('resize', resizeCallback);
         }
+        isObserved = true;
     }
 
     function removeResizeObserver() {
+        if (!isObserved) return;
         if (resizeObserver) {
             resizeObserver.disconnect();
             resizeObserver = null;
         } else {
             window.removeEventListener('resize', resizeCallback);
         }
+        isObserved = false;
     }
 
     let debounceTime = 0;
