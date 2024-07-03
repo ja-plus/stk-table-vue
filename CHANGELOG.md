@@ -1,8 +1,9 @@
 ## 0.4.11
 
-* fix: `StkTable.setHighlightDimCell` first parameter type accept number.
 * feat: export strCompare from './utils';
 * optimize: if not virtual table, need not do auto resize function.
+* fix: `StkTable.setHighlightDimCell` first parameter type accept number.
+* fix: `insertToOrderedArray` emptyToBottom bugfix
 
 ## 0.4.10
 

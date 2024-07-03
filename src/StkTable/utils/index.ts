@@ -12,6 +12,8 @@ function isEmptyValue(val: any, isNumber?: boolean) {
 
 /**
  * 对有序数组插入新数据
+ *
+ * 注意：不会改变原数组，返回新数组
  * @param sortState
  * @param sortState.dataIndex 排序的列
  * @param sortState.order 排序顺序
@@ -20,7 +22,7 @@ function isEmptyValue(val: any, isNumber?: boolean) {
  * @param targetArray 表格数据
  * @return targetArray 的浅拷贝
  */
-export function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: any, targetArray: T[], sortConfig: SortConfig<T> = {}) {
+export function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig: SortConfig<T> = {}) {
     const { dataIndex, order } = sortState;
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;
@@ -28,13 +30,13 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
     const isNumber = sortType === 'number';
     const data = [...targetArray];
 
-    if (!order) {
+    if (!order || !data.length) {
         // 没有排序的情况，插入在最上方
         data.unshift(newItem);
         return data;
     }
 
-    if (sortConfig.emptyToBottom && isEmptyValue(data)) {
+    if (sortConfig.emptyToBottom && isEmptyValue(newItem)) {
         // 空值排在最下方
         data.push(newItem);
     }
@@ -42,7 +44,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
     // 二分插入
     let sIndex = 0;
     let eIndex = data.length - 1;
-    const targetVal = newItem[dataIndex];
+    const targetVal: any = newItem[dataIndex];
     while (sIndex <= eIndex) {
         // console.log(sIndex, eIndex);
         const midIndex = Math.floor((sIndex + eIndex) / 2);
@@ -71,7 +73,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
  * @param b
  * @param type 类型
  * @param isNumber 是否是数字类型
- * @param localeCompare 是否 使用Array.prototype.localeCompare
+ * @param localeCompare 是否 使用Array.prototyshpe.localeCompare
  * @return {-1|0|1}
  */
 export function strCompare(a: string, b: string, isNumber: boolean, localeCompare = false): number {
