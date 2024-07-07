@@ -28,6 +28,7 @@
         <label><input v-model="props.rowActive" type="checkbox" />rowActive</label>
         <label><input v-model="props.rowCurrentRevokable" type="checkbox" />rowCurrentRevokable</label>
         <label><input v-model="props.fixedColShadow" type="checkbox" />fixedColShadow</label>
+        <label><input v-model="props.smoothScroll" type="checkbox" />smoothScroll</label>
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
@@ -124,6 +125,7 @@ const props = ref({
         duration: 1,
     },
     fixedColShadow: true,
+    smoothScroll: false,
 });
 
 const dataSource = shallowRef<any>(

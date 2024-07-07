@@ -28,4 +28,7 @@ const _firefoxVersion = getBrowsersVersion('firefox');
 /** 低版本sticky兼容模式  */
 export const IS_LEGACY_MODE = _chromeVersion < 56 || _firefoxVersion < 59;
 
+/** 默认props.smoothDefault */
+export const DEFAULT_SMOOTH_SCROLL = _chromeVersion < 85;
+
 export const STK_ID_PREFIX = 'stk';

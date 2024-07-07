@@ -193,7 +193,7 @@
  * [] column.dataIndex 作为唯一键，不能重复
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE } from './const';
+import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL } from './const';
 import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -317,6 +317,12 @@ const props = withDefaults(
          * 低版本浏览器强制为'relative'，
          */
         cellFixedMode?: 'sticky' | 'relative';
+        /**
+         * 是否平滑滚动。default: chrome < 85 ? true : false
+         * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
+         * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
+         */
+        smoothScroll?: boolean;
     }>(),
     {
         width: '',
@@ -361,6 +367,7 @@ const props = withDefaults(
         highlightConfig: () => ({}),
         seqConfig: () => ({}),
         cellFixedMode: 'sticky',
+        smoothScroll: DEFAULT_SMOOTH_SCROLL,
     },
 );
 
@@ -944,6 +951,9 @@ function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
+    if (props.smoothScroll) {
+        return;
+    }
     if (isColResizing.value) {
         // 正在调整列宽时，不允许用户滚动
         e.stopPropagation();
