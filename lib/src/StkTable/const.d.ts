@@ -23,4 +23,6 @@ export declare const HIGHLIGHT_ROW_CLASS = "highlight-row";
 export declare const HIGHLIGHT_CELL_CLASS = "highlight-cell";
 /** 低版本sticky兼容模式  */
 export declare const IS_LEGACY_MODE: boolean;
+/** 默认props.smoothDefault */
+export declare const DEFAULT_SMOOTH_SCROLL: boolean;
 export declare const STK_ID_PREFIX = "stk";

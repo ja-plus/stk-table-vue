@@ -19,7 +19,7 @@ export declare function useHighlight({ props, stkTableId, tableContainerRef }: P
         keyframe?: Parameters<Animatable['animate']>['0'];
         duration?: number;
     }) => void;
-    setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
+    setHighlightDimCell: (rowKeyValue: UniqKey, dataIndex: string, option?: {
         className?: string;
         method?: 'animation' | 'css';
         keyframe?: Parameters<Animatable['animate']>['0'];

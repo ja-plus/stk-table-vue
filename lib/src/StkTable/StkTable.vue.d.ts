@@ -5,7 +5,7 @@ type DT = any;
 /**
  * 选中一行，
  * @param {string} rowKey selected rowKey, undefined to unselect
- * @param {boolean} option.silent 是否触发回调
+ * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
  */
 declare function setCurrentRow(rowKey: string | undefined, option?: {
     silent: boolean;
@@ -143,6 +143,12 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
      * 低版本浏览器强制为'relative'，
      */
     cellFixedMode?: "sticky" | "relative" | undefined;
+    /**
+     * 是否平滑滚动。default: chrome < 85 ? true : false
+     * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
+     * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
+     */
+    smoothScroll?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -186,6 +192,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     highlightConfig: () => {};
     seqConfig: () => {};
     cellFixedMode: string;
+    smoothScroll: boolean;
 }>, {
     /** 初始化横向纵向虚拟滚动 */
     initVirtualScroll: (height?: number | undefined) => void;
@@ -196,11 +203,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** 设置当前选中行 */
     setCurrentRow: typeof setCurrentRow;
     /** 设置高亮渐暗单元格 */
-    setHighlightDimCell: (rowKeyValue: string, dataIndex: string, option?: {
-        className?: string | undefined; /**
-         * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
-         * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[])```
-         */
+    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, dataIndex: string, option?: {
+        className?: string | undefined;
         method?: "animation" | "css" | undefined;
         keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
         duration?: number | undefined;
@@ -354,6 +358,12 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
      * 低版本浏览器强制为'relative'，
      */
     cellFixedMode?: "sticky" | "relative" | undefined;
+    /**
+     * 是否平滑滚动。default: chrome < 85 ? true : false
+     * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
+     * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
+     */
+    smoothScroll?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -397,6 +407,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     highlightConfig: () => {};
     seqConfig: () => {};
     cellFixedMode: string;
+    smoothScroll: boolean;
 }>>> & {
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -463,6 +474,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     highlightConfig: HighlightConfig;
     seqConfig: SeqConfig;
     cellFixedMode: "sticky" | "relative";
+    smoothScroll: boolean;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;

@@ -170,7 +170,6 @@
 }
 .stk-table th.sorter-desc .table-header-sorter{
   display:inline;
-  display:initial;
 }
 .stk-table th.sorter-desc .table-header-sorter .arrow-up{
   fill:var(--sort-arrow-active-sub-color);
@@ -180,7 +179,6 @@
 }
 .stk-table th.sorter-asc .table-header-sorter{
   display:inline;
-  display:initial;
 }
 .stk-table th.sorter-asc .table-header-sorter .arrow-up{
   fill:var(--sort-arrow-active-color);
@@ -270,7 +268,6 @@
 }
 .stk-table .table-header-title{
   overflow:hidden;
-  align-self:flex-start;
 }
 .stk-table .table-header-sorter{
   flex-shrink:0;

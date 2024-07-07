@@ -2,6 +2,8 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../typ
 
 /**
  * 对有序数组插入新数据
+ *
+ * 注意：不会改变原数组，返回新数组
  * @param sortState
  * @param sortState.dataIndex 排序的列
  * @param sortState.order 排序顺序
@@ -10,7 +12,17 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../typ
  * @param targetArray 表格数据
  * @return targetArray 的浅拷贝
  */
-export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: any, targetArray: T[], sortConfig?: SortConfig<T>): T[];
+export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig?: SortConfig<T>): T[];
+/**
+ * 字符串比较
+ * @param a
+ * @param b
+ * @param type 类型
+ * @param isNumber 是否是数字类型
+ * @param localeCompare 是否 使用Array.prototyshpe.localeCompare
+ * @return {-1|0|1}
+ */
+export declare function strCompare(a: string, b: string, isNumber: boolean, localeCompare?: boolean): number;
 /**
  * 表格排序抽离
  * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
