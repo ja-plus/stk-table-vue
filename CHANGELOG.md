@@ -1,3 +1,7 @@
+## 0.4.12
+
+* feat: `StkTable` expose `setCurrentRow` function. First param support row object.
+
 ## 0.4.11
 
 * feat: export strCompare from './utils';
