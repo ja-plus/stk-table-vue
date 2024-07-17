@@ -4,10 +4,10 @@ import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, S
 type DT = any;
 /**
  * 选中一行，
- * @param {string} rowKey selected rowKey, undefined to unselect
+ * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
  */
-declare function setCurrentRow(rowKey: string | undefined, option?: {
+declare function setCurrentRow(rowKeyOrRow: string | undefined | DT, option?: {
     silent: boolean;
 }): void;
 /**

@@ -91,7 +91,7 @@
 .stk-table.border-body-v tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
-.stk-table.stripe .stk-tbody-main tr:nth-child(even){
+.stk-table.stripe:not(.vt-on) .stk-tbody-main tr:nth-child(even){
   background-color:var(--stripe-bgc);
 }
 .stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
