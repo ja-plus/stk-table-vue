@@ -135,7 +135,7 @@
 
     /* 斑马纹*/
     &.stripe {
-        .stk-tbody-main tr:nth-child(even) {
+        &:not(.vt-on) .stk-tbody-main tr:nth-child(even) {
             background-color: var(--stripe-bgc);
         }
 

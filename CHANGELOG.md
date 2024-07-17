@@ -1,6 +1,7 @@
 ## 0.4.12
 
 * feat: `StkTable` expose `setCurrentRow` function. First param support row object.
+* fix: table stripe color error in virtual mode.
 
 ## 0.4.11
 
