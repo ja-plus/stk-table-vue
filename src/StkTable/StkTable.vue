@@ -452,6 +452,10 @@ const emits = defineEmits<{
      * ```(targetColKey: string)```
      */
     (e: 'th-drop', targetColKey: string): void;
+    /**
+     * 列宽变动时触发
+     */
+    (e: 'col-resize', cols: StkTableColumn<DT>): void;
     /** v-model:columns col resize 时更新宽度*/
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }>();

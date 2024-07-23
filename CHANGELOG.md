@@ -1,3 +1,7 @@
+## 0.4.13
+
+* feat: `StkTable` emit `col-resize` when drag col width change.
+
 ## 0.4.12
 
 * feat: `StkTable` expose `setCurrentRow` function. First param support row object.

@@ -167,6 +167,7 @@ export function useColResize<DT extends Record<string, any>>({
         curCol.width = width + 'px';
 
         emits('update:columns', [...props.columns]);
+        emits('col-resize', { ...curCol });
 
         // 隐藏指示线
         if (colResizeIndicatorRef.value) {
