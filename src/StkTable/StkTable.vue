@@ -374,7 +374,7 @@ const props = withDefaults(
 const emits = defineEmits<{
     /**
      * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
-     * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[])```
+     * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>)```
      */
     (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
     /**
