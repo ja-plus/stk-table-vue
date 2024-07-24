@@ -1,3 +1,7 @@
+## 0.4.14
+
+* optimize: optimize defineExpose function comment.(use jsdoc @see & @link)
+
 ## 0.4.13
 
 * feat: `StkTable` emit `col-resize` when drag col width change.

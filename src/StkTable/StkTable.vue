@@ -1120,29 +1120,29 @@ function getSortColumns(): Partial<SortState<DT>>[] {
 }
 
 defineExpose({
-    /** 初始化横向纵向虚拟滚动 */
+    /** @see {@link initVirtualScroll} */
     initVirtualScroll,
-    /** 初始化横向虚拟滚动 */
+    /** @see {@link initVirtualScrollX} */
     initVirtualScrollX,
-    /** 初始化纵向虚拟滚动 */
+    /** @see {@link initVirtualScrollY} */
     initVirtualScrollY,
-    /** 设置当前选中行 */
+    /** @see {@link setCurrentRow} */
     setCurrentRow,
-    /** 设置高亮渐暗单元格 */
+    /** @see {@link setHighlightDimCell} */
     setHighlightDimCell,
-    /** 设置高亮渐暗行 */
+    /** @see {@link setHighlightDimRow} */
     setHighlightDimRow,
     /** 表格排序列dataIndex */
     sortCol,
-    /** 获取当前排序状态 */
+    /** @see {@link getSortColumns} */
     getSortColumns,
-    /** 设置排序 */
+    /** @see {@link setSorter} */
     setSorter,
-    /** 重置排序 */
+    /** @see {@link resetSorter} */
     resetSorter,
-    /** 滚动至 */
+    /** @see {@link scrollTo} */
     scrollTo,
-    /** 获取表格数据 */
+    /** @see {@link getTableData} */
     getTableData,
 });
 </script>
