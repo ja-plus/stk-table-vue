@@ -158,7 +158,7 @@
                             col.className,
                             fixedColClassMap.get(colKeyGen(col)),
                             col.type === 'seq' ? 'seq-column' : '',
-                            currentCellKey === (props.cellActive && rowKeyGen(row) + '--' + colKeyGen(col)) ? 'active' : '',
+                            currentCellKey === rowKeyGen(row) + '--' + colKeyGen(col) ? 'active' : '',
                         ]"
                         @click="e => onCellClick(e, row, col)"
                         @mouseenter="e => onCellMouseEnter(e, row, col)"

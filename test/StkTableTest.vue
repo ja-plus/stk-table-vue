@@ -322,7 +322,7 @@ function onRowDblclick(e, row) {
 }
 function onCellClick(e, row, col) {
     // e.stopPropagation();
-    console.log('cell-click:', row, col);
+    console.log('cell-click:', e, row, col);
 }
 function onHeaderCellClick(e, row) {
     console.log('header-cell-click:', e, row);
