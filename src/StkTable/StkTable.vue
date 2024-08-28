@@ -1111,6 +1111,7 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
  * @param option.silent if emit current-change. default:false(not emit `current-change`)
  */
 function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: false }) {
+    if (!dataSourceCopy.value.length) return;
     const select = row !== void 0 && col !== void 0;
     currentSelectedCellKey.value = select ? cellKeyGen(row, col) : void 0;
     if (!option.silent) {
