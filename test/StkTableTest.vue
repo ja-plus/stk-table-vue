@@ -58,6 +58,7 @@
             @scroll="onTableScroll"
             @col-order-change="onColOrderChange"
             @cell-mouseover="onCellMouseOver"
+            @cell-selected="onCellSelected"
         ></StkTable>
     </div>
     <div>
@@ -325,6 +326,9 @@ function onRowDblclick(e, row) {
 function onCellClick(e, row, col) {
     // e.stopPropagation();
     console.log('cell-click:', e, row, col);
+}
+function onCellSelected(e, data) {
+    console.log('cell-selected:', e, data);
 }
 function onHeaderCellClick(e, row) {
     console.log('header-cell-click:', e, row);

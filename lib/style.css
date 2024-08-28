@@ -12,6 +12,7 @@
   --border-width:1px;
   --td-bgc:#fff;
   --td-hover-color:#71a2fd;
+  --td-active-color:#386ccc;
   --th-bgc:#fafafc;
   --th-color:#272841;
   --tr-active-bgc:#e6f7ff;
@@ -46,6 +47,7 @@
   --th-color:#C0C0D1;
   --td-bgc:#1b1b24;
   --td-hover-color:#70a6ff;
+  --td-active-color:#386ccc;
   --border-color:#292933;
   --tr-active-bgc:#283f63;
   --tr-hover-bgc:#1a2b46;
@@ -111,6 +113,9 @@
 }
 .stk-table.cell-hover tbody td:hover{
   box-shadow:inset 0 0 0 2px var(--td-hover-color);
+}
+.stk-table.cell-active tbody td.active{
+  box-shadow:inset 0 0 0 2px var(--td-active-color);
 }
 .stk-table.text-overflow .table-cell-wrapper{
   white-space:nowrap;
