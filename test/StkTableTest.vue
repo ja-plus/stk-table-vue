@@ -24,6 +24,7 @@
         <label><input v-model="props.virtual" type="checkbox" />virtual</label>
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
         <label><input v-model="props.cellHover" type="checkbox" />cellHover</label>
+        <label><input v-model="props.cellActive" type="checkbox" />cellActive</label>
         <label><input v-model="props.rowHover" type="checkbox" />rowHover</label>
         <label><input v-model="props.rowActive" type="checkbox" />rowActive</label>
         <label><input v-model="props.rowCurrentRevokable" type="checkbox" />rowCurrentRevokable</label>
@@ -111,6 +112,7 @@ const props = ref({
     rowActive: true,
     rowCurrentRevokable: true,
     cellHover: true,
+    cellActive: false,
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,

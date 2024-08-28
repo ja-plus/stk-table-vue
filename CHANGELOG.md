@@ -1,6 +1,7 @@
 ## 0.4.14
 
 * optimize: optimize defineExpose function comment.(use jsdoc @see & @link)
+* feature: `props.cellActive[false]` Control whether to highlight **Selected** cells.
 
 ## 0.4.13
 
