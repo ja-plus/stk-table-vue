@@ -25,6 +25,7 @@
         <label><input v-model="props.virtualX" type="checkbox" />virtualX</label>
         <label><input v-model="props.cellHover" type="checkbox" />cellHover</label>
         <label><input v-model="props.cellActive" type="checkbox" />cellActive</label>
+        <label><input v-model="props.selectedCellRevokable" type="checkbox" />selectedCellRevokable</label>
         <label><input v-model="props.rowHover" type="checkbox" />rowHover</label>
         <label><input v-model="props.rowActive" type="checkbox" />rowActive</label>
         <label><input v-model="props.rowCurrentRevokable" type="checkbox" />rowCurrentRevokable</label>
@@ -113,6 +114,7 @@ const props = ref({
     rowCurrentRevokable: true,
     cellHover: true,
     cellActive: false,
+    selectedCellRevokable: true,
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,
@@ -261,8 +263,6 @@ const columns = shallowRef<StkTableColumn<any>[]>([
     },
 ]);
 
-let scrollTimeout = 0;
-
 const stkTable = ref<InstanceType<typeof StkTable>>();
 const stkTableParent = ref();
 
@@ -291,6 +291,8 @@ onMounted(() => {
         stkTable.value?.setHighlightDimCell('7add', 'age', { className: 'special-highlight-cell-red', duration: 1500 });
     }, 2600);
     intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7);
+
+    stkTable.value?.setSelectedCell({ name: '1add' }, columns.value[2]);
 });
 
 onBeforeUnmount(() => {

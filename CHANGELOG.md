@@ -2,6 +2,10 @@
 
 * optimize: optimize defineExpose function comment.(use jsdoc @see & @link)
 * feature: `props.cellActive[false]` Control whether to highlight **Selected** cells.
+  - `props.selectedCellRevokable[true]` click selected cell to cancel select
+  - emit `cell-selected` 
+  - expose `setSelectedCell` set default selected cell 
+* fix: `setCurrentRow` when set option.silent = false, `@current-change` third param select always true
 
 ## 0.4.13
 

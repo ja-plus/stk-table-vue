@@ -157,8 +157,10 @@
                         :class="[
                             col.className,
                             fixedColClassMap.get(colKeyGen(col)),
-                            col.type === 'seq' ? 'seq-column' : '',
-                            currentCellKey === rowKeyGen(row) + '--' + colKeyGen(col) ? 'active' : '',
+                            {
+                                'seq-column': col.type === 'seq',
+                                active: currentSelectedCellKey === cellKeyGen(row, col),
+                            },
                         ]"
                         @click="e => onCellClick(e, row, col)"
                         @mouseenter="e => onCellMouseEnter(e, row, col)"
@@ -241,7 +243,7 @@ const props = withDefaults(
         rowHover?: boolean;
         /** 是否高亮选中的行 */
         rowActive?: boolean;
-        /** 当前行再次点击否可以取消 */
+        /** 当前行再次点击否可以取消 (rowActive=true)*/
         rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
         headerRowHeight?: number | null;
@@ -275,6 +277,8 @@ const props = withDefaults(
         cellHover?: boolean;
         /** 是否高亮选中的单元格 */
         cellActive?: boolean;
+        /** 单元格再次点击否可以取消选中 (cellActive=true)*/
+        selectedCellRevokable?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
         /**
@@ -361,6 +365,7 @@ const props = withDefaults(
         showTrHoverClass: false,
         cellHover: false,
         cellActive: false,
+        selectedCellRevokable: true,
         headerDrag: false,
         rowClassName: () => '',
         colResizable: false,
@@ -397,6 +402,11 @@ const emits = defineEmits<{
      * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean })```
      */
     (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
+    /**
+     * 选中单元格触发。ev返回null表示不是点击事件触发的
+     * ```(ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | null })```
+     */
+    (e: 'cell-selected', ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | undefined }): void;
     /**
      * 行双击事件
      * ```(ev: MouseEvent, row: DT)```
@@ -494,8 +504,9 @@ const currentRow = shallowRef<DT>();
  * 保存当前选中行的key<br>
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
  */
-const currentRowKey = ref<any>(null);
-const currentCellKey = ref<any>(null);
+const currentRowKey = ref<any>(void 0);
+/** 当前选中的单元格key  */
+const currentSelectedCellKey = ref<any>(void 0);
 /** 当前hover行 */
 let currentHoverRow: DT | null = null;
 /** 当前hover的行的key */
@@ -810,6 +821,11 @@ function rowKeyGen(row: DT | null | undefined) {
     return key;
 }
 
+/** 单元格唯一值 */
+function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
+    return rowKeyGen(row) + '--' + colKeyGen.value(col);
+}
+
 /** 单元格样式 */
 const cellStyleMap = computed(() => {
     const thMap = new Map();
@@ -936,7 +952,16 @@ function onRowMenu(e: MouseEvent, row: DT) {
 
 /** 单元格单击 */
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    currentCellKey.value = rowKeyGen(row) + '--' + colKeyGen.value(col);
+    if (props.rowActive) {
+        const cellKey = cellKeyGen(row, col);
+        if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
+            currentSelectedCellKey.value = void 0;
+            emits('cell-selected', e, { select: false, row, col });
+        } else {
+            currentSelectedCellKey.value = cellKey;
+            emits('cell-selected', e, { select: true, row, col });
+        }
+    }
     emits('cell-click', e, row, col);
 }
 
@@ -1052,13 +1077,14 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 }
 
 /**
- * 选中一行，
+ * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
  */
 function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
-    if (rowKeyOrRow === void 0) {
+    const select = rowKeyOrRow !== void 0;
+    if (!select) {
         currentRow.value = void 0;
         currentRowKey.value = void 0;
     } else if (typeof rowKeyOrRow === 'string') {
@@ -1074,7 +1100,21 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
         currentRowKey.value = rowKeyGen(rowKeyOrRow);
     }
     if (!option.silent) {
-        emits('current-change', /** no Event */ null, currentRow.value, { select: true });
+        emits('current-change', /** no Event */ null, currentRow.value, { select });
+    }
+}
+
+/**
+ * set highlight active cell (props.cellActive=true)
+ * @param row row if undefined, clear highlight
+ * @param col column
+ * @param option.silent if emit current-change. default:false(not emit `current-change`)
+ */
+function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: false }) {
+    const select = row !== void 0 && col !== void 0;
+    currentSelectedCellKey.value = select ? cellKeyGen(row, col) : void 0;
+    if (!option.silent) {
+        emits('cell-selected', /** no Event */ null, { row, col, select });
     }
 }
 
@@ -1140,6 +1180,8 @@ defineExpose({
     initVirtualScrollY,
     /** @see {@link setCurrentRow} */
     setCurrentRow,
+    /** @see {@link setSelectedCell} */
+    setSelectedCell,
     /** @see {@link setHighlightDimCell} */
     setHighlightDimCell,
     /** @see {@link setHighlightDimRow} */

@@ -139,7 +139,7 @@ export type StkProps = {
   rowHover?: boolean;
   /** 是否高亮选中的行 */
   rowActive?: boolean;
-  /** 当前行再次点击否可以取消 */
+  /** 当前行再次点击否可以取消 (rowActive=true)*/
   rowCurrentRevokable?: boolean;
   /** 表头行高。default = rowHeight */
   headerRowHeight?: number | null;
@@ -169,9 +169,12 @@ export type StkProps = {
   showOverflow?: boolean;
   /** 是否增加行hover class */
   showTrHoverClass?: boolean;
- 
   /** 是否高亮鼠标悬浮的单元格 */
   cellHover?: boolean;
+  /** 是否高亮选中的单元格 */
+  cellActive?: boolean;
+  /** 单元格再次点击否可以取消选中 (cellActive=true)*/
+  selectedCellRevokable?: boolean;
   /** 表头是否可拖动。支持回调函数。 */
   headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
   /**
@@ -273,6 +276,11 @@ export type StkProps = {
      */
     (e: 'current-change', ev: MouseEvent | null, row: DT | undefined,, data: { select: boolean }): void;
     /**
+     * 选中单元格触发。ev返回null表示不是点击事件触发的
+     * ```(ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | null })```
+     */
+    (e: 'cell-selected', ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | null }): void;
+    /**
      * 行双击事件
      * ```(ev: MouseEvent, row: DT)```
      */
@@ -357,6 +365,8 @@ defineExpose({
   initVirtualScrollY,
   /** 设置当前选中行 */
   setCurrentRow,
+  /** 设置当前选中单元格 (props.cellActive=true)*/
+  setSelectedCell,
   /** 设置高亮渐暗单元格 */
   setHighlightDimCell,
   /** 设置高亮渐暗行 */
@@ -601,6 +611,9 @@ export type SortConfig<T extends Record<string, any>> = {
     - 大量 highlight 动画时。
 ### props.autoResize
 * 手动设置为 `props.autoResize=false`。可取消监听的性能消耗。适用于宽度高度不变的表格。
+
+### props.smoothScroll
+* 高版本浏览器滚动默认有惯性。会频繁触发 `onscroll` 回调。因此 chrome > 85 默认关闭，使用 `onwheel` 代理滚动，且可防止滚动白屏。
 
 ## Tips
 ### props.fixedMode
