@@ -17,6 +17,7 @@
             'border-body-v': props.bordered === 'body-v',
             stripe: props.stripe,
             'cell-hover': props.cellHover,
+            'cell-active': props.cellActive,
             'row-hover': props.rowHover,
             'row-active': props.rowActive,
             'text-overflow': props.showOverflow,
@@ -151,8 +152,14 @@
                         v-for="(col, colIndex) in virtualX_columnPart"
                         :key="col.dataIndex"
                         :data-index="col.dataIndex"
+                        :cell-key="rowKeyGen(row) + '--' + colKeyGen(col)"
                         :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                        :class="[col.className, fixedColClassMap.get(colKeyGen(col)), col.type === 'seq' ? 'seq-column' : '']"
+                        :class="[
+                            col.className,
+                            fixedColClassMap.get(colKeyGen(col)),
+                            col.type === 'seq' ? 'seq-column' : '',
+                            currentCellKey === (props.cellActive && rowKeyGen(row) + '--' + colKeyGen(col)) ? 'active' : '',
+                        ]"
                         @click="e => onCellClick(e, row, col)"
                         @mouseenter="e => onCellMouseEnter(e, row, col)"
                         @mouseleave="e => onCellMouseLeave(e, row, col)"
@@ -266,6 +273,8 @@ const props = withDefaults(
         showTrHoverClass?: boolean;
         /** 是否高亮鼠标悬浮的单元格 */
         cellHover?: boolean;
+        /** 是否高亮选中的单元格 */
+        cellActive?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
         /**
@@ -351,6 +360,7 @@ const props = withDefaults(
         showOverflow: false,
         showTrHoverClass: false,
         cellHover: false,
+        cellActive: false,
         headerDrag: false,
         rowClassName: () => '',
         colResizable: false,
@@ -485,6 +495,7 @@ const currentRow = shallowRef<DT>();
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
  */
 const currentRowKey = ref<any>(null);
+const currentCellKey = ref<any>(null);
 /** 当前hover行 */
 let currentHoverRow: DT | null = null;
 /** 当前hover的行的key */
@@ -925,6 +936,7 @@ function onRowMenu(e: MouseEvent, row: DT) {
 
 /** 单元格单击 */
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    currentCellKey.value = rowKeyGen(row) + '--' + colKeyGen.value(col);
     emits('cell-click', e, row, col);
 }
 

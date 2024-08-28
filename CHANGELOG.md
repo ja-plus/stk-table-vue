@@ -1,3 +1,7 @@
+## 0.4.15
+
+* feature: `props.cellActive[false]` 控制是否高亮**选中**的单元格。
+
 ## 0.4.14
 
 * optimize: optimize defineExpose function comment.(use jsdoc @see & @link)
