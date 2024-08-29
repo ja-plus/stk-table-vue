@@ -1,3 +1,7 @@
+## 0.4.15
+
+* fix: `props.cellActive` not effective.
+
 ## 0.4.14
 
 * optimize: optimize defineExpose function comment.(use jsdoc @see & @link)

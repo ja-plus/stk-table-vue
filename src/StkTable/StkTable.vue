@@ -952,7 +952,7 @@ function onRowMenu(e: MouseEvent, row: DT) {
 
 /** 单元格单击 */
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    if (props.rowActive) {
+    if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
         if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
             currentSelectedCellKey.value = void 0;
