@@ -493,14 +493,14 @@ const emits = defineEmits<{
      */
     (e: 'col-resize', cols: StkTableColumn<DT>): void;
     /**
-     * v-model:columns col resize 时更新宽度
-     */
-    (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
-    /**
-     * 行展开触发
+     * 展开行触发
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
      */
     (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
+    /**
+     * v-model:columns col resize 时更新宽度
+     */
+    (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }>();
 
 // 仅支持vue3.3+
