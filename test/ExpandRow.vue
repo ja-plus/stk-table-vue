@@ -26,11 +26,14 @@ const columns = ref<StkTableColumn<any>[]>([
 const data = new Array(200).fill(0).map((it, index) => {
     return { id: index, name: 'hah', address: 'sss' };
 });
+function handleToggleRowExpand(data) {
+    console.log('handleToggleRowExpand', data);
+}
 </script>
 <template>
     <div>
         <h2>Expand Row</h2>
-        <StkTable row-key="id" style="height: 200px" :columns="columns" :data-source="data">
+        <StkTable row-key="id" style="height: 200px" :columns="columns" :data-source="data" @toggle-row-expand="handleToggleRowExpand">
             <template #expand="{ row }">
                 <div>
                     <p>id: {{ row.id }}</p>
