@@ -6,7 +6,7 @@ import { StkTableColumn } from '../src/StkTable/types';
 const columns = ref<StkTableColumn<any>[]>([
     {
         type: 'expand',
-        dataIndex: '',
+        dataIndex: 'name',
     },
     {
         dataIndex: 'id',
@@ -14,17 +14,13 @@ const columns = ref<StkTableColumn<any>[]>([
         width: '100px',
     },
     {
-        dataIndex: 'name',
-        title: 'name',
-    },
-    {
         dataIndex: 'address',
         title: 'address',
     },
 ]);
 
-const data = new Array(200).fill(0).map((it, index) => {
-    return { id: index, name: 'hah', address: 'sss' };
+const data = new Array(100).fill(0).map((it, index) => {
+    return { id: index, name: 'hah' + index, address: 'sss' };
 });
 function handleToggleRowExpand(data) {
     console.log('handleToggleRowExpand', data);

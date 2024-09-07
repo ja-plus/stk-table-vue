@@ -179,7 +179,9 @@
                                     {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
                                 </template>
                                 <template v-else-if="col.type === 'expand'">
-                                    <div class="expand-icon" :class="{ expanded: row.__EXPANDED__ }" @click="() => toggleExpandRow(row, col)"></div>
+                                    <div class="expand-icon" :class="{ expanded: row.__EXPANDED__ }" @click="() => toggleExpandRow(row, col)">
+                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                    </div>
                                 </template>
                                 <template v-else>
                                     {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
