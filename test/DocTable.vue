@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>API</h2>
-        <StkTable style="position: initial; overflow: unset" theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
+        <StkTable style="overflow: unset" theme="dark" :columns="docTableColumns" :data-source="docTableData"></StkTable>
     </div>
 </template>
 <script lang="ts" setup>
