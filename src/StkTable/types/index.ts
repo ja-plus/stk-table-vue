@@ -51,8 +51,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 列类型
      * - seq 序号列
+     * - expand 展开列
      */
-    type?: 'seq';
+    type?: 'seq' | 'expand';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -103,6 +104,10 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+};
+
+/** private StkTableColumn type. Add some private key */
+export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColumn<T> & {
     /** private 父节点引用 */
     __PARENT__?: StkTableColumn<T> | null;
     /** private 保存计算的宽度。横向虚拟滚动用。 */
@@ -165,4 +170,11 @@ export type HighlightConfig = {
 export type SeqConfig = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
+};
+
+/** 展开行对象 */
+export type ExpandedRow = {
+    __ROW_KEY__: string;
+    __EXPANDED_TRIGGER_ROW__: any;
+    __EXPANDED_TRIGGER_COL__: any;
 };

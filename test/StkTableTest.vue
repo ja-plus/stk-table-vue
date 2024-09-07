@@ -61,12 +61,14 @@
             @cell-selected="onCellSelected"
         ></StkTable>
     </div>
-    <div>
+    <!-- <div>
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
-    </div>
-    <StkTableMultiHeader></StkTableMultiHeader>
-    <StkTableSimple></StkTableSimple>
+    </div> -->
+    <!-- <StkTableMultiHeader></StkTableMultiHeader> -->
+    <!-- <StkTableSimple></StkTableSimple> -->
+
+    <ExpandRow></ExpandRow>
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -99,6 +101,7 @@ import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import StkTableSimple from './StkTableSimple.vue';
 import DragResize from './utils/DragResize.js';
+import ExpandRow from './ExpandRow.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
 
 const seqConfig = {

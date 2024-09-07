@@ -97,14 +97,7 @@
 
                             <!-- 排序图图标 -->
                             <span v-if="col.sorter" class="table-header-sorter">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 16 16">
-                                    <polygon class="arrow-up" fill="#757699" points="8 2 4.8 6 11.2 6"></polygon>
-                                    <polygon
-                                        class="arrow-down"
-                                        transform="translate(8, 12) rotate(-180) translate(-8, -12) "
-                                        points="8 10 4.8 14 11.2 14"
-                                    ></polygon>
-                                </svg>
+                                <SortIcon />
                             </span>
                             <!-- 列宽拖动handler -->
                             <div
@@ -148,43 +141,52 @@
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td
-                        v-for="(col, colIndex) in virtualX_columnPart"
-                        :key="col.dataIndex"
-                        :data-index="col.dataIndex"
-                        :cell-key="rowKeyGen(row) + '--' + colKeyGen(col)"
-                        :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                        :class="[
-                            col.className,
-                            fixedColClassMap.get(colKeyGen(col)),
-                            {
-                                'seq-column': col.type === 'seq',
-                                active: currentSelectedCellKey === cellKeyGen(row, col),
-                            },
-                        ]"
-                        @click="e => onCellClick(e, row, col)"
-                        @mouseenter="e => onCellMouseEnter(e, row, col)"
-                        @mouseleave="e => onCellMouseLeave(e, row, col)"
-                        @mouseover="e => onCellMouseOver(e, row, col)"
-                    >
-                        <component
-                            :is="col.customCell"
-                            v-if="col.customCell"
-                            :col="col"
-                            :row="row"
-                            :rowIndex="rowIndex"
-                            :colIndex="colIndex"
-                            :cellValue="row?.[col.dataIndex]"
-                        />
-                        <div v-else class="table-cell-wrapper" :title="!col.type ? row?.[col.dataIndex] : ''">
-                            <template v-if="col.type === 'seq'">
-                                {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
-                            </template>
-                            <template v-else>
-                                {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                            </template>
-                        </div>
+                    <td v-if="row && row.__EXPANDED_TRIGGER_ROW__" :colspan="virtualX_columnPart.length">
+                        <!-- 展开的行 -->
+                        <slot name="expand" :row="row.__EXPANDED_TRIGGER_ROW__" :col="row.__EXPANDED_TRIGGER_COL__"></slot>
                     </td>
+                    <template v-else>
+                        <td
+                            v-for="(col, colIndex) in virtualX_columnPart"
+                            :key="col.dataIndex"
+                            :data-index="col.dataIndex"
+                            :cell-key="rowKeyGen(row) + '--' + colKeyGen(col)"
+                            :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
+                            :class="[
+                                col.className,
+                                fixedColClassMap.get(colKeyGen(col)),
+                                {
+                                    'seq-column': col.type === 'seq',
+                                    active: currentSelectedCellKey === cellKeyGen(row, col),
+                                },
+                            ]"
+                            @click="e => onCellClick(e, row, col)"
+                            @mouseenter="e => onCellMouseEnter(e, row, col)"
+                            @mouseleave="e => onCellMouseLeave(e, row, col)"
+                            @mouseover="e => onCellMouseOver(e, row, col)"
+                        >
+                            <component
+                                :is="col.customCell"
+                                v-if="col.customCell"
+                                :col="col"
+                                :row="row"
+                                :rowIndex="rowIndex"
+                                :colIndex="colIndex"
+                                :cellValue="row?.[col.dataIndex]"
+                            />
+                            <div v-else class="table-cell-wrapper" :title="!col.type ? row?.[col.dataIndex] : ''">
+                                <template v-if="col.type === 'seq'">
+                                    {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
+                                </template>
+                                <template v-else-if="col.type === 'expand'">
+                                    <div class="expand-icon" :class="{ expanded: row.__EXPANDED__ }" @click="() => toggleExpandRow(row, col)"></div>
+                                </template>
+                                <template v-else>
+                                    {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                </template>
+                            </div>
+                        </td>
+                    </template>
                 </tr>
                 <tr v-if="virtual_on" :style="`height: ${virtual_offsetBottom}px`"></tr>
             </tbody>
@@ -203,7 +205,19 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL } from './const';
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TagType, UniqKeyProp } from './types/index';
+import {
+    ExpandedRow,
+    HighlightConfig,
+    Order,
+    PrivateStkTableColumn,
+    SeqConfig,
+    SortConfig,
+    SortOption,
+    SortState,
+    StkTableColumn,
+    TagType,
+    UniqKeyProp,
+} from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
@@ -214,6 +228,7 @@ import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
+import SortIcon from './components/SortIcon.vue';
 
 /** Generic stands for DataType */
 type DT = any;
@@ -474,10 +489,18 @@ const emits = defineEmits<{
     (e: 'th-drop', targetColKey: string): void;
     /**
      * 列宽变动时触发
+     *  ```(cols: StkTableColumn<DT>)```
      */
     (e: 'col-resize', cols: StkTableColumn<DT>): void;
-    /** v-model:columns col resize 时更新宽度*/
+    /**
+     * v-model:columns col resize 时更新宽度
+     */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
+    /**
+     * 行展开触发
+     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
+     */
+    (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
 }>();
 
 // 仅支持vue3.3+
@@ -753,7 +776,11 @@ function dealColumns() {
      * @param parent 父节点引用，用于构建双向链表。
      * @param parentFixed 父节点固定列继承。
      */
-    function flat(arr: StkTableColumn<DT>[], parent: StkTableColumn<DT> | null, depth = 0 /* , parentFixed: 'left' | 'right' | null = null */) {
+    function flat(
+        arr: PrivateStkTableColumn<DT>[],
+        parent: PrivateStkTableColumn<DT> | null,
+        depth = 0 /* , parentFixed: 'left' | 'right' | null = null */,
+    ) {
         if (!tableHeadersTemp[depth]) {
             tableHeadersTemp[depth] = [];
         }
@@ -810,7 +837,11 @@ function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
     let key = rowKeyGenStore.get(row);
     if (!key) {
-        key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
+        if (row.__ROW_KEY__) {
+            key = row.__ROW_KEY__;
+        } else {
+            key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
+        }
 
         if (key === void 0) {
             // key为undefined时，不应该高亮行。因此重新生成key
@@ -1069,7 +1100,7 @@ function onTableScroll(e: Event) {
     }
 }
 
-/** tr hover事件 */
+/** tr hover */
 function onTrMouseOver(_e: MouseEvent, row: DT) {
     if (currentHoverRow === row) return;
     currentHoverRow = row;
@@ -1079,7 +1110,7 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 /**
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
- * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
+ * @param {boolean} option.silent if set true not emit `current-change`. default:false
  */
 function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false }) {
     if (!dataSourceCopy.value.length) return;
@@ -1172,6 +1203,51 @@ function getSortColumns(): Partial<SortState<DT>>[] {
     return [{ dataIndex: sortCol.value, order: sortOrder }];
 }
 
+/** click expended icon to toggleg expand row */
+function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
+    const isExpand = !row.__EXPANDED__;
+    setRowExpand(row, isExpand, { col });
+}
+
+/**
+ *
+ * @param rowKeyOrRow rowKey or row
+ * @param expand expand or collapse
+ * @param data { col?: StkTableColumn<DT> }
+ * @param data.silent if set true, not emit `toggle-row-expand`, default:false
+ */
+function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
+    let rowKey: string;
+    if (typeof rowKeyOrRow === 'string') {
+        rowKey = rowKeyOrRow;
+    } else {
+        rowKey = rowKeyGen(rowKeyOrRow);
+    }
+    const index = dataSourceCopy.value.findIndex(it => rowKeyGen(it) === rowKey);
+    if (index === -1) {
+        console.warn('expandRow failed.rowKey:', rowKey);
+        return;
+    }
+    const row = dataSourceCopy.value[index];
+    const col = data?.col || null;
+    if (expand) {
+        // insert new row
+        const newExpandRow: ExpandedRow = {
+            __ROW_KEY__: 'expand-' + rowKey,
+            __EXPANDED_TRIGGER_ROW__: row,
+            __EXPANDED_TRIGGER_COL__: col,
+        };
+        dataSourceCopy.value.splice(index + 1, 0, newExpandRow);
+    } else {
+        dataSourceCopy.value.splice(index + 1, 1);
+    }
+    row.__EXPANDED__ = expand;
+
+    if (!data?.silent) {
+        emits('toggle-row-expand', { expanded: Boolean(expand), row, col });
+    }
+}
+
 defineExpose({
     /** @see {@link initVirtualScroll} */
     initVirtualScroll,
@@ -1199,5 +1275,7 @@ defineExpose({
     scrollTo,
     /** @see {@link getTableData} */
     getTableData,
+    /** @see {@link setRowExpand} */
+    setRowExpand,
 });
 </script>

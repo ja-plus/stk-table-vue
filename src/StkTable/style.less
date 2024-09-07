@@ -453,4 +453,28 @@
         }
     }
 
+    .expand-icon {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        width: 16px;
+        height: 16px;
+        &::before{
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            border-left: 5px solid #757699;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        &.expanded::before{
+            transform: rotate(90deg);
+        }
+    }
+
+    
+
 }
