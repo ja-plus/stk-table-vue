@@ -6,7 +6,6 @@ import { getCalculatedColWidth } from './utils';
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
-    theadRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
@@ -58,7 +57,6 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
 export function useVirtualScroll<DT extends Record<string, any>>({
     props,
     tableContainerRef,
-    theadRef,
     dataSourceCopy,
     tableHeaderLast,
     tableHeaders,
