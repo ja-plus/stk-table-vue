@@ -52,7 +52,7 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
 </script>
 <template>
     <div>
-        多级表头处理
+        <h3>Multi Header</h3>
         <StkTable style="height: 200px; width: 600px" row-key="id" fixed-col-shadow virtual :columns="columns" :data-source="dataSource"> </StkTable>
     </div>
 </template>

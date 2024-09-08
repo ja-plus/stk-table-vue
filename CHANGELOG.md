@@ -1,3 +1,10 @@
+## 0.5.0
+
+* feature: support expand row
+  - add: expose `setRowExpand`
+  - add: emit `toggle-row-expand`
+  - add: `StkTableColumn['type']` `expand`
+
 ## 0.4.15
 
 * fix: `props.cellActive` not effective.

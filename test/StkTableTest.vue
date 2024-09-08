@@ -65,8 +65,8 @@
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
     </div> -->
-    <!-- <StkTableMultiHeader></StkTableMultiHeader> -->
-    <!-- <StkTableSimple></StkTableSimple> -->
+    <StkTableSimple></StkTableSimple>
+    <StkTableMultiHeader></StkTableMultiHeader>
 
     <ExpandRow></ExpandRow>
 

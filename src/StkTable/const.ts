@@ -6,29 +6,29 @@ export const DEFAULT_TABLE_HEIGHT = 100;
 export const DEFAULT_TABLE_WIDTH = 200;
 export const DEFAULT_ROW_HEIGHT = 28;
 
-/** 高亮背景色 */
+/** highlight background */
 export const HIGHLIGHT_COLOR = {
     light: { from: '#71a2fd', to: '#fff' },
     dark: { from: '#1e4c99', to: '#181c21' },
 };
-/** 高亮持续时间 */
 export const HIGHLIGHT_DURATION = 2000;
 
-/** 高亮变更频率 */
+/** highlight change frequency 1000/30 -> 30FPS */
 export const HIGHLIGHT_FREQ = 1000 / 30;
 
-/** 高亮行class */
 export const HIGHLIGHT_ROW_CLASS = 'highlight-row';
-/** 高连单元格class */
 export const HIGHLIGHT_CELL_CLASS = 'highlight-cell';
 
 const _chromeVersion = getBrowsersVersion('chrome');
 const _firefoxVersion = getBrowsersVersion('firefox');
 
-/** 低版本sticky兼容模式  */
+/** legacy sticky compatible mode  */
 export const IS_LEGACY_MODE = _chromeVersion < 56 || _firefoxVersion < 59;
 
-/** 默认props.smoothDefault */
+/** default props.smoothDefault */
 export const DEFAULT_SMOOTH_SCROLL = _chromeVersion < 85;
 
 export const STK_ID_PREFIX = 'stk';
+
+/** expanded row key prefix */
+export const EXPANDED_ROW_KEY_PREFIX = 'expanded-';

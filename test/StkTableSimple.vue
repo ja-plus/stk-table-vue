@@ -49,6 +49,6 @@ const dataSource = ref(
 );
 </script>
 <template>
-    <h2>simple table</h2>
+    <h3>Simple</h3>
     <StkTable key="age" style="height: 300px" fixed-col-shadow :columns="columns" :data-source="dataSource"></StkTable>
 </template>

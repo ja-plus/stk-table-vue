@@ -349,6 +349,11 @@ export type StkProps = {
      * 列宽变动时触发
      */
     (e: 'col-resize', cols: StkTableColumn<DT>): void;
+     /**
+     * 展开行触发
+     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
+     */
+    (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
     /** v-model:columns col resize 时更新宽度*/
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }
@@ -383,6 +388,8 @@ defineExpose({
   scrollTo,
   /** 获取表格数据 */
   getTableData,
+  /** 设置展开行*/
+  setRowExpand,
 });
 ```
 

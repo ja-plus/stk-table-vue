@@ -158,9 +158,16 @@
                                 {
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
+                                    'expand-cell': col.type === 'expand',
+                                    expanded: col.type === 'expand' && row.__EXPANDED__ && colKeyGen(row.__EXPANDED__) === colKeyGen(col),
                                 },
                             ]"
-                            @click="e => onCellClick(e, row, col)"
+                            @click="
+                                e => {
+                                    col.type === 'expand' && toggleExpandRow(row, col);
+                                    onCellClick(e, row, col);
+                                }
+                            "
                             @mouseenter="e => onCellMouseEnter(e, row, col)"
                             @mouseleave="e => onCellMouseLeave(e, row, col)"
                             @mouseover="e => onCellMouseOver(e, row, col)"
@@ -174,15 +181,13 @@
                                 :colIndex="colIndex"
                                 :cellValue="row?.[col.dataIndex]"
                             />
-                            <div v-else class="table-cell-wrapper" :title="!col.type ? row?.[col.dataIndex] : ''">
+                            <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
                                 <template v-if="col.type === 'seq'">
                                     {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
                                 </template>
-                                <template v-else-if="col.type === 'expand'">
-                                    <div class="expand-icon" :class="{ expanded: row.__EXPANDED__ }" @click="() => toggleExpandRow(row, col)">
-                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                                    </div>
-                                </template>
+                                <span v-if="col.type === 'expand'">
+                                    {{ row?.[col.dataIndex] ?? '' }}
+                                </span>
                                 <template v-else>
                                     {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
                                 </template>
@@ -201,12 +206,10 @@
 
 <script setup lang="ts">
 /**
- * @author JA+
- * TODO:存在的问题：
- * [] column.dataIndex 作为唯一键，不能重复
+ * @author japlus
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL } from './const';
+import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX } from './const';
 import {
     ExpandedRow,
     HighlightConfig,
@@ -233,11 +236,15 @@ import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader,
 import SortIcon from './components/SortIcon.vue';
 
 /** Generic stands for DataType */
-type DT = any;
-/** 自己生成实例id */
+type DT = any & {
+    /**   */
+    __EXPANDED__?: StkTableColumn<any> | false;
+};
+/** generate table instance id */
 const stkTableId = createStkTableId();
+
 /**
- * props 不能放在单独的文件中。vue2.7 compiler 构建会出错。
+ * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
  */
 const props = withDefaults(
     defineProps<{
@@ -567,16 +574,13 @@ const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
  * 列唯一键
  * @param col
  */
-const colKeyGen = computed(() => {
+const colKeyGen = computed<(col: StkTableColumn<DT>) => string>(() => {
     if (typeof props.colKey === 'function') {
-        return (col: StkTableColumn<DT>) => (props.colKey as (col: StkTableColumn<DT>) => string)(col);
+        return col => (props.colKey as (col: StkTableColumn<DT>) => string)(col);
     } else {
-        return (col: StkTableColumn<DT>) => (col as any)[props.colKey as string];
+        return col => (col ? (col as any)[props.colKey as string] : null);
     }
 });
-
-/**高亮帧间隔 
-const highlightStepDuration = Highlight_Color_Change_Freq / 1000 + 's';*/
 
 /** 空单元格占位字符 */
 const getEmptyCellText = computed(() => {
@@ -1175,7 +1179,6 @@ function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortO
     return dataSourceCopy.value;
 }
 
-/** 重置排序 */
 function resetSorter() {
     sortCol.value = void 0;
     sortOrderIndex.value = 0;
@@ -1183,9 +1186,9 @@ function resetSorter() {
 }
 
 /**
- * 设置滚动条位置
- * @param top 传null 则不变动位置
- * @param left 传null 则不变动位置
+ * set scroll bar position
+ * @param top null to not change
+ * @param left null to not change
  */
 function scrollTo(top: number | null = 0, left: number | null = 0) {
     if (!tableContainerRef.value) return;
@@ -1193,12 +1196,12 @@ function scrollTo(top: number | null = 0, left: number | null = 0) {
     if (left !== null) tableContainerRef.value.scrollLeft = left;
 }
 
-/** 获取当前状态的表格数据 */
+/** get current table data */
 function getTableData() {
     return toRaw(dataSourceCopy.value);
 }
 
-/** 获取当前排序列的信息 */
+/** get current sort info */
 function getSortColumns(): Partial<SortState<DT>>[] {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];
@@ -1207,7 +1210,7 @@ function getSortColumns(): Partial<SortState<DT>>[] {
 
 /** click expended icon to toggleg expand row */
 function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
-    const isExpand = !row.__EXPANDED__;
+    const isExpand = row.__EXPANDED__ === col ? !row.__EXPANDED__ : true;
     setRowExpand(row, isExpand, { col });
 }
 
@@ -1230,20 +1233,33 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
         console.warn('expandRow failed.rowKey:', rowKey);
         return;
     }
+
+    // delete other expanded row below the target row
+    for (let i = index + 1; i < dataSourceCopy.value.length; i++) {
+        const item = dataSourceCopy.value[i];
+        const rowKey = item.__ROW_KEY__;
+        if (rowKey?.startsWith(EXPANDED_ROW_KEY_PREFIX)) {
+            dataSourceCopy.value.splice(i, 1);
+            i--;
+        } else {
+            break;
+        }
+    }
+
     const row = dataSourceCopy.value[index];
     const col = data?.col || null;
+
     if (expand) {
-        // insert new row
+        // insert new expanded row
         const newExpandRow: ExpandedRow = {
-            __ROW_KEY__: 'expand-' + rowKey,
+            __ROW_KEY__: EXPANDED_ROW_KEY_PREFIX + rowKey,
             __EXPANDED_TRIGGER_ROW__: row,
             __EXPANDED_TRIGGER_COL__: col,
         };
         dataSourceCopy.value.splice(index + 1, 0, newExpandRow);
-    } else {
-        dataSourceCopy.value.splice(index + 1, 1);
     }
-    row.__EXPANDED__ = expand;
+
+    row.__EXPANDED__ = expand ? col : false;
 
     if (!data?.silent) {
         emits('toggle-row-expand', { expanded: Boolean(expand), row, col });

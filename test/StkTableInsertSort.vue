@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p>插入表格排序</p>
+        <h3>Insert Sort</h3>
         <button @click="addRow">add row</button>
 
         <StkTable
