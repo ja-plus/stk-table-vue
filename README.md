@@ -359,6 +359,15 @@ export type StkProps = {
 }
 ```
 
+#### Slots
+
+| slots | props | describe |
+| ---- | ---- | ---- |
+| `tableHeader` | `{col}` | table header slot |
+| `empty` | --| no data status |
+| `expand` |  `{col, row}` | expand row |
+
+
 #### Expose
 ```js
 defineExpose({

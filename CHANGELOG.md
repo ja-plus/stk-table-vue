@@ -4,6 +4,8 @@
   - add: expose `setRowExpand`
   - add: emit `toggle-row-expand`
   - add: `StkTableColumn['type']` `expand`
+  - add: slot `expand`
+* change: remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`
 
 ## 0.4.15
 

@@ -141,9 +141,8 @@
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td v-if="row && row.__EXPANDED_TRIGGER_ROW__" :colspan="virtualX_columnPart.length">
-                        <!-- 展开的行 -->
-                        <slot name="expand" :row="row.__EXPANDED_TRIGGER_ROW__" :col="row.__EXPANDED_TRIGGER_COL__"></slot>
+                    <td v-if="row && (row as ExpandedRow).__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
+                        <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__"></slot>
                     </td>
                     <template v-else>
                         <td
@@ -214,6 +213,7 @@ import {
     ExpandedRow,
     HighlightConfig,
     Order,
+    PrivateRowDT,
     PrivateStkTableColumn,
     SeqConfig,
     SortConfig,
@@ -236,10 +236,8 @@ import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader,
 import SortIcon from './components/SortIcon.vue';
 
 /** Generic stands for DataType */
-type DT = any & {
-    /**   */
-    __EXPANDED__?: StkTableColumn<any> | false;
-};
+type DT = any & PrivateRowDT;
+
 /** generate table instance id */
 const stkTableId = createStkTableId();
 
@@ -843,8 +841,8 @@ function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
     let key = rowKeyGenStore.get(row);
     if (!key) {
-        if (row.__ROW_KEY__) {
-            key = row.__ROW_KEY__;
+        if ((row as PrivateRowDT).__ROW_KEY__) {
+            key = (row as PrivateRowDT).__ROW_KEY__;
         } else {
             key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
         }
@@ -1236,7 +1234,7 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 
     // delete other expanded row below the target row
     for (let i = index + 1; i < dataSourceCopy.value.length; i++) {
-        const item = dataSourceCopy.value[i];
+        const item: PrivateRowDT = dataSourceCopy.value[i];
         const rowKey = item.__ROW_KEY__;
         if (rowKey?.startsWith(EXPANDED_ROW_KEY_PREFIX)) {
             dataSourceCopy.value.splice(i, 1);
@@ -1253,8 +1251,8 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
         // insert new expanded row
         const newExpandRow: ExpandedRow = {
             __ROW_KEY__: EXPANDED_ROW_KEY_PREFIX + rowKey,
-            __EXPANDED_TRIGGER_ROW__: row,
-            __EXPANDED_TRIGGER_COL__: col,
+            __EXPANDED_ROW__: row,
+            __EXPANDED_COL__: col,
         };
         dataSourceCopy.value.splice(index + 1, 0, newExpandRow);
     }

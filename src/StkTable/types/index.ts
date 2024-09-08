@@ -14,23 +14,11 @@ export type CustomCellProps<T extends Record<string, any>> = {
     colIndex: number;
 };
 
-/**
- * $*$自定义单元格渲染函数
- * @deprecated
- */
-export type CustomCellFunc<T extends Record<string, any>> = (props: CustomCellProps<T>) => VNode;
-
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
     rowIndex: number;
     colIndex: number;
 };
-
-/**
- * $*$自定义表头渲染函数
- * @deprecated
- */
-export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: CustomHeaderCellProps<T>) => VNode;
 
 /**
  * 自定义渲染单元格
@@ -108,27 +96,45 @@ export type StkTableColumn<T extends Record<string, any>> = {
 
 /** private StkTableColumn type. Add some private key */
 export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColumn<T> & {
-    /** private 父节点引用 */
+    /**
+     * 父节点引用
+     * @private
+     */
     __PARENT__?: StkTableColumn<T> | null;
-    /** private 保存计算的宽度。横向虚拟滚动用。 */
+    /**
+     * 保存计算的宽度。横向虚拟滚动用。
+     * @private
+     */
     __WIDTH__?: number;
+};
+/** private row keys */
+export type PrivateRowDT = {
+    /**
+     * Only expanded row will add this key
+     *
+     * If user define the `__ROW_KEY__` in table data, this value will be used as the row key
+     * @private
+     */
+    __ROW_KEY__: string;
+    /**
+     * if row expanded
+     * @private
+     */
+    __EXPANDED__?: boolean;
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 
-/** 排序状态 */
 export type SortState<T> = {
     dataIndex: keyof T;
     order: Order;
     sortType?: 'number' | 'string';
 };
 
-/** 唯一键 */
 export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
 
-/** 排序配置 */
 export type SortConfig<T extends Record<string, any>> = {
     /** 空值始终排在列表末尾 */
     emptyToBottom?: boolean;
@@ -152,29 +158,28 @@ export type SortConfig<T extends Record<string, any>> = {
     stringLocaleCompare?: boolean;
 };
 
-/** th td类型 */
+/** th td type */
 export const enum TagType {
     TH,
     TD,
 }
 
-/** 高亮配置 */
 export type HighlightConfig = {
-    /** 高亮持续时间(s) */
+    /** Duration of the highlight in seconds */
     duration?: number;
-    /** 高亮帧率 */
+    /** Frame rate of the highlight */
     fps?: number;
 };
 
-/** 序号列配置 */
+/**
+ * Configuration options for the sequence column.
+ */
 export type SeqConfig = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
 };
 
-/** 展开行对象 */
-export type ExpandedRow = {
-    __ROW_KEY__: string;
-    __EXPANDED_TRIGGER_ROW__: any;
-    __EXPANDED_TRIGGER_COL__: any;
+export type ExpandedRow = PrivateRowDT & {
+    __EXPANDED_ROW__: any;
+    __EXPANDED_COL__: any;
 };
