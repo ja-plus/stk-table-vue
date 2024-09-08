@@ -168,7 +168,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         customCell: ({ row }) => {
             return h('input', {
                 type: 'checkbox',
-                checked: row?.isCheckAll,
+                checked: row?.isChecked,
                 onChange: (e: any) => {
                     if (row) {
                         row.isChecked = e.target.checked;
