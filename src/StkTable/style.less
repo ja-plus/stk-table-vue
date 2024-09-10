@@ -217,6 +217,10 @@
         .padding-top-tr td {
             height: 0;
         }
+
+        .expand-cell .table-cell-wrapper {
+            white-space: nowrap;
+        }
     }
 
     &.fixed-relative-mode {
@@ -353,6 +357,7 @@
             &::before {
                 content: '';
                 display: inline-block;
+                margin: 0 2px;
                 width: 0;
                 height: 0;
                 border-left: 5px solid #757699;

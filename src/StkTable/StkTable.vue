@@ -1228,25 +1228,26 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
     } else {
         rowKey = rowKeyGen(rowKeyOrRow);
     }
-    const index = dataSourceCopy.value.findIndex(it => rowKeyGen(it) === rowKey);
+    const tempData = [...dataSourceCopy.value];
+    const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
     if (index === -1) {
         console.warn('expandRow failed.rowKey:', rowKey);
         return;
     }
 
     // delete other expanded row below the target row
-    for (let i = index + 1; i < dataSourceCopy.value.length; i++) {
-        const item: PrivateRowDT = dataSourceCopy.value[i];
+    for (let i = index + 1; i < tempData.length; i++) {
+        const item: PrivateRowDT = tempData[i];
         const rowKey = item.__ROW_KEY__;
         if (rowKey?.startsWith(EXPANDED_ROW_KEY_PREFIX)) {
-            dataSourceCopy.value.splice(i, 1);
+            tempData.splice(i, 1);
             i--;
         } else {
             break;
         }
     }
 
-    const row = dataSourceCopy.value[index];
+    const row = tempData[index];
     const col = data?.col || null;
 
     if (expand) {
@@ -1256,11 +1257,12 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
             __EXPANDED_ROW__: row,
             __EXPANDED_COL__: col,
         };
-        dataSourceCopy.value.splice(index + 1, 0, newExpandRow);
+        tempData.splice(index + 1, 0, newExpandRow);
     }
 
     row.__EXPANDED__ = expand ? col : false;
 
+    dataSourceCopy.value = tempData;
     if (!data?.silent) {
         emits('toggle-row-expand', { expanded: Boolean(expand), row, col });
     }

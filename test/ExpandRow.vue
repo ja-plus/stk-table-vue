@@ -36,7 +36,7 @@ function handleToggleRowExpand(data) {
 <template>
     <div>
         <h2>Expand Row</h2>
-        <StkTable row-key="id" style="height: 400px" :columns="columns" :data-source="data" @toggle-row-expand="handleToggleRowExpand">
+        <StkTable row-key="id" style="height: 400px" virtual :columns="columns" :data-source="data" @toggle-row-expand="handleToggleRowExpand">
             <template #expand="{ row, col }">
                 <div>
                     <h4>trigger: {{ col.title || '--' }}</h4>
