@@ -10,11 +10,6 @@ repo:
 
 [<span style="font-size: 16px;font-weight: bold;">Online Demo</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
 
-## Bug TODO:
-* [x] props.dataSource 为 shallowRef 时，高亮行不生效。(bug:2024.02.21)(resolved:0.2.3)
-* [x] 右侧固定列列宽拖动目标。（v0.4.10）
-* [] 惯性滚动优化。
-
 ## Feature TODO:
 * [x] 高亮行，单元格。
   - [x] 使用 `Web Animations API` 实现高亮。(`v0.3.4` 变更为默认值)
@@ -27,6 +22,7 @@ repo:
   - [x] 固定列阴影。
     - [x] 多级表头固定列阴影。
     - [x] sticky column 动态计算阴影位置。(`v0.4.0`)
+* [x] 列展开。(`v0.5.0`)
 * [] 列筛选。
 * [x] 斑马纹。
 * [x] 拖动更改列顺序。
@@ -44,6 +40,7 @@ repo:
   - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
 * [x] 支持配置序号列。`StkTableColumn['type']`。(`v0.3.0`)
 * [x] `props.cellHover`单元格悬浮样式。(`v0.3.2`)
+* [] 惯性滚动优化。
 
 
 ## Usage
