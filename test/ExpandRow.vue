@@ -50,10 +50,8 @@ function handleToggleRowExpand(data) {
         <h2>Expand Row</h2>
         <StkTable row-key="id" style="height: 400px" virtual :columns="columns" :data-source="data" @toggle-row-expand="handleToggleRowExpand">
             <template #expand="{ row, col }">
-                <div>
-                    <h4>trigger: {{ col.title || '--' }}</h4>
-                    <p>id: {{ row.id }}, phone: {{ row.phone }}</p>
-                </div>
+                <h4>trigger: {{ col.title || '--' }}</h4>
+                <p>id: {{ row.id }}, phone: {{ row.phone }}</p>
             </template>
         </StkTable>
     </div>

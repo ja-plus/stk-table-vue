@@ -142,9 +142,11 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
                     <td v-if="row && (row as ExpandedRow).__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
-                        <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__">
-                            {{ (row as ExpandedRow).__EXPANDED_ROW__?.[(row as ExpandedRow).__EXPANDED_COL__.dataIndex] ?? '' }}
-                        </slot>
+                        <div class="table-cell-wrapper">
+                            <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__">
+                                {{ (row as ExpandedRow).__EXPANDED_ROW__?.[(row as ExpandedRow).__EXPANDED_COL__.dataIndex] ?? '' }}
+                            </slot>
+                        </div>
                     </td>
                     <template v-else>
                         <td
