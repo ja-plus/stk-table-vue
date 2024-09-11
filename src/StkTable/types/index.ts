@@ -12,6 +12,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     cellValue: any;
     rowIndex: number;
     colIndex: number;
+    /**
+     * 当前行是否展开
+     * - 不展开: null
+     * - 展开: 返回column配置
+     */
+    expanded?: PrivateRowDT['__EXPANDED__'];
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
@@ -92,6 +98,13 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+    expandConfig?: ExpandConfig;
+};
+
+type ExpandConfig = {
+    showIcon?: boolean;
+    iconOpen?: string;
+    iconClose?: string;
 };
 
 /** private StkTableColumn type. Add some private key */
@@ -120,7 +133,7 @@ export type PrivateRowDT = {
      * if row expanded
      * @private
      */
-    __EXPANDED__?: boolean;
+    __EXPANDED__?: StkTableColumn<any> | null;
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;

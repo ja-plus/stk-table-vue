@@ -160,7 +160,7 @@
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     'expand-cell': col.type === 'expand',
-                                    expanded: col.type === 'expand' && row.__EXPANDED__ && colKeyGen(row.__EXPANDED__) === colKeyGen(col),
+                                    expanded: col.type === 'expand' && colKeyGen(row.__EXPANDED__) === colKeyGen(col),
                                 },
                             ]"
                             @click="
@@ -181,6 +181,7 @@
                                 :rowIndex="rowIndex"
                                 :colIndex="colIndex"
                                 :cellValue="row?.[col.dataIndex]"
+                                :expanded="row?.__EXPANDED__ || null"
                             />
                             <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
                                 <template v-if="col.type === 'seq'">
@@ -1260,7 +1261,7 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
         tempData.splice(index + 1, 0, newExpandRow);
     }
 
-    row.__EXPANDED__ = expand ? col : false;
+    row.__EXPANDED__ = expand ? col : null;
 
     dataSourceCopy.value = tempData;
     if (!data?.silent) {

@@ -1,11 +1,23 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { h, ref } from 'vue';
 import StkTable from '../src/StkTable/StkTable.vue';
 import { StkTableColumn } from '../src/StkTable/types';
 
 const columns = ref<StkTableColumn<any>[]>([
     { type: 'expand', dataIndex: '', width: 50, align: 'center', fixed: 'left' },
-    { type: 'expand', dataIndex: 'name', title: 'name', width: 80 },
+    {
+        type: 'expand',
+        dataIndex: 'name',
+        title: 'custom expand',
+        width: 80,
+        customCell: props => {
+            let className = 'custom-expand-icon';
+            if (props.expanded && props.expanded.dataIndex === 'name') {
+                className += ' custom-expand-icon-active';
+            }
+            return h('div', [h('span', { className }, '✈'), h('span', props.cellValue)]);
+        },
+    },
     { dataIndex: 'id', title: 'id(100px)', width: '100px' },
     { dataIndex: 'address', title: 'address' },
     { dataIndex: 'email', title: 'email' },
@@ -46,3 +58,22 @@ function handleToggleRowExpand(data) {
         </StkTable>
     </div>
 </template>
+<style scoped lang="less">
+:deep(.stk-table) {
+    .custom-expand-icon {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid;
+        transition: all 0.2s ease;
+    }
+    .custom-expand-icon-active {
+        background-color: #1890ff;
+        color: #fff;
+        transform: rotate(90deg);
+    }
+}
+</style>

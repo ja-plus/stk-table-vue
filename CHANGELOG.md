@@ -5,6 +5,7 @@
   - add: emit `toggle-row-expand`
   - add: `StkTableColumn['type']` `expand`
   - add: slot `expand`
+  - add: `StkTableColumn.customCell` new prop `expanded`
 * change: remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`
 
 ## 0.4.15
