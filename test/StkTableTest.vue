@@ -289,12 +289,23 @@ onMounted(() => {
         stkTable.value?.setHighlightDimRow(['5add'], { method: 'css', className: 'special-highlight-row', duration: 2000 });
     }, 1600);
     const interval6 = window.setInterval(() => {
-        stkTable.value?.setHighlightDimCell('6add', 'name', { className: 'special-highlight-cell', duration: 1000 });
+        stkTable.value?.setHighlightDimCell('6add', 'name', { method: 'css', className: 'special-highlight-cell', duration: 1000 });
     }, 2300);
     const interval7 = window.setInterval(() => {
-        stkTable.value?.setHighlightDimCell('7add', 'age', { className: 'special-highlight-cell-red', duration: 1500 });
+        stkTable.value?.setHighlightDimCell('7add', 'age', { method: 'css', className: 'special-highlight-cell-red', duration: 1500 });
     }, 2600);
-    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7);
+    const interval8 = window.setInterval(() => {
+        stkTable.value?.setHighlightDimCell('8add', 'name', {
+            keyframe: {
+                color: ['#fff', '#C70000', '#fff'],
+                transform: ['scale(1)', 'scale(1.2)', 'scale(1)'],
+                boxShadow: ['unset', '0 0 10px #aaa', 'unset'],
+                easing: 'cubic-bezier(.11,.1,.03,.98)',
+            },
+            duration: 1000,
+        });
+    }, 1790);
+    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7, interval8);
 
     stkTable.value?.setSelectedCell({ name: '1add' }, columns.value[2]);
 });

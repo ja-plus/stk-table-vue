@@ -133,7 +133,7 @@
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, rowIndex)]: true,
-                        expanded: row.__EXPANDED__,
+                        expanded: row?.__EXPANDED__,
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -163,7 +163,7 @@
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     'expand-cell': col.type === 'expand',
-                                    expanded: col.type === 'expand' && colKeyGen(row.__EXPANDED__) === colKeyGen(col),
+                                    expanded: col.type === 'expand' && colKeyGen(row?.__EXPANDED__) === colKeyGen(col),
                                 },
                             ]"
                             @click="
@@ -1214,7 +1214,7 @@ function getSortColumns(): Partial<SortState<DT>>[] {
 
 /** click expended icon to toggleg expand row */
 function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
-    const isExpand = row.__EXPANDED__ === col ? !row.__EXPANDED__ : true;
+    const isExpand = row?.__EXPANDED__ === col ? !row?.__EXPANDED__ : true;
     setRowExpand(row, isExpand, { col });
 }
 
@@ -1264,7 +1264,9 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
         tempData.splice(index + 1, 0, newExpandRow);
     }
 
-    row.__EXPANDED__ = expand ? col : null;
+    if (row) {
+        row.__EXPANDED__ = expand ? col : null;
+    }
 
     dataSourceCopy.value = tempData;
     if (!data?.silent) {
