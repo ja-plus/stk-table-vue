@@ -3,6 +3,8 @@ import { h, ref } from 'vue';
 import StkTable from '../src/StkTable/StkTable.vue';
 import { StkTableColumn } from '../src/StkTable/types';
 
+const virtual = ref(false);
+
 const columns = ref<StkTableColumn<any>[]>([
     { type: 'expand', dataIndex: '', width: 50, align: 'center', fixed: 'left' },
     {
@@ -15,7 +17,7 @@ const columns = ref<StkTableColumn<any>[]>([
             if (props.expanded && props.expanded.dataIndex === 'name') {
                 className += ' custom-expand-icon-active';
             }
-            return h('div', [h('span', { className }, '✈'), h('span', props.cellValue)]);
+            return h('div', { class: 'roww' }, [h('span', { className }, '✈'), h('span', props.cellValue)]);
         },
     },
     { dataIndex: 'id', title: 'id(100px)', width: '100px' },
@@ -48,10 +50,25 @@ function handleToggleRowExpand(data) {
 <template>
     <div>
         <h2>Expand Row</h2>
-        <StkTable row-key="id" style="height: 400px" virtual :columns="columns" :data-source="data" @toggle-row-expand="handleToggleRowExpand">
+        <div>
+            <label><input v-model="virtual" type="checkbox" /> virtual (fix expand row height)</label>
+        </div>
+        <StkTable
+            row-key="id"
+            style="height: 400px"
+            :virtual="virtual"
+            :columns="columns"
+            :data-source="data"
+            :expand-config="{
+                height: 80,
+            }"
+            @toggle-row-expand="handleToggleRowExpand"
+        >
             <template #expand="{ row, col }">
-                <h4>trigger: {{ col.title || '--' }}</h4>
+                <div>trigger: {{ col.title || '--' }}</div>
                 <p>id: {{ row.id }}, phone: {{ row.phone }}</p>
+                <p>name: {{ row.name }}</p>
+                <p>website: {{ row.website }}</p>
             </template>
         </StkTable>
     </div>

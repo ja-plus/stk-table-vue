@@ -234,6 +234,8 @@ export type StkProps = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
   };
+  /** 展开行配置 */
+  expandConfig?: ExpandConfig;
   /**
    * 固定头，固定列实现方式。
    * [非响应式]

@@ -98,13 +98,6 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
-    expandConfig?: ExpandConfig;
-};
-
-type ExpandConfig = {
-    showIcon?: boolean;
-    iconOpen?: string;
-    iconClose?: string;
 };
 
 /** private StkTableColumn type. Add some private key */
@@ -190,6 +183,11 @@ export type HighlightConfig = {
 export type SeqConfig = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
+};
+
+/** Configuration options for the expand column  */
+export type ExpandConfig = {
+    height?: number;
 };
 
 export type ExpandedRow = PrivateRowDT & {

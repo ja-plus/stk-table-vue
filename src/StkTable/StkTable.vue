@@ -84,7 +84,7 @@
                         @drop="onThDrop"
                         @dragover="onThDragOver"
                     >
-                        <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.rowSpan}`">
+                        <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.rowSpan }">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else-if="col.type === 'seq'">
                                 <span class="table-header-title">{{ col.title }}</span>
@@ -134,6 +134,15 @@
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, rowIndex)]: true,
                         expanded: row?.__EXPANDED__,
+                        'expanded-row': row && (row as ExpandedRow).__EXPANDED_ROW__,
+                    }"
+                    :style="{
+                        '--row-height':
+                            row &&
+                            (row as ExpandedRow).__EXPANDED_ROW__ &&
+                            virtual_on &&
+                            props.expandConfig?.height &&
+                            props.expandConfig?.height + 'px',
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -143,6 +152,7 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
                     <td v-if="row && (row as ExpandedRow).__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
+                        <!-- TODO: support wheel -->
                         <div class="table-cell-wrapper">
                             <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__">
                                 {{ (row as ExpandedRow).__EXPANDED_ROW__?.[(row as ExpandedRow).__EXPANDED_COL__.dataIndex] ?? '' }}
@@ -179,6 +189,7 @@
                             <component
                                 :is="col.customCell"
                                 v-if="col.customCell"
+                                class="table-cell-wrapper"
                                 :col="col"
                                 :row="row"
                                 :rowIndex="rowIndex"
@@ -186,7 +197,12 @@
                                 :cellValue="row?.[col.dataIndex]"
                                 :expanded="row?.__EXPANDED__ || null"
                             />
-                            <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
+                            <div
+                                v-else
+                                class="table-cell-wrapper"
+                                :class="{ 'expanded-cell-wrapper': col.type === 'expand' }"
+                                :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
+                            >
                                 <template v-if="col.type === 'seq'">
                                     {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
                                 </template>
@@ -216,6 +232,7 @@
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX } from './const';
 import {
+    ExpandConfig,
     ExpandedRow,
     HighlightConfig,
     Order,
@@ -348,6 +365,10 @@ const props = withDefaults(
         highlightConfig?: HighlightConfig;
         /** 序号列配置 */
         seqConfig?: SeqConfig;
+        /** 展开行配置 */
+        expandConfig?: {
+            height?: number;
+        };
         /**
          * 固定头，固定列实现方式。(非响应式)
          *
@@ -409,6 +430,7 @@ const props = withDefaults(
         hideHeaderTitle: false,
         highlightConfig: () => ({}),
         seqConfig: () => ({}),
+        expandConfig: () => ({}),
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
     },
