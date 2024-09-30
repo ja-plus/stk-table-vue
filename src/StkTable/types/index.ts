@@ -43,11 +43,16 @@ export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, 
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
+     * 用于区分相同dataIndex 的列。
+     * 需要自行配置colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"
+     */
+    key?: any;
+    /**
      * 列类型
      * - seq 序号列
      * - expand 展开列
      */
-    type?: 'seq' | 'expand';
+    type?: 'seq' | 'expand' | 'dragRow';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */

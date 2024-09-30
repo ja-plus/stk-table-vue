@@ -21,7 +21,7 @@ const columns = ref<StkTableColumn<any>[]>([
                 'div',
                 {
                     draggable: 'true',
-                    class: 'drag-handle',
+                    class: 'custom-drag-handle',
                     onDragstart: e => handleDragStart(e, rowIndex),
                     onDragover: e => handleDragOver(e, rowIndex),
                     onDragend: e => handleDragEnd(e),
@@ -33,6 +33,14 @@ const columns = ref<StkTableColumn<any>[]>([
                 ],
             );
         },
+    },
+    {
+        key: 'dragRow',
+        type: 'dragRow',
+        width: 50,
+        title: 'type dragRow',
+        dataIndex: 'id',
+        align: 'center',
     },
     { dataIndex: 'id', title: 'id(100px)', width: '100px' },
     { dataIndex: 'address', title: 'address' },
@@ -95,7 +103,14 @@ function handleDrop(e: DragEvent, endIndex: number) {
         <div>
             <label><input v-model="virtual" type="checkbox" /> virtual (fix expand row height)</label>
         </div>
-        <StkTable row-key="id" style="height: 300px" :virtual="virtual" :columns="columns" :data-source="data">
+        <StkTable
+            row-key="id"
+            :col-key="col => col.key || col.dataIndex"
+            style="height: 300px"
+            :virtual="virtual"
+            :columns="columns"
+            :data-source="data"
+        >
             <template #expand="{ row, col }">
                 <div>trigger: {{ col.title || '--' }}</div>
                 <p>id: {{ row.id }}, phone: {{ row.phone }}</p>
@@ -107,7 +122,7 @@ function handleDrop(e: DragEvent, endIndex: number) {
 </template>
 <style lang="less" scoped>
 :deep(.stk-table) {
-    .drag-handle {
+    .custom-drag-handle {
         display: flex;
         justify-content: center;
         height: 16px;
