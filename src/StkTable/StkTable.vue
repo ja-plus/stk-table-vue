@@ -126,13 +126,13 @@
                 </tr>
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
-                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : rowIndex)"
-                    :key="rowKey ? rowKeyGen(row) : rowIndex"
-                    :data-row-key="rowKey ? rowKeyGen(row) : rowIndex"
+                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex)"
+                    :key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
+                    :data-row-key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
                     :class="{
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
-                        [rowClassName(row, rowIndex)]: true,
+                        [rowClassName(row, virtualScroll.startIndex + rowIndex)]: true,
                         expanded: row?.__EXPANDED__,
                         'expanded-row': row && (row as ExpandedRow).__EXPANDED_ROW__,
                     }"
@@ -192,7 +192,7 @@
                                 class="table-cell-wrapper"
                                 :col="col"
                                 :row="row"
-                                :rowIndex="rowIndex"
+                                :rowIndex="virtualScroll.startIndex + rowIndex"
                                 :colIndex="colIndex"
                                 :cellValue="row?.[col.dataIndex]"
                                 :expanded="row?.__EXPANDED__ || null"
@@ -204,9 +204,9 @@
                                 :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
                             >
                                 <template v-if="col.type === 'seq'">
-                                    {{ (props.seqConfig.startIndex || 0) + rowIndex + 1 }}
+                                    {{ (props.seqConfig.startIndex || 0) + virtualScroll.startIndex + rowIndex + 1 }}
                                 </template>
-                                <span v-if="col.type === 'expand'">
+                                <span v-else-if="col.type === 'expand'">
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
                                 <template v-else>
@@ -366,9 +366,7 @@ const props = withDefaults(
         /** 序号列配置 */
         seqConfig?: SeqConfig;
         /** 展开行配置 */
-        expandConfig?: {
-            height?: number;
-        };
+        expandConfig?: ExpandConfig;
         /**
          * 固定头，固定列实现方式。(非响应式)
          *

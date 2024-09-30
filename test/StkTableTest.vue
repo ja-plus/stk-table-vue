@@ -69,6 +69,7 @@
     <StkTableMultiHeader></StkTableMultiHeader>
 
     <ExpandRow></ExpandRow>
+    <DragRow></DragRow>
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -102,6 +103,7 @@ import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import StkTableSimple from './StkTableSimple.vue';
 import DragResize from './utils/DragResize.js';
 import ExpandRow from './ExpandRow.vue';
+import DragRow from './DragRow.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
 
 const seqConfig = {

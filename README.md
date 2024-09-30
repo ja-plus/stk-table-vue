@@ -235,7 +235,9 @@ export type StkProps = {
     startIndex?: number;
   };
   /** 展开行配置 */
-  expandConfig?: ExpandConfig;
+  expandConfig?: {
+    height?: number;
+  };
   /**
    * 固定头，固定列实现方式。
    * [非响应式]

@@ -1,13 +1,20 @@
 ## 0.5.0
 
-* feature: support expand row
-  - add: expose `setRowExpand`
-  - add: emit `toggle-row-expand`
-  - add: `StkTableColumn['type']` `expand`
-  - add: slot `expand`
-  - add: `StkTableColumn.customCell` new prop `expanded`
-  - add: `props.expandConfig`
-* change: remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`
+* Feature: Support expand row.
+  - Add: Expose `setRowExpand`.
+  - Add: Emit `toggle-row-expand`.
+  - Add: `StkTableColumn['type']` `expand`.
+  - Add: Slot `expand`.
+  - Add: `StkTableColumn.customCell` new prop `expanded`.
+  - Add: `props.expandConfig`.
+* Change: 
+  - Remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`.
+  - In virtual mode, `th` `line-height` set 1.
+* Fix: 
+  - Invalid th height in virtual mode.
+  - Error seq in virtual mode.
+  - Error `rowIndex` in `StkTableColumn['customCell']` props when in virtual mode.
+
 
 ## 0.4.15
 
