@@ -383,19 +383,26 @@
         }
     }
 
-    .drag-row-cell{
+    .drag-row-cell {
+        .table-cell-wrapper {
+            display: inline-flex;
+            align-items: center;
+        }
 
         .drag-handle {
-            // display: inline-flex;
-            // align-items: center;
             cursor: grab;
             border-radius: 4px;
-            vertical-align: middle;
+
             &:hover {
                 background-color: #ddd;
             }
+
             &:active {
                 cursor: grabbing;
+            }
+
+            >svg {
+                vertical-align: -2px;
             }
         }
     }
