@@ -383,6 +383,23 @@
         }
     }
 
+    .drag-row-cell{
+
+        .drag-handle {
+            // display: inline-flex;
+            // align-items: center;
+            cursor: grab;
+            border-radius: 4px;
+            vertical-align: middle;
+            &:hover {
+                background-color: #ddd;
+            }
+            &:active {
+                cursor: grabbing;
+            }
+        }
+    }
+
     /*固定列阴影-左*/
     .fixed-cell--left {
         --shadow-rotate: 90deg;
@@ -490,8 +507,6 @@
             flex: 1;
         }
     }
-
-
 
 
 

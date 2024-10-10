@@ -174,6 +174,7 @@
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     'expand-cell': col.type === 'expand',
                                     expanded: col.type === 'expand' && colKeyGen(row?.__EXPANDED__) === colKeyGen(col),
+                                    'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
                             @click="
@@ -209,6 +210,12 @@
                                 <span v-else-if="col.type === 'expand'">
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
+                                <template v-else-if="col.type === 'dragRow'">
+                                    <DragHandle />
+                                    <span>
+                                        {{ row?.[col.dataIndex] ?? '' }}
+                                    </span>
+                                </template>
                                 <template v-else>
                                     {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
                                 </template>
@@ -257,6 +264,7 @@ import { useThDrag } from './useThDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
 import SortIcon from './components/SortIcon.vue';
+import DragHandle from './components/DragHandle.vue';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
