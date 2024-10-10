@@ -12,7 +12,7 @@ const columns = ref<StkTableColumn<any>[]>([
     {
         dataIndex: '',
         width: 100,
-        title: 'custom drag',
+        title: 'custom drag cell',
         align: 'center',
         fixed: 'left',
         customCell: props => {
@@ -24,6 +24,7 @@ const columns = ref<StkTableColumn<any>[]>([
                     class: 'drag-handle',
                     onDragstart: e => handleDragStart(e, rowIndex),
                     onDragover: e => handleDragOver(e, rowIndex),
+                    onDragleave: e => handleDragLeave(e),
                     onDragend: e => handleDragEnd(e),
                     onDrop: e => handleDrop(e, rowIndex),
                 },
@@ -58,7 +59,7 @@ function handleDragStart(e: DragEvent, startIndex: number) {
     const tr = target.closest('tr');
     // tr ?.classList.add('dragging');
     if (tr) {
-        e.dataTransfer?.setDragImage(tr, 0, 0);
+        e.dataTransfer?.setDragImage(tr, 50, 10);
         tr.style.opacity = '0.5';
     }
     if (e.dataTransfer) {
@@ -75,12 +76,35 @@ function handleDragEnd(e: DragEvent) {
 }
 function handleDragOver(e: DragEvent, endIndex: number) {
     e.preventDefault();
+    const target = e.target as HTMLElement;
+    const tr = target.closest('tr');
+
+    if (tr) {
+        tr.style.boxShadow = 'inset 0 -2px 0 0 #1d63d9';
+    }
     if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
     }
 }
 
+function handleDragLeave(e: DragEvent) {
+    e.preventDefault();
+    const target = e.target as HTMLElement;
+    if (target.classList.contains('drag-handle')) {
+        const tr = target.closest('tr');
+        if (tr) {
+            tr.style.removeProperty('box-shadow');
+        }
+    }
+}
+
 function handleDrop(e: DragEvent, endIndex: number) {
+    console.log('🚀 ~ handleDrop ~ switch index:', sourceIndex, endIndex);
+    const target = e.target as HTMLElement;
+    const tr = target.closest('tr');
+    if (tr) {
+        tr.style.removeProperty('box-shadow');
+    }
     if (sourceIndex === null) return;
     const d = [...data.value];
     const sourceData = d[sourceIndex];
@@ -111,7 +135,6 @@ function handleDrop(e: DragEvent, endIndex: number) {
         display: flex;
         justify-content: center;
         height: 16px;
-        width: 10px;
         padding: 2px;
         cursor: grab;
         border-radius: 4px;

@@ -10,27 +10,30 @@ type Params = {
  * @returns
  */
 export function useThDrag<DT extends Record<string, any>>({ props, emits }: Params) {
-    let dragStartKey: string | undefined = void 0;
-
-    function findParentTH(el: HTMLElement | Node) {
-        let n: any = el;
-        while (n) {
-            if (n.tagName === 'TH') return n;
-            n = n.parentElement;
-        }
+    function findParentTH(el: HTMLElement) {
+        // let n: any = el;
+        // while (n) {
+        //     if (n.tagName === 'TH') return n;
+        //     n = n.parentElement;
+        // }
+        return el.closest('th');
     }
     /** 开始拖动记录th位置 */
-    function onThDragStart(e: MouseEvent) {
+    function onThDragStart(e: DragEvent) {
         // const i = Array.prototype.indexOf.call(e.target.parentNode.children, e.target); // 得到是第几个子元素
-        const th = findParentTH(e.target as HTMLElement | Node);
+        const th = findParentTH(e.target as HTMLElement);
         if (!th) return;
+        const dragStartKey = th.dataset.colKey || '';
+        if (e.dataTransfer) {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', dragStartKey);
+        }
 
-        dragStartKey = th.dataset.colKey;
         emits('th-drag-start', dragStartKey);
     }
 
-    function onThDragOver(e: MouseEvent) {
-        const th = findParentTH(e.target as HTMLElement | Node);
+    function onThDragOver(e: DragEvent) {
+        const th = findParentTH(e.target as HTMLElement);
         if (!th) return;
 
         const isHeaderDraggable = th.getAttribute('draggable') === 'true';
@@ -38,13 +41,17 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits }: Para
             // 不可drag的表头不可被覆盖
             return;
         }
+        if (e.dataTransfer) {
+            e.dataTransfer.dropEffect = 'move';
+        }
         e.preventDefault();
     }
 
     /** th拖动释放时 */
-    function onThDrop(e: MouseEvent) {
-        const th = findParentTH(e.target as HTMLElement | Node);
+    function onThDrop(e: DragEvent) {
+        const th = findParentTH(e.target as HTMLElement);
         if (!th) return;
+        const dragStartKey = e.dataTransfer?.getData('text');
 
         // const i = Array.prototype.indexOf.call(th.parentNode.children, th); // 得到是第几个子元素
         if (dragStartKey !== th.dataset.colKey) {

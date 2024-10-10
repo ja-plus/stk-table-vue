@@ -4,32 +4,32 @@ import { StkTable, StkTableColumn } from '../src/StkTable/index';
 
 const columns: StkTableColumn<any>[] = [
     {
-        title: '姓名',
+        title: 'Name',
         dataIndex: 'name',
         minWidth: 100,
         width: '25%',
         fixed: 'left',
     },
     {
-        title: '年龄',
+        title: 'Age',
         dataIndex: 'age',
         fixed: 'left',
         width: '25%',
         minWidth: 200,
     },
     {
-        title: '住址',
+        title: 'Address',
         dataIndex: 'address',
         minWidth: 500,
     },
     {
-        title: '性别',
+        title: 'Gender',
         dataIndex: 'gender',
         width: '10%',
         minWidth: 50,
     },
     {
-        title: '操作',
+        title: 'Operation',
         dataIndex: 'operation',
         width: '15%',
         minWidth: 100,
@@ -40,10 +40,10 @@ const columns: StkTableColumn<any>[] = [
 const dataSource = ref(
     new Array(100).fill(0).map((_, index) => {
         return {
-            name: `张三${index}`,
+            name: `Jack ${index}`,
             age: 18 + index,
-            address: `北京市朝阳区${index}`,
-            gender: index % 2 === 0 ? '男' : '女',
+            address: `Beijing Forbidden City ${index}`,
+            gender: index % 2 === 0 ? 'male' : 'female',
         };
     }),
 );
