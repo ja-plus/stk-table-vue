@@ -10,6 +10,7 @@
 * Change: 
   - Remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`.
   - In virtual mode, `th` `line-height` set 1.
+  - change th drag dataTransfer.effectAllowed to `move`.
 * Fix: 
   - Invalid th height in virtual mode.
   - Error seq in virtual mode.
