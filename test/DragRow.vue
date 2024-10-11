@@ -98,7 +98,7 @@ function handleDragOver(e: DragEvent, endIndex: number) {
 function handleDragLeave(e: DragEvent) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    if (target.classList.contains('drag-handle')) {
+    if (target.classList.contains('custom-drag-handle')) {
         const tr = target.closest('tr');
         if (tr) {
             tr.style.removeProperty('box-shadow');
@@ -107,7 +107,6 @@ function handleDragLeave(e: DragEvent) {
 }
 
 function handleDrop(e: DragEvent, endIndex: number) {
-    console.log('🚀 ~ handleDrop ~ switch index:', sourceIndex, endIndex);
     const target = e.target as HTMLElement;
     const tr = target.closest('tr');
     if (tr) {
