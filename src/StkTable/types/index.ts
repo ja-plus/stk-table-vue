@@ -51,6 +51,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * 列类型
      * - seq 序号列
      * - expand 展开列
+     * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
      */
     type?: 'seq' | 'expand' | 'dragRow';
     /** 取值id */

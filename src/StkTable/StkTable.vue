@@ -116,7 +116,7 @@
             <!-- 用于虚拟滚动表格内容定位 @deprecated 有兼容问题-->
             <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
-            <tbody class="stk-tbody-main">
+            <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragleave="onTrDragLeave" @dragend="onTrDragEnd">
                 <tr v-if="virtual_on" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
@@ -148,6 +148,7 @@
                     @dblclick="e => onRowDblclick(e, row)"
                     @contextmenu="e => onRowMenu(e, row)"
                     @mouseover="e => onTrMouseOver(e, row)"
+                    @drop="e => onTrDrop(e, virtualScroll.startIndex + rowIndex)"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -211,7 +212,11 @@
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
                                 <template v-else-if="col.type === 'dragRow'">
-                                    <DragHandle />
+                                    <DragHandle
+                                        class="drag-row-handle"
+                                        draggable="true"
+                                        @dragstart="e => onTrDragStart(e, virtualScroll.startIndex + rowIndex)"
+                                    />
                                     <span>
                                         {{ row?.[col.dataIndex] ?? '' }}
                                     </span>
@@ -237,7 +242,9 @@
  * @author japlus
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
-import { DEFAULT_ROW_HEIGHT, IS_LEGACY_MODE, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX } from './const';
+import DragHandle from './components/DragHandle.vue';
+import SortIcon from './components/SortIcon.vue';
+import { DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
 import {
     ExpandConfig,
     ExpandedRow,
@@ -261,10 +268,9 @@ import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
+import { useTrDrag } from './useTrDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
-import SortIcon from './components/SortIcon.vue';
-import DragHandle from './components/DragHandle.vue';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -627,6 +633,8 @@ const getEmptyCellText = computed(() => {
 const rowKeyGenStore = new WeakMap();
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits });
+
+const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter, onTrDragLeave } = useTrDrag({ dataSourceCopy });
 
 const {
     virtualScroll,
