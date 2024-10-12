@@ -116,7 +116,7 @@
             <!-- 用于虚拟滚动表格内容定位 @deprecated 有兼容问题-->
             <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
-            <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragleave="onTrDragLeave" @dragend="onTrDragEnd">
+            <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
                 <tr v-if="virtual_on" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
@@ -634,7 +634,7 @@ const rowKeyGenStore = new WeakMap();
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits });
 
-const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter, onTrDragLeave } = useTrDrag({ dataSourceCopy });
+const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter } = useTrDrag({ dataSourceCopy });
 
 const {
     virtualScroll,

@@ -4,6 +4,9 @@ type Params = {
     dataSourceCopy: ShallowRef<any[]>;
 };
 
+/**
+ * 拖拽行
+ */
 export function useTrDrag({ dataSourceCopy }: Params) {
     let trDragFlag = false;
     function onTrDragStart(e: DragEvent, rowIndex: number) {
@@ -47,17 +50,6 @@ export function useTrDrag({ dataSourceCopy }: Params) {
         }
     }
 
-    function onTrDragLeave(e: DragEvent) {
-        // if (!trDragFlag) return;
-        // e.preventDefault();
-        // const target = e.target as HTMLElement;
-        // const tr = target.closest('tr');
-        // if (tr) {
-        //     tr.style.removeProperty('background');
-        //     isInTr = null;
-        // }
-    }
-
     function onTrDragEnd(e: DragEvent) {
         if (!trDragFlag) return;
         const target = e.target as HTMLElement;
@@ -92,7 +84,6 @@ export function useTrDrag({ dataSourceCopy }: Params) {
         onTrDragOver,
         onTrDrop,
         onTrDragEnter,
-        onTrDragLeave,
         onTrDragEnd,
     };
 }
