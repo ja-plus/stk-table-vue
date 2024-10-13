@@ -212,11 +212,7 @@
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
                                 <template v-else-if="col.type === 'dragRow'">
-                                    <DragHandle
-                                        class="drag-row-handle"
-                                        draggable="true"
-                                        @dragstart="e => onTrDragStart(e, virtualScroll.startIndex + rowIndex)"
-                                    />
+                                    <DragHandle @dragstart="e => onTrDragStart(e, virtualScroll.startIndex + rowIndex)" />
                                     <span>
                                         {{ row?.[col.dataIndex] ?? '' }}
                                     </span>

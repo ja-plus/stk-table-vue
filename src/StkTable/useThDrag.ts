@@ -11,11 +11,6 @@ type Params = {
  */
 export function useThDrag<DT extends Record<string, any>>({ props, emits }: Params) {
     function findParentTH(e: DragEvent) {
-        // let n: any = el;
-        // while (n) {
-        //     if (n.tagName === 'TH') return n;
-        //     n = n.parentElement;
-        // }
         const el = e.target as HTMLElement;
         return el.closest('th');
     }

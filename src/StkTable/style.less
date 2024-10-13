@@ -41,6 +41,9 @@
     --fixed-col-shadow-color-from: rgba(0, 0, 0, 0.1);
     --fixed-col-shadow-color-to: rgba(0, 0, 0, 0);
 
+    /** 拖动行hover背景 */
+    --drag-handle-hover-color: #d0d1e0;
+
     position: relative;
     overflow: auto;
     display: flex;
@@ -82,6 +85,8 @@
 
         --fixed-col-shadow-color-from: rgba(135, 135, 156, 0.1);
         --fixed-col-shadow-color-to: rgba(135, 135, 156, 0);
+
+        --drag-handle-hover-color: #5d6064;
 
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
@@ -394,7 +399,7 @@
             border-radius: 4px;
 
             &:hover {
-                background-color: #ddd;
+                background-color: var(--drag-handle-hover-color);
             }
 
             &:active {
@@ -405,6 +410,14 @@
                 vertical-align: -2px;
             }
         }
+    }
+
+    .tr-dragging {
+        opacity: .5;
+    }
+
+    .tr-dragging-over {
+        background-color: var(--tr-hover-bgc);
     }
 
     /*固定列阴影-左*/

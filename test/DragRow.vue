@@ -4,7 +4,10 @@ import StkTable from '../src/StkTable/StkTable.vue';
 import { StkTableColumn } from '../src/StkTable/types';
 import { shallowRef } from 'vue';
 
-const virtual = ref(false);
+const p = ref({
+    virtual: false,
+    theme: 'light',
+});
 
 let sourceIndex: number | null = null;
 
@@ -29,17 +32,21 @@ const columns = ref<StkTableColumn<any>[]>([
                     onDrop: e => handleDrop(e, rowIndex),
                 },
                 [
-                    h('div', { class: 'group' }, [h('div', { class: 'point' }), h('div', { class: 'point' }), h('div', { class: 'point' })]),
-                    h('div', { class: 'group' }, [h('div', { class: 'point' }), h('div', { class: 'point' }), h('div', { class: 'point' })]),
+                    h('div', { class: 'point' }),
+                    h('div', { class: 'point' }),
+                    h('div', { class: 'point' }),
+                    h('div', { class: 'point' }),
+                    h('div', { class: 'point' }),
+                    h('div', { class: 'point' }),
                 ],
             );
         },
     },
     {
         key: 'dragRow',
-        type: 'dragRow',
-        width: 50,
-        title: 'type dragRow',
+        type: 'dragRow', // type dragRow
+        width: 150,
+        title: 'type="dragRow"',
         dataIndex: 'id',
         align: 'center',
     },
@@ -124,14 +131,18 @@ function handleDrop(e: DragEvent, endIndex: number) {
     <div>
         <h2>Drag Row</h2>
         <div>
-            <label><input v-model="virtual" type="checkbox" /> virtual (fix expand row height)</label>
+            <label><input v-model="p.virtual" type="checkbox" /> virtual (fix expand row height)</label>
+            <label><input v-model="p.theme" name="theme" type="radio" value="light" /> light</label>
+            <label><input v-model="p.theme" name="theme" type="radio" value="dark" /> dark</label>
         </div>
         <StkTable
+            v-model:columns="columns"
+            :theme="p.theme"
             row-key="id"
-            :col-key="col => col.key || col.dataIndex"
             style="height: 300px"
-            :virtual="virtual"
-            :columns="columns"
+            header-drag
+            :col-key="col => col.key || col.dataIndex"
+            :virtual="p.virtual"
             :data-source="data"
         >
             <template #expand="{ row, col }">
@@ -146,28 +157,37 @@ function handleDrop(e: DragEvent, endIndex: number) {
 <style lang="less" scoped>
 :deep(.stk-table) {
     .custom-drag-handle {
-        display: flex;
-        justify-content: center;
         height: 16px;
         padding: 2px;
         cursor: grab;
         border-radius: 4px;
+        position: relative;
         &:hover {
             background-color: #ddd;
         }
-        .group {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            .point {
-                width: 3px;
-                height: 3px;
-                border-radius: 50%;
-                background-color: #888;
+        .point {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #888;
+            position: absolute;
+            &:nth-child(2) {
+                left: 8px;
             }
-        }
-        .group + .group {
-            margin-left: 2px;
+            &:nth-child(3) {
+                top: 8px;
+            }
+            &:nth-child(4) {
+                left: 8px;
+                top: 8px;
+            }
+            &:nth-child(5) {
+                top: 14px;
+            }
+            &:nth-child(6) {
+                top: 14px;
+                left: 8px;
+            }
         }
     }
 }

@@ -4,22 +4,34 @@ type Params = {
     dataSourceCopy: ShallowRef<any[]>;
 };
 
+const TR_DRAGGING_CLASS = 'tr-dragging';
+const TR_DRAG_OVER_CLASS = 'tr-dragging-over';
+const DATA_TRANSFER_FORMAT = 'text/plain';
+
 /**
  * 拖拽行
  */
 export function useTrDrag({ dataSourceCopy }: Params) {
     let trDragFlag = false;
-    function onTrDragStart(e: DragEvent, rowIndex: number) {
+
+    function getClosestTr(e: DragEvent) {
         const target = e.target as HTMLElement;
         const tr = target?.closest('tr');
+        return tr;
+    }
+
+    function onTrDragStart(e: DragEvent, rowIndex: number) {
+        const tr = getClosestTr(e);
         if (tr) {
-            e.dataTransfer?.setDragImage(tr, 0, 0);
-            tr.style.opacity = '0.5';
+            const trRect = tr.getBoundingClientRect();
+            const x = e.clientX - (trRect.left ?? 0);
+            e.dataTransfer?.setDragImage(tr, x, trRect.height / 2);
+            tr.classList.add(TR_DRAGGING_CLASS);
         }
         const dt = e.dataTransfer;
         if (dt) {
             dt.effectAllowed = 'move';
-            dt.setData('text/plain', rowIndex.toString());
+            dt.setData(DATA_TRANSFER_FORMAT, String(rowIndex));
         }
         trDragFlag = true;
     }
@@ -38,27 +50,25 @@ export function useTrDrag({ dataSourceCopy }: Params) {
     function onTrDragEnter(e: DragEvent) {
         if (!trDragFlag) return;
         e.preventDefault();
-        const target = e.target as HTMLElement;
-        const tr = target.closest('tr');
+        const tr = getClosestTr(e);
         if (oldTr && oldTr !== tr) {
             // 两个tr不一样说明移动到了另一个tr中
-            oldTr.style.removeProperty('background');
+            oldTr.classList.remove(TR_DRAG_OVER_CLASS);
         }
         if (tr) {
             oldTr = tr;
-            tr.style.background = 'var(--tr-hover-bgc)';
+            tr.classList.add(TR_DRAG_OVER_CLASS);
         }
     }
 
     function onTrDragEnd(e: DragEvent) {
         if (!trDragFlag) return;
-        const target = e.target as HTMLElement;
-        const tr = target.closest('tr');
+        const tr = getClosestTr(e);
         if (tr) {
-            tr.style.opacity = '1';
+            tr.classList.remove(TR_DRAGGING_CLASS);
         }
         if (oldTr) {
-            oldTr.style.removeProperty('background');
+            oldTr.classList.remove(TR_DRAG_OVER_CLASS);
             oldTr = null;
         }
         trDragFlag = false;
@@ -66,24 +76,26 @@ export function useTrDrag({ dataSourceCopy }: Params) {
 
     function onTrDrop(e: DragEvent, rowIndex: number) {
         if (!trDragFlag) return;
-
         const dt = e.dataTransfer;
-        if (dt) {
-            const sourceIndex = parseInt(dt.getData('text/plain'), 10);
-            const endIndex = rowIndex;
-            if (sourceIndex !== endIndex) {
-                const temp = dataSourceCopy.value[sourceIndex];
-                dataSourceCopy.value.splice(sourceIndex, 1);
-                dataSourceCopy.value.splice(endIndex, 0, temp);
-                dataSourceCopy.value = [...dataSourceCopy.value];
-            }
-        }
+        if (!dt) return;
+
+        const sourceIndex = Number(dt.getData(DATA_TRANSFER_FORMAT));
+        dt.clearData(DATA_TRANSFER_FORMAT);
+        const endIndex = rowIndex;
+        if (sourceIndex === endIndex) return;
+
+        const dataTemp = [...dataSourceCopy.value];
+        const temp = dataTemp[sourceIndex];
+        dataTemp.splice(sourceIndex, 1);
+        dataTemp.splice(endIndex, 0, temp);
+        dataSourceCopy.value = [...dataTemp];
     }
+
     return {
         onTrDragStart,
+        onTrDragEnter,
         onTrDragOver,
         onTrDrop,
-        onTrDragEnter,
         onTrDragEnd,
     };
 }
