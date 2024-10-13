@@ -6,7 +6,7 @@ import { shallowRef } from 'vue';
 
 const p = ref({
     virtual: false,
-    theme: 'light',
+    theme: 'light' as 'light' | 'dark',
 });
 
 let sourceIndex: number | null = null;
