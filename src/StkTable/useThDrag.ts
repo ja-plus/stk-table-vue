@@ -1,15 +1,17 @@
-import { StkTableColumn } from './types';
+import { ComputedRef } from 'vue';
+import { StkTableColumn, UniqKey } from './types';
 
-type Params = {
+type Params<T extends Record<string, any>> = {
     props: any;
     emits: any;
+    colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
 };
 /**
  * 列顺序拖动
  * @param param0
  * @returns
  */
-export function useThDrag<DT extends Record<string, any>>({ props, emits }: Params) {
+export function useThDrag<DT extends Record<string, any>>({ props, emits, colKeyGen }: Params<DT>) {
     function findParentTH(e: DragEvent) {
         const el = e.target as HTMLElement;
         return el.closest('th');
@@ -49,9 +51,26 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits }: Para
         const dragStartKey = e.dataTransfer?.getData('text');
 
         if (dragStartKey !== th.dataset.colKey) {
-            emits('col-order-change', dragStartKey, th.dataset.colKey);
+            handleColOrderChange(dragStartKey, th.dataset.colKey);
         }
         emits('th-drop', th.dataset.colKey);
+    }
+
+    /** 列拖动交换顺序 */
+    function handleColOrderChange(dragStartKey: string | undefined, dragEndKey: string | undefined) {
+        if (!dragStartKey || !dragEndKey) return;
+        const columns = [...props.columns];
+
+        const dragStartIndex = columns.findIndex(col => colKeyGen.value(col) === dragStartKey);
+        const dragEndIndex = columns.findIndex(col => colKeyGen.value(col) === dragEndKey);
+
+        if (dragStartIndex === -1 || dragEndIndex === -1) return;
+        const dragStartCol = columns[dragStartIndex];
+        columns.splice(dragStartIndex, 1);
+        columns.splice(dragEndIndex, 0, dragStartCol);
+
+        emits('col-order-change', dragStartKey, dragEndKey);
+        emits('update:columns', columns);
     }
 
     const headerDragProp = props.headerDrag;

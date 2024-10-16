@@ -11,6 +11,8 @@
   - Remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`.
   - In virtual mode, `th` `line-height` set 1.
   - change th drag dataTransfer.effectAllowed to `move`.
+* ⭐**Break Change**
+  - If `props.headerDrag` is `true`, in this version, you needn't set `@col-order-change` to change columns order. Only set props.columns to `v-model:columns` will work.
 * Fix: 
   - Invalid th height in virtual mode.
   - Error seq in virtual mode.

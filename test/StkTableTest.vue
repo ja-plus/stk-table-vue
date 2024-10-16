@@ -61,6 +61,7 @@
             @cell-selected="onCellSelected"
         ></StkTable>
     </div>
+    <hr />
     <!-- <div>
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
@@ -180,6 +181,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
             });
         },
     },
+    { type: 'dragRow', width: 40, fixed: 'left' },
     {
         type: 'seq',
         dataIndex: 'seq',
@@ -376,14 +378,14 @@ function handleSortChange(col, order) {
     console.log('排序改变事件触发：', col, order);
 }
 function onColOrderChange(sourceKey, targetKey) {
-    console.log(sourceKey, targetKey);
-    const sourceIndex = columns.value.findIndex(it => it.dataIndex === sourceKey);
-    const targetIndex = columns.value.findIndex(it => it.dataIndex === targetKey);
-    // delete
-    const deleteEle = columns.value.splice(sourceIndex, 1);
-    // insert
-    columns.value.splice(targetIndex, 0, deleteEle[0]);
-    columns.value = [...columns.value];
+    console.log('onColOrderChange:', sourceKey, targetKey);
+    // const sourceIndex = columns.value.findIndex(it => it.dataIndex === sourceKey);
+    // const targetIndex = columns.value.findIndex(it => it.dataIndex === targetKey);
+    // // delete
+    // const deleteEle = columns.value.splice(sourceIndex, 1);
+    // // insert
+    // columns.value.splice(targetIndex, 0, deleteEle[0]);
+    // columns.value = [...columns.value];
 }
 // /** stkTableC列顺序变化 */
 // function onColOrderChange2(sourceIndex, targetIndex) {
@@ -503,14 +505,14 @@ function scrollAndDataToLess() {
 
 <style scoped>
 .stk-table-parent {
-    width: 700px;
+    width: 800px;
     height: 400px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
-    .stk-table {
-        flex: 1;
-    }
+}
+.stk-table {
+    flex: 1;
 }
 @keyframes my-highlight-row {
     from {

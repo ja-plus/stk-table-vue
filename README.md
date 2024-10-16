@@ -180,9 +180,10 @@ export type StkProps = {
    */
   rowClassName?: (row: any, i: number) => string;
   /**
-   * 列宽是否可拖动<br>
+   * 列宽是否可拖动(需要设置v-model:columns)<br>
    * **不要设置**列minWidth，**必须**设置width<br>
    * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+   * - 会自动更新props.columns中的with属性
    */
   colResizable?: boolean;
   /** 可拖动至最小的列宽 */
