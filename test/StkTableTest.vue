@@ -125,7 +125,7 @@ const props = ref({
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,
-    headerDrag: col => col.dataIndex !== 'name',
+    headerDrag: { mode: 'insert', disabled: col => col.dataIndex !== 'name' },
     virtual: true,
     virtualX: true,
     noDataFull: true,

@@ -206,3 +206,17 @@ export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
     // disabled?: (row: T, rowIndex: number) => boolean;
 };
+
+export type HeaderDragConfig<DT extends Record<string, any> = any> =
+    | boolean
+    | {
+          /**
+           * 列交换模式
+           * - none - 不做任何事
+           * - insert - 插入(默认值)
+           * - swap - 交换
+           */
+          mode?: 'none' | 'insert' | 'swap';
+          /** 禁用拖动的列 */
+          disabled?: (col: StkTableColumn<DT>) => boolean;
+      };

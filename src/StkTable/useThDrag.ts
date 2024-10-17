@@ -1,4 +1,4 @@
-import { ComputedRef } from 'vue';
+import { computed, ComputedRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 
 type Params<T extends Record<string, any>> = {
@@ -8,14 +8,22 @@ type Params<T extends Record<string, any>> = {
 };
 /**
  * 列顺序拖动
- * @param param0
  * @returns
  */
 export function useThDrag<DT extends Record<string, any>>({ props, emits, colKeyGen }: Params<DT>) {
-    function findParentTH(e: DragEvent) {
-        const el = e.target as HTMLElement;
-        return el.closest('th');
-    }
+    const findParentTH = (e: DragEvent) => (e.target as HTMLElement).closest('th');
+
+    const dragConfig = computed(() => {
+        const headerDrag = props.headerDrag;
+        const draggable = headerDrag !== false;
+        return {
+            draggable,
+            mode: 'insert',
+            disabled: () => !draggable,
+            ...headerDrag,
+        };
+    });
+
     /** 开始拖动记录th位置 */
     function onThDragStart(e: DragEvent) {
         const th = findParentTH(e);
@@ -59,29 +67,36 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
     /** 列拖动交换顺序 */
     function handleColOrderChange(dragStartKey: string | undefined, dragEndKey: string | undefined) {
         if (!dragStartKey || !dragEndKey) return;
-        const columns = [...props.columns];
 
-        const dragStartIndex = columns.findIndex(col => colKeyGen.value(col) === dragStartKey);
-        const dragEndIndex = columns.findIndex(col => colKeyGen.value(col) === dragEndKey);
+        if (dragConfig.value.mode !== 'none') {
+            const columns = [...props.columns];
 
-        if (dragStartIndex === -1 || dragEndIndex === -1) return;
-        const dragStartCol = columns[dragStartIndex];
-        columns.splice(dragStartIndex, 1);
-        columns.splice(dragEndIndex, 0, dragStartCol);
+            const dragStartIndex = columns.findIndex(col => colKeyGen.value(col) === dragStartKey);
+            const dragEndIndex = columns.findIndex(col => colKeyGen.value(col) === dragEndKey);
+
+            if (dragStartIndex === -1 || dragEndIndex === -1) return;
+
+            const dragStartCol = columns[dragStartIndex];
+            // if mode is none, do nothing
+            if (dragConfig.value.mode === 'swap') {
+                columns[dragStartIndex] = columns[dragEndIndex];
+                columns[dragEndIndex] = dragStartCol;
+            } else {
+                // default is insert
+                columns.splice(dragStartIndex, 1);
+                columns.splice(dragEndIndex, 0, dragStartCol);
+            }
+            emits('update:columns', columns);
+        }
 
         emits('col-order-change', dragStartKey, dragEndKey);
-        emits('update:columns', columns);
     }
-
-    const headerDragProp = props.headerDrag;
-
-    /** 是否可拖拽 */
-    const isHeaderDraggable: (col: StkTableColumn<DT>) => boolean = typeof headerDragProp === 'function' ? headerDragProp : () => headerDragProp;
 
     return {
         onThDragStart,
         onThDragOver,
         onThDrop,
-        isHeaderDraggable,
+        /** 是否可拖拽 */
+        isHeaderDraggable: dragConfig.value.disabled,
     };
 }

@@ -173,7 +173,19 @@ export type StkProps = {
   /** 单元格再次点击否可以取消选中 (cellActive=true)*/
   selectedCellRevokable?: boolean;
   /** 表头是否可拖动。支持回调函数。 */
-  headerDrag?: boolean | ((col: StkTableColumn<DT>) => boolean);
+  headerDrag?:
+    | boolean
+    | {
+        /**
+         * 列交换模式
+         * - none - 不做任何事
+         * - insert - 插入(默认值)
+         * - swap - 交换
+         */
+        mode?: 'none' | 'insert' | 'swap';
+        /** 禁用拖动的列 */
+        disabled?: (col: StkTableColumn<DT>) => boolean;
+      };
   /**
    * 给行附加className<br>
    * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
