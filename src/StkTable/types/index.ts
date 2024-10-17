@@ -200,3 +200,9 @@ export type ExpandedRow = PrivateRowDT & {
     __EXPANDED_ROW__: any;
     __EXPANDED_COL__: any;
 };
+
+/** 列拖动配置 */
+export type DragRowConfig = {
+    mode?: 'none' | 'insert' | 'swap';
+    // disabled?: (row: T, rowIndex: number) => boolean;
+};

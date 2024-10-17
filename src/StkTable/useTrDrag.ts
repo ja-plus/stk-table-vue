@@ -1,6 +1,9 @@
-import { ShallowRef } from 'vue';
+import { computed, ShallowRef } from 'vue';
+import { DragRowConfig } from './types';
 
 type Params = {
+    props: any;
+    emits: any;
     dataSourceCopy: ShallowRef<any[]>;
 };
 
@@ -12,8 +15,12 @@ const DATA_TRANSFER_FORMAT = 'text/plain';
  * 拖拽行
  * TODO: 不在虚拟滚动的情况下，从上面拖拽到下面，跨页的时候，滚动条会自适应位置。没有顶上去
  */
-export function useTrDrag({ dataSourceCopy }: Params) {
+export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
     let trDragFlag = false;
+
+    const dragRowConfig = computed<DragRowConfig>(() => {
+        return { mode: 'insert', ...props.dragRowConfig };
+    });
 
     function getClosestTr(e: DragEvent) {
         const target = e.target as HTMLElement;
@@ -79,20 +86,29 @@ export function useTrDrag({ dataSourceCopy }: Params) {
         if (!trDragFlag) return;
         const dt = e.dataTransfer;
         if (!dt) return;
-
+        const mode = dragRowConfig.value.mode;
         const sourceIndex = Number(dt.getData(DATA_TRANSFER_FORMAT));
         dt.clearData(DATA_TRANSFER_FORMAT);
         const endIndex = rowIndex;
         if (sourceIndex === endIndex) return;
 
-        const dataTemp = [...dataSourceCopy.value];
-        const temp = dataTemp[sourceIndex];
-        dataTemp.splice(sourceIndex, 1);
-        dataTemp.splice(endIndex, 0, temp);
-        dataSourceCopy.value = [...dataTemp];
+        if (mode !== 'none') {
+            const dataSourceTemp = [...dataSourceCopy.value];
+            const sourceRow = dataSourceTemp[sourceIndex];
+            if (mode === 'swap') {
+                dataSourceTemp[sourceIndex] = dataSourceTemp[endIndex];
+                dataSourceTemp[endIndex] = sourceRow;
+            } else {
+                dataSourceTemp.splice(sourceIndex, 1);
+                dataSourceTemp.splice(endIndex, 0, sourceRow);
+            }
+            dataSourceCopy.value = [...dataSourceTemp];
+        }
+        emits('row-order-change', sourceIndex, endIndex);
     }
 
     return {
+        dragRowConfig,
         onTrDragStart,
         onTrDragEnter,
         onTrDragOver,

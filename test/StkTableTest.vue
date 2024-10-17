@@ -135,6 +135,9 @@ const props = ref({
         // fps: 10,
         duration: 1,
     },
+    dragRowConfig: {
+        mode: 'insert', // 'none' | 'swap'
+    },
     fixedColShadow: true,
     smoothScroll: false,
 });

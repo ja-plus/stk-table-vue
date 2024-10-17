@@ -242,6 +242,7 @@ import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
 import {
+    DragRowConfig,
     ExpandConfig,
     ExpandedRow,
     HighlightConfig,
@@ -378,6 +379,8 @@ const props = withDefaults(
         seqConfig?: SeqConfig;
         /** 展开行配置 */
         expandConfig?: ExpandConfig;
+        /** 列拖动配置 */
+        dragRowConfig?: DragRowConfig;
         /**
          * 固定头，固定列实现方式。(非响应式)
          *
@@ -440,6 +443,7 @@ const props = withDefaults(
         highlightConfig: () => ({}),
         seqConfig: () => ({}),
         expandConfig: () => ({}),
+        dragRowConfig: () => ({}),
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
     },
@@ -531,6 +535,11 @@ const emits = defineEmits<{
      * ```(targetColKey: string)```
      */
     (e: 'th-drop', targetColKey: string): void;
+    /**
+     * 行拖动事件
+     * ```(dragStartKey: string, targetRowKey: string)```
+     */
+    (e: 'row-order-change', dragStartKey: string, targetRowKey: string): void;
     /**
      * 列宽变动时触发
      *  ```(cols: StkTableColumn<DT>)```
@@ -631,7 +640,7 @@ const rowKeyGenStore = new WeakMap();
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
 
-const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter } = useTrDrag({ dataSourceCopy });
+const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter } = useTrDrag({ props, emits, dataSourceCopy });
 
 const {
     virtualScroll,

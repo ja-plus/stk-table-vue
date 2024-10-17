@@ -239,6 +239,10 @@ export type StkProps = {
   expandConfig?: {
     height?: number;
   };
+  /** 列拖动配置 */
+  dragRowConfig?: {
+    mode?: 'none' | 'insert' | 'swap';
+  };
   /**
    * 固定头，固定列实现方式。
    * [非响应式]
