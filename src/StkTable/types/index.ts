@@ -201,12 +201,12 @@ export type ExpandedRow = PrivateRowDT & {
     __EXPANDED_COL__: any;
 };
 
-/** 列拖动配置 */
+/** drag row config */
 export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
     // disabled?: (row: T, rowIndex: number) => boolean;
 };
-
+/** header drag config */
 export type HeaderDragConfig<DT extends Record<string, any> = any> =
     | boolean
     | {
