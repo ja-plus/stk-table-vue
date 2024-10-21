@@ -4,7 +4,6 @@ import { StkTableColumn } from './types';
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
-    theadRef: Ref<HTMLElement | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
@@ -48,7 +47,7 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, theadRef, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;

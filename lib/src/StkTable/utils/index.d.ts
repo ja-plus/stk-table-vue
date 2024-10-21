@@ -1,4 +1,4 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
+import { Order, PrivateStkTableColumn, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
 
 /**
  * 对有序数组插入新数据
@@ -44,7 +44,7 @@ export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: num
  */
 export declare function getColWidth(col: StkTableColumn<any> | null): number;
 /** 获取计算后的宽度 */
-export declare function getCalculatedColWidth(col: StkTableColumn<any> | null): number;
+export declare function getCalculatedColWidth(col: PrivateStkTableColumn<any> | null): number;
 /** number列宽+px */
 export declare function transformWidthToStr(width?: string | number): string | undefined;
 /** 创建组件唯一标识 */

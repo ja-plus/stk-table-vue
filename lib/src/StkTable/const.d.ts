@@ -2,7 +2,7 @@ export declare const DEFAULT_COL_WIDTH = "100";
 export declare const DEFAULT_TABLE_HEIGHT = 100;
 export declare const DEFAULT_TABLE_WIDTH = 200;
 export declare const DEFAULT_ROW_HEIGHT = 28;
-/** 高亮背景色 */
+/** highlight background */
 export declare const HIGHLIGHT_COLOR: {
     light: {
         from: string;
@@ -13,16 +13,15 @@ export declare const HIGHLIGHT_COLOR: {
         to: string;
     };
 };
-/** 高亮持续时间 */
 export declare const HIGHLIGHT_DURATION = 2000;
-/** 高亮变更频率 */
+/** highlight change frequency 1000/30 -> 30FPS */
 export declare const HIGHLIGHT_FREQ: number;
-/** 高亮行class */
 export declare const HIGHLIGHT_ROW_CLASS = "highlight-row";
-/** 高连单元格class */
 export declare const HIGHLIGHT_CELL_CLASS = "highlight-cell";
-/** 低版本sticky兼容模式  */
+/** legacy sticky compatible mode  */
 export declare const IS_LEGACY_MODE: boolean;
-/** 默认props.smoothDefault */
+/** default props.smoothDefault */
 export declare const DEFAULT_SMOOTH_SCROLL: boolean;
 export declare const STK_ID_PREFIX = "stk";
+/** expanded row key prefix */
+export declare const EXPANDED_ROW_KEY_PREFIX = "expanded-";

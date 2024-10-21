@@ -1,11 +1,11 @@
-import { HighlightConfig, Order, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 
 /** Generic stands for DataType */
-type DT = any;
+type DT = any & PrivateRowDT;
 /**
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
- * @param {boolean} option.silent if emit current-change. default:false(not emit `current-change`)
+ * @param {boolean} option.silent if set true not emit `current-change`. default:false
  */
 declare function setCurrentRow(rowKeyOrRow: string | undefined | DT, option?: {
     silent: boolean;
@@ -34,18 +34,28 @@ declare function setSorter(dataIndex: string, order: Order, option?: {
     silent?: boolean;
     sort?: boolean;
 }): any[];
-/** 重置排序 */
 declare function resetSorter(): void;
 /**
- * 设置滚动条位置
- * @param top 传null 则不变动位置
- * @param left 传null 则不变动位置
+ * set scroll bar position
+ * @param top null to not change
+ * @param left null to not change
  */
 declare function scrollTo(top?: number | null, left?: number | null): void;
-/** 获取当前状态的表格数据 */
+/** get current table data */
 declare function getTableData(): any[];
-/** 获取当前排序列的信息 */
+/** get current sort info */
 declare function getSortColumns(): Partial<SortState<DT>>[];
+/**
+ *
+ * @param rowKeyOrRow rowKey or row
+ * @param expand expand or collapse
+ * @param data { col?: StkTableColumn<DT> }
+ * @param data.silent if set true, not emit `toggle-row-expand`, default:false
+ */
+declare function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: {
+    col?: StkTableColumn<DT>;
+    silent?: boolean;
+}): void;
 declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
@@ -106,16 +116,17 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean | undefined;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
+    headerDrag?: HeaderDragConfig | undefined;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
     rowClassName?: ((row: any, i: number) => string) | undefined;
     /**
-     * 列宽是否可拖动<br>
+     * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+     * - 会自动更新props.columns中的with属性
      */
     colResizable?: boolean | undefined;
     /** 可拖动至最小的列宽 */
@@ -146,6 +157,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     highlightConfig?: HighlightConfig | undefined;
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
+    /** 展开行配置 */
+    expandConfig?: ExpandConfig | undefined;
+    /** 列拖动配置 */
+    dragRowConfig?: DragRowConfig | undefined;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -206,6 +221,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
     seqConfig: () => {};
+    expandConfig: () => {};
+    dragRowConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
 }>, {
@@ -246,6 +263,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     scrollTo: typeof scrollTo;
     /** @see {@link getTableData} */
     getTableData: typeof getTableData;
+    /** @see {@link setRowExpand} */
+    setRowExpand: typeof setRowExpand;
 }, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any) => void;
@@ -273,7 +292,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     "col-order-change": (dragStartKey: string, targetColKey: string) => void;
     "th-drag-start": (dragStartKey: string) => void;
     "th-drop": (targetColKey: string) => void;
+    "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
     "col-resize": (cols: StkTableColumn<any>) => void;
+    "toggle-row-expand": (data: {
+        expanded: boolean;
+        row: any;
+        col: StkTableColumn<any> | null;
+    }) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
@@ -335,16 +360,17 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean | undefined;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: boolean | ((col: StkTableColumn<any>) => boolean) | undefined;
+    headerDrag?: HeaderDragConfig | undefined;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
     rowClassName?: ((row: any, i: number) => string) | undefined;
     /**
-     * 列宽是否可拖动<br>
+     * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
+     * - 会自动更新props.columns中的with属性
      */
     colResizable?: boolean | undefined;
     /** 可拖动至最小的列宽 */
@@ -375,6 +401,10 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     highlightConfig?: HighlightConfig | undefined;
     /** 序号列配置 */
     seqConfig?: SeqConfig | undefined;
+    /** 展开行配置 */
+    expandConfig?: ExpandConfig | undefined;
+    /** 列拖动配置 */
+    dragRowConfig?: DragRowConfig | undefined;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -435,6 +465,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
     seqConfig: () => {};
+    expandConfig: () => {};
+    dragRowConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
 }>>> & {
@@ -445,8 +477,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
     "onCol-resize"?: ((cols: StkTableColumn<any>) => any) | undefined;
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
-    "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
+    "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
+    "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
@@ -466,6 +499,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
+    "onToggle-row-expand"?: ((data: {
+        expanded: boolean;
+        row: any;
+        col: StkTableColumn<any> | null;
+    }) => any) | undefined;
 }, {
     width: string;
     minWidth: string;
@@ -473,6 +511,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     rowHeight: number;
     headerRowHeight: number | null;
     headless: boolean;
+    colKey: UniqKeyProp;
     stripe: boolean;
     fixedMode: boolean;
     theme: "light" | "dark";
@@ -484,7 +523,6 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     columns: StkTableColumn<any>[];
     dataSource: any[];
     rowKey: UniqKeyProp;
-    colKey: UniqKeyProp;
     emptyCellText: string | ((option: {
         row: any;
         col: StkTableColumn<any>;
@@ -498,7 +536,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     cellHover: boolean;
     cellActive: boolean;
     selectedCellRevokable: boolean;
-    headerDrag: boolean | ((col: StkTableColumn<any>) => boolean);
+    headerDrag: HeaderDragConfig;
     rowClassName: (row: any, i: number) => string;
     colResizable: boolean;
     colMinWidth: number;
@@ -510,11 +548,17 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     hideHeaderTitle: boolean | string[];
     highlightConfig: HighlightConfig;
     seqConfig: SeqConfig;
+    expandConfig: ExpandConfig;
+    dragRowConfig: DragRowConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
 }, {}>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
+    }): any;
+    expand?(_: {
+        row: any;
+        col: any;
     }): any;
     empty?(_: {}): any;
 }>;

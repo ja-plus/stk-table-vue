@@ -1,4 +1,4 @@
-import { Component, ConcreteComponent, VNode } from 'vue';
+import { Component, ConcreteComponent } from 'vue';
 
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';
@@ -13,22 +13,18 @@ export type CustomCellProps<T extends Record<string, any>> = {
     cellValue: any;
     rowIndex: number;
     colIndex: number;
+    /**
+     * 当前行是否展开
+     * - 不展开: null
+     * - 展开: 返回column配置
+     */
+    expanded?: PrivateRowDT['__EXPANDED__'];
 };
-/**
- * $*$自定义单元格渲染函数
- * @deprecated
- */
-export type CustomCellFunc<T extends Record<string, any>> = (props: CustomCellProps<T>) => VNode;
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
     rowIndex: number;
     colIndex: number;
 };
-/**
- * $*$自定义表头渲染函数
- * @deprecated
- */
-export type CustomHeaderCellFunc<T extends Record<string, any>> = (props: CustomHeaderCellProps<T>) => VNode;
 /**
  * 自定义渲染单元格
  *
@@ -42,10 +38,17 @@ export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, 
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
+     * 用于区分相同dataIndex 的列。
+     * 需要自行配置colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"
+     */
+    key?: any;
+    /**
      * 列类型
      * - seq 序号列
+     * - expand 展开列
+     * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
      */
-    type?: 'seq';
+    type?: 'seq' | 'expand' | 'dragRow';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -96,23 +99,44 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
-    /** private 父节点引用 */
+};
+/** private StkTableColumn type. Add some private key */
+export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColumn<T> & {
+    /**
+     * 父节点引用
+     * @private
+     */
     __PARENT__?: StkTableColumn<T> | null;
-    /** private 保存计算的宽度。横向虚拟滚动用。 */
+    /**
+     * 保存计算的宽度。横向虚拟滚动用。
+     * @private
+     */
     __WIDTH__?: number;
 };
+/** private row keys */
+export type PrivateRowDT = {
+    /**
+     * Only expanded row will add this key
+     *
+     * If user define the `__ROW_KEY__` in table data, this value will be used as the row key
+     * @private
+     */
+    __ROW_KEY__: string;
+    /**
+     * if row expanded
+     * @private
+     */
+    __EXPANDED__?: StkTableColumn<any> | null;
+};
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
-/** 排序状态 */
 export type SortState<T> = {
     dataIndex: keyof T;
     order: Order;
     sortType?: 'number' | 'string';
 };
-/** 唯一键 */
 export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
-/** 排序配置 */
 export type SortConfig<T extends Record<string, any>> = {
     /** 空值始终排在列表末尾 */
     emptyToBottom?: boolean;
@@ -135,21 +159,46 @@ export type SortConfig<T extends Record<string, any>> = {
      */
     stringLocaleCompare?: boolean;
 };
-/** th td类型 */
+/** th td type */
 export declare const enum TagType {
     TH = 0,
     TD = 1
 }
-/** 高亮配置 */
 export type HighlightConfig = {
-    /** 高亮持续时间(s) */
+    /** Duration of the highlight in seconds */
     duration?: number;
-    /** 高亮帧率 */
+    /** Frame rate of the highlight */
     fps?: number;
 };
-/** 序号列配置 */
+/**
+ * Configuration options for the sequence column.
+ */
 export type SeqConfig = {
     /** 序号列起始下标 用于适配分页 */
     startIndex?: number;
+};
+/** Configuration options for the expand column  */
+export type ExpandConfig = {
+    height?: number;
+};
+export type ExpandedRow = PrivateRowDT & {
+    __EXPANDED_ROW__: any;
+    __EXPANDED_COL__: any;
+};
+/** drag row config */
+export type DragRowConfig = {
+    mode?: 'none' | 'insert' | 'swap';
+};
+/** header drag config */
+export type HeaderDragConfig<DT extends Record<string, any> = any> = boolean | {
+    /**
+     * 列交换模式
+     * - none - 不做任何事
+     * - insert - 插入(默认值)
+     * - swap - 交换
+     */
+    mode?: 'none' | 'insert' | 'swap';
+    /** 禁用拖动的列 */
+    disabled?: (col: StkTableColumn<DT>) => boolean;
 };
 export {};

@@ -32,6 +32,7 @@
   --col-resize-indicator-color:#87879c;
   --fixed-col-shadow-color-from:rgba(0, 0, 0, 0.1);
   --fixed-col-shadow-color-to:rgba(0, 0, 0, 0);
+  --drag-handle-hover-color:#d0d1e0;
   position:relative;
   overflow:auto;
   display:flex;
@@ -61,6 +62,7 @@
   --col-resize-indicator-color:#5d6064;
   --fixed-col-shadow-color-from:rgba(135, 135, 156, 0.1);
   --fixed-col-shadow-color-to:rgba(135, 135, 156, 0);
+  --drag-handle-hover-color:#5d6064;
   color:#d1d1e0;
 }
 .stk-table.headless{
@@ -134,7 +136,8 @@
 }
 .stk-table.virtual .table-header-cell-wrapper{
   overflow:hidden;
-  max-height:calc(var(--header-row-height) * var(--row-span));
+  max-height:calc(var(--header-row-height) * 1);
+  max-height:calc(var(--header-row-height) * var(--row-span, 1));
 }
 .stk-table.virtual tbody td{
   height:var(--row-height);
@@ -145,6 +148,9 @@
 }
 .stk-table.virtual .padding-top-tr td{
   height:0;
+}
+.stk-table.virtual .expand-cell .table-cell-wrapper{
+  white-space:nowrap;
 }
 .stk-table.fixed-relative-mode th{
   position:relative;
@@ -235,6 +241,49 @@
 }
 .stk-table .seq-column{
   text-align:center;
+}
+.stk-table .expand-cell{
+  cursor:pointer;
+}
+.stk-table .expand-cell .table-cell-wrapper.expanded-cell-wrapper::before{
+  content:'';
+  display:inline-block;
+  margin:0 2px;
+  width:0;
+  height:0;
+  border-left:5px solid #757699;
+  border-top:4px solid transparent;
+  border-bottom:4px solid transparent;
+  transition:transform 0.2s ease;
+}
+.stk-table .expand-cell .table-cell-wrapper.expanded-cell-wrapper > span{
+  margin-left:var(--cell-padding-x);
+}
+.stk-table .expand-cell.expanded .table-cell-wrapper::before{
+  transform:rotate(90deg);
+}
+.stk-table .drag-row-cell .table-cell-wrapper{
+  display:inline-flex;
+  align-items:center;
+}
+.stk-table .drag-row-cell .drag-row-handle{
+  cursor:grab;
+  border-radius:4px;
+}
+.stk-table .drag-row-cell .drag-row-handle:hover{
+  background-color:var(--drag-handle-hover-color);
+}
+.stk-table .drag-row-cell .drag-row-handle:active{
+  cursor:grabbing;
+}
+.stk-table .drag-row-cell .drag-row-handle > svg{
+  vertical-align:-2px;
+}
+.stk-table .tr-dragging{
+  opacity:0.5;
+}
+.stk-table .tr-dragging-over{
+  background-color:var(--tr-hover-bgc);
 }
 .stk-table .fixed-cell--left{
   --shadow-rotate:90deg;
