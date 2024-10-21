@@ -88,7 +88,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
         if (!dt) return;
         const mode = dragRowConfig.value.mode;
         const sourceIndex = Number(dt.getData(DATA_TRANSFER_FORMAT));
-        dt.clearData(DATA_TRANSFER_FORMAT);
+        // dt.clearData(DATA_TRANSFER_FORMAT); // firefox not work
         const endIndex = rowIndex;
         if (sourceIndex === endIndex) return;
 

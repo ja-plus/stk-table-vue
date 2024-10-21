@@ -1,3 +1,8 @@
+## 0.5.1
+
+* Bugfix: 
+  - `DragRow` not work in firefox, because firefox not support `dataTransfer.clearData()`.
+
 ## 0.5.0
 
 * Feature: 
