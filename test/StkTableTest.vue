@@ -34,7 +34,7 @@
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
-        <StkTable
+        <!-- <StkTable
             v-bind="props"
             ref="stkTable"
             v-model:columns="columns"
@@ -59,18 +59,18 @@
             @col-order-change="onColOrderChange"
             @cell-mouseover="onCellMouseOver"
             @cell-selected="onCellSelected"
-        ></StkTable>
+        ></StkTable> -->
     </div>
     <hr />
     <!-- <div>
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
     </div> -->
-    <StkTableSimple></StkTableSimple>
+    <!-- <StkTableSimple></StkTableSimple>
     <StkTableMultiHeader></StkTableMultiHeader>
 
     <ExpandRow></ExpandRow>
-    <DragRow></DragRow>
+    <DragRow></DragRow> -->
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -85,11 +85,12 @@
         @col-order-change="onColOrderChange2"
     ></StkTableC> -->
 
-    <FixedMode></FixedMode>
-    <StkTableInsertSort />
+    <!-- <FixedMode></FixedMode>
+    <StkTableInsertSort /> -->
+    <VariableHeight />
 
     <hr />
-    <DocTable></DocTable>
+    <!-- <DocTable></DocTable> -->
 </template>
 
 <script lang="ts" setup>
@@ -106,6 +107,7 @@ import DragResize from './utils/DragResize.js';
 import ExpandRow from './ExpandRow.vue';
 import DragRow from './DragRow.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
+import VariableHeight from './VariableHeight.vue';
 
 const seqConfig = {
     startIndex: 20,

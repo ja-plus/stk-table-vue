@@ -23,6 +23,7 @@
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
+            'variable-row-height': props.autoRowHeight,
         }"
         :style="{
             '--row-height': virtualScroll.rowHeight + 'px',
@@ -127,6 +128,7 @@
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
                     :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex)"
+                    ref="trRef"
                     :key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
                     :data-row-key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
                     :class="{
@@ -296,6 +298,8 @@ const props = withDefaults(
         theme?: 'light' | 'dark';
         /** 行高 */
         rowHeight?: number;
+        /** 可变行高 */
+        autoRowHeight?: boolean;
         /** 是否高亮鼠标悬浮的行 */
         rowHover?: boolean;
         /** 是否高亮选中的行 */
@@ -568,6 +572,7 @@ const emits = defineEmits<{
 const tableContainerRef = ref<HTMLDivElement>();
 const theadRef = ref<HTMLElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
+const trRef = ref<HTMLTableRowElement[]>();
 
 /** 是否使用 relative 固定头和列 */
 const isRelativeMode = ref(IS_LEGACY_MODE ? true : props.cellFixedMode === 'relative');
@@ -657,7 +662,7 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
-} = useVirtualScroll({ tableContainerRef, props, dataSourceCopy, tableHeaderLast, tableHeaders });
+} = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen });
 
 /** 获取固定列的位置 */
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeaders });

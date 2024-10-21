@@ -1,14 +1,16 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
-import { DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
-import { StkTableColumn } from './types';
+import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
+import { StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
+    trRef: Ref<HTMLTableRowElement[] | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
+    rowKeyGen: (row: any) => UniqKey;
 };
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -57,9 +59,11 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
 export function useVirtualScroll<DT extends Record<string, any>>({
     props,
     tableContainerRef,
+    trRef,
     dataSourceCopy,
     tableHeaderLast,
     tableHeaders,
+    rowKeyGen,
 }: Option<DT>) {
     /** 表头高度 */
     const tableHeaderHeight = ref(props.headerRowHeight ?? props.rowHeight);
@@ -213,6 +217,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     let vue2ScrollYTimeout: null | number = null;
 
+    const variableHeightMap = new Map<UniqKey, number>();
+
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
         const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
@@ -224,8 +230,30 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             return;
         }
 
+        trRef.value?.forEach(tr => {
+            const rowKey = tr.dataset.rowKey;
+            if (!rowKey || variableHeightMap.has(rowKey)) return;
+            variableHeightMap.set(rowKey, tr.offsetHeight);
+        });
+        console.log('🚀 ~ updateVirtualScrollY ~ variableHeightMap:', variableHeightMap);
         let startIndex = Math.floor(sTop / rowHeight);
         let endIndex = startIndex + pageSize;
+        let autoRowHeightTop = 0;
+        if (props.autoRowHeight) {
+            for (let i = 0; i < dataSourceCopy.value.length; i++) {
+                const row = dataSourceCopy.value[i];
+                const rowKey = rowKeyGen(row);
+                const height = variableHeightMap.get(rowKey);
+                if (height) {
+                    autoRowHeightTop += height;
+                }
+                if (autoRowHeightTop >= sTop) {
+                    startIndex = i - 1;
+                    autoRowHeightTop -= height || DEFAULT_ROW_HEIGHT;
+                    break;
+                }
+            }
+        }
 
         if (props.stripe && startIndex !== 0) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
@@ -253,7 +281,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             return;
         }
 
-        const offsetTop = startIndex * rowHeight; // startIndex之前的高度
+        const offsetTop = props.autoRowHeight ? autoRowHeightTop : startIndex * rowHeight; // startIndex之前的高度
 
         /**
          * 一次滚动大于一页时表示滚动过快，回退优化
