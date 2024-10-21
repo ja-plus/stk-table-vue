@@ -1,4 +1,4 @@
-import { Component, ConcreteComponent, VNode } from 'vue';
+import { Component, ConcreteComponent } from 'vue';
 
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';

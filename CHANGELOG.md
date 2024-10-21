@@ -1,16 +1,19 @@
 ## 0.5.0
 
-* Feature: Support expand row.
-  - Add: Expose `setRowExpand`.
-  - Add: Emit `toggle-row-expand`.
-  - Add: `StkTableColumn['type']` `expand`.
-  - Add: Slot `expand`.
-  - Add: `StkTableColumn.customCell` new prop `expanded`.
-  - Add: `props.expandConfig`.
-  - Add: `props.headerDrag.mode` `props.headerDrag.disabled`
+* Feature: 
+  - Support expand row.
+    - Add: Expose `setRowExpand`.
+    - Add: Emit `toggle-row-expand`.
+    - Add: `StkTableColumn['type']` `expand`.
+    - Add: Slot `expand`.
+    - Add: `StkTableColumn.customCell` new prop `expanded`.
+    - Add: `props.expandConfig`.
+    - Add: `props.headerDrag.mode` `props.headerDrag.disabled`.
+  - Support `dragRow`
+    - Add: `StkTableColumn['type']` `dragRow`.
+    - Add: `props.dragRowConfig`.
 * Change: 
   - Remove deprecated type `CustomHeaderCellFunc` & `CustomCellFunc`.
-  - In virtual mode, `th` `line-height` set 1.
   - change th drag dataTransfer.effectAllowed to `move`.
 * ⭐**Break Change**
   - If `props.headerDrag` is `true`, in this version, you needn't set `@col-order-change` to change columns order. Only set props.columns to `v-model:columns` will work.
