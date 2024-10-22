@@ -230,30 +230,36 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             return;
         }
 
-        trRef.value?.forEach(tr => {
-            const rowKey = tr.dataset.rowKey;
-            if (!rowKey || variableHeightMap.has(rowKey)) return;
-            variableHeightMap.set(rowKey, tr.offsetHeight);
-        });
-        console.log('🚀 ~ updateVirtualScrollY ~ variableHeightMap:', variableHeightMap);
-        let startIndex = Math.floor(sTop / rowHeight);
-        let endIndex = startIndex + pageSize;
+        let startIndex = 0;
+
         let autoRowHeightTop = 0;
         if (props.autoRowHeight) {
+            trRef.value?.forEach(tr => {
+                const { rowKey } = tr.dataset;
+                if (!rowKey || variableHeightMap.has(rowKey)) return;
+                variableHeightMap.set(rowKey, tr.offsetHeight);
+            });
+
             for (let i = 0; i < dataSourceCopy.value.length; i++) {
                 const row = dataSourceCopy.value[i];
-                const rowKey = rowKeyGen(row);
+                const rowKey = String(rowKeyGen(row));
                 const height = variableHeightMap.get(rowKey);
                 if (height) {
                     autoRowHeightTop += height;
                 }
                 if (autoRowHeightTop >= sTop) {
-                    startIndex = i - 1;
-                    autoRowHeightTop -= height || DEFAULT_ROW_HEIGHT;
-                    break;
+                    if (i > 0) {
+                        startIndex = i - 1;
+                        autoRowHeightTop -= height || DEFAULT_ROW_HEIGHT;
+                        break;
+                    }
                 }
             }
+        } else {
+            startIndex = Math.floor(sTop / rowHeight);
         }
+
+        let endIndex = startIndex + pageSize;
 
         if (props.stripe && startIndex !== 0) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
@@ -281,7 +287,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             return;
         }
 
-        const offsetTop = props.autoRowHeight ? autoRowHeightTop : startIndex * rowHeight; // startIndex之前的高度
+        let offsetTop = 0;
+        if (props.autoRowHeight) {
+            offsetTop = autoRowHeightTop;
+        } else {
+            offsetTop = startIndex * rowHeight;
+        }
 
         /**
          * 一次滚动大于一页时表示滚动过快，回退优化

@@ -87,7 +87,7 @@
 
     <!-- <FixedMode></FixedMode>
     <StkTableInsertSort /> -->
-    <VariableHeight />
+    <VariableRowHeight />
 
     <hr />
     <!-- <DocTable></DocTable> -->
@@ -107,7 +107,7 @@ import DragResize from './utils/DragResize.js';
 import ExpandRow from './ExpandRow.vue';
 import DragRow from './DragRow.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
-import VariableHeight from './VariableHeight.vue';
+import VariableRowHeight from './VariableRowHeight.vue';
 
 const seqConfig = {
     startIndex: 20,
