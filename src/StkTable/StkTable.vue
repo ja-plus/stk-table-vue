@@ -23,11 +23,11 @@
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
-            'variable-row-height': props.autoRowHeight,
+            'auto-row-height': props.autoRowHeight,
         }"
         :style="{
-            '--row-height': virtualScroll.rowHeight + 'px',
-            '--header-row-height': (props.headerRowHeight || props.rowHeight) + 'px',
+            '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
+            '--header-row-height': props.headerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
             '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
         }"
@@ -296,9 +296,15 @@ const props = withDefaults(
         headless?: boolean;
         /** 主题，亮、暗 */
         theme?: 'light' | 'dark';
-        /** 行高 */
+        /**
+         * 行高
+         * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+         */
         rowHeight?: number;
-        /** 可变行高 */
+        /**
+         * 是否可变行高
+         * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
+         */
         autoRowHeight?: boolean;
         /** 是否高亮鼠标悬浮的行 */
         rowHover?: boolean;
@@ -415,7 +421,7 @@ const props = withDefaults(
         rowHover: true,
         rowActive: true,
         rowCurrentRevokable: true,
-        headerRowHeight: null,
+        headerRowHeight: DEFAULT_ROW_HEIGHT,
         virtual: false,
         virtualX: false,
         columns: () => [],

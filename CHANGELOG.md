@@ -1,12 +1,18 @@
-## 0.5.1
+## 0.6.0
 
+* Feature:
+  - Support variable row height virtual scroll.
+    - Add: `props.autoRowHeight`.
+    - Add: `props.rowHeight` means expected row height.
 * Bugfix: 
   - `DragRow` not work in firefox, because firefox not support `dataTransfer.clearData()`.
+* ⭐**Break Change**:
+  - `--header-row-height` will not extends `props.rowHeight`
 
 ## 0.5.0
 
 * Feature: 
-  - Support expand row.
+  - Support expand row:
     - Add: Expose `setRowExpand`.
     - Add: Emit `toggle-row-expand`.
     - Add: `StkTableColumn['type']` `expand`.
@@ -14,7 +20,7 @@
     - Add: `StkTableColumn.customCell` new prop `expanded`.
     - Add: `props.expandConfig`.
     - Add: `props.headerDrag.mode` `props.headerDrag.disabled`.
-  - Support `dragRow`
+  - Support drag row switch order:
     - Add: `StkTableColumn['type']` `dragRow`.
     - Add: `props.dragRowConfig`.
 * Change: 

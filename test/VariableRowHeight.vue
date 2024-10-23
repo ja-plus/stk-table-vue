@@ -21,6 +21,6 @@ const data = new Array(200).fill(0).map((it, index) => {
 <template>
     <div>
         <h3>Variable Row Height Virtual Table</h3>
-        <StkTable row-key="id" style="height: 300px" virtual auto-row-height :columns="columns" :data-source="data"></StkTable>
+        <StkTable row-key="id" style="height: 300px" :row-height="50" virtual auto-row-height :columns="columns" :data-source="data"></StkTable>
     </div>
 </template>

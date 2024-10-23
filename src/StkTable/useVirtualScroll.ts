@@ -66,7 +66,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     rowKeyGen,
 }: Option<DT>) {
     /** 表头高度 */
-    const tableHeaderHeight = ref(props.headerRowHeight ?? props.rowHeight);
+    const tableHeaderHeight = ref(props.headerRowHeight);
 
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
@@ -243,16 +243,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             for (let i = 0; i < dataSourceCopy.value.length; i++) {
                 const row = dataSourceCopy.value[i];
                 const rowKey = String(rowKeyGen(row));
-                const height = variableHeightMap.get(rowKey);
-                if (height) {
-                    autoRowHeightTop += height;
-                }
+                const height = variableHeightMap.get(rowKey) || rowHeight || DEFAULT_ROW_HEIGHT;
+                autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
-                    if (i > 0) {
-                        startIndex = i - 1;
-                        autoRowHeightTop -= height || DEFAULT_ROW_HEIGHT;
-                        break;
-                    }
+                    startIndex = i;
+                    autoRowHeightTop = autoRowHeightTop - height;
+                    break;
                 }
             }
         } else {
@@ -282,15 +278,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             window.clearTimeout(vue2ScrollYTimeout);
         }
 
-        if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
-            // 没有变化，不需要更新
-            return;
-        }
-
         let offsetTop = 0;
         if (props.autoRowHeight) {
             offsetTop = autoRowHeightTop;
         } else {
+            if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
+                // 没有变化，不需要更新
+                return;
+            }
             offsetTop = startIndex * rowHeight;
         }
 

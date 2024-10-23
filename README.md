@@ -15,9 +15,10 @@ repo:
   - [x] 使用 `Web Animations API` 实现高亮。(`v0.3.4` 变更为默认值)
   - [x] 支持配置高亮参数（持续时间，颜色，频率）。(`v0.2.9`)
   - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
-* [x] 虚拟滚动。
+* [x] 虚拟列表。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
+  - [x] 不定行高虚拟列表。（`v0.6.0`）
 * [x] 列固定。
   - [x] 固定列阴影。
     - [x] 多级表头固定列阴影。
@@ -131,8 +132,16 @@ export type StkProps = {
   headless?: boolean;
   /** 主题，亮、暗 */
   theme?: 'light' | 'dark';
-  /** 行高 */
+  /**
+   * 行高
+   * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+   */
   rowHeight?: number;
+  /**
+   * 是否可变行高
+   * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
+   */
+  autoRowHeight?: boolean;
   /** 是否高亮鼠标悬浮的行 */
   rowHover?: boolean;
   /** 是否高亮选中的行 */

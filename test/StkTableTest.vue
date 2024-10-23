@@ -34,7 +34,7 @@
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
     <div ref="stkTableParent" class="stk-table-parent">
-        <!-- <StkTable
+        <StkTable
             v-bind="props"
             ref="stkTable"
             v-model:columns="columns"
@@ -59,18 +59,18 @@
             @col-order-change="onColOrderChange"
             @cell-mouseover="onCellMouseOver"
             @cell-selected="onCellSelected"
-        ></StkTable> -->
+        ></StkTable>
     </div>
     <hr />
     <!-- <div>
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
     </div> -->
-    <!-- <StkTableSimple></StkTableSimple>
+    <StkTableSimple></StkTableSimple>
     <StkTableMultiHeader></StkTableMultiHeader>
 
     <ExpandRow></ExpandRow>
-    <DragRow></DragRow> -->
+    <DragRow></DragRow>
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -85,12 +85,12 @@
         @col-order-change="onColOrderChange2"
     ></StkTableC> -->
 
-    <!-- <FixedMode></FixedMode>
-    <StkTableInsertSort /> -->
+    <FixedMode></FixedMode>
+    <StkTableInsertSort />
     <VariableRowHeight />
 
     <hr />
-    <!-- <DocTable></DocTable> -->
+    <DocTable></DocTable>
 </template>
 
 <script lang="ts" setup>
@@ -99,14 +99,15 @@ import { StkTable, StkTableColumn } from '../src/StkTable/index';
 // import { StkTable } from '../lib/stk-table-vue.js';
 //import StkTableC from '../history/StkTableC/index.vue'; // 兼容版本 fixedLeft
 import DocTable from './DocTable.vue';
+import DragRow from './DragRow.vue';
+import ExpandRow from './ExpandRow.vue';
 import FixedMode from './FixedMode.vue';
 import StkTableInsertSort from './StkTableInsertSort.vue'; // 插入排序
 import StkTableMultiHeader from './StkTableMultiHeader.vue';
 import StkTableSimple from './StkTableSimple.vue';
 import DragResize from './utils/DragResize.js';
-import ExpandRow from './ExpandRow.vue';
-import DragRow from './DragRow.vue';
 // import StkTableHugeData from './StkTableHugeData.vue';
+import { DragRowConfig, HeaderDragConfig } from '../src/StkTable/types/index';
 import VariableRowHeight from './VariableRowHeight.vue';
 
 const seqConfig = {
@@ -127,7 +128,7 @@ const props = ref({
     sortRemote: false,
     // minWidth: 'auto',
     colResizable: true,
-    headerDrag: { mode: 'insert', disabled: col => col.dataIndex !== 'name' },
+    headerDrag: { mode: 'insert', disabled: col => col.dataIndex !== 'name' } as HeaderDragConfig,
     virtual: true,
     virtualX: true,
     noDataFull: true,
@@ -139,7 +140,7 @@ const props = ref({
     },
     dragRowConfig: {
         mode: 'insert', // 'none' | 'swap'
-    },
+    } as DragRowConfig,
     fixedColShadow: true,
     smoothScroll: false,
 });
@@ -186,7 +187,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
             });
         },
     },
-    { type: 'dragRow', width: 40, fixed: 'left' },
+    { type: 'dragRow', width: 40, fixed: 'left', dataIndex: '' },
     {
         type: 'seq',
         dataIndex: 'seq',
