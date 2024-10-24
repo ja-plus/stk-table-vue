@@ -217,7 +217,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     let vue2ScrollYTimeout: null | number = null;
 
+    /** every row actual height */
     const variableHeightMap = new Map<UniqKey, number>();
+    const getRowVariableHeight = (row: any) => {
+        const rowKey = String(rowKeyGen(row));
+        return variableHeightMap.get(rowKey) || props.rowHeight || DEFAULT_ROW_HEIGHT;
+    };
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
@@ -229,11 +234,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (!virtual_on.value) {
             return;
         }
+        const { autoRowHeight, stripe, optimizeVue2Scroll } = props;
 
         let startIndex = 0;
 
         let autoRowHeightTop = 0;
-        if (props.autoRowHeight) {
+        if (autoRowHeight) {
             trRef.value?.forEach(tr => {
                 const { rowKey } = tr.dataset;
                 if (!rowKey || variableHeightMap.has(rowKey)) return;
@@ -241,9 +247,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             });
 
             for (let i = 0; i < dataSourceCopy.value.length; i++) {
-                const row = dataSourceCopy.value[i];
-                const rowKey = String(rowKeyGen(row));
-                const height = variableHeightMap.get(rowKey) || rowHeight || DEFAULT_ROW_HEIGHT;
+                const height = getRowVariableHeight(dataSourceCopy.value[i]);
                 autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
                     startIndex = i;
@@ -257,10 +261,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
         let endIndex = startIndex + pageSize;
 
-        if (props.stripe && startIndex !== 0) {
+        if (stripe && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
-            if (startIndex % 2) {
-                startIndex -= 1; // 奇数-1变成偶数
+            startIndex -= 1; // 奇数-1变成偶数
+            if (autoRowHeight) {
+                const height = getRowVariableHeight(dataSourceCopy.value[startIndex]);
+                autoRowHeightTop -= height;
             }
         }
 
@@ -279,7 +285,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         let offsetTop = 0;
-        if (props.autoRowHeight) {
+        if (autoRowHeight) {
             offsetTop = autoRowHeightTop;
         } else {
             if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
@@ -292,7 +298,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         /**
          * 一次滚动大于一页时表示滚动过快，回退优化
          */
-        if (!props.optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
+        if (!optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // 向上滚动
             Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop });
         } else {

@@ -1098,12 +1098,12 @@ function onTableWheel(e: WheelEvent) {
     // #region ---- 控制滚动，防止出现白屏--
     const dom = tableContainerRef.value;
     if (!dom) return;
-    const { containerHeight, scrollTop, scrollHeight, rowHeight } = virtualScroll.value;
+    const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
     const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
     /** 是否滚动在下面 */
-    const isScrollBottom = scrollHeight - containerHeight - scrollTop < rowHeight;
+    const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
     /** 是否滚动在右侧 */
-    const isScrollRight = scrollWidth - containerWidth - scrollLeft < 100;
+    const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
     const { deltaY, deltaX } = e;
 
     /**

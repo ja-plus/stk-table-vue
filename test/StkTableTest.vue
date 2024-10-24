@@ -87,7 +87,7 @@
 
     <FixedMode></FixedMode>
     <StkTableInsertSort />
-    <VariableRowHeight />
+    <AutoRowHeight />
 
     <hr />
     <DocTable></DocTable>
@@ -108,7 +108,7 @@ import StkTableSimple from './StkTableSimple.vue';
 import DragResize from './utils/DragResize.js';
 // import StkTableHugeData from './StkTableHugeData.vue';
 import { DragRowConfig, HeaderDragConfig } from '../src/StkTable/types/index';
-import VariableRowHeight from './VariableRowHeight.vue';
+import AutoRowHeight from './AutoRowHeight.vue';
 
 const seqConfig = {
     startIndex: 20,
