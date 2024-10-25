@@ -8,6 +8,7 @@
   - `DragRow` not work in firefox, because firefox not support `dataTransfer.clearData()`.
 * ⭐**Break Change**:
   - `--header-row-height` will not extends `props.rowHeight`
+  - `sortConfig.stringLocaleCompare` default value change to `false`.
 
 ## 0.5.0
 

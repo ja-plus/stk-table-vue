@@ -219,9 +219,20 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** every row actual height */
     const variableHeightMap = new Map<UniqKey, number>();
-    const getRowVariableHeight = (row: any) => {
+    const getRowVariableHeight = (row: DT) => {
         const rowKey = String(rowKeyGen(row));
-        return variableHeightMap.get(rowKey) || props.rowHeight || DEFAULT_ROW_HEIGHT;
+        const storedHeight = variableHeightMap.get(rowKey);
+        let expectedHeight;
+        if (storedHeight) {
+            return storedHeight;
+        } else if ((expectedHeight = props.autoRowHeight?.expectedHeight)) {
+            if (typeof expectedHeight === 'function') {
+                return expectedHeight(row);
+            } else {
+                return expectedHeight;
+            }
+        }
+        return props.rowHeight || DEFAULT_ROW_HEIGHT;
     };
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */

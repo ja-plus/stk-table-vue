@@ -244,6 +244,7 @@ import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
 import {
+    AutoRowHeightConfig,
     DragRowConfig,
     ExpandConfig,
     ExpandedRow,
@@ -305,7 +306,7 @@ const props = withDefaults(
          * 是否可变行高
          * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
          */
-        autoRowHeight?: boolean;
+        autoRowHeight?: boolean | AutoRowHeightConfig<DT>;
         /** 是否高亮鼠标悬浮的行 */
         rowHover?: boolean;
         /** 是否高亮选中的行 */
@@ -418,6 +419,7 @@ const props = withDefaults(
         headless: false,
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
+        autoRowHeight: false,
         rowHover: true,
         rowActive: true,
         rowCurrentRevokable: true,
@@ -448,7 +450,7 @@ const props = withDefaults(
         optimizeVue2Scroll: false,
         sortConfig: () => ({
             emptyToBottom: false,
-            stringLocaleCompare: true,
+            stringLocaleCompare: false,
         }),
         hideHeaderTitle: false,
         highlightConfig: () => ({}),
