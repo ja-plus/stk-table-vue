@@ -52,17 +52,18 @@ repo:
 <script>
 import { StkTable } from 'stk-table-vue'
 import { ref } from 'vue'
-const stkTable = ref<InstanceType<typeof StkTable>>();
+const stkTableRef = ref<InstanceType<typeof StkTable>>();
+// const stkTableRef = useTemplateRef<InstanceType<typeof StkTable>>('stkTableRef'); // Vue 3.5 useTemplateRef
 
 // highlight row
-stkTable.value.setHighlightDimRow([rowKey]，{
+stkTableRef.value.setHighlightDimRow([rowKey]，{
   method: 'css'|'js'|'animation',// 默认 animation。
   className: 'custom-class-name', // method css 时生效。
   keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
   duration: 2000,// 动画时长。
 });
  // highlight cell
-stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
+stkTableRef.value.setHighlightDimCell(rowKey, colDataIndex, {
   method: 'css'|'animation',
   className:'custom-class-name', // method css 时生效。
   keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}], // method animation 时生效。
@@ -71,7 +72,7 @@ stkTable.value.setHighlightDimCell(rowKey, colDataIndex, {
 </script>
 
 <template>
-    <StkTable row-key="id" :data-source="[]" :columns="[]" />
+    <StkTable ref='stkTableRef' row-key="id" :data-source="[]" :columns="[]" />
 </template>
 
 ```
