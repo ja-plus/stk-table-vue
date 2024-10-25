@@ -4,6 +4,7 @@
   - Support variable row height virtual scroll.
     - Add: `props.autoRowHeight`.
     - Add: `props.rowHeight` means expected row height.
+    - expose `setAutoHeight` & `clearAllAutoHeight` function.
   - Export `setHighlightDimRow` & `setHighlightDimCell` option types.
 * Bugfix: 
   - `DragRow` not work in firefox, because firefox not support `dataTransfer.clearData()`.

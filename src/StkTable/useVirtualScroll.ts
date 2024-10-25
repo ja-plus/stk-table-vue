@@ -218,10 +218,22 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     let vue2ScrollYTimeout: null | number = null;
 
     /** every row actual height */
-    const variableHeightMap = new Map<UniqKey, number>();
-    const getRowVariableHeight = (row: DT) => {
+    const autoRowHeightMap = new Map<UniqKey, number>();
+    /** 如果行高度有变化，则要调用此方法清除保存的行高 */
+    const setAutoHeight = (rowKey: UniqKey, height?: number | null) => {
+        if (!height) {
+            autoRowHeightMap.delete(rowKey);
+        } else {
+            autoRowHeightMap.set(rowKey, height);
+        }
+    };
+    const clearAllAutoHeight = () => {
+        autoRowHeightMap.clear();
+    };
+
+    const getAutoRowHeight = (row: DT) => {
         const rowKey = String(rowKeyGen(row));
-        const storedHeight = variableHeightMap.get(rowKey);
+        const storedHeight = autoRowHeightMap.get(rowKey);
         let expectedHeight;
         if (storedHeight) {
             return storedHeight;
@@ -253,12 +265,12 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (autoRowHeight) {
             trRef.value?.forEach(tr => {
                 const { rowKey } = tr.dataset;
-                if (!rowKey || variableHeightMap.has(rowKey)) return;
-                variableHeightMap.set(rowKey, tr.offsetHeight);
+                if (!rowKey || autoRowHeightMap.has(rowKey)) return;
+                autoRowHeightMap.set(rowKey, tr.offsetHeight);
             });
 
             for (let i = 0; i < dataSourceCopy.value.length; i++) {
-                const height = getRowVariableHeight(dataSourceCopy.value[i]);
+                const height = getAutoRowHeight(dataSourceCopy.value[i]);
                 autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
                     startIndex = i;
@@ -276,7 +288,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
             startIndex -= 1; // 奇数-1变成偶数
             if (autoRowHeight) {
-                const height = getRowVariableHeight(dataSourceCopy.value[startIndex]);
+                const height = getAutoRowHeight(dataSourceCopy.value[startIndex]);
                 autoRowHeightTop -= height;
             }
         }
@@ -405,5 +417,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         initVirtualScrollX,
         updateVirtualScrollY,
         updateVirtualScrollX,
+        setAutoHeight,
+        clearAllAutoHeight,
     };
 }

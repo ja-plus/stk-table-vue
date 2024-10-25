@@ -18,7 +18,7 @@ repo:
 * [x] 虚拟列表。
   - [x] 纵向。
   - [x] 横向（必须设置列宽）。
-  - [x] 不定行高虚拟列表。（`v0.6.0`）
+  - [x] 支持不定行高。（`v0.6.0`）
 * [x] 列固定。
   - [x] 固定列阴影。
     - [x] 多级表头固定列阴影。
@@ -428,6 +428,10 @@ defineExpose({
   getTableData,
   /** 设置展开行*/
   setRowExpand,
+  /** 设置指定行的 auto-row-height 保存的高度，如果行高度有变化，则可以调用此方法清除或变更行高 */
+  setAutoHeight,
+  /** 清除所有 auto-row-height 保存的高度 */
+  clearAllAutoHeight,
 });
 ```
 

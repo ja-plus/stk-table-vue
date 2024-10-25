@@ -670,6 +670,8 @@ const {
     initVirtualScrollX,
     updateVirtualScrollY,
     updateVirtualScrollX,
+    setAutoHeight,
+    clearAllAutoHeight,
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen });
 
 /** 获取固定列的位置 */
@@ -1269,7 +1271,7 @@ function getSortColumns(): Partial<SortState<DT>>[] {
 }
 
 /** click expended icon to toggleg expand row */
-function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
+function toggleExpandRow(row: DT, col: StkTableColumn<DT>, expand?: boolean) {
     const isExpand = row?.__EXPANDED__ === col ? !row?.__EXPANDED__ : true;
     setRowExpand(row, isExpand, { col });
 }
@@ -1359,5 +1361,9 @@ defineExpose({
     getTableData,
     /** @see {@link setRowExpand} */
     setRowExpand,
+    /** @see {@link setAutoHeight} */
+    setAutoHeight,
+    /** @see {@link clearAllAutoHeight} */
+    clearAllAutoHeight,
 });
 </script>
