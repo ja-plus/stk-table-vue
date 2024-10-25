@@ -2,6 +2,7 @@ import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed } from 'vue';
 import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS } from './const';
 import { HighlightConfig, UniqKey } from './types';
+import { HighlightDimCellOption, HighlightDimRowOption } from './types/highlightDimOptions';
 
 type Params = {
     props: any;
@@ -152,11 +153,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
-    function setHighlightDimCell(
-        rowKeyValue: UniqKey,
-        dataIndex: string,
-        option: { className?: string; method?: 'animation' | 'css'; keyframe?: Parameters<Animatable['animate']>['0']; duration?: number } = {},
-    ) {
+    function setHighlightDimCell(rowKeyValue: UniqKey, dataIndex: string, option: HighlightDimCellOption = {}) {
         const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
@@ -180,26 +177,16 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
      */
-    function setHighlightDimRow(
-        rowKeyValues: UniqKey[],
-        option: {
-            method?: 'animation' | 'css' | 'js';
-            /** @deprecated 请使用method */
-            useCss?: boolean;
-            className?: string;
-            keyframe?: Parameters<Animatable['animate']>['0'];
-            duration?: number;
-        } = {},
-    ) {
+    function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {}) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
-        const { className, method, useCss, keyframe, duration } = {
+        const { className, method, keyframe, duration } = {
             className: HIGHLIGHT_ROW_CLASS,
             method: 'animation',
             ...defaultHighlightDimOption,
             ...option,
         };
 
-        if (method === 'css' || useCss) {
+        if (method === 'css') {
             // -------- use css keyframe
             highlightRowsInCssKeyframe(rowKeyValues, className, duration);
         } else if (method === 'animation') {

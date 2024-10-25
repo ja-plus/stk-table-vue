@@ -4,11 +4,14 @@
   - Support variable row height virtual scroll.
     - Add: `props.autoRowHeight`.
     - Add: `props.rowHeight` means expected row height.
+  - Export `setHighlightDimRow` & `setHighlightDimCell` option types.
 * Bugfix: 
   - `DragRow` not work in firefox, because firefox not support `dataTransfer.clearData()`.
 * ⭐**Break Change**:
   - `--header-row-height` will not extends `props.rowHeight`
   - `sortConfig.stringLocaleCompare` default value change to `false`.
+  - remove deprecated `stkTableRef.setHighlightDimRow` param of `option.useCss`
+
 
 ## 0.5.0
 
