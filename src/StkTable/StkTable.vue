@@ -271,7 +271,8 @@ import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useVirtualScroll } from './useVirtualScroll';
-import { createStkTableId, getCalculatedColWidth, getColWidth, howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
+import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
+import { howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;

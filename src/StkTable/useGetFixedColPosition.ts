@@ -1,6 +1,6 @@
 import { ComputedRef, ShallowRef, computed } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
-import { getCalculatedColWidth } from './utils';
+import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Params<T extends Record<string, any>> = {
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;

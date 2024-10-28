@@ -2,6 +2,7 @@
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 import { StkTableColumn } from '../src/StkTable/types';
+const stkTableRef = useTemplateRef<InstanceType<typeof StkTable>>('stkTableRef');
 const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'id',
@@ -26,8 +27,9 @@ const data = new Array(200).fill(0).map((it, index) => {
 </script>
 <template>
     <div>
-        <h3>Variable Row Height Virtual Table</h3>
+        <h3>Auto Row Height Virtual Table</h3>
         <StkTable
+            ref="stkTableRef"
             row-key="id"
             style="height: 300px"
             stripe

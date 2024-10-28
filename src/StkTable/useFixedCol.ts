@@ -1,7 +1,7 @@
 import { computed, ComputedRef, Ref, ShallowRef, shallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 import { VirtualScrollXStore } from './useVirtualScroll';
-import { getCalculatedColWidth } from './utils';
+import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Params<T extends Record<string, any>> = {
     props: any;

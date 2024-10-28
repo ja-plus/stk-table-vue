@@ -1,7 +1,7 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { StkTableColumn, UniqKey } from './types';
-import { getCalculatedColWidth } from './utils';
+import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Option<DT extends Record<string, any>> = {
     props: any;

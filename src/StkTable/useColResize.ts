@@ -1,6 +1,6 @@
 import { ComputedRef, Ref, ShallowRef, onBeforeUnmount, onMounted, ref } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
-import { getCalculatedColWidth } from './utils';
+import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type ColResizeState<DT extends Record<string, any>> = {
     /** 当前被拖动的列*/
