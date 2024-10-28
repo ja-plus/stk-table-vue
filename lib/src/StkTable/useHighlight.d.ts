@@ -1,6 +1,6 @@
 import { Ref } from 'vue';
 import { UniqKey } from './types';
-
+import { HighlightDimCellOption, HighlightDimRowOption } from './types/highlightDimOptions';
 type Params = {
     props: any;
     stkTableId: string;
@@ -11,19 +11,7 @@ type Params = {
  */
 export declare function useHighlight({ props, stkTableId, tableContainerRef }: Params): {
     highlightSteps: number | null;
-    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: {
-        method?: 'animation' | 'css' | 'js';
-        /** @deprecated 请使用method */
-        useCss?: boolean;
-        className?: string;
-        keyframe?: Parameters<Animatable['animate']>['0'];
-        duration?: number;
-    }) => void;
-    setHighlightDimCell: (rowKeyValue: UniqKey, dataIndex: string, option?: {
-        className?: string;
-        method?: 'animation' | 'css';
-        keyframe?: Parameters<Animatable['animate']>['0'];
-        duration?: number;
-    }) => void;
+    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: HighlightDimRowOption) => void;
+    setHighlightDimCell: (rowKeyValue: UniqKey, dataIndex: string, option?: HighlightDimCellOption) => void;
 };
 export {};

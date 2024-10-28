@@ -1,5 +1,4 @@
-import { Order, PrivateStkTableColumn, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
-
+import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
 /**
  * 对有序数组插入新数据
  *
@@ -37,16 +36,6 @@ export declare function strCompare(a: string, b: string, isNumber: boolean, loca
 export declare function tableSort<T extends Record<string, any>>(sortOption: SortOption<T>, order: Order, dataSource: T[], sortConfig?: SortConfig<T>): T[];
 /** 表头column配置的层级 */
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
-/**
- * 获取列宽
- *
- * 关于列宽的操作往往在横向滚动中使用。既然已经有横向滚动了，则列宽会被压缩至minWidth，所以优先取minWidth
- */
-export declare function getColWidth(col: StkTableColumn<any> | null): number;
-/** 获取计算后的宽度 */
-export declare function getCalculatedColWidth(col: PrivateStkTableColumn<any> | null): number;
 /** number列宽+px */
 export declare function transformWidthToStr(width?: string | number): string | undefined;
-/** 创建组件唯一标识 */
-export declare function createStkTableId(): string;
 export declare function getBrowsersVersion(browserName: string): number;

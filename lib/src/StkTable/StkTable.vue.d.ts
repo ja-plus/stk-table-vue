@@ -1,5 +1,4 @@
-import { DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
-
+import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
 /**
@@ -56,7 +55,7 @@ declare function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boo
     col?: StkTableColumn<DT>;
     silent?: boolean;
 }): void;
-declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -70,8 +69,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     headless?: boolean | undefined;
     /** 主题，亮、暗 */
     theme?: "light" | "dark" | undefined;
-    /** 行高 */
+    /**
+     * 行高
+     * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+     */
     rowHeight?: number | undefined;
+    /**
+     * 是否可变行高
+     * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
+     */
+    autoRowHeight?: boolean | AutoRowHeightConfig<any> | undefined;
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean | undefined;
     /** 是否高亮选中的行 */
@@ -177,55 +184,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
-}>, {
-    width: string;
-    fixedMode: boolean;
-    stripe: boolean;
-    minWidth: string;
-    maxWidth: string;
-    headless: boolean;
-    theme: string;
-    rowHeight: number;
-    rowHover: boolean;
-    rowActive: boolean;
-    rowCurrentRevokable: boolean;
-    headerRowHeight: null;
-    virtual: boolean;
-    virtualX: boolean;
-    columns: () => never[];
-    dataSource: () => never[];
-    rowKey: string;
-    colKey: string;
-    emptyCellText: string;
-    noDataFull: boolean;
-    showNoData: boolean;
-    sortRemote: boolean;
-    showHeaderOverflow: boolean;
-    showOverflow: boolean;
-    showTrHoverClass: boolean;
-    cellHover: boolean;
-    cellActive: boolean;
-    selectedCellRevokable: boolean;
-    headerDrag: boolean;
-    rowClassName: () => "";
-    colResizable: boolean;
-    colMinWidth: number;
-    bordered: boolean;
-    autoResize: boolean;
-    fixedColShadow: boolean;
-    optimizeVue2Scroll: boolean;
-    sortConfig: () => {
-        emptyToBottom: boolean;
-        stringLocaleCompare: boolean;
-    };
-    hideHeaderTitle: boolean;
-    highlightConfig: () => {};
-    seqConfig: () => {};
-    expandConfig: () => {};
-    dragRowConfig: () => {};
-    cellFixedMode: string;
-    smoothScroll: boolean;
-}>, {
+}, {
     /** @see {@link initVirtualScroll} */
     initVirtualScroll: (height?: number | undefined) => void;
     /** @see {@link initVirtualScrollX} */
@@ -237,22 +196,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     /** @see {@link setSelectedCell} */
     setSelectedCell: typeof setSelectedCell;
     /** @see {@link setHighlightDimCell} */
-    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, dataIndex: string, option?: {
-        className?: string | undefined;
-        method?: "animation" | "css" | undefined;
-        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
-        duration?: number | undefined;
-    }) => void;
+    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, dataIndex: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
     /** @see {@link setHighlightDimRow} */
-    setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: {
-        method?: "animation" | "css" | "js" | undefined;
-        useCss?: boolean | undefined;
-        className?: string | undefined;
-        keyframe?: Keyframe[] | PropertyIndexedKeyframes | null | undefined;
-        duration?: number | undefined;
-    }) => void;
+    setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: import('./types/highlightDimOptions').HighlightDimRowOption) => void;
     /** 表格排序列dataIndex */
-    sortCol: import('vue').Ref<string | number | symbol | undefined>;
+    sortCol: import('vue').Ref<string | number | symbol | undefined, string | number | symbol | undefined>;
     /** @see {@link getSortColumns} */
     getSortColumns: typeof getSortColumns;
     /** @see {@link setSorter} */
@@ -265,42 +213,15 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     getTableData: typeof getTableData;
     /** @see {@link setRowExpand} */
     setRowExpand: typeof setRowExpand;
-}, unknown, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
-    "row-click": (ev: MouseEvent, row: any) => void;
-    "current-change": (ev: MouseEvent | null, row: any, data: {
-        select: boolean;
-    }) => void;
-    "cell-selected": (ev: MouseEvent | null, data: {
-        select: boolean;
-        row: any;
-        col: StkTableColumn<any> | undefined;
-    }) => void;
-    "row-dblclick": (ev: MouseEvent, row: any) => void;
-    "header-row-menu": (ev: MouseEvent) => void;
-    "row-menu": (ev: MouseEvent, row: any) => void;
-    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
-    scroll: (ev: Event, data: {
-        startIndex: number;
-        endIndex: number;
-    }) => void;
-    "scroll-x": (ev: Event) => void;
-    "col-order-change": (dragStartKey: string, targetColKey: string) => void;
-    "th-drag-start": (dragStartKey: string) => void;
-    "th-drop": (targetColKey: string) => void;
-    "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
-    "col-resize": (cols: StkTableColumn<any>) => void;
-    "toggle-row-expand": (data: {
-        expanded: boolean;
-        row: any;
-        col: StkTableColumn<any> | null;
-    }) => void;
-    "update:columns": (cols: StkTableColumn<any>[]) => void;
-}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    /** @see {@link setAutoHeight} */
+    setAutoHeight: (rowKey: import('./types/index').UniqKey, height?: number | null | undefined) => void;
+    /** @see {@link clearAllAutoHeight} */
+    clearAllAutoHeight: () => void;
+}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
+    [x: string]: any;
+} & {
+    [x: string]: any;
+}, string, import('vue').PublicProps, Readonly<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -314,8 +235,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     headless?: boolean | undefined;
     /** 主题，亮、暗 */
     theme?: "light" | "dark" | undefined;
-    /** 行高 */
+    /**
+     * 行高
+     * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+     */
     rowHeight?: number | undefined;
+    /**
+     * 是否可变行高
+     * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
+     */
+    autoRowHeight?: boolean | AutoRowHeightConfig<any> | undefined;
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean | undefined;
     /** 是否高亮选中的行 */
@@ -421,98 +350,20 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
+}> & Readonly<{
+    [x: `on${Capitalize<any>}`]: ((...args: any[] | unknown[]) => any) | undefined;
 }>, {
-    width: string;
-    fixedMode: boolean;
-    stripe: boolean;
-    minWidth: string;
-    maxWidth: string;
-    headless: boolean;
-    theme: string;
-    rowHeight: number;
-    rowHover: boolean;
-    rowActive: boolean;
-    rowCurrentRevokable: boolean;
-    headerRowHeight: null;
-    virtual: boolean;
-    virtualX: boolean;
-    columns: () => never[];
-    dataSource: () => never[];
-    rowKey: string;
-    colKey: string;
-    emptyCellText: string;
-    noDataFull: boolean;
-    showNoData: boolean;
-    sortRemote: boolean;
-    showHeaderOverflow: boolean;
-    showOverflow: boolean;
-    showTrHoverClass: boolean;
-    cellHover: boolean;
-    cellActive: boolean;
-    selectedCellRevokable: boolean;
-    headerDrag: boolean;
-    rowClassName: () => "";
-    colResizable: boolean;
-    colMinWidth: number;
-    bordered: boolean;
-    autoResize: boolean;
-    fixedColShadow: boolean;
-    optimizeVue2Scroll: boolean;
-    sortConfig: () => {
-        emptyToBottom: boolean;
-        stringLocaleCompare: boolean;
-    };
-    hideHeaderTitle: boolean;
-    highlightConfig: () => {};
-    seqConfig: () => {};
-    expandConfig: () => {};
-    dragRowConfig: () => {};
-    cellFixedMode: string;
-    smoothScroll: boolean;
-}>>> & {
-    onScroll?: ((ev: Event, data: {
-        startIndex: number;
-        endIndex: number;
-    }) => any) | undefined;
-    "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
-    "onCol-resize"?: ((cols: StkTableColumn<any>) => any) | undefined;
-    "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
-    "onTh-drop"?: ((targetColKey: string) => any) | undefined;
-    "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
-    "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
-    "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
-    "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
-        select: boolean;
-    }) => any) | undefined;
-    "onCell-selected"?: ((ev: MouseEvent | null, data: {
-        select: boolean;
-        row: any;
-        col: StkTableColumn<any> | undefined;
-    }) => any) | undefined;
-    "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
-    "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
-    "onRow-menu"?: ((ev: MouseEvent, row: any) => any) | undefined;
-    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
-    "onScroll-x"?: ((ev: Event) => any) | undefined;
-    "onToggle-row-expand"?: ((data: {
-        expanded: boolean;
-        row: any;
-        col: StkTableColumn<any> | null;
-    }) => any) | undefined;
-}, {
     width: string;
     minWidth: string;
     maxWidth: string;
     rowHeight: number;
     headerRowHeight: number | null;
     headless: boolean;
-    colKey: UniqKeyProp;
+    autoRowHeight: boolean | AutoRowHeightConfig<any>;
     stripe: boolean;
+    optimizeVue2Scroll: boolean;
+    rowKey: UniqKeyProp;
+    colKey: UniqKeyProp;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
@@ -522,7 +373,6 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     virtualX: boolean;
     columns: StkTableColumn<any>[];
     dataSource: any[];
-    rowKey: UniqKeyProp;
     emptyCellText: string | ((option: {
         row: any;
         col: StkTableColumn<any>;
@@ -543,7 +393,6 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);
     fixedColShadow: boolean;
-    optimizeVue2Scroll: boolean;
     sortConfig: SortConfig<any>;
     hideHeaderTitle: boolean | string[];
     highlightConfig: HighlightConfig;
@@ -552,7 +401,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     dragRowConfig: DragRowConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
-}, {}>, {
+}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, any>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
     }): any;
@@ -563,23 +412,6 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<__
     empty?(_: {}): any;
 }>;
 export default _default;
-type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
-type __VLS_TypePropsToRuntimeProps<T> = {
-    [K in keyof T]-?: {} extends Pick<T, K> ? {
-        type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
-    } : {
-        type: import('vue').PropType<T[K]>;
-        required: true;
-    };
-};
-type __VLS_WithDefaults<P, D> = {
-    [K in keyof Pick<P, keyof P>]: K extends keyof D ? __VLS_Prettify<P[K] & {
-        default: D[K];
-    }> : P[K];
-};
-type __VLS_Prettify<T> = {
-    [K in keyof T]: T[K];
-} & {};
 type __VLS_WithTemplateSlots<T, S> = T & {
     new (): {
         $slots: S;

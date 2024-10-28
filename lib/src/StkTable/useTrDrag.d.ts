@@ -1,6 +1,5 @@
 import { ShallowRef } from 'vue';
 import { DragRowConfig } from './types';
-
 type Params = {
     props: any;
     emits: any;

@@ -152,6 +152,16 @@
 .stk-table.virtual .expand-cell .table-cell-wrapper{
   white-space:nowrap;
 }
+.stk-table.auto-row-height tbody td{
+  height:auto;
+  height:initial;
+}
+.stk-table.auto-row-height tbody td .table-cell-wrapper{
+  max-height:none;
+  max-height:initial;
+  overflow:visible;
+  overflow:initial;
+}
 .stk-table.fixed-relative-mode th{
   position:relative;
 }

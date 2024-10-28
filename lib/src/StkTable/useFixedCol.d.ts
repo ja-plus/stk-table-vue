@@ -1,7 +1,6 @@
 import { ComputedRef, Ref, ShallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 import { VirtualScrollXStore } from './useVirtualScroll';
-
 type Params<T extends Record<string, any>> = {
     props: any;
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
@@ -16,7 +15,7 @@ type Params<T extends Record<string, any>> = {
  */
 export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, getFixedColPosition, tableHeaders, tableHeaderLast, tableContainerRef, }: Params<DT>): {
     /** 正在被固定的列 */
-    fixedCols: ShallowRef<StkTableColumn<DT>[]>;
+    fixedCols: ShallowRef<StkTableColumn<DT>[], StkTableColumn<DT>[]>;
     /** 固定列class */
     fixedColClassMap: ComputedRef<Map<any, any>>;
     /** 滚动条变化时，更新需要展示阴影的列 */

@@ -1,12 +1,13 @@
 import { Ref, ShallowRef } from 'vue';
-import { StkTableColumn } from './types';
-
+import { StkTableColumn, UniqKey } from './types';
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
+    trRef: Ref<HTMLTableRowElement[] | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
     tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
+    rowKeyGen: (row: any) => UniqKey;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -47,8 +48,17 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, dataSourceCopy, tableHeaderLast, tableHeaders, }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, }: Option<DT>): {
     virtualScroll: Ref<{
+        containerHeight: number;
+        pageSize: number;
+        startIndex: number;
+        endIndex: number;
+        rowHeight: number;
+        offsetTop: number;
+        scrollTop: number;
+        scrollHeight: number;
+    }, VirtualScrollStore | {
         containerHeight: number;
         pageSize: number;
         startIndex: number;
@@ -59,6 +69,13 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         scrollHeight: number;
     }>;
     virtualScrollX: Ref<{
+        containerWidth: number;
+        scrollWidth: number;
+        startIndex: number;
+        endIndex: number;
+        offsetLeft: number;
+        scrollLeft: number;
+    }, VirtualScrollXStore | {
         containerWidth: number;
         scrollWidth: number;
         startIndex: number;
@@ -77,5 +94,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
     initVirtualScrollX: () => void;
     updateVirtualScrollY: (sTop?: number) => void;
     updateVirtualScrollX: (sLeft?: number) => void;
+    setAutoHeight: (rowKey: UniqKey, height?: number | null) => void;
+    clearAllAutoHeight: () => void;
 };
 export {};

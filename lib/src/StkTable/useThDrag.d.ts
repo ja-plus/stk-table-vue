@@ -1,6 +1,5 @@
 import { ComputedRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
-
 type Params<T extends Record<string, any>> = {
     props: any;
     emits: any;

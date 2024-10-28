@@ -1,6 +1,5 @@
 import { ComputedRef, Ref, ShallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
-
 type Params<DT extends Record<string, any>> = {
     props: any;
     emits: any;
@@ -12,7 +11,7 @@ type Params<DT extends Record<string, any>> = {
 };
 /** 列宽拖动 */
 export declare function useColResize<DT extends Record<string, any>>({ tableContainerRef, tableHeaderLast, colResizeIndicatorRef, props, emits, colKeyGen, fixedCols, }: Params<DT>): {
-    isColResizing: Ref<boolean>;
+    isColResizing: Ref<boolean, boolean>;
     onThResizeMouseDown: (e: MouseEvent, col: StkTableColumn<DT>, leftHandle?: boolean) => void;
 };
 export {};

@@ -2,7 +2,8 @@
 import { h } from 'vue';
 import { StkTable } from '../src/StkTable/index';
 import { StkTableColumn } from '../src/StkTable/types';
-const stkTableRef = useTemplateRef<InstanceType<typeof StkTable>>('stkTableRef');
+import { useTemplateRef } from 'vue';
+const stkTableRef = useTemplateRef('stkTableRef');
 const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'id',

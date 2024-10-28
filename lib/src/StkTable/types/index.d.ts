@@ -1,5 +1,4 @@
 import { Component, ConcreteComponent } from 'vue';
-
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';
 type Sorter<T> = boolean | ((data: T[], option: {
@@ -154,8 +153,8 @@ export type SortConfig<T extends Record<string, any>> = {
         silent?: boolean;
     };
     /**
-     * string排序是否使用 String.prototype.localCompare
-     * 默认true ($*$应该false)
+     * string sort if use `String.prototype.localCompare`
+     * default: false
      */
     stringLocaleCompare?: boolean;
 };
@@ -174,7 +173,7 @@ export type HighlightConfig = {
  * Configuration options for the sequence column.
  */
 export type SeqConfig = {
-    /** 序号列起始下标 用于适配分页 */
+    /** The initial subscript of the sequence number column is used to adapt the paging. */
     startIndex?: number;
 };
 /** Configuration options for the expand column  */
@@ -200,5 +199,9 @@ export type HeaderDragConfig<DT extends Record<string, any> = any> = boolean | {
     mode?: 'none' | 'insert' | 'swap';
     /** 禁用拖动的列 */
     disabled?: (col: StkTableColumn<DT>) => boolean;
+};
+export type AutoRowHeightConfig<DT> = {
+    /** Estimated row height */
+    expectedHeight?: number | ((row: DT, index: number) => number);
 };
 export {};

@@ -1,6 +1,5 @@
 import { ComputedRef, ShallowRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
-
 type Params<T extends Record<string, any>> = {
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
     tableHeaders: ShallowRef<StkTableColumn<T>[][]>;

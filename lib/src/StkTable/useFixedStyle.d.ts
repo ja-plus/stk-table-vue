@@ -1,7 +1,6 @@
 import { CSSProperties, ComputedRef, Ref } from 'vue';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
-
 type Options<T extends Record<string, any>> = {
     props: any;
     isRelativeMode: Ref<boolean>;
