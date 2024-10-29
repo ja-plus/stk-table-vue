@@ -295,12 +295,12 @@ export type StkProps = {
    * 低版本浏览器只能为'relative', 
    */
   cellFixedMode?: 'sticky' | 'relative';
-   /**
-     * 是否平滑滚动
-     * - default: chrome < 85 ? true : false
-     * - false: 使用 wheel 事件滚动。为了防止滚动过快导致白屏。
-     * - true: 不使用 wheel 事件滚动。滚轮滚动时更加平滑。滚动过快时会白屏。
-     */
+  /**
+   * 是否平滑滚动
+   * - default: chrome < 85 ? true : false
+   * - false: 使用 wheel 事件滚动。为了防止滚动过快导致白屏。
+   * - true: 不使用 wheel 事件滚动。滚轮滚动时更加平滑。滚动过快时会白屏。
+   */
   smoothScroll?: boolean;
 };
 ```
@@ -398,11 +398,11 @@ export type StkProps = {
      * ```(dragStartKey: string, targetRowKey: string)```
      */
     (e: 'row-order-change', dragStartKey: string, targetRowKey: string): void;
-     /**
+    /**
      * 列宽变动时触发
      */
     (e: 'col-resize', cols: StkTableColumn<DT>): void;
-     /**
+    /**
      * 展开行触发
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
      */
