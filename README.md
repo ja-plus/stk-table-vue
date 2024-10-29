@@ -49,30 +49,46 @@ repo:
 > npm install stk-table-vue
 
 ```html
-<script>
+<script setup>
 import { StkTable } from 'stk-table-vue'
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 const stkTableRef = ref<InstanceType<typeof StkTable>>();
-// const stkTableRef = useTemplateRef<InstanceType<typeof StkTable>>('stkTableRef'); // Vue 3.5 useTemplateRef
+// or Vue 3.5 useTemplateRef
+const stkTableRef = useTemplateRef('stkTableRef');
 
 // highlight row
 stkTableRef.value.setHighlightDimRow([rowKey]，{
   method: 'css'|'js'|'animation',// 默认 animation。
   className: 'custom-class-name', // method css 时生效。
-  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
   duration: 2000,// 动画时长。
 });
  // highlight cell
 stkTableRef.value.setHighlightDimCell(rowKey, colDataIndex, {
   method: 'css'|'animation',
   className:'custom-class-name', // method css 时生效。
-  keyframe: [{backgroundColor:'#aaa'},{backgroundColor: '#222'}], // method animation 时生效。
+  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}], // method animation 时生效。
   duration: 2000,// 动画时长。
-})
+});
+
+const columns = [
+  {title: 'name', dataIndex: 'name'},
+  {title: 'age', dataIndex: 'age'},
+  {title: 'address', dataIndex: 'address'},
+];
+
+const dataSource = [
+  {id: 1, name: 'John', age: 32, address: 'New York'},
+  {id: 2, name: 'Jim', age: 42, address: 'London'},
+  {id: 3, name: 'Joe', age: 52, address: 'Tokyo'},
+  {id: 4, name: 'Jack', age: 62, address: 'Sydney'},
+  {id: 5, name: 'Jill', age: 72, address: 'Paris'},
+]
+
 </script>
 
 <template>
-    <StkTable ref='stkTableRef' row-key="id" :data-source="[]" :columns="[]" />
+    <StkTable ref='stkTableRef' row-key="id" :data-source="dataSource" :columns="columns" ></StkTable>
 </template>
 
 ```
@@ -142,7 +158,10 @@ export type StkProps = {
    * 是否可变行高
    * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
    */
-  autoRowHeight?: boolean;
+  autoRowHeight?: boolean | {
+    /** 预估行高(优先级高于rowHeight) */
+    expectedHeight?: number | ((row: DT, index: number) => number);
+  };
   /** 是否高亮鼠标悬浮的行 */
   rowHover?: boolean;
   /** 是否高亮选中的行 */
@@ -374,6 +393,11 @@ export type StkProps = {
      * ```(targetColKey: string)```
      */
     (e: 'th-drop', targetColKey: string): void;
+    /**
+     * 行拖动事件
+     * ```(dragStartKey: string, targetRowKey: string)```
+     */
+    (e: 'row-order-change', dragStartKey: string, targetRowKey: string): void;
      /**
      * 列宽变动时触发
      */
@@ -383,7 +407,9 @@ export type StkProps = {
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
      */
     (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
-    /** v-model:columns col resize 时更新宽度*/
+    /** 
+     * v-model:columns col resize 时更新宽度
+     */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }
 ```
@@ -393,7 +419,7 @@ export type StkProps = {
 | slots | props | describe |
 | ---- | ---- | ---- |
 | `tableHeader` | `{col}` | table header slot |
-| `empty` | --| no data status |
+| `empty` | -- | no data status |
 | `expand` |  `{col, row}` | expand row |
 
 
