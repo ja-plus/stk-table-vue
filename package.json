@@ -1,65 +1,69 @@
 {
-    "name": "stk-table-vue",
-    "version": "0.6.2",
-    "description": "Simple realtime virtual table for vue3 and vue2.7",
-    "main": "./lib/stk-table-vue.js",
-    "types": "./lib/src/StkTable/index.d.ts",
-    "packageManager": "pnpm@8.14.3",
-    "directories": {
-        "test": "test"
-    },
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "test": "vitest"
-    },
-    "keywords": [
-        "virtual table",
-        "vue",
-        "vue2",
-        "vue3",
-        "highlight",
-        "sticky",
-        "virtual",
-        "table",
-        "list"
-    ],
-    "files": [
-        "lib",
-        "src"
-    ],
-    "author": "japlus",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ja-plus/stk-table-vue"
-    },
-    "license": "MIT",
-    "devDependencies": {
-        "@types/d3-interpolate": "^3.0.4",
-        "@types/node": "^20.12.10",
-        "@typescript-eslint/eslint-plugin": "^7.7.0",
-        "@typescript-eslint/parser": "^7.7.0",
-        "@vitejs/plugin-vue": "^5.1.4",
-        "@vue/test-utils": "2.4.4",
-        "eslint": "^8.57.0",
-        "eslint-config-prettier": "^9.1.0",
-        "eslint-plugin-html": "^8.1.0",
-        "eslint-plugin-prettier": "^5.1.3",
-        "eslint-plugin-vue": "^9.25.0",
-        "happy-dom": "^12.10.3",
-        "less": "^4.2.0",
-        "postcss-discard-comments": "^6.0.2",
-        "postcss-preset-env": "^9.5.11",
-        "prettier": "^3.2.5",
-        "typescript": "^5.4.5",
-        "vite": "^5.4.10",
-        "vite-plugin-dts": "^4.3.0",
-        "vitest": "^2.1.3",
-        "vue": "^3.5.12",
-        "vue-eslint-parser": "^9.4.2"
-    },
-    "dependencies": {
-        "d3-interpolate": "^3.0.1"
-    }
+  "name": "stk-table-vue",
+  "version": "0.6.2",
+  "description": "Simple realtime virtual table for vue3 and vue2.7",
+  "main": "./lib/stk-table-vue.js",
+  "types": "./lib/src/StkTable/index.d.ts",
+  "packageManager": "pnpm@8.14.3",
+  "directories": {
+    "test": "test"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "keywords": [
+    "virtual table",
+    "vue",
+    "vue2",
+    "vue3",
+    "highlight",
+    "sticky",
+    "virtual",
+    "table",
+    "list"
+  ],
+  "files": [
+    "lib",
+    "src"
+  ],
+  "author": "japlus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ja-plus/stk-table-vue"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/node": "^20.12.10",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "@vue/test-utils": "2.4.4",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-html": "^8.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-vue": "^9.25.0",
+    "happy-dom": "^12.10.3",
+    "less": "^4.2.0",
+    "postcss-discard-comments": "^6.0.2",
+    "postcss-preset-env": "^9.5.11",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5",
+    "vite": "^5.4.10",
+    "vite-plugin-dts": "^4.3.0",
+    "vitepress": "^1.4.5",
+    "vitest": "^2.1.3",
+    "vue": "^3.5.12",
+    "vue-eslint-parser": "^9.4.2"
+  },
+  "dependencies": {
+    "d3-interpolate": "^3.0.1"
+  }
 }
