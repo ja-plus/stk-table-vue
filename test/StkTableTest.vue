@@ -38,6 +38,7 @@
             v-bind="props"
             ref="stkTable"
             v-model:columns="columns"
+            class="vp-raw"
             row-key="name"
             cell-fixed-mode="sticky"
             :seq-config="seqConfig"
