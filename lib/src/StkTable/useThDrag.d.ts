@@ -14,6 +14,6 @@ export declare function useThDrag<DT extends Record<string, any>>({ props, emits
     onThDragOver: (e: DragEvent) => void;
     onThDrop: (e: DragEvent) => void;
     /** 是否可拖拽 */
-    isHeaderDraggable: any;
+    isHeaderDraggable: (col: StkTableColumn<DT>) => boolean;
 };
 export {};
