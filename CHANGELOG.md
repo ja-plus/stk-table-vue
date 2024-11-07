@@ -1,3 +1,7 @@
+## 0.6.1
+* Bugfix: 
+  - fix: `props.headerDrag = true` not work.
+
 ## 0.6.0
 
 * Feature:
