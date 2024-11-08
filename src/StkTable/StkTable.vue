@@ -1334,37 +1334,82 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 }
 
 defineExpose({
-    /** @see {@link initVirtualScroll} */
+    /**
+     * 计算横向纵向虚拟滚动参数
+     * @see {@link initVirtualScroll}
+     */
     initVirtualScroll,
-    /** @see {@link initVirtualScrollX} */
+    /**
+     * 计算横向虚拟滚动参数
+     * @see {@link initVirtualScrollX}
+     */
     initVirtualScrollX,
-    /** @see {@link initVirtualScrollY} */
+    /**
+     * 计算纵向虚拟滚动参数
+     * @see {@link initVirtualScrollY}
+     */
     initVirtualScrollY,
-    /** @see {@link setCurrentRow} */
+    /**
+     * select a row
+     * @see {@link setCurrentRow}
+     */
     setCurrentRow,
-    /** @see {@link setSelectedCell} */
+    /**
+     * set highlight active cell (props.cellActive=true)
+     * @see {@link setSelectedCell}
+     */
     setSelectedCell,
-    /** @see {@link setHighlightDimCell} */
+    /**
+     * 设置高亮单元格
+     * @see {@link setHighlightDimCell}
+     */
     setHighlightDimCell,
-    /** @see {@link setHighlightDimRow} */
+    /**
+     * 设置高亮行
+     * @see {@link setHighlightDimRow}
+     */
     setHighlightDimRow,
     /** 表格排序列dataIndex */
     sortCol,
-    /** @see {@link getSortColumns} */
+    /**
+     * get current sort info
+     * @see {@link getSortColumns}
+     */
     getSortColumns,
-    /** @see {@link setSorter} */
+    /**
+     * 设置表头排序状态
+     * @see {@link setSorter}
+     */
     setSorter,
-    /** @see {@link resetSorter} */
+    /**
+     * 重置sorter状态
+     * @see {@link resetSorter}
+     */
     resetSorter,
-    /** @see {@link scrollTo} */
+    /**
+     * 滚动至
+     * @see {@link scrollTo}
+     */
     scrollTo,
-    /** @see {@link getTableData} */
+    /**
+     * 获取表格数据
+     * @see {@link getTableData}
+     */
     getTableData,
-    /** @see {@link setRowExpand} */
+    /**
+     * 设置展开的行
+     * @see {@link setRowExpand}
+     */
     setRowExpand,
-    /** @see {@link setAutoHeight} */
+    /**
+     * 不定行高时，如果行高有变化，则调用此方法更新行高。
+     * @see {@link setAutoHeight}
+     */
     setAutoHeight,
-    /** @see {@link clearAllAutoHeight} */
+    /**
+     * 清除所有行高
+     * @see {@link clearAllAutoHeight}
+     */
     clearAllAutoHeight,
 });
 </script>
