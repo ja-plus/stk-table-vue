@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "stk-table-vue"
-  text: "一个简单的Vue虚拟列表"
+  text: "A virtual table for vue"
   tagline: My great project tagline
   actions:
     - theme: brand
@@ -14,7 +14,7 @@ hero:
       text: API Examples
       link: /api-examples
     - theme: alt
-      text: 基本使用
+      text: Basic Usage
       link: /basic-usage
 
 features:

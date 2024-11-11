@@ -1,1 +1,2 @@
-<demo vue="../test/StkTableTest.vue"></demo>
+# 基本使用
+<demo vue="../docs-demo/basic-usage/BasicUsage.vue"></demo>

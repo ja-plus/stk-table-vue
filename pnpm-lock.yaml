@@ -71,11 +71,11 @@ devDependencies:
     specifier: ^4.3.0
     version: 4.3.0(@types/node@20.12.10)(typescript@5.4.5)(vite@5.4.10)
   vitepress:
-    specifier: ^1.4.5
-    version: 1.4.5(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5)
+    specifier: ^1.5.0
+    version: 1.5.0(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5)
   vitepress-demo-plugin:
-    specifier: ^1.0.5
-    version: 1.0.5(vitepress@1.4.5)(vue@3.5.12)
+    specifier: ^1.1.1
+    version: 1.1.1(vitepress@1.5.0)(vue@3.5.12)
   vitest:
     specifier: ^2.1.3
     version: 2.1.3(@types/node@20.12.10)(happy-dom@12.10.3)(less@4.2.0)
@@ -1014,6 +1014,16 @@ packages:
 
   /@humanwhocodes/object-schema@2.0.3:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
+    dev: true
+
+  /@iconify-json/simple-icons@1.2.11:
+    resolution: {integrity: sha512-AHCGDtBRqP+JzAbBzgO8uN/08CXxEmuaC6lQQZ3b5burKhRU12AJnJczwbUw2K5Mb/U85EpSUNhYMG3F28b8NA==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify/types@2.0.0:
+    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
     dev: true
 
   /@isaacs/cliui@8.0.2:
@@ -4291,18 +4301,18 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitepress-demo-plugin@1.0.5(vitepress@1.4.5)(vue@3.5.12):
-    resolution: {integrity: sha512-uD6/593ClASZAavOMBkoj1q6B+VmQWrXkmhIoJiDoLlflbBWDPNXv2BdS1kOgsIAY1MunGpC/jzTFwod3sagrA==}
+  /vitepress-demo-plugin@1.1.1(vitepress@1.5.0)(vue@3.5.12):
+    resolution: {integrity: sha512-LhIgz8OdE4ADzfzWonJxlDjhIDLVtywet0VYUXG54wAi6+m3AmfGvtVBJwb1LtE5X6ftDXaZsE2L4vaumhkexw==}
     peerDependencies:
       vitepress: '*'
       vue: ^3.2.0
     dependencies:
-      vitepress: 1.4.5(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5)
+      vitepress: 1.5.0(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5)
       vue: 3.5.12(typescript@5.4.5)
     dev: true
 
-  /vitepress@1.4.5(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5):
-    resolution: {integrity: sha512-9K0k8kvdEbeowVCpKF/x0AySSq0Pr9pM8xufLgQcKMjsifwxtDjXJjcFhZv4LYw2dcpdYiBq2j7PnWi0tCaMCg==}
+  /vitepress@1.5.0(@algolia/client-search@5.12.0)(@types/node@20.12.10)(less@4.2.0)(postcss@8.4.47)(search-insights@2.17.2)(typescript@5.4.5):
+    resolution: {integrity: sha512-q4Q/G2zjvynvizdB3/bupdYkCJe2umSAMv9Ju4d92E6/NXJ59z70xB0q5p/4lpRyAwflDsbwy1mLV9Q5+nlB+g==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4
@@ -4315,6 +4325,7 @@ packages:
     dependencies:
       '@docsearch/css': 3.6.3
       '@docsearch/js': 3.6.3(@algolia/client-search@5.12.0)(search-insights@2.17.2)
+      '@iconify-json/simple-icons': 1.2.11
       '@shikijs/core': 1.22.2
       '@shikijs/transformers': 1.22.2
       '@shikijs/types': 1.22.2
