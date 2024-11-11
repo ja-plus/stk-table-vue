@@ -1,32 +1,27 @@
-<template lang="pug">
-div(style="display:flex;align-items:flex-start")
-  div(style="width:200px")
-    div allHeight:{{vScrollTree.allHeight}}
-    div mainPageHeight:{{vScrollTree.mainPageHeight}}
-    div offsetTop:{{vScrollTree.offsetTop}}
-    div offsetBottom:{{vScrollTree.offsetBottom}}
-    div startIndex:{{vScrollTree.startIndex}}
-    div endIndex:{{vScrollTree.endIndex}}
-    div pageSize:{{vScrollTree.pageSize}}
-    hr
-    //- div currentItem:{{vScrollTree.currentItem}}
-    //- div selectedItems:{{vScrollTree.selectedItems}}
-  div(style="width: 200px;border:1px solid #ddd;")
-    VirtualTree(
-      ref="vScrollTree"
-      v-bind="vScrollTreeProps"
-      :treeData="treeData"
-      @item-click="itemClick"
-      @item-select="itemSelect"
-      @item-dblclick="itemDblClick"
-      @right-click="itemRightClick"
-    )
-      //- template(#icon="{isExpand}")
-      //-   span {{isExpand ? 1 : 2}}
-      //- template(#text="{text}")
-      //-   div(style="color:red") 11{{text}}
-  //- pre {{JSON.stringify(treeData,null,2)}}
- 
+<template>
+    <div style="display: flex; align-items: flex-start">
+        <div style="width: 200px">
+            <div>allHeight:{{ vScrollTree.allHeight }}</div>
+            <div>mainPageHeight:{{ vScrollTree.mainPageHeight }}</div>
+            <div>offsetTop:{{ vScrollTree.offsetTop }}</div>
+            <div>offsetBottom:{{ vScrollTree.offsetBottom }}</div>
+            <div>startIndex:{{ vScrollTree.startIndex }}</div>
+            <div>endIndex:{{ vScrollTree.endIndex }}</div>
+            <div>pageSize:{{ vScrollTree.pageSize }}</div>
+            <hr />
+        </div>
+        <div style="width: 200px; border: 1px solid #ddd">
+            <VirtualTree
+                ref="vScrollTree"
+                v-bind="vScrollTreeProps"
+                :tree-data="treeData"
+                @item-click="itemClick"
+                @item-select="itemSelect"
+                @item-dblclick="itemDblClick"
+                @right-click="itemRightClick"
+            ></VirtualTree>
+        </div>
+    </div>
 </template>
 
 <script>

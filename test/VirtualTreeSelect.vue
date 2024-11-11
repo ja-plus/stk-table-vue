@@ -1,25 +1,31 @@
-<template lang="pug">
-div(style="display:flex;justify-content:center;width:100vw;")
-    VirtualTreeSelect(
-        ref="vsTreeSelect"
-        :replaceFields="{key:'id', title:'label'}" 
-        :value="selectedId" 
-        :treeData="treeData"
-        :vsTreeProps="vsTreeProps" 
-        @change="onSelectChange"
-    )
-    VirtualTreeSelect(:replaceFields="{key:'id', title:'label'}" :value="selectedId2" :treeData="treeData" @change="onSelectChange2")
-    VirtualTreeSelect(
-        ref="vsTreeSelect2"
-        :replaceFields="{key:'id', title:'label'}" 
-        placeholder="请选择..."
-        :treeData="treeData3"
-        :vsTreeProps="vsTreeProps3" 
-        :dropdownWidth="800"
-        @change="onSelectChange3"
-    )
-br
-div selectedId: {{selectedId}}
+<template>
+    <div style="display: flex; justify-content: center; width: 100vw">
+        <VirtualTreeSelect
+            ref="vsTreeSelect"
+            :replace-fields="{ key: 'id', title: 'label' }"
+            :value="selectedId"
+            :tree-data="treeData"
+            :vs-tree-props="vsTreeProps"
+            @change="onSelectChange"
+        ></VirtualTreeSelect>
+        <VirtualTreeSelect
+            :replace-fields="{ key: 'id', title: 'label' }"
+            :value="selectedId2"
+            :tree-data="treeData"
+            @change="onSelectChange2"
+        ></VirtualTreeSelect>
+        <VirtualTreeSelect
+            ref="vsTreeSelect2"
+            :replace-fields="{ key: 'id', title: 'label' }"
+            placeholder="请选择..."
+            :tree-data="treeData3"
+            :vs-tree-props="vsTreeProps3"
+            :dropdown-width="800"
+            @change="onSelectChange3"
+        ></VirtualTreeSelect>
+    </div>
+    <br />
+    <div>selectedId: {{ selectedId }}</div>
 </template>
 
 <script>
