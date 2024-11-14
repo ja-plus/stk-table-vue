@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: "stk-table-vue"
-  text: "一个简单的Vue虚拟列表"
+  name: "Stk Table Vue"
+  text: "Vue虚拟列表"
   tagline: My great project tagline
   actions:
     - theme: brand

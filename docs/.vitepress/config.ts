@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import { vitepressDemoPlugin } from 'vitepress-demo-plugin'; 
+import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
 import { enConfig } from './src/config/en';
 
 // https://vitepress.dev/reference/site-config
@@ -13,15 +13,12 @@ export default defineConfig({
       provider: 'local'
     },
     darkModeSwitchLabel: "主题",
-    docFooter: {
-        prev: "上一篇",
-        next: "下一篇",
-    },
+    docFooter: { prev: "上一篇", next: "下一篇", },
     lastUpdatedText: "最后更新",
     // nav: getZhCNNav(),
     outline: {
-        level: [2, 6],
-        label: "目录",
+      level: [2, 6],
+      label: "目录",
     },
     returnToTopLabel: "返回顶部",
     sidebarMenuLabel: "菜单",
@@ -30,18 +27,20 @@ export default defineConfig({
       { text: '主页', link: '/' },
       { text: '例子', link: '/markdown-examples' }
     ],
-
     sidebar: [
       {
         text: 'Examples',
         items: [
           { text: 'Markdown Examples', link: '/markdown-examples' },
           { text: 'Runtime API Examples', link: '/api-examples' },
-          { text: '基本样例', link: '/basic-usage' }
+        ]
+      }, {
+        text: '表格',
+        items: [
+          { text: '基本表格', link: '/basic-usage' },
         ]
       }
     ],
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/ja-plus/stk-table-vue' }
     ]
@@ -57,9 +56,9 @@ export default defineConfig({
       ...enConfig
     }
   },
-  markdown:{
-    config(md) { 
-      md.use(vitepressDemoPlugin); 
+  markdown: {
+    config(md) {
+      md.use(vitepressDemoPlugin);
     },
   }
 })
