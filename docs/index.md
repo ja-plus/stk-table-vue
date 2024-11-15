@@ -15,7 +15,7 @@ hero:
       link: /api-examples
     - theme: alt
       text: 基本使用
-      link: /basic-usage
+      link: /table/basic
 
 features:
   - title: Feature A

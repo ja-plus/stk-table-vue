@@ -1,7 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export const enConfig = defineConfig({
-    title: "stk-table-vue",
+    title: "StkTableVue",
     description: "A virtual table for vue",
     lang: "zh",
     themeConfig: {
@@ -17,7 +17,7 @@ export const enConfig = defineConfig({
                 items: [
                     { text: 'Markdown Examples', link: '/markdown-examples' },
                     { text: 'Runtime API Examples', link: '/api-examples' },
-                    { text: 'Base Examples', link: '/basic-usage' }
+                    { text: 'Base Examples', link: '/table/basic' }
                 ]
             }
         ],

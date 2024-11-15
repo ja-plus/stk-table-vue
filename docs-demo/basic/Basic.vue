@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { StkTable, StkTableColumn } from '../../src/StkTable/index';
-import { useData } from 'vitepress';
-const { theme } = useData();
+import StkTable from '../StkTable.vue';
+import { StkTableColumn } from '../../src/StkTable/index';
 
 const columns: StkTableColumn<any>[] = [
     { title: 'Name', dataIndex: 'name', minWidth: 100, width: '25%', fixed: 'left' },
-    { title: 'Age', dataIndex: 'age', fixed: 'left', width: '25%', minWidth: 200 },
+    { title: 'Age', dataIndex: 'age', fixed: 'left', width: '25%', minWidth: 50 },
     { title: 'Address', dataIndex: 'address', minWidth: 200 },
     { title: 'Gender', dataIndex: 'gender', width: '10%', minWidth: 50 },
     { title: 'Operation', dataIndex: 'operation', width: '15%', minWidth: 100, fixed: 'right' },
@@ -24,6 +23,5 @@ const dataSource = ref(
 );
 </script>
 <template>
-    {{ theme }}
-    <StkTable key="age" class="vp-raw" style="height: 300px; width: 100%" fixed-col-shadow :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable key="age" style="height: 300px; width: 100%" fixed-col-shadow :columns="columns" :data-source="dataSource"></StkTable>
 </template>

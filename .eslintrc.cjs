@@ -32,6 +32,7 @@ module.exports = {
         // 'no-undef': 0,
         'no-new-object': 1, // 使用字面量创建对象 非new Object()
         'object-shorthand': 1, // 对象方法属性值缩写
+        'vue/multi-word-component-names': 0,
         // 'vue/attribute-hyphenation': [
         //     'warn',
         //     'never',

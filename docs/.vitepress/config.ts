@@ -4,10 +4,11 @@ import { enConfig } from './src/config/en';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "stk-table-vue",
+  title: "StkTableVue",
   description: "A virtual table for vue",
   lastUpdated: true,
   lang: 'zh',
+  appearance: 'dark',
   themeConfig: {
     search: {
       provider: 'local'
@@ -37,7 +38,7 @@ export default defineConfig({
       }, {
         text: '表格',
         items: [
-          { text: '基本表格', link: '/basic-usage' },
+          { text: '基本表格', link: '/table/basic' },
         ]
       }
     ],
