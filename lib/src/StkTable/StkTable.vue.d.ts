@@ -185,37 +185,116 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      */
     smoothScroll?: boolean | undefined;
 }, {
-    /** @see {@link initVirtualScroll} */
+    /**
+     * 重新计算虚拟列表宽高
+     *
+     * en: calc virtual scroll x & y info
+     * @see {@link initVirtualScroll}
+     */
     initVirtualScroll: (height?: number | undefined) => void;
-    /** @see {@link initVirtualScrollX} */
+    /**
+     * 重新计算虚拟列表宽度
+     *
+     * en: calc virtual scroll x
+     * @see {@link initVirtualScrollX}
+     */
     initVirtualScrollX: () => void;
-    /** @see {@link initVirtualScrollY} */
+    /**
+     * 重新计算虚拟列表高度
+     *
+     * en: calc virtual scroll y
+     * @see {@link initVirtualScrollY}
+     */
     initVirtualScrollY: (height?: number | undefined) => void;
-    /** @see {@link setCurrentRow} */
+    /**
+     * 选中一行
+     *
+     * en：select a row
+     * @see {@link setCurrentRow}
+     */
     setCurrentRow: typeof setCurrentRow;
-    /** @see {@link setSelectedCell} */
+    /**
+     * 取消选中单元格
+     *
+     * en: set highlight active cell (props.cellActive=true)
+     * @see {@link setSelectedCell}
+     */
     setSelectedCell: typeof setSelectedCell;
-    /** @see {@link setHighlightDimCell} */
+    /**
+     * 设置高亮单元格
+     *
+     * en: Set highlight cell
+     * @see {@link setHighlightDimCell}
+     */
     setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, dataIndex: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
-    /** @see {@link setHighlightDimRow} */
+    /**
+     * 设置高亮行
+     *
+     * en: Set highlight row
+     * @see {@link setHighlightDimRow}
+     */
     setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: import('./types/highlightDimOptions').HighlightDimRowOption) => void;
-    /** 表格排序列dataIndex */
+    /**
+     * 表格排序列dataIndex
+     *
+     * en: Table sort column dataIndex
+     */
     sortCol: import('vue').Ref<string | number | symbol | undefined, string | number | symbol | undefined>;
-    /** @see {@link getSortColumns} */
+    /**
+     * 表格排序列顺序
+     *
+     * en: get current sort info
+     * @see {@link getSortColumns}
+     */
     getSortColumns: typeof getSortColumns;
-    /** @see {@link setSorter} */
+    /**
+     * 设置表头排序状态
+     *
+     * en: Set the sort status of the table header
+     * @see {@link setSorter}
+     */
     setSorter: typeof setSorter;
-    /** @see {@link resetSorter} */
+    /**
+     * 重置sorter状态
+     *
+     * en: Reset the sorter status
+     * @see {@link resetSorter}
+     */
     resetSorter: typeof resetSorter;
-    /** @see {@link scrollTo} */
+    /**
+     * 滚动至
+     *
+     * en: Scroll to
+     * @see {@link scrollTo}
+     */
     scrollTo: typeof scrollTo;
-    /** @see {@link getTableData} */
+    /**
+     * 获取表格数据
+     *
+     * en: Get table data
+     * @see {@link getTableData}
+     */
     getTableData: typeof getTableData;
-    /** @see {@link setRowExpand} */
+    /**
+     * 设置展开的行
+     *
+     * en: Set expanded rows
+     * @see {@link setRowExpand}
+     */
     setRowExpand: typeof setRowExpand;
-    /** @see {@link setAutoHeight} */
+    /**
+     * 不定行高时，如果行高有变化，则调用此方法更新行高。
+     *
+     * en: When the row height is not fixed, call this method to update the row height if the row height changes.
+     * @see {@link setAutoHeight}
+     */
     setAutoHeight: (rowKey: import('./types/index').UniqKey, height?: number | null | undefined) => void;
-    /** @see {@link clearAllAutoHeight} */
+    /**
+     * 清除所有行高
+     *
+     * en: Clear all row heights
+     * @see {@link clearAllAutoHeight}
+     */
     clearAllAutoHeight: () => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     [x: string]: any;
