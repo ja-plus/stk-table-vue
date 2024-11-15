@@ -1,3 +1,6 @@
+## 0.6.2
+* Bugfix: Click the sort triggered by the header. If the col.sorter is false, it will not be processed. Sorting triggered by setSorter remains popular.
+ - 
 ## 0.6.1
 * Bugfix: 
   - fix: `props.headerDrag = true` not work.

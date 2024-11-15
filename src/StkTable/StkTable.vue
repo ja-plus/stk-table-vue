@@ -1000,7 +1000,14 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
  * @param options.emit 是否触发回调
  */
 function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, options: { force?: boolean; emit?: boolean } = {}) {
-    if (!col?.sorter) return;
+    if (!col) {
+        console.warn('onColumnSort: col is not found');
+        return;
+    }
+    if (!col.sorter && click) {
+        // 点击表头触发的排序，如果列没有配置sorter则不处理。setSorter 触发的排序则保持通行。
+        return;
+    }
     options = { force: false, emit: false, ...options };
     if (sortCol.value !== col.dataIndex) {
         // 改变排序的列时，重置排序
