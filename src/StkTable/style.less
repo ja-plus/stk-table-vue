@@ -49,14 +49,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    /** 
-     * border-left: 此方案用于减少cell 中border-left 的css选择。同时利于多级表头border-left问题。利于横向滚动border-left
-     * - box-shadow inset 方案不生效，且占用属性。
-     * - outline 方案绘制在图形外
-     * - 绝对定位元素。需要根据滚动条位置动态计算。不合适。
-     * - sticky 定位方案需要占用位置。高度为0。
-     */
-    border-left: 1px solid var(--border-color);
+
     /* 下面border用于表格内容不满高度时，绘制表格边界线 */
     background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 
@@ -113,16 +106,15 @@
         }
     }
 
-    &.border-h {
-        --bg-border-right: linear-gradient(transparent, transparent);
-        --bg-border-left: linear-gradient(transparent, transparent);
-    }
-
-    &.border-v {
-        --bg-border-bottom: linear-gradient(transparent, transparent);
-    }
-
     &.border {
+        /** 
+        * border-left: 此方案用于减少cell 中border-left 的css选择。同时利于多级表头border-left问题。利于横向滚动border-left
+        * - box-shadow inset 方案不生效，且占用属性。
+        * - outline 方案绘制在图形外
+        * - 绝对定位元素。需要根据滚动条位置动态计算。不合适。
+        * - sticky 定位方案需要占用位置。高度为0。
+        */
+        border-left: 1px solid var(--border-color);
 
         th,
         td {
@@ -133,6 +125,19 @@
             background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
         }
     }
+
+    &.border-h {
+        border-left: none;
+        --bg-border-right: linear-gradient(transparent, transparent);
+        --bg-border-left: linear-gradient(transparent, transparent);
+    }
+
+    &.border-v {
+        --bg-border-bottom: linear-gradient(transparent, transparent);
+        --bg-border-top: linear-gradient(transparent, transparent);
+    }
+
+
 
     &.border-body-v {
         tbody {
@@ -233,7 +238,7 @@
     }
 
     &.auto-row-height {
-        
+
         tbody td {
             height: unset;
 

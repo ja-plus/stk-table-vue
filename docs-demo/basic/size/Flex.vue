@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useData } from 'vitepress';
+const { isDark } = useData();
 
 const height = ref(150);
 
@@ -29,7 +31,7 @@ function handleHeightInput(e) {
 </script>
 <template>
     <div><input :value="height" type="range" min="100" max="800" @input="handleHeightInput" />{{ height }}px</div>
-    <article :style="{ height: height + 'px' }">
+    <article :class="{ dark: isDark }" :style="{ height: height + 'px' }">
         <header>Flex Content</header>
         <StkTable :columns="columns" :data-source="dataSource"></StkTable>
     </article>
@@ -39,12 +41,12 @@ function handleHeightInput(e) {
 article {
     display: flex;
     flex-direction: column;
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--coot-demo-box-border);
 }
 
 header {
     min-height: 30px;
-    background: #f0f0f0;
+    background: var(--coot-demo-box-border);
     display: flex;
     align-items: center;
     padding: 0 12px;
@@ -53,7 +55,6 @@ header {
 
 .stk-table {
     flex: 1;
-    margin: 8px;
     height: 0;
 }
 </style>

@@ -37,12 +37,16 @@ export default defineConfig({
         ]
       }, {
         text: '表格',
+        collapsed: true,
         items: [
           {
-            text: '基础功能', items: [
+            text: '基础功能',
+            collapsed: true,
+            items: [
               { text: '基础', link: '/table/basic/basic' },
               { text: '宽高', link: '/table/basic/size' },
               { text: '空数据', link: '/table/basic/empty' },
+              { text: '边框', link: '/table/basic/bordered' },
             ]
           },
         ]
