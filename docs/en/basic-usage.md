@@ -1,1 +1,0 @@
-<demo vue="../test/StkTableTest.vue"></demo>

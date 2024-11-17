@@ -17,7 +17,15 @@ export const enConfig = defineConfig({
                 items: [
                     { text: 'Markdown Examples', link: '/markdown-examples' },
                     { text: 'Runtime API Examples', link: '/api-examples' },
-                    { text: 'Base Examples', link: '/table/basic' }
+                ]
+            }, {
+                text: 'Table',
+                items: [
+                    {
+                        text: 'Basic Usage', items: [
+                            { text: 'Basic', link: '/en/table/basic/basic' }
+                        ]
+                    },
                 ]
             }
         ],
