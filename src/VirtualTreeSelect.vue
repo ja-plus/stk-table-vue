@@ -7,17 +7,19 @@
             </div>
             <div class="tree-select-main-arrow"></div>
         </div>
-        <!-- 下拉框 -->
-        <div v-if="vIfLoadComponent" v-show="!disabled && showDropdown" class="dropdown-menu" :style="dropdownMenuStyle">
-            <VirtualTree
-                ref="virtualTree"
-                v-bind="vsTreeProps"
-                height="100%"
-                :replace-fields="assignedFields"
-                :tree-data="treeDataClone"
-                @item-click="onTreeItemClick"
-            />
-        </div>
+        <Teleport :to="renderDropdownToBody ? body : void 0" :disabled="!renderDropdownToBody">
+            <!-- VirtualTreeSelect下拉框 -->
+            <div v-if="vIfLoadComponent" v-show="!disabled && showDropdown" class="dropdown-menu" :style="dropdownMenuStyle">
+                <VirtualTree
+                    ref="virtualTree"
+                    v-bind="vsTreeProps"
+                    height="100%"
+                    :replace-fields="assignedFields"
+                    :tree-data="treeDataClone"
+                    @item-click="onTreeItemClick"
+                />
+            </div>
+        </Teleport>
         <!-- 遮罩：用于点击区域外关闭 -->
         <div v-if="!disabled && showDropdown" class="dropdown-mask" :style="{ zIndex: zIndex }" @click="showDropdown = false"></div>
     </div>
@@ -82,6 +84,11 @@ export default {
         vsTreeProps: {
             type: Object,
             default: () => ({}),
+        },
+        /** 是否把dropdown挂载在body  */
+        renderDropdownToBody: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
@@ -155,9 +162,10 @@ export default {
          * 设置下拉框从上方弹出还是下方
          */
         setDropdownMenuStyle() {
+            const { innerWidth, innerHeight } = window;
             /** @type {DOMRect} */
             const rect = this.$el.getBoundingClientRect();
-            const bottom = window.innerHeight - rect.top - rect.height;
+            const bottom = innerHeight - rect.top - rect.height;
             const dropdownWidth = this.dropdownWidth ? this.dropdownWidth : rect.width;
             // reset style
             this.dropdownMenuStyle = {
@@ -166,28 +174,40 @@ export default {
                 height: this.dropdownHeight + 'px',
                 zIndex: this.zIndex + 1,
             };
-
-            if (window.innerWidth - rect.left >= dropdownWidth) {
-                // 右边有空间
-                this.dropdownMenuStyle.right = null;
-            } else if (rect.right >= dropdownWidth) {
-                // 左边有空间
-                this.dropdownMenuStyle.right = 0;
+            if (this.renderDropdownToBody) {
+                this.dropdownMenuStyle.top = rect.bottom + this.dropdownSpace + 'px';
+                this.dropdownMenuStyle.left = rect.left + 'px';
+                if (innerWidth - rect.left < dropdownWidth) {
+                    // 右边没有空间放左边
+                    this.dropdownMenuStyle.left = rect.right - this.dropdownWidth + 'px';
+                }
+                if (innerHeight - rect.bottom < this.dropdownHeight) {
+                    // 下面没有空间放上面
+                    this.dropdownMenuStyle.top = rect.top - this.dropdownHeight - this.dropdownSpace + 'px';
+                }
             } else {
-                this.dropdownMenuStyle.width = '96vw';
-                this.dropdownMenuStyle.right = -1 * (window.innerWidth - rect.right) + 'px';
-            }
+                if (innerWidth - rect.left >= dropdownWidth) {
+                    // 右边有空间
+                    this.dropdownMenuStyle.right = null;
+                } else if (rect.right >= dropdownWidth) {
+                    // 左边有空间
+                    this.dropdownMenuStyle.right = 0;
+                } else {
+                    this.dropdownMenuStyle.width = '96vw';
+                    this.dropdownMenuStyle.right = -1 * (innerWidth - rect.right) + 'px';
+                }
 
-            if (bottom >= this.dropdownHeight) {
-                // 下方有充足空间
-                this.dropdownMenuStyle.top = rect.height + this.dropdownSpace + 'px';
-            } else if (rect.top >= this.dropdownHeight) {
-                // 上方有充足空间
-                this.dropdownMenuStyle.top = -1 * this.dropdownHeight - this.dropdownSpace + 'px';
-            } else {
-                this.dropdownMenuStyle.top = 0;
-                this.dropdownMenuStyle.position = 'fixed';
-                this.dropdownMenuStyle.height = window.innerHeight + 'px';
+                if (bottom >= this.dropdownHeight) {
+                    // 下方有充足空间
+                    this.dropdownMenuStyle.top = rect.height + this.dropdownSpace + 'px';
+                } else if (rect.top >= this.dropdownHeight) {
+                    // 上方有充足空间
+                    this.dropdownMenuStyle.top = -1 * this.dropdownHeight - this.dropdownSpace + 'px';
+                } else {
+                    this.dropdownMenuStyle.top = 0;
+                    this.dropdownMenuStyle.position = 'fixed';
+                    this.dropdownMenuStyle.height = innerHeight + 'px';
+                }
             }
         },
         /** 通过key值查找一项 */
@@ -228,7 +248,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-:v-deep(.vtScroll-tree ul li .list-item:hover:not(.item-highlight)) {
+:deep(.vtScroll-tree ul li .list-item:hover:not(.item-highlight)) {
     background-color: #f7f7fc;
 }
 
@@ -237,29 +257,35 @@ export default {
         border: 1px solid #cbcbe1;
         background-color: rgb(246, 246, 246);
         cursor: not-allowed;
+
         .tree-select-main-label {
             color: #ccc;
         }
+
         .tree-select-main-arrow {
             border-top: 5px solid #ccc;
         }
     }
 }
+
 .v-tree-select-wrapper {
     position: relative;
     width: 200px;
     height: 25px;
     transition: border 0.3s;
+
     &.disabled {
         .tree-select-main {
             border: 1px solid #cccccc;
         }
     }
+
     &:hover:not(.disabled) {
         .tree-select-main {
             border: 1px solid #8f90b5;
         }
     }
+
     .tree-select-main {
         display: flex;
         justify-content: space-between;
@@ -273,21 +299,26 @@ export default {
         box-sizing: border-box;
         padding: 0 10px;
         transition: all 0.3s;
+
         &.expand {
             border: 1px solid #8f90b5;
+
             .tree-select-main-arrow {
                 border-top: 5px solid #4a4b72;
                 transform: rotate(180deg);
             }
         }
+
         .tree-select-main-label {
             width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
+
             &.placeholder {
                 color: #7d7d94;
             }
         }
+
         .tree-select-main-arrow {
             margin-left: 10px;
             align-self: center;
@@ -298,11 +329,13 @@ export default {
             border-right: 4px solid transparent;
             border-bottom: 0px;
             transition: transform 0.2s ease;
+
             &.expand {
                 transform: rotate(180deg);
             }
         }
     }
+
     .dropdown-menu {
         overflow: hidden;
         border: 1px solid #ddd;
@@ -319,6 +352,7 @@ export default {
         //   min-width: max-content;
         // }
     }
+
     /**遮罩 */
     .dropdown-mask {
         position: fixed;
