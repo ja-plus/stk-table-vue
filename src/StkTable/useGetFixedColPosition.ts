@@ -15,9 +15,9 @@ type Params<T extends Record<string, any>> = {
 export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHeaders, colKeyGen }: Params<DT>) {
     /** 固定列fixed左侧或者右侧的距离 */
     const getFixedColPosition = computed(() => {
-        /** dataIndex 作为唯一标识 */
+        /** colKey 作为唯一标识 */
         const colKeyStore: Record<string, number> = {};
-        /** 没有dataIndex 的多级表头列，使用对象引用做标识 */
+        /** 没有 colKey 的多级表头列，使用对象引用做标识 */
         const refStore = new WeakMap<StkTableColumn<DT>, number>();
         tableHeaders.value.forEach(cols => {
             let left = 0;

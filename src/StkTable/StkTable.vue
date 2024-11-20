@@ -166,8 +166,7 @@
                         <td
                             v-for="(col, colIndex) in virtualX_columnPart"
                             :key="colKeyGen(col)"
-                            :data-index="colKeyGen(col)"
-                            :cell-key="rowKeyGen(row) + '--' + colKeyGen(col)"
+                            :data-cell-key="cellKeyGen(row, col)"
                             :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                             :class="[
                                 col.className,

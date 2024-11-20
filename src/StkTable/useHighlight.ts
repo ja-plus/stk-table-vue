@@ -147,14 +147,14 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     /**
      * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
      * @param rowKeyValue 一行的key
-     * @param dataIndex 列key
+     * @param colKeyValue 列key
      * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
      * @param option.className 自定义css动画的class。
      * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
-    function setHighlightDimCell(rowKeyValue: UniqKey, dataIndex: string, option: HighlightDimCellOption = {}) {
-        const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-row-key="${rowKeyValue}"]>[data-index="${dataIndex}"]`);
+    function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {}) {
+        const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-cell-key="${rowKeyValue}--${colKeyValue}"]`);
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
             method: 'animation',

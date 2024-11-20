@@ -44,10 +44,6 @@ export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, 
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 用于区分相同dataIndex 的列。
-     *
-     * 需要自行指定props.colKey
-     *
-     * eg:`props.colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"` 以生效
      */
     key?: any;
     /**
