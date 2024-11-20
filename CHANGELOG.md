@@ -1,5 +1,14 @@
 ## 0.6.3
-* Bugfix: incorrect table th sticky top when use multi header, because it use `props.rowHeight` to calculate top.(quick resolve: add `props.headerRowHeight` to fix).
+* Change: old key `dataIndex` replace to `props.colKey` result.
+  - th attribute `key` & `data-col-key` replace to `props.colKey`.
+  - `props.hideHeaderTitle` callback support `colKey`.
+  - exposed function `setSorter` , first params `dataIndex` support `colKey`.
+  - `props.sortConfig.defaultSort` add new attribute `key`.
+* ⭐**Break Change**:
+  - exposed function `getSortColumns` return key `dataIndex` to `key` 
+* Bugfix: 
+  - incorrect table th sticky top when use multi header, because it use `props.rowHeight` to calculate top.(quick resolve: add `props.headerRowHeight` to fix).
+  - TODO:  multi header fixed 
 
 ## 0.6.2
 * Bugfix: Click the sort triggered by the header. If the col.sorter is false, it will not be processed. Sorting triggered by setSorter remains popular.

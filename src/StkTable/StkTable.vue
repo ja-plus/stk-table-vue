@@ -62,7 +62,7 @@
                     <!-- v for中最后一行才用 切割。TODO:不支持多级表头虚拟横向滚动 -->
                     <th
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
-                        :key="col.dataIndex"
+                        :key="colKeyGen(col)"
                         :data-col-key="colKeyGen(col)"
                         :draggable="isHeaderDraggable(col) ? 'true' : 'false'"
                         :rowspan="virtualX_on ? 1 : col.rowSpan"
@@ -71,7 +71,7 @@
                         :title="getHeaderTitle(col)"
                         :class="[
                             col.sorter ? 'sortable' : '',
-                            col.dataIndex === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
+                            colKeyGen(col) === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
                             col.headerClassName,
                             fixedColClassMap.get(colKeyGen(col)),
                         ]"
@@ -122,7 +122,7 @@
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
-                        <td v-for="col in virtualX_columnPart" :key="col.dataIndex" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                        <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                     </template>
                 </tr>
                 <tr
@@ -165,8 +165,8 @@
                     <template v-else>
                         <td
                             v-for="(col, colIndex) in virtualX_columnPart"
-                            :key="col.dataIndex"
-                            :data-index="col.dataIndex"
+                            :key="colKeyGen(col)"
+                            :data-index="colKeyGen(col)"
                             :cell-key="rowKeyGen(row) + '--' + colKeyGen(col)"
                             :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
                             :class="[
@@ -384,7 +384,7 @@ const props = withDefaults(
         optimizeVue2Scroll?: boolean;
         /** 排序配置 */
         sortConfig?: SortConfig<DT>;
-        /** 隐藏头部title。可传入dataIndex数组 */
+        /** 隐藏头部title。可传入colKey数组 */
         hideHeaderTitle?: boolean | string[];
         /** 高亮配置 */
         highlightConfig?: HighlightConfig;
@@ -625,7 +625,7 @@ const currentHoverRowKey = ref(null);
 /** 当前hover的列的key */
 // const currentColHoverKey = ref(null);
 
-/** 排序的列dataIndex*/
+/** sort colKey*/
 let sortCol = ref<keyof DT>();
 let sortOrderIndex = ref(0);
 
@@ -799,7 +799,7 @@ watch(
 
         if (sortCol.value) {
             // 排序
-            const column = tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
+            const column = tableHeaderLast.value.find(it => colKeyGen.value(it) === sortCol.value);
             onColumnSort(column, false);
         }
     },
@@ -824,8 +824,8 @@ onMounted(() => {
 /** 处理默认排序 */
 function dealDefaultSorter() {
     if (!props.sortConfig.defaultSort) return;
-    const { dataIndex, order, silent } = { silent: false, ...props.sortConfig.defaultSort };
-    setSorter(dataIndex as string, order, { force: false, silent });
+    const { key, dataIndex, order, silent } = { silent: false, ...props.sortConfig.defaultSort };
+    setSorter((key || dataIndex) as string, order, { force: false, silent });
 }
 
 /**
@@ -986,8 +986,9 @@ const cellStyleMap = computed(() => {
 
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
+    const colKey = colKeyGen.value(col);
     // 不展示title
-    if (props.hideHeaderTitle === true || (Array.isArray(props.hideHeaderTitle) && props.hideHeaderTitle.includes(col.dataIndex))) {
+    if (props.hideHeaderTitle === true || (Array.isArray(props.hideHeaderTitle) && props.hideHeaderTitle.includes(colKey))) {
         return '';
     }
     return col.title || '';
@@ -1009,9 +1010,10 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
         return;
     }
     options = { force: false, emit: false, ...options };
-    if (sortCol.value !== col.dataIndex) {
+    const colKey = colKeyGen.value(col);
+    if (sortCol.value !== colKey) {
         // 改变排序的列时，重置排序
-        sortCol.value = col.dataIndex;
+        sortCol.value = colKey;
         sortOrderIndex.value = 0;
     }
     if (click) sortOrderIndex.value++;
@@ -1022,15 +1024,23 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     const defaultSort = sortConfig.defaultSort;
 
     if (!order && defaultSort) {
-        if (!defaultSort.dataIndex) {
-            console.error('sortConfig.defaultSort.dataIndex is required');
+        // if no order ,use default order
+        const colKey = defaultSort.key || defaultSort.dataIndex;
+        if (!colKey) {
+            console.error('sortConfig.defaultSort key or dataIndex is required');
             return;
         }
-        // 没有排序时变成默认排序
         order = defaultSort.order || 'desc';
         sortOrderIndex.value = sortSwitchOrder.indexOf(order);
-        sortCol.value = defaultSort.dataIndex as string;
-        col = props.columns.find(item => item.dataIndex === defaultSort.dataIndex) || null;
+        sortCol.value = colKey as string;
+        col = null;
+        for (const row of tableHeaders.value) {
+            const c = row.find(item => colKeyGen.value(item) === colKey);
+            if (c) {
+                col = c;
+                break;
+            }
+        }
     }
     if (!props.sortRemote || options.force) {
         const sortOption = col || defaultSort;
@@ -1248,23 +1258,23 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
 
 /**
  * 设置表头排序状态
- * @param dataIndex 列字段
+ * @param colKey 列唯一键字段
  * @param order 正序倒序
  * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
  */
-function setSorter(dataIndex: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
+function setSorter(colKey: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
     const newOption = { silent: true, sortOption: null, sort: true, ...option };
-    sortCol.value = dataIndex;
+    sortCol.value = colKey;
     sortOrderIndex.value = sortSwitchOrder.indexOf(order);
 
     if (newOption.sort && dataSourceCopy.value?.length) {
         // 如果表格有数据，则进行排序
-        const column = newOption.sortOption || tableHeaderLast.value.find(it => it.dataIndex === sortCol.value);
+        const column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGen.value(it) === sortCol.value);
         if (column) onColumnSort(column, false, { force: option.force ?? true, emit: !newOption.silent });
-        else console.warn('Can not find column by dataIndex:', sortCol.value);
+        else console.warn('Can not find column by key:', sortCol.value);
     }
     return dataSourceCopy.value;
 }
@@ -1292,10 +1302,10 @@ function getTableData() {
 }
 
 /** get current sort info */
-function getSortColumns(): Partial<SortState<DT>>[] {
+function getSortColumns() {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];
-    return [{ dataIndex: sortCol.value, order: sortOrder }];
+    return [{ key: sortCol.value, order: sortOrder }];
 }
 
 /** click expended icon to toggle expand row */
@@ -1411,9 +1421,9 @@ defineExpose({
      */
     setHighlightDimRow,
     /**
-     * 表格排序列dataIndex
+     * 表格排序列colKey
      *
-     * en: Table sort column dataIndex
+     * en: Table sort column colKey
      */
     sortCol,
     /**

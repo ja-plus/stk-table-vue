@@ -45,7 +45,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 用于区分相同dataIndex 的列。
      *
-     * 需要重写colKey `props.colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"` 以生效
+     * 需要自行指定props.colKey
+     *
+     * eg:`props.colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"` 以生效
      */
     key?: any;
     /**
@@ -156,6 +158,12 @@ export type SortConfig<T extends Record<string, any>> = {
      * 类似onMounted时，调用setSorter点了下表头。
      */
     defaultSort?: {
+        /**
+         * 列唯一键，
+         *
+         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
+         */
+        key?: StkTableColumn<T>['key'];
         dataIndex: StkTableColumn<T>['dataIndex'];
         order: Order;
         sortField?: StkTableColumn<T>['sortField'];

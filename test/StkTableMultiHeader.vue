@@ -10,14 +10,28 @@ const columns = [
             {
                 dataIndex: 'lv2',
                 title: 'Lv 2',
+                fixed: 'left',
+                width: 100,
                 children: [
-                    { dataIndex: 'lv2_1', title: 'Lv 2.1', width: '100px' },
-                    { dataIndex: 'lv2_2', title: 'Lv 2.2', width: '100px' },
+                    { dataIndex: 'lv2_1', title: 'Lv 2.1', width: '100px', fixed: 'left' },
+                    { dataIndex: 'lv2_2', title: 'Lv 2.2', width: '100px', fixed: 'left' },
                 ],
             },
         ],
     },
-    { dataIndex: 'age', title: 'Age', width: '50px' },
+    {
+        dataIndex: 'age',
+        title: 'Age',
+        width: '50px',
+        children: [
+            { dataIndex: 'id3', title: 'ID', width: 50 },
+            {
+                dataIndex: 'lv5',
+                title: 'Lv 2',
+                width: 100,
+            },
+        ],
+    },
     { dataIndex: 'email', title: 'Email', width: '130px' },
     {
         dataIndex: 'other',

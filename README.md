@@ -180,7 +180,7 @@ export type StkProps = {
   dataSource?: any[];
   /** 行唯一键 (行唯一值不能为undefined）*/
   rowKey?: UniqKeyProp;
-  /** 列唯一键 */
+  /** 列唯一键。默认`dataIndex`*/
   colKey?: UniqKeyProp;
   /** 空值展示文字 */
   emptyCellText?: string | ((option: { row: DT; col: StkTableColumn<DT> }) => string);

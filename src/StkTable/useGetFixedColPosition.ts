@@ -26,7 +26,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
             for (let i = 0; i < cols.length; i++) {
                 const item = cols[i];
                 if (item.fixed === 'left') {
-                    const colKey = colKeyGen.value(item) || item.dataIndex;
+                    const colKey = colKeyGen.value(item);
                     if (colKey) {
                         colKeyStore[colKey] = left;
                     } else {
@@ -42,7 +42,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
             let right = 0;
             for (let i = cols.length - 1; i >= rightStartIndex; i--) {
                 const item = cols[i];
-                const colKey = colKeyGen.value(item) || item.dataIndex;
+                const colKey = colKeyGen.value(item);
                 if (item.fixed === 'right') {
                     if (colKey) {
                         colKeyStore[colKey] = right;
@@ -55,7 +55,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
         });
 
         return (col: StkTableColumn<any>) => {
-            const colKey = colKeyGen.value(col) || col.dataIndex;
+            const colKey = colKeyGen.value(col);
             return colKey ? colKeyStore[colKey] : refStore.get(col) || 0;
         };
     });

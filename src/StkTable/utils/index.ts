@@ -14,7 +14,7 @@ function isEmptyValue(val: any, isNumber?: boolean) {
  *
  * 注意：不会改变原数组，返回新数组
  * @param sortState
- * @param sortState.dataIndex 排序的列
+ * @param sortState.dataIndex 排序的字段
  * @param sortState.order 排序顺序
  * @param sortState.sortType 排序方式
  * @param newItem 要插入的数据
