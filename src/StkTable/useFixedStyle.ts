@@ -43,7 +43,8 @@ export function useFixedStyle<DT extends Record<string, any>>({
             if (isRelativeMode.value) {
                 style.top = virtualScroll.value.scrollTop + 'px';
             } else {
-                style.top = depth * props.rowHeight + 'px';
+                const rowHeight = props.headerRowHeight ?? props.rowHeight;
+                style.top = depth * rowHeight + 'px';
             }
         }
 
