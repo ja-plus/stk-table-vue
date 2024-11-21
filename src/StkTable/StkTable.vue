@@ -1256,8 +1256,8 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
 }
 
 /**
- * 设置表头排序状态
- * @param colKey 列唯一键字段
+ * 设置表头排序状态。
+ * @param colKey 列唯一键字段。如果你想要取消排序状态，请使用`resetSorter`
  * @param order 正序倒序
  * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
