@@ -15,7 +15,7 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
 
     const dragConfig = computed(() => {
         const headerDrag = props.headerDrag;
-        const draggable = headerDrag !== false;
+        const draggable = headerDrag !== false; // true or object
         return {
             draggable,
             mode: 'insert',
@@ -97,6 +97,6 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
         onThDragOver,
         onThDrop,
         /** 是否可拖拽 */
-        isHeaderDraggable: (col: StkTableColumn<DT>) => !dragConfig.value.disabled(col),
+        isHeaderDraggable: (col: StkTableColumn<DT>) => dragConfig.value.draggable && !dragConfig.value.disabled(col),
     };
 }
