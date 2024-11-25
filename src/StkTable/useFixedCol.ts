@@ -30,9 +30,56 @@ export function useFixedCol<DT extends Record<string, any>>({
     /** 正在被固定的列 */
     const fixedCols = shallowRef<StkTableColumn<DT>[]>([]);
 
+    /**
+     *
+     * |            colspan3                |
+     * | rowspan2 |       colspan2          |
+     * | rowspan2 |  colspan1 | colspan1    |
+     * ---
+     * expect arr:
+     * ```
+     * const arr = [
+     *  [col, null, null],
+     *  [col2, col3, null],
+     *  [col2, col4, col5],
+     * ]
+     * ```
+     */
+    const tableHeaderForCalc = computed(() => {
+        const headers: (StkTableColumn<DT> | null)[][] = [];
+        tableHeaders.value.forEach((cols, i) => {
+            headers[i] = [];
+        });
+        for (let i = 0; i < tableHeaders.value.length; i++) {
+            const cols = tableHeaders.value[i];
+            let j = 0;
+            let k = 0;
+            let col;
+            while ((col = cols[k])) {
+                headers[i][j] = col;
+                if (col.colSpan && col.colSpan > 1) {
+                    const m = col.colSpan - 1;
+                    for (let n = 0; n < m; n++) {
+                        headers[i][j + n + 1] = null;
+                    }
+                    j += m;
+                }
+                if (col.rowSpan && col.rowSpan > 1) {
+                    for (let n = 0; n < col.rowSpan; n++) {
+                        headers[i + n][j] = null;
+                    }
+                }
+                j++;
+                k++;
+            }
+        }
+        return headers;
+    });
+
     /** 固定列的class */
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
+        console.log('tableHeaderForCalc', tableHeaderForCalc.value);
         const fixedShadowColsValue = fixedShadowCols.value;
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {
