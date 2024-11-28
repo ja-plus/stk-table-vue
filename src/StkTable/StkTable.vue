@@ -127,14 +127,14 @@
                 </tr>
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
-                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex)"
+                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)"
                     ref="trRef"
-                    :key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
-                    :data-row-key="rowKey ? rowKeyGen(row) : virtualScroll.startIndex + rowIndex"
+                    :key="rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
+                    :data-row-key="rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
                     :class="{
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
-                        [rowClassName(row, virtualScroll.startIndex + rowIndex)]: true,
+                        [rowClassName(row, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)]: true,
                         expanded: row?.__EXPANDED__,
                         'expanded-row': row && (row as ExpandedRow).__EXPANDED_ROW__,
                     }"
@@ -150,7 +150,7 @@
                     @dblclick="e => onRowDblclick(e, row)"
                     @contextmenu="e => onRowMenu(e, row)"
                     @mouseover="e => onTrMouseOver(e, row)"
-                    @drop="e => onTrDrop(e, virtualScroll.startIndex + rowIndex)"
+                    @drop="e => onTrDrop(e, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -195,7 +195,7 @@
                                 class="table-cell-wrapper"
                                 :col="col"
                                 :row="row"
-                                :rowIndex="virtualScroll.startIndex + rowIndex"
+                                :rowIndex="(virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
                                 :colIndex="colIndex"
                                 :cellValue="row?.[col.dataIndex]"
                                 :expanded="row?.__EXPANDED__ || null"
@@ -207,13 +207,13 @@
                                 :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
                             >
                                 <template v-if="col.type === 'seq'">
-                                    {{ (props.seqConfig.startIndex || 0) + virtualScroll.startIndex + rowIndex + 1 }}
+                                    {{ (props.seqConfig.startIndex || 0) + (virtual_on ? virtualScroll.startIndex : 0) + rowIndex + 1 }}
                                 </template>
                                 <span v-else-if="col.type === 'expand'">
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
                                 <template v-else-if="col.type === 'dragRow'">
-                                    <DragHandle @dragstart="e => onTrDragStart(e, virtualScroll.startIndex + rowIndex)" />
+                                    <DragHandle @dragstart="e => onTrDragStart(e, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)" />
                                     <span>
                                         {{ row?.[col.dataIndex] ?? '' }}
                                     </span>
@@ -255,7 +255,6 @@ import {
     SeqConfig,
     SortConfig,
     SortOption,
-    SortState,
     StkTableColumn,
     TagType,
     UniqKeyProp,
