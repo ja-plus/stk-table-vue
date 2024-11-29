@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, UniqKeyProp } from './types/index';
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
 /**
@@ -19,15 +19,15 @@ declare function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option?: {
     silent: boolean;
 }): void;
 /**
- * 设置表头排序状态
- * @param dataIndex 列字段
+ * 设置表头排序状态。
+ * @param colKey 列唯一键字段。如果你想要取消排序状态，请使用`resetSorter`
  * @param order 正序倒序
  * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
  */
-declare function setSorter(dataIndex: string, order: Order, option?: {
+declare function setSorter(colKey: string, order: Order, option?: {
     sortOption?: SortOption<DT>;
     force?: boolean;
     silent?: boolean;
@@ -43,7 +43,10 @@ declare function scrollTo(top?: number | null, left?: number | null): void;
 /** get current table data */
 declare function getTableData(): any[];
 /** get current sort info */
-declare function getSortColumns(): Partial<SortState<DT>>[];
+declare function getSortColumns(): {
+    key: string | number | symbol | undefined;
+    order: "desc" | "asc";
+}[];
 /**
  *
  * @param rowKeyOrRow rowKey or row
@@ -158,7 +161,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
     sortConfig?: SortConfig<any> | undefined;
-    /** 隐藏头部title。可传入dataIndex数组 */
+    /** 隐藏头部title。可传入colKey数组 */
     hideHeaderTitle?: boolean | string[] | undefined;
     /** 高亮配置 */
     highlightConfig?: HighlightConfig | undefined;
@@ -226,7 +229,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      * en: Set highlight cell
      * @see {@link setHighlightDimCell}
      */
-    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, dataIndex: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
+    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, colKeyValue: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
     /**
      * 设置高亮行
      *
@@ -235,9 +238,9 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      */
     setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: import('./types/highlightDimOptions').HighlightDimRowOption) => void;
     /**
-     * 表格排序列dataIndex
+     * 表格排序列colKey
      *
-     * en: Table sort column dataIndex
+     * en: Table sort column colKey
      */
     sortCol: import('vue').Ref<string | number | symbol | undefined, string | number | symbol | undefined>;
     /**
@@ -403,7 +406,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     optimizeVue2Scroll?: boolean | undefined;
     /** 排序配置 */
     sortConfig?: SortConfig<any> | undefined;
-    /** 隐藏头部title。可传入dataIndex数组 */
+    /** 隐藏头部title。可传入colKey数组 */
     hideHeaderTitle?: boolean | string[] | undefined;
     /** 高亮配置 */
     highlightConfig?: HighlightConfig | undefined;

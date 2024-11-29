@@ -8,7 +8,7 @@
   - exposed function `getSortColumns` return key `dataIndex` to `key` 
 * Bugfix: 
   - incorrect table th sticky top when use multi header, because it use `props.rowHeight` to calculate top.(quick resolve: add `props.headerRowHeight` to fix).
-  - TODO:  multi header fixed 
+  - multi header fixed left error. 
   - fix th draggable always be true.
 
 ## 0.6.2
