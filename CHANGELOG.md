@@ -1,3 +1,7 @@
+## 0.6.4
+* Feature
+  - Add: `StkTableColumn['sortConfig']` to support column localeCompare
+
 ## 0.6.3
 * Change: old key `dataIndex` replace to `props.colKey` result.
   - th attribute `key` & `data-col-key` replace to `props.colKey`.

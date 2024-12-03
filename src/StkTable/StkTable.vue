@@ -1047,7 +1047,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
     let order = sortSwitchOrder[sortOrderIndex.value];
-    const sortConfig = props.sortConfig;
+    const sortConfig = { ...props.sortConfig, ...col.sortConfig };
     const defaultSort = sortConfig.defaultSort;
 
     if (!order && defaultSort) {
