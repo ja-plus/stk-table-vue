@@ -139,8 +139,9 @@ export function useColResize<DT extends Record<string, any>>({
         const { clientX } = e;
         let moveX = clientX - startX;
         const currentColWidth = getCalculatedColWidth(lastCol);
+        const minWidth = lastCol?.minWidth ?? props.colMinWidth;
         // 移动量不小于最小列宽
-        if (currentColWidth + moveX < props.colMinWidth) {
+        if (currentColWidth + moveX < minWidth) {
             moveX = -currentColWidth;
         }
 

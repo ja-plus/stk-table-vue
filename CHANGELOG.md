@@ -1,6 +1,7 @@
 ## 0.6.4
 * Feature
   - Add: `StkTableColumn['sortConfig']` to support column localeCompare
+  - `StkTableColumn['minWidth']` Can affect the minimum width of column width adjustment.
 
 ## 0.6.3
 * Change: old key `dataIndex` replace to `props.colKey` result.
