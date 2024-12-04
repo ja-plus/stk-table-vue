@@ -180,12 +180,10 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 0) {
     return Math.max(...levels);
 }
 
-/** number列宽+px */
+/** number width +px */
 export function transformWidthToStr(width?: string | number) {
-    if (typeof width === 'number') {
-        return width + 'px';
-    }
-    return width;
+    const numberWidth = Number(width);
+    return width + (!Number.isNaN(numberWidth) ? 'px' : '');
 }
 
 export function getBrowsersVersion(browserName: string) {
