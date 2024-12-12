@@ -4,6 +4,8 @@
   - `StkTableColumn['minWidth']` Can affect the minimum width of column width adjustment.
 * Optimize
   - `StkTableColumn['width']` if set number string, auto append `px`.
+* Bugfix
+   - fix vue2 compiler template parse error cause by vue-loader.
 
 ## 0.6.3
 * Change: old key `dataIndex` replace to `props.colKey` result.

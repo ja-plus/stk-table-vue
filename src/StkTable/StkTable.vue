@@ -136,12 +136,12 @@
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)]: true,
                         expanded: row?.__EXPANDED__,
-                        'expanded-row': row && (row as ExpandedRow).__EXPANDED_ROW__,
+                        'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
                     :style="{
                         '--row-height':
                             row &&
-                            (row as ExpandedRow).__EXPANDED_ROW__ &&
+                            row.__EXPANDED_ROW__ &&
                             virtual_on &&
                             props.expandConfig?.height &&
                             props.expandConfig?.height + 'px',
@@ -154,11 +154,11 @@
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td v-if="row && (row as ExpandedRow).__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
+                    <td v-if="row && row.__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
                         <!-- TODO: support wheel -->
                         <div class="table-cell-wrapper">
-                            <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__">
-                                {{ (row as ExpandedRow).__EXPANDED_ROW__?.[(row as ExpandedRow).__EXPANDED_COL__.dataIndex] ?? '' }}
+                            <slot name="expand" :row="row.__EXPANDED_ROW__" :col="row.__EXPANDED_COL__">
+                                {{ row.__EXPANDED_ROW__?.[row.__EXPANDED_COL__.dataIndex] ?? '' }}
                             </slot>
                         </div>
                     </td>
