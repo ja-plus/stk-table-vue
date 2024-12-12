@@ -139,12 +139,7 @@
                         'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
                     :style="{
-                        '--row-height':
-                            row &&
-                            row.__EXPANDED_ROW__ &&
-                            virtual_on &&
-                            props.expandConfig?.height &&
-                            props.expandConfig?.height + 'px',
+                        '--row-height': row && row.__EXPANDED_ROW__ && virtual_on && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"

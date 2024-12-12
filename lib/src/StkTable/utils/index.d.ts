@@ -36,6 +36,6 @@ export declare function strCompare(a: string, b: string, isNumber: boolean, loca
 export declare function tableSort<T extends Record<string, any>>(sortOption: SortOption<T>, order: Order, dataSource: T[], sortConfig?: SortConfig<T>): T[];
 /** 多级表头深度 从0开始为一级*/
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
-/** number列宽+px */
-export declare function transformWidthToStr(width?: string | number): string | undefined;
+/** number width +px */
+export declare function transformWidthToStr(width?: string | number): string;
 export declare function getBrowsersVersion(browserName: string): number;

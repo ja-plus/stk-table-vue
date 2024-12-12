@@ -71,6 +71,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortField?: keyof T;
     /** 排序方式。按数字/字符串 */
     sortType?: 'number' | 'string';
+    /** 配置当前列的排序规则 */
+    sortConfig?: Pick<SortConfig<T>, 'emptyToBottom' | 'stringLocaleCompare'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;

@@ -438,6 +438,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     width: string;
     minWidth: string;
     maxWidth: string;
+    sortConfig: SortConfig<any>;
     rowHeight: number;
     headerRowHeight: number | null;
     headless: boolean;
@@ -475,7 +476,6 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);
     fixedColShadow: boolean;
-    sortConfig: SortConfig<any>;
     hideHeaderTitle: boolean | string[];
     highlightConfig: HighlightConfig;
     seqConfig: SeqConfig;
