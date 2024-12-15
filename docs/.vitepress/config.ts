@@ -10,6 +10,7 @@ export default defineConfig({
   lang: 'zh',
   appearance: 'dark',
   themeConfig: {
+    logo: '/assets/logo.svg',
     search: {
       provider: 'local'
     },
@@ -30,10 +31,11 @@ export default defineConfig({
     ],
     sidebar: [
       {
-        text: 'Examples',
+        text: '开发指南',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' },
+          { text: '开始', link: '/start/start' },
+          { text: '在vue2中使用', link: '/start/vue2-usage' },
+          // { text: 'Runtime API Examples', link: '/api-examples' },
         ]
       }, {
         text: '表格',
