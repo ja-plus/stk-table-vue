@@ -4,6 +4,7 @@ import { enConfig } from './src/config/en';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/stk-table-vue/',
   title: "StkTableVue",
   description: "A virtual table for vue",
   lastUpdated: true,
