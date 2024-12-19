@@ -1,3 +1,12 @@
+## 0.6.4
+* Feature
+  - Add: `StkTableColumn['sortConfig']` to support column localeCompare
+  - `StkTableColumn['minWidth']` Can affect the minimum width of column width adjustment.
+* Optimize
+  - `StkTableColumn['width']` if set number string, auto append `px`.
+* Bugfix
+   - fix vue2 compiler template parse error cause by vue-loader.
+
 ## 0.6.3
 * Change: old key `dataIndex` replace to `props.colKey` result.
   - th attribute `key` & `data-col-key` replace to `props.colKey`.
@@ -8,7 +17,7 @@
   - exposed function `getSortColumns` return key `dataIndex` to `key` 
 * Bugfix: 
   - incorrect table th sticky top when use multi header, because it use `props.rowHeight` to calculate top.(quick resolve: add `props.headerRowHeight` to fix).
-  - TODO:  multi header fixed 
+  - multi header fixed left error. 
   - fix th draggable always be true.
 
 ## 0.6.2

@@ -169,8 +169,8 @@ export function tableSort<T extends Record<string, any>>(
     return targetDataSource;
 }
 
-/** 表头column配置的层级 */
-export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
+/** 多级表头深度 从0开始为一级*/
+export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 0) {
     const levels = [level];
     arr.forEach(item => {
         if (item.children?.length) {
@@ -180,12 +180,10 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 1) {
     return Math.max(...levels);
 }
 
-/** number列宽+px */
+/** number width +px */
 export function transformWidthToStr(width?: string | number) {
-    if (typeof width === 'number') {
-        return width + 'px';
-    }
-    return width;
+    const numberWidth = Number(width);
+    return width + (!Number.isNaN(numberWidth) ? 'px' : '');
 }
 
 export function getBrowsersVersion(browserName: string) {

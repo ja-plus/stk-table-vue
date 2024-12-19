@@ -12,6 +12,6 @@ type Params = {
 export declare function useHighlight({ props, stkTableId, tableContainerRef }: Params): {
     highlightSteps: number | null;
     setHighlightDimRow: (rowKeyValues: UniqKey[], option?: HighlightDimRowOption) => void;
-    setHighlightDimCell: (rowKeyValue: UniqKey, dataIndex: string, option?: HighlightDimCellOption) => void;
+    setHighlightDimCell: (rowKeyValue: UniqKey, colKeyValue: string, option?: HighlightDimCellOption) => void;
 };
 export {};

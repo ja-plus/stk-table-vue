@@ -33,6 +33,7 @@ export function useFixedCol<DT extends Record<string, any>>({
     /** 固定列的class */
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
+        // console.log('tableHeaderForCalc', tableHeaderForCalc.value);
         const fixedShadowColsValue = fixedShadowCols.value;
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {

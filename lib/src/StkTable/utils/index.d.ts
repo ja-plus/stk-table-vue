@@ -4,7 +4,7 @@ import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../typ
  *
  * 注意：不会改变原数组，返回新数组
  * @param sortState
- * @param sortState.dataIndex 排序的列
+ * @param sortState.dataIndex 排序的字段
  * @param sortState.order 排序顺序
  * @param sortState.sortType 排序方式
  * @param newItem 要插入的数据
@@ -34,8 +34,8 @@ export declare function strCompare(a: string, b: string, isNumber: boolean, loca
  * @param dataSource 排序的数组
  */
 export declare function tableSort<T extends Record<string, any>>(sortOption: SortOption<T>, order: Order, dataSource: T[], sortConfig?: SortConfig<T>): T[];
-/** 表头column配置的层级 */
+/** 多级表头深度 从0开始为一级*/
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
-/** number列宽+px */
-export declare function transformWidthToStr(width?: string | number): string | undefined;
+/** number width +px */
+export declare function transformWidthToStr(width?: string | number): string;
 export declare function getBrowsersVersion(browserName: string): number;

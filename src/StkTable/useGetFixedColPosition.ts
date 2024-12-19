@@ -4,7 +4,7 @@ import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Params<T extends Record<string, any>> = {
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
-    tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
+    tableHeadersForCalc: ShallowRef<StkTableColumn<T>[][]>;
 };
 
 /**
@@ -12,14 +12,14 @@ type Params<T extends Record<string, any>> = {
  * - col.fixed = left 则得到距离左侧的距离
  * - col.fixed = right 则得到距离右侧的距离
  */
-export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHeaders, colKeyGen }: Params<DT>) {
+export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHeadersForCalc, colKeyGen }: Params<DT>) {
     /** 固定列fixed左侧或者右侧的距离 */
     const getFixedColPosition = computed(() => {
         /** colKey 作为唯一标识 */
         const colKeyStore: Record<string, number> = {};
         /** 没有 colKey 的多级表头列，使用对象引用做标识 */
         const refStore = new WeakMap<StkTableColumn<DT>, number>();
-        tableHeaders.value.forEach(cols => {
+        tableHeadersForCalc.value.forEach(cols => {
             let left = 0;
             /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
             let rightStartIndex = 0;

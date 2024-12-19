@@ -38,7 +38,6 @@ export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, 
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 用于区分相同dataIndex 的列。
-     * 需要自行配置colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"
      */
     key?: any;
     /**
@@ -72,6 +71,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortField?: keyof T;
     /** 排序方式。按数字/字符串 */
     sortType?: 'number' | 'string';
+    /** 配置当前列的排序规则 */
+    sortConfig?: Pick<SortConfig<T>, 'emptyToBottom' | 'stringLocaleCompare'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;
@@ -144,6 +145,12 @@ export type SortConfig<T extends Record<string, any>> = {
      * 类似onMounted时，调用setSorter点了下表头。
      */
     defaultSort?: {
+        /**
+         * 列唯一键，
+         *
+         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
+         */
+        key?: StkTableColumn<T>['key'];
         dataIndex: StkTableColumn<T>['dataIndex'];
         order: Order;
         sortField?: StkTableColumn<T>['sortField'];

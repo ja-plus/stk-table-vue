@@ -136,15 +136,10 @@
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)]: true,
                         expanded: row?.__EXPANDED__,
-                        'expanded-row': row && (row as ExpandedRow).__EXPANDED_ROW__,
+                        'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
                     :style="{
-                        '--row-height':
-                            row &&
-                            (row as ExpandedRow).__EXPANDED_ROW__ &&
-                            virtual_on &&
-                            props.expandConfig?.height &&
-                            props.expandConfig?.height + 'px',
+                        '--row-height': row && row.__EXPANDED_ROW__ && virtual_on && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
                     @click="e => onRowClick(e, row)"
                     @dblclick="e => onRowDblclick(e, row)"
@@ -154,11 +149,11 @@
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td v-if="row && (row as ExpandedRow).__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
+                    <td v-if="row && row.__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
                         <!-- TODO: support wheel -->
                         <div class="table-cell-wrapper">
-                            <slot name="expand" :row="(row as ExpandedRow).__EXPANDED_ROW__" :col="(row as ExpandedRow).__EXPANDED_COL__">
-                                {{ (row as ExpandedRow).__EXPANDED_ROW__?.[(row as ExpandedRow).__EXPANDED_COL__.dataIndex] ?? '' }}
+                            <slot name="expand" :row="row.__EXPANDED_ROW__" :col="row.__EXPANDED_COL__">
+                                {{ row.__EXPANDED_ROW__?.[row.__EXPANDED_COL__.dataIndex] ?? '' }}
                             </slot>
                         </div>
                     </td>
@@ -645,6 +640,26 @@ const tableHeaders = shallowRef<StkTableColumn<DT>[][]>([]);
 /** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
 
+/**
+ * 用于计算多级表头的tableHeaders。模拟rowSpan 位置的辅助数组。用于计算固定列。
+ * @eg
+ * ```
+ * |             colspan3               |
+ * | rowspan2 |       colspan2          |
+ * | rowspan2 |  colspan1 |  colspan1   |
+ * ```
+ * ---
+ * expect arr:
+ * ```
+ * const arr = [
+ *  [col],
+ *  [col2, col3],
+ *  [col2, col4, col5],
+ * ]
+ * ```
+ */
+const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
+
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
 /**
@@ -694,7 +709,7 @@ const {
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen });
 
 /** 获取固定列的位置 */
-const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeaders });
+const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeadersForCalc });
 
 const getFixedStyle = useFixedStyle<DT>({
     props,
@@ -831,7 +846,8 @@ function dealDefaultSorter() {
  */
 function dealColumns() {
     // reset
-    let tableHeadersTemp: StkTableColumn<DT>[][] = [];
+    const tableHeadersTemp: StkTableColumn<DT>[][] = [];
+    const tableHeadersForCalcTemp: StkTableColumn<DT>[][] = [];
     let copyColumn = props.columns; // do not deep clone
     // relative 模式下不支持sticky列。因此就放在左右两侧。
     if (isRelativeMode.value) {
@@ -849,11 +865,16 @@ function dealColumns() {
         });
         copyColumn = [...leftCol, ...centerCol, ...rightCol];
     }
-    const deep = howDeepTheHeader(copyColumn);
+    const maxDeep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
 
-    if (deep > 1 && props.virtualX) {
+    if (maxDeep > 0 && props.virtualX) {
         console.error('多级表头不支持横向虚拟滚动');
+    }
+
+    for (let i = 0; i <= maxDeep; i++) {
+        tableHeadersTemp[i] = [];
+        tableHeadersForCalcTemp[i] = [];
     }
 
     /**
@@ -868,9 +889,6 @@ function dealColumns() {
         parent: PrivateStkTableColumn<DT> | null,
         depth = 0 /* , parentFixed: 'left' | 'right' | null = null */,
     ) {
-        if (!tableHeadersTemp[depth]) {
-            tableHeadersTemp[depth] = [];
-        }
         /** 所有子节点数量 */
         let allChildrenLen = 0;
         let allChildrenWidthSum = 0;
@@ -890,21 +908,27 @@ function dealColumns() {
                 const [len, widthSum] = flat(col.children, col, depth + 1 /* , col.fixed */);
                 colChildrenLen = len;
                 colWidth = widthSum;
+                tableHeadersForCalcTemp[depth].push(col);
             } else {
                 colWidth = getColWidth(col);
                 tempHeaderLast.push(col); // 没有children的列作为colgroup
+                for (let i = depth; i <= maxDeep; i++) {
+                    // 如有rowSpan 向下复制一个表头col，用于计算固定列
+                    tableHeadersForCalcTemp[i].push(col);
+                }
             }
             // 回溯
+            col.__WIDTH__ = colWidth; //记录计算的列宽
             tableHeadersTemp[depth].push(col);
-            const rowSpan = col.children ? 1 : deep - depth;
+            const rowSpan = col.children ? 1 : maxDeep - depth + 1;
             const colSpan = colChildrenLen;
-            if (rowSpan !== 1) {
+            if (rowSpan > 1) {
                 col.rowSpan = rowSpan;
             }
-            if (colSpan !== 1) {
+            if (colSpan > 1) {
                 col.colSpan = colSpan;
             }
-            col.__WIDTH__ = colWidth; //记录计算的列宽
+
             allChildrenLen += colChildrenLen;
             allChildrenWidthSum += colWidth;
         });
@@ -912,9 +936,9 @@ function dealColumns() {
     }
 
     flat(copyColumn, null);
-
     tableHeaders.value = tableHeadersTemp;
     tableHeaderLast.value = tempHeaderLast;
+    tableHeadersForCalc.value = tableHeadersForCalcTemp;
 }
 
 /**
@@ -1018,7 +1042,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
     let order = sortSwitchOrder[sortOrderIndex.value];
-    const sortConfig = props.sortConfig;
+    const sortConfig = { ...props.sortConfig, ...col.sortConfig };
     const defaultSort = sortConfig.defaultSort;
 
     if (!order && defaultSort) {
