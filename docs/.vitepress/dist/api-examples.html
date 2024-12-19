@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Runtime API Examples | StkTableVue</title>
+    <meta name="description" content="A virtual table for vue">
+    <meta name="generator" content="VitePress v1.5.0">
+    <link rel="preload stylesheet" href="/assets/style.C49MIlzA.css" as="style">
+    <link rel="preload stylesheet" href="/vp-icons.css" as="style">
+    
+    <script type="module" src="/assets/app.BJvqdHwa.js"></script>
+    <link rel="preload" href="/assets/inter-roman-latin.Di8DUHzh.woff2" as="font" type="font/woff2" crossorigin="">
+    <link rel="modulepreload" href="/assets/chunks/theme.S1XL5PU3.js">
+    <link rel="modulepreload" href="/assets/chunks/framework.B0bGi2fO.js">
+    <link rel="modulepreload" href="/assets/api-examples.md.D34mf58a.lean.js">
+    <script id="check-dark-mode">(()=>{const e=localStorage.getItem("vitepress-theme-appearance")||"dark",a=window.matchMedia("(prefers-color-scheme: dark)").matches;(!e||e==="auto"?a:e==="dark")&&document.documentElement.classList.add("dark")})();</script>
+    <script id="check-mac-os">document.documentElement.classList.toggle("mac",/Mac|iPhone|iPod|iPad/i.test(navigator.platform));</script>
+  </head>
+  <body>
+    <div id="app"><div class="Layout" data-v-4e472276><!--[--><!--]--><!--[--><span tabindex="-1" data-v-f029ee1c></span><a href="#VPContent" class="VPSkipLink visually-hidden" data-v-f029ee1c> Skip to content </a><!--]--><!----><header class="VPNav" data-v-4e472276 data-v-2ea9fbe6><div class="VPNavBar" data-v-2ea9fbe6 data-v-ff315404><div class="wrapper" data-v-ff315404><div class="container" data-v-ff315404><div class="title" data-v-ff315404><div class="VPNavBarTitle has-sidebar" data-v-ff315404 data-v-cf9a648f><a class="title" href="/" data-v-cf9a648f><!--[--><!--]--><!----><span data-v-cf9a648f>StkTableVue</span><!--[--><!--]--></a></div></div><div class="content" data-v-ff315404><div class="content-body" data-v-ff315404><!--[--><!--]--><div class="VPNavBarSearch search" data-v-ff315404><!--[--><!----><div id="local-search"><button type="button" class="DocSearch DocSearch-Button" aria-label="Search"><span class="DocSearch-Button-Container"><span class="vp-icon DocSearch-Search-Icon"></span><span class="DocSearch-Button-Placeholder">Search</span></span><span class="DocSearch-Button-Keys"><kbd class="DocSearch-Button-Key"></kbd><kbd class="DocSearch-Button-Key">K</kbd></span></button></div><!--]--></div><nav aria-labelledby="main-nav-aria-label" class="VPNavBarMenu menu" data-v-ff315404 data-v-0c5e9078><span id="main-nav-aria-label" class="visually-hidden" data-v-0c5e9078> Main Navigation </span><!--[--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/" tabindex="0" data-v-0c5e9078 data-v-31a6e070><!--[--><span data-v-31a6e070>主页</span><!--]--></a><!--]--><!--[--><a class="VPLink link VPNavBarMenuLink" href="/markdown-examples.html" tabindex="0" data-v-0c5e9078 data-v-31a6e070><!--[--><span data-v-31a6e070>例子</span><!--]--></a><!--]--><!--]--></nav><div class="VPFlyout VPNavBarTranslations translations" data-v-ff315404 data-v-d5e11e44 data-v-705218bd><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="Change language" data-v-705218bd><span class="text" data-v-705218bd><span class="vpi-languages option-icon" data-v-705218bd></span><!----><span class="vpi-chevron-down text-icon" data-v-705218bd></span></span></button><div class="menu" data-v-705218bd><div class="VPMenu" data-v-705218bd data-v-78406afe><!----><!--[--><!--[--><div class="items" data-v-d5e11e44><p class="title" data-v-d5e11e44>中文</p><!--[--><div class="VPMenuLink" data-v-d5e11e44 data-v-4822d3f2><a class="VPLink link" href="/en/api-examples.html" data-v-4822d3f2><!--[--><span data-v-4822d3f2>English</span><!--]--></a></div><!--]--></div><!--]--><!--]--></div></div></div><div class="VPNavBarAppearance appearance" data-v-ff315404 data-v-ac796df3><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="true" data-v-ac796df3 data-v-22812845 data-v-c8236951><span class="check" data-v-c8236951><span class="icon" data-v-c8236951><!--[--><span class="vpi-sun sun" data-v-22812845></span><span class="vpi-moon moon" data-v-22812845></span><!--]--></span></span></button></div><div class="VPSocialLinks VPNavBarSocialLinks social-links" data-v-ff315404 data-v-6001c8e8 data-v-a2fab8a6><!--[--><a class="VPSocialLink no-icon" href="https://github.com/ja-plus/stk-table-vue" aria-label="github" target="_blank" rel="noopener" data-v-a2fab8a6 data-v-9116c941><span class="vpi-social-github"></span></a><!--]--></div><div class="VPFlyout VPNavBarExtra extra" data-v-ff315404 data-v-6ad290cf data-v-705218bd><button type="button" class="button" aria-haspopup="true" aria-expanded="false" aria-label="extra navigation" data-v-705218bd><span class="vpi-more-horizontal icon" data-v-705218bd></span></button><div class="menu" data-v-705218bd><div class="VPMenu" data-v-705218bd data-v-78406afe><!----><!--[--><!--[--><div class="group translations" data-v-6ad290cf><p class="trans-title" data-v-6ad290cf>中文</p><!--[--><div class="VPMenuLink" data-v-6ad290cf data-v-4822d3f2><a class="VPLink link" href="/en/api-examples.html" data-v-4822d3f2><!--[--><span data-v-4822d3f2>English</span><!--]--></a></div><!--]--></div><div class="group" data-v-6ad290cf><div class="item appearance" data-v-6ad290cf><p class="label" data-v-6ad290cf>主题</p><div class="appearance-action" data-v-6ad290cf><button class="VPSwitch VPSwitchAppearance" type="button" role="switch" title aria-checked="true" data-v-6ad290cf data-v-22812845 data-v-c8236951><span class="check" data-v-c8236951><span class="icon" data-v-c8236951><!--[--><span class="vpi-sun sun" data-v-22812845></span><span class="vpi-moon moon" data-v-22812845></span><!--]--></span></span></button></div></div></div><div class="group" data-v-6ad290cf><div class="item social-links" data-v-6ad290cf><div class="VPSocialLinks social-links-list" data-v-6ad290cf data-v-a2fab8a6><!--[--><a class="VPSocialLink no-icon" href="https://github.com/ja-plus/stk-table-vue" aria-label="github" target="_blank" rel="noopener" data-v-a2fab8a6 data-v-9116c941><span class="vpi-social-github"></span></a><!--]--></div></div></div><!--]--><!--]--></div></div></div><!--[--><!--]--><button type="button" class="VPNavBarHamburger hamburger" aria-label="mobile navigation" aria-expanded="false" aria-controls="VPNavScreen" data-v-ff315404 data-v-22041f17><span class="container" data-v-22041f17><span class="top" data-v-22041f17></span><span class="middle" data-v-22041f17></span><span class="bottom" data-v-22041f17></span></span></button></div></div></div></div><div class="divider" data-v-ff315404><div class="divider-line" data-v-ff315404></div></div></div><!----></header><div class="VPLocalNav has-sidebar empty" data-v-4e472276 data-v-76256903><div class="container" data-v-76256903><button class="menu" aria-expanded="false" aria-controls="VPSidebarNav" data-v-76256903><span class="vpi-align-left menu-icon" data-v-76256903></span><span class="menu-text" data-v-76256903>菜单</span></button><div class="VPLocalNavOutlineDropdown" style="--vp-vh:0px;" data-v-76256903 data-v-e210645f><button data-v-e210645f>返回顶部</button><!----></div></div></div><aside class="VPSidebar" data-v-4e472276 data-v-3e08354d><div class="curtain" data-v-3e08354d></div><nav class="nav" id="VPSidebarNav" aria-labelledby="sidebar-aria-label" tabindex="-1" data-v-3e08354d><span class="visually-hidden" id="sidebar-aria-label" data-v-3e08354d> Sidebar Navigation </span><!--[--><!--]--><!--[--><div class="no-transition group" data-v-9ab2ae7d><section class="VPSidebarItem level-0 has-active" data-v-9ab2ae7d data-v-aa7d6c98><div class="item" role="button" tabindex="0" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><h2 class="text" data-v-aa7d6c98>Examples</h2><!----></div><div class="items" data-v-aa7d6c98><!--[--><div class="VPSidebarItem level-1 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/markdown-examples.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>Markdown Examples</p><!--]--></a><!----></div><!----></div><div class="VPSidebarItem level-1 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/api-examples.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>Runtime API Examples</p><!--]--></a><!----></div><!----></div><!--]--></div></section></div><div class="no-transition group" data-v-9ab2ae7d><section class="VPSidebarItem level-0 collapsible collapsed" data-v-9ab2ae7d data-v-aa7d6c98><div class="item" role="button" tabindex="0" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><h2 class="text" data-v-aa7d6c98>表格</h2><div class="caret" role="button" aria-label="toggle section" tabindex="0" data-v-aa7d6c98><span class="vpi-chevron-right caret-icon" data-v-aa7d6c98></span></div></div><div class="items" data-v-aa7d6c98><!--[--><section class="VPSidebarItem level-1 collapsible collapsed" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" role="button" tabindex="0" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><h3 class="text" data-v-aa7d6c98>基础功能</h3><div class="caret" role="button" aria-label="toggle section" tabindex="0" data-v-aa7d6c98><span class="vpi-chevron-right caret-icon" data-v-aa7d6c98></span></div></div><div class="items" data-v-aa7d6c98><!--[--><div class="VPSidebarItem level-2 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/table/basic/basic.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>基础</p><!--]--></a><!----></div><!----></div><div class="VPSidebarItem level-2 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/table/basic/size.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>宽高</p><!--]--></a><!----></div><!----></div><div class="VPSidebarItem level-2 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/table/basic/empty.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>空数据</p><!--]--></a><!----></div><!----></div><div class="VPSidebarItem level-2 is-link" data-v-aa7d6c98 data-v-aa7d6c98><div class="item" data-v-aa7d6c98><div class="indicator" data-v-aa7d6c98></div><a class="VPLink link link" href="/table/basic/bordered.html" data-v-aa7d6c98><!--[--><p class="text" data-v-aa7d6c98>边框</p><!--]--></a><!----></div><!----></div><!--]--></div></section><!--]--></div></section></div><!--]--><!--[--><!--]--></nav></aside><div class="VPContent has-sidebar" id="VPContent" data-v-4e472276 data-v-dad1466b><div class="VPDoc has-sidebar has-aside" data-v-dad1466b data-v-7bc39021><!--[--><!--]--><div class="container" data-v-7bc39021><div class="aside" data-v-7bc39021><div class="aside-curtain" data-v-7bc39021></div><div class="aside-container" data-v-7bc39021><div class="aside-content" data-v-7bc39021><div class="VPDocAside" data-v-7bc39021 data-v-31256b08><!--[--><!--]--><!--[--><!--]--><nav aria-labelledby="doc-outline-aria-label" class="VPDocAsideOutline" data-v-31256b08 data-v-c92ffb26><div class="content" data-v-c92ffb26><div class="outline-marker" data-v-c92ffb26></div><div aria-level="2" class="outline-title" id="doc-outline-aria-label" role="heading" data-v-c92ffb26>目录</div><ul class="VPDocOutlineItem root" data-v-c92ffb26 data-v-e40a5f65><!--[--><!--]--></ul></div></nav><!--[--><!--]--><div class="spacer" data-v-31256b08></div><!--[--><!--]--><!----><!--[--><!--]--><!--[--><!--]--></div></div></div></div><div class="content" data-v-7bc39021><div class="content-container" data-v-7bc39021><!--[--><!--]--><main class="main" data-v-7bc39021><div style="position:relative;" class="vp-doc _api-examples" data-v-7bc39021><div><h1 id="runtime-api-examples" tabindex="-1">Runtime API Examples <a class="header-anchor" href="#runtime-api-examples" aria-label="Permalink to &quot;Runtime API Examples&quot;">​</a></h1><p>This page demonstrates usage of some of the runtime APIs provided by VitePress.</p><p>The main <code>useData()</code> API can be used to access site, theme, and page data for the current page. It works in both <code>.md</code> and <code>.vue</code> files:</p><div class="language-md vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">md</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;script setup&gt;</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">import { useData } from &#39;vitepress&#39;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">const { theme, page, frontmatter } = useData()</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;/script&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">## Results</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">### Theme Data</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;pre&gt;{{ theme }}&lt;/pre&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">### Page Data</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;pre&gt;{{ page }}&lt;/pre&gt;</span></span>
+<span class="line"></span>
+<span class="line"><span style="--shiki-light:#005CC5;--shiki-light-font-weight:bold;--shiki-dark:#79B8FF;--shiki-dark-font-weight:bold;">### Page Frontmatter</span></span>
+<span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">&lt;pre&gt;{{ frontmatter }}&lt;/pre&gt;</span></span></code></pre></div><h2 id="results" tabindex="-1">Results <a class="header-anchor" href="#results" aria-label="Permalink to &quot;Results&quot;">​</a></h2><h3 id="theme-data" tabindex="-1">Theme Data <a class="header-anchor" href="#theme-data" aria-label="Permalink to &quot;Theme Data&quot;">​</a></h3><pre>{
+  &quot;search&quot;: {
+    &quot;provider&quot;: &quot;local&quot;
+  },
+  &quot;darkModeSwitchLabel&quot;: &quot;主题&quot;,
+  &quot;docFooter&quot;: {
+    &quot;prev&quot;: &quot;上一篇&quot;,
+    &quot;next&quot;: &quot;下一篇&quot;
+  },
+  &quot;lastUpdatedText&quot;: &quot;最后更新&quot;,
+  &quot;outline&quot;: {
+    &quot;level&quot;: [
+      2,
+      6
+    ],
+    &quot;label&quot;: &quot;目录&quot;
+  },
+  &quot;returnToTopLabel&quot;: &quot;返回顶部&quot;,
+  &quot;sidebarMenuLabel&quot;: &quot;菜单&quot;,
+  &quot;nav&quot;: [
+    {
+      &quot;text&quot;: &quot;主页&quot;,
+      &quot;link&quot;: &quot;/&quot;
+    },
+    {
+      &quot;text&quot;: &quot;例子&quot;,
+      &quot;link&quot;: &quot;/markdown-examples&quot;
+    }
+  ],
+  &quot;sidebar&quot;: [
+    {
+      &quot;text&quot;: &quot;Examples&quot;,
+      &quot;items&quot;: [
+        {
+          &quot;text&quot;: &quot;Markdown Examples&quot;,
+          &quot;link&quot;: &quot;/markdown-examples&quot;
+        },
+        {
+          &quot;text&quot;: &quot;Runtime API Examples&quot;,
+          &quot;link&quot;: &quot;/api-examples&quot;
+        }
+      ]
+    },
+    {
+      &quot;text&quot;: &quot;表格&quot;,
+      &quot;collapsed&quot;: true,
+      &quot;items&quot;: [
+        {
+          &quot;text&quot;: &quot;基础功能&quot;,
+          &quot;collapsed&quot;: true,
+          &quot;items&quot;: [
+            {
+              &quot;text&quot;: &quot;基础&quot;,
+              &quot;link&quot;: &quot;/table/basic/basic&quot;
+            },
+            {
+              &quot;text&quot;: &quot;宽高&quot;,
+              &quot;link&quot;: &quot;/table/basic/size&quot;
+            },
+            {
+              &quot;text&quot;: &quot;空数据&quot;,
+              &quot;link&quot;: &quot;/table/basic/empty&quot;
+            },
+            {
+              &quot;text&quot;: &quot;边框&quot;,
+              &quot;link&quot;: &quot;/table/basic/bordered&quot;
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  &quot;socialLinks&quot;: [
+    {
+      &quot;icon&quot;: &quot;github&quot;,
+      &quot;link&quot;: &quot;https://github.com/ja-plus/stk-table-vue&quot;
+    }
+  ]
+}</pre><h3 id="page-data" tabindex="-1">Page Data <a class="header-anchor" href="#page-data" aria-label="Permalink to &quot;Page Data&quot;">​</a></h3><pre>{
+  &quot;title&quot;: &quot;Runtime API Examples&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;frontmatter&quot;: {
+    &quot;outline&quot;: &quot;deep&quot;
+  },
+  &quot;headers&quot;: [],
+  &quot;relativePath&quot;: &quot;api-examples.md&quot;,
+  &quot;filePath&quot;: &quot;api-examples.md&quot;,
+  &quot;lastUpdated&quot;: 1730724770000
+}</pre><h3 id="page-frontmatter" tabindex="-1">Page Frontmatter <a class="header-anchor" href="#page-frontmatter" aria-label="Permalink to &quot;Page Frontmatter&quot;">​</a></h3><pre>{
+  &quot;outline&quot;: &quot;deep&quot;
+}</pre><h2 id="more" tabindex="-1">More <a class="header-anchor" href="#more" aria-label="Permalink to &quot;More&quot;">​</a></h2><p>Check out the documentation for the <a href="https://vitepress.dev/reference/runtime-api#usedata" target="_blank" rel="noreferrer">full list of runtime APIs</a>.</p></div></div></main><footer class="VPDocFooter" data-v-7bc39021 data-v-bd85cd24><!--[--><!--]--><div class="edit-info" data-v-bd85cd24><!----><div class="last-updated" data-v-bd85cd24><p class="VPLastUpdated" data-v-bd85cd24 data-v-3ebb60f8>最后更新: <time datetime="2024-11-04T12:52:50.000Z" data-v-3ebb60f8></time></p></div></div><nav class="prev-next" aria-labelledby="doc-footer-aria-label" data-v-bd85cd24><span class="visually-hidden" id="doc-footer-aria-label" data-v-bd85cd24>Pager</span><div class="pager" data-v-bd85cd24><a class="VPLink link pager-link prev" href="/markdown-examples.html" data-v-bd85cd24><!--[--><span class="desc" data-v-bd85cd24>上一篇</span><span class="title" data-v-bd85cd24>Markdown Examples</span><!--]--></a></div><div class="pager" data-v-bd85cd24><a class="VPLink link pager-link next" href="/table/basic/basic.html" data-v-bd85cd24><!--[--><span class="desc" data-v-bd85cd24>下一篇</span><span class="title" data-v-bd85cd24>基础</span><!--]--></a></div></nav></footer><!--[--><!--]--></div></div></div><!--[--><!--]--></div></div><!----><!--[--><!--]--></div></div>
+    <script>window.__VP_HASH_MAP__=JSON.parse("{\"api-examples.md\":\"D34mf58a\",\"en_index.md\":\"BLUKVRt2\",\"en_table_basic_basic.md\":\"BL5IfU0E\",\"index.md\":\"C4ZXgRn1\",\"markdown-examples.md\":\"BOoJ2E47\",\"table_basic_basic.md\":\"CfVzAFl6\",\"table_basic_bordered.md\":\"Bwm14nd5\",\"table_basic_empty.md\":\"DhbJxoEI\",\"table_basic_size.md\":\"D7lfgNpj\"}");window.__VP_SITE_DATA__=JSON.parse("{\"lang\":\"zh\",\"dir\":\"ltr\",\"title\":\"StkTableVue\",\"description\":\"A virtual table for vue\",\"base\":\"/\",\"head\":[],\"router\":{\"prefetchLinks\":true},\"appearance\":\"dark\",\"themeConfig\":{\"search\":{\"provider\":\"local\"},\"darkModeSwitchLabel\":\"主题\",\"docFooter\":{\"prev\":\"上一篇\",\"next\":\"下一篇\"},\"lastUpdatedText\":\"最后更新\",\"outline\":{\"level\":[2,6],\"label\":\"目录\"},\"returnToTopLabel\":\"返回顶部\",\"sidebarMenuLabel\":\"菜单\",\"nav\":[{\"text\":\"主页\",\"link\":\"/\"},{\"text\":\"例子\",\"link\":\"/markdown-examples\"}],\"sidebar\":[{\"text\":\"Examples\",\"items\":[{\"text\":\"Markdown Examples\",\"link\":\"/markdown-examples\"},{\"text\":\"Runtime API Examples\",\"link\":\"/api-examples\"}]},{\"text\":\"表格\",\"collapsed\":true,\"items\":[{\"text\":\"基础功能\",\"collapsed\":true,\"items\":[{\"text\":\"基础\",\"link\":\"/table/basic/basic\"},{\"text\":\"宽高\",\"link\":\"/table/basic/size\"},{\"text\":\"空数据\",\"link\":\"/table/basic/empty\"},{\"text\":\"边框\",\"link\":\"/table/basic/bordered\"}]}]}],\"socialLinks\":[{\"icon\":\"github\",\"link\":\"https://github.com/ja-plus/stk-table-vue\"}]},\"locales\":{\"root\":{\"label\":\"中文\",\"lang\":\"zh\"},\"en\":{\"label\":\"English\",\"lang\":\"zh\",\"title\":\"StkTableVue\",\"description\":\"A virtual table for vue\",\"themeConfig\":{\"nav\":[{\"text\":\"Home\",\"link\":\"/\"},{\"text\":\"Examples\",\"link\":\"/markdown-examples\"}],\"sidebar\":[{\"text\":\"Examples\",\"items\":[{\"text\":\"Markdown Examples\",\"link\":\"/markdown-examples\"},{\"text\":\"Runtime API Examples\",\"link\":\"/api-examples\"}]},{\"text\":\"Table\",\"items\":[{\"text\":\"Basic Usage\",\"items\":[{\"text\":\"Basic\",\"link\":\"/en/table/basic/basic\"}]}]}]}}},\"scrollOffset\":134,\"cleanUrls\":false}");</script>
+    
+  </body>
+</html>
