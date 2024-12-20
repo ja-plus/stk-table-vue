@@ -1,3 +1,7 @@
+## 0.6.5
+* Bugfix
+  - fix: `StkTableColumn['width']` not work correctly.
+
 ## 0.6.4
 * Feature
   - Add: `StkTableColumn['sortConfig']` to support column localeCompare

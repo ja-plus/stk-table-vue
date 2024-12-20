@@ -11,15 +11,15 @@
 列配置demo
 ```typescript
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name', fixed: 'left', minWidth: 100 },
-    { title: 'Age', dataIndex: 'age', minWidth: 100 }, 
-    { title: 'Address', dataIndex: 'address', minWidth: 200 }, 
+    { title: 'Name', dataIndex: 'name', fixed: 'left', width: 100 },
+    { title: 'Age', dataIndex: 'age', width: 100 }, 
+    { title: 'Address', dataIndex: 'address', width: 200 }, 
     // Gender 列前面的列都必须指定列宽
-    { title: 'Gender', dataIndex: 'gender', minWidth: 50, fixed: 'left' },
+    { title: 'Gender', dataIndex: 'gender', width: 50, fixed: 'left' },
     { title: 'Email', dataIndex: 'email' },
     { title: 'Phone', dataIndex: 'phone' },
     { title: 'Company', dataIndex: 'company'  },
-    { title: 'Operation', dataIndex: 'operation', fixed: 'right', minWidth: 100 },
+    { title: 'Operation', dataIndex: 'operation', fixed: 'right', width: 100 },
 ];
 
 ```

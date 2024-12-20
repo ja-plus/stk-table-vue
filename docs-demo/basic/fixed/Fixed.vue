@@ -7,14 +7,14 @@ import CheckItem from '../components/CheckItem.vue';
 const fixedColShadow = ref(false);
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name', fixed: 'left', minWidth: 100 },
-    { title: 'Age', dataIndex: 'age', minWidth: 100 },
-    { title: 'Address', dataIndex: 'address', minWidth: 200 },
-    { title: 'Gender', dataIndex: 'gender', minWidth: 50, fixed: 'left' },
-    { title: 'Email', dataIndex: 'email', minWidth: 200 },
-    { title: 'Phone', dataIndex: 'phone', minWidth: 100 },
-    { title: 'Company', dataIndex: 'company', minWidth: 200 },
-    { title: 'Operation', dataIndex: 'operation', fixed: 'right', minWidth: 100 },
+    { title: 'Name', dataIndex: 'name', fixed: 'left', width: 100 },
+    { title: 'Age', dataIndex: 'age', width: 100 },
+    { title: 'Address', dataIndex: 'address', width: 200 },
+    { title: 'Gender', dataIndex: 'gender', width: 50, fixed: 'left' },
+    { title: 'Email', dataIndex: 'email', width: 200 },
+    { title: 'Phone', dataIndex: 'phone', width: 100 },
+    { title: 'Company', dataIndex: 'company', width: 200 },
+    { title: 'Operation', dataIndex: 'operation', fixed: 'right', width: 100 },
 ];
 const dataSource = ref([
     { key: '1', name: 'John Brown', age: 32, address: 'New York No. 1 Lake Park', gender: 'male', email: 'john@example.com' },
