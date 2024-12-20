@@ -1,3 +1,5 @@
 .vscode
 node_modules
 docs/.vitepress/cache
+docs-src/.vitepress/dist
+docs-src/.vitepress/cache

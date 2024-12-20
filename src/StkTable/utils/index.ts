@@ -182,6 +182,7 @@ export function howDeepTheHeader(arr: StkTableColumn<any>[], level = 0) {
 
 /** number width +px */
 export function transformWidthToStr(width?: string | number) {
+    if (width === void 0) return;
     const numberWidth = Number(width);
     return width + (!Number.isNaN(numberWidth) ? 'px' : '');
 }

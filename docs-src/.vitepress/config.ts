@@ -50,7 +50,7 @@ export default defineConfig({
               { text: '宽高', link: '/table/basic/size' },
               { text: '空数据', link: '/table/basic/empty' },
               { text: '边框', link: '/table/basic/bordered' },
-              { text: 'TODO:固定列', link: '/todo-page', },
+              { text: '固定列', link: '/table/basic/fixed', },
               { text: 'TODO:斑马纹', link: '/todo-page', },
               { text: 'TODO:行高', link: '/todo-page', },
               { text: 'TODO:列宽', link: '/todo-page', },

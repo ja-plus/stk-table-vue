@@ -10,16 +10,12 @@ const columns: StkTableColumn<any>[] = [
     { title: 'Gender', dataIndex: 'gender' },
 ];
 
-const dataSource = ref(
-    new Array(3).fill(0).map((_, index) => {
-        return {
-            name: `Jack ${index}`,
-            age: 18 + index,
-            address: `Beijing Forbidden City ${index}`,
-            gender: index % 2 === 0 ? 'male' : 'female',
-        };
-    }),
-);
+const dataSource = ref([
+    { name: `Jack`, age: 18, address: `Beijing Forbidden City `, gender: 'male' },
+    { name: `Tom`, age: 20, address: `Shanghai`, gender: 'male' },
+    { name: `Lucy`, age: 22, address: `Guangzhou`, gender: 'female' },
+    { name: `Lily`, age: 24, address: `Shenzhen`, gender: 'female' },
+]);
 </script>
 <template>
     <StkTable :columns="columns" :data-source="dataSource"></StkTable>
