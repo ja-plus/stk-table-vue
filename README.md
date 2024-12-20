@@ -4,6 +4,10 @@ Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐
 
 Vue2.7支持引入源码(**ts**)使用。
 
+[Stk Table Vue 文档](https://ja-plus.github.io/stk-table-vue/)
+
+## License
+MIT
 repo: 
 - [Github](https://github.com/ja-plus/stk-table-vue)
 - [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
