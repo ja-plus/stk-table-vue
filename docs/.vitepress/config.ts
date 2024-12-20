@@ -10,7 +10,7 @@ export default defineConfig({
   lang: 'zh',
   appearance: 'dark',
   themeConfig: {
-    logo: '/assets/logo.svg',
+    logo: '/stk-table-vue/assets/logo.svg',
     search: {
       provider: 'local'
     },
