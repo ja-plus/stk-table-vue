@@ -6,7 +6,7 @@
 *  `props.showHeaderOverflow` 为 true，当表头内容溢出时，会显示省略号。
 
 ::: tip
-开启虚拟列表时，为了不影响计算，将**强制固定行高**。
+当开启虚拟列表时，为了不影响计算，行高不会被单元格内容影响，并固定至 `props.rowHeight` & `props.headerRowHeight` 配置的行高。
 :::
 
 
