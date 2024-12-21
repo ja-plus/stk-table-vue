@@ -11,7 +11,7 @@ export default defineConfig({
   lang: 'zh',
   appearance: 'dark',
   themeConfig: {
-    logo: '/stk-table-vue/assets/logo.svg',
+    logo: '/assets/logo.svg',
     search: {
       provider: 'local'
     },
@@ -51,7 +51,7 @@ export default defineConfig({
               { text: '空数据', link: '/table/basic/empty' },
               { text: '边框', link: '/table/basic/bordered' },
               { text: '固定列', link: '/table/basic/fixed', },
-              { text: 'TODO:斑马纹', link: '/todo-page', },
+              { text: '斑马纹', link: '/table/basic/stripe', },
               { text: 'TODO:行高', link: '/todo-page', },
               { text: 'TODO:列宽', link: '/todo-page', },
               { text: 'TODO:排序', link: '/todo-page', },
