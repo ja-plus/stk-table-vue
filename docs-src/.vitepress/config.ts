@@ -54,7 +54,7 @@ export default defineConfig({
               { text: '斑马纹', link: '/table/basic/stripe', },
               { text: '行高', link: '/table/basic/row-height', },
               { text: '列宽', link: '/table/basic/column-width', },
-              { text: 'TODO:内容溢出省略', link: '/todo-page', },
+              { text: '内容溢出省略', link: '/table/basic/overflow', },
               { text: 'TODO:排序', link: '/todo-page', },
               { text: 'TODO:选中行', link: '/todo-page', },
               { text: 'TODO:鼠标悬浮', link: '/todo-page', },

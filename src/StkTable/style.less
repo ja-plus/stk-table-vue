@@ -213,6 +213,10 @@
         .table-header-cell-wrapper {
             overflow: hidden;
             max-height: calc(var(--header-row-height) * var(--row-span, 1));
+
+            .table-header-title {
+                max-height: inherit;
+            }
         }
 
         tbody td {

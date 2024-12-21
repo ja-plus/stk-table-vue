@@ -3,14 +3,22 @@ import { ref } from 'vue';
 import StkTable from '../StkTable.vue';
 import { StkTableColumn } from '../../src/StkTable/index';
 
-const columns: StkTableColumn<any>[] = [
+type Data = {
+    name: string;
+    age: number;
+    address: string;
+    gender: 'male' | 'female';
+};
+
+const columns: StkTableColumn<Data>[] = [
+    { type: 'seq', title: 'No.', dataIndex: '', width: 50 },
     { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
+    { title: 'Age', dataIndex: 'age', headerAlign: 'right', align: 'right' },
+    { title: 'Gender', dataIndex: 'gender', align: 'center' },
     { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
 ];
 
-const dataSource = ref([
+const dataSource = ref<Data[]>([
     { name: `Jack`, age: 18, address: `Beijing Forbidden City `, gender: 'male' },
     { name: `Tom`, age: 20, address: `Shanghai`, gender: 'male' },
     { name: `Lucy`, age: 22, address: `Guangzhou`, gender: 'female' },
@@ -18,5 +26,5 @@ const dataSource = ref([
 ]);
 </script>
 <template>
-    <StkTable :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable style="height: 200px" row-key="name" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
