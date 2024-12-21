@@ -14,7 +14,7 @@
     "build": "vite build",
     "test": "vitest",
     "docs:dev": "vitepress dev docs-src",
-    "docs:build": "vitepress build docs-src && ",
+    "docs:build": "vitepress build docs-src",
     "docs:preview": "vitepress preview docs-src",
     "docs:update": "cp -rf ./docs-src/.vitepress/dist/* ./docs"
   },
