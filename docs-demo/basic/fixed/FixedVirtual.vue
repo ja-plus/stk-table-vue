@@ -4,10 +4,11 @@ import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 
 const columns: StkTableColumn<any>[] = [
+    { type: 'seq', title: 'No.', dataIndex: '', fixed: 'left', width: 50 },
     { title: 'Name', dataIndex: 'name', fixed: 'left', width: 100 },
     { title: 'Age', dataIndex: 'age', width: 100 },
     { title: 'Address', dataIndex: 'address', width: 200 },
-    { title: 'Gender', dataIndex: 'gender', width: 50, fixed: 'left' },
+    { title: 'Gender', dataIndex: 'gender', width: 70, fixed: 'left' },
     { title: 'Email', dataIndex: 'email', width: 200 },
     { title: 'Phone', dataIndex: 'phone', width: 100 },
     { title: 'Operation', dataIndex: 'operation', fixed: 'right', width: 100 },
@@ -20,9 +21,18 @@ const dataSource = ref([
     { key: '3', name: 'Joe Black', age: 32, address: 'Sidney No. 1 Lake Park', gender: 'male', email: 'joe@example.com' },
     { key: '4', name: 'Jim Red', age: 32, address: 'London No. 2 Lake Park', gender: 'male', email: 'jim@example.com' },
     { key: '5', name: 'Jake White', age: 32, address: 'New York No. 2 Lake Park', gender: 'male', email: 'jake@example.com' },
+    // 再加100条数据
+    ...new Array(100).fill(0).map((_, i) => ({
+        key: `${i + 6}`,
+        name: `John Brown${i + 6}`,
+        age: 32,
+        address: 'New York No. 1 Lake Park',
+        gender: 'male',
+        email: 'john@example.com',
+    })),
 ]);
 </script>
 
 <template>
-    <StkTable row-key="key" virtual virtual-x :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable style="height: 200px" row-key="key" virtual virtual-x fixed-col-shadow :columns="columns" :data-source="dataSource"></StkTable>
 </template>

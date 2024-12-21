@@ -10,7 +10,7 @@ const columns: StkTableColumn<any>[] = [
     { title: 'Name', dataIndex: 'name', fixed: 'left', width: 100 },
     { title: 'Age', dataIndex: 'age', width: 100 },
     { title: 'Address', dataIndex: 'address', width: 200 },
-    { title: 'Gender', dataIndex: 'gender', width: 50, fixed: 'left' },
+    { title: 'Gender', dataIndex: 'gender', width: 70, fixed: 'left' },
     { title: 'Email', dataIndex: 'email', width: 200 },
     { title: 'Phone', dataIndex: 'phone', width: 100 },
     { title: 'Company', dataIndex: 'company', width: 200 },

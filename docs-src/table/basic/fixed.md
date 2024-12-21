@@ -3,10 +3,10 @@
 通过配置 `StkTableColumn['fixed'] = 'left'` 或 `'right'` 即可实现固定左侧或右侧列的效果。
 
 ::: info
-由于表格使用了 `sticky` 实现固定列，因此支持列吸附的特性。
+由于表格使用了 `sticky` 实现固定列，因此支持**列吸附**的特性。
 :::
 
-## 基本固定
+## 基本
 
 列配置demo
 ```typescript
@@ -24,7 +24,9 @@ const columns: StkTableColumn<any>[] = [
 
 ```
 ::: warning
-由于我要用列宽来计算**固定列**的吸附位置，设置固定左侧列前面的所有列**必须指定列宽**。如上 `Gender` 列前的所有列必须都设置列宽。固定右侧同理。
+由于要用列宽来计算**固定列**的吸附位置，设置固定左侧列前面的所有列**必须指定列宽**。
+
+如上表 `Gender` 列前的所有列必须都设置列宽。固定右侧同理。
 :::
 
 <demo vue="../../../docs-demo/basic/fixed/Fixed.vue"></demo>
@@ -40,10 +42,14 @@ const columns: StkTableColumn<any>[] = [
 默认情况下，固定列没有阴影效果，如果您希望有阴影效果，可以设置 `fixed-col-shadow` 属性为 `true`。
 
 ```html
-<StkTable fixed-col-shadow ></StkTable>
+<StkTable fixed-col-shadow></StkTable>
 ```
 
 ## 虚拟列表列固定
 
+
 <demo vue="../../../docs-demo/basic/fixed/FixedVirtual.vue"></demo>
 
+::: warning
+设置了 `props.virtual-x` 横向虚拟列表时，未设置列宽的列都会被强制设置为100px
+:::
