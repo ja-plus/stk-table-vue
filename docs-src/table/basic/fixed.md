@@ -9,7 +9,7 @@
 ## 基本
 
 列配置demo
-```typescript
+```typescript{2,6,10}
 const columns: StkTableColumn<any>[] = [
     { title: 'Name', dataIndex: 'name', fixed: 'left', width: 100 },
     { title: 'Age', dataIndex: 'age', width: 100 }, 

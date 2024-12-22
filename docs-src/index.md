@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Stk Table Vue"
   text: "Vue虚拟列表"
-  tagline: vue 虚拟列表新选择
+  tagline: 基于sticky的高性能实时虚拟列表。
   image:
     src: /assets/logo.svg
     alt: Stk Table Vue
