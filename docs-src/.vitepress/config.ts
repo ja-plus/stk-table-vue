@@ -55,7 +55,7 @@ export default defineConfig({
               { text: '行高', link: '/table/basic/row-height', },
               { text: '列宽', link: '/table/basic/column-width', },
               { text: '内容溢出省略', link: '/table/basic/overflow', },
-              { text: 'TODO:排序', link: '/todo-page', },
+              { text: '排序', link: '/table/basic/sort', },
               { text: 'TODO:选中行', link: '/todo-page', },
               { text: 'TODO:鼠标悬浮', link: '/todo-page', },
               { text: 'TODO:无头', link: '/todo-page', },
