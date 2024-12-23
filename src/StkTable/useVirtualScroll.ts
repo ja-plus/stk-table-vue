@@ -79,6 +79,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         scrollHeight: 0,
     });
 
+    // TODO: init pageSize
+
     const virtualScrollX = ref<VirtualScrollXStore>({
         containerWidth: 0,
         scrollWidth: 0,
