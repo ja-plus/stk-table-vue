@@ -56,8 +56,7 @@ export default defineConfig({
               { text: '列宽', link: '/table/basic/column-width', },
               { text: '内容溢出省略', link: '/table/basic/overflow', },
               { text: '排序', link: '/table/basic/sort', },
-              { text: 'TODO:选中行', link: '/todo-page', },
-              { text: 'TODO:鼠标悬浮', link: '/todo-page', },
+              { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
               { text: 'TODO:无头', link: '/todo-page', },
               { text: 'TODO:行展开', link: '/todo-page', },
               { text: 'TODO:多级表头', link: '/todo-page', },
@@ -81,7 +80,18 @@ export default defineConfig({
 
             ]
 
-          }
+          },
+        {
+          text: 'API',
+          collapsed: false,
+          items:[
+            { text: 'Table Props', link: '/api/table-props' },
+            { text: 'StkTableColumn', link: '/api/stk-table-column' },
+            { text: 'Emits', link: '/api/emits' },
+            { text: 'Expose', link: '/api/expose' },
+            { text: 'Slots', link: '/api/slots' },
+          ]
+        }
         ]
       }
     ],
