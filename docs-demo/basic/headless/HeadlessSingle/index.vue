@@ -3,7 +3,7 @@ import StkTable from '../../../StkTable.vue';
 import { StkTableColumn } from '../../../../src/StkTable/index';
 import type { DataType } from './types';
 import Panel from './Panel.vue';
-import { Random } from 'mockjs';
+import { Random } from 'mockjs-esm';
 
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
 const data = [

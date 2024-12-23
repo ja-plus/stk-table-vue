@@ -13,9 +13,6 @@ devDependencies:
   '@types/d3-interpolate':
     specifier: ^3.0.4
     version: 3.0.4
-  '@types/mockjs':
-    specifier: ^1.0.10
-    version: 1.0.10
   '@types/node':
     specifier: ^20.12.10
     version: 20.12.10
@@ -52,9 +49,6 @@ devDependencies:
   less:
     specifier: ^4.2.0
     version: 4.2.0
-  mockjs:
-    specifier: ^1.1.0
-    version: 1.1.0
   postcss:
     specifier: ^8.4.47
     version: 8.4.47
@@ -1440,10 +1434,6 @@ packages:
 
   /@types/mdurl@2.0.0:
     resolution: {integrity: sha512-RGdgjQUZba5p6QEFAVx2OGb8rQDL/cPRG7GiedRzMcJ1tYnUANBncjbSB1NRGwbvjcPeikRABz2nshyPk1bhWg==}
-    dev: true
-
-  /@types/mockjs@1.0.10:
-    resolution: {integrity: sha512-SXgrhajHG7boLv6oU93CcmdDm0HYRiceuz6b+7z+/2lCJPTWDv0V5YiwFHT2ejE4bQqgSXQiVPQYPWv7LGsK1g==}
     dev: true
 
   /@types/node@20.12.10:
@@ -3201,13 +3191,6 @@ packages:
       pathe: 1.1.2
       pkg-types: 1.1.0
       ufo: 1.5.3
-    dev: true
-
-  /mockjs@1.1.0:
-    resolution: {integrity: sha512-eQsKcWzIaZzEZ07NuEyO4Nw65g0hdWAyurVol1IPl1gahRwY+svqzfgfey8U8dahLwG44d6/RwEzuK52rSa/JQ==}
-    hasBin: true
-    dependencies:
-      commander: 10.0.1
     dev: true
 
   /ms@2.1.2:
