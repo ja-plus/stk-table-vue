@@ -1,4 +1,4 @@
-# Emits
+# Emits 事件
 
 ```ts
  {

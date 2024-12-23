@@ -1,4 +1,4 @@
-# Espose
+# Expose 实例方法
 
 ```ts
 defineExpose({

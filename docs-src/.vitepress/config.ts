@@ -85,11 +85,11 @@ export default defineConfig({
           text: 'API',
           collapsed: false,
           items:[
-            { text: 'Table Props', link: '/api/table-props' },
-            { text: 'StkTableColumn', link: '/api/stk-table-column' },
-            { text: 'Emits', link: '/api/emits' },
-            { text: 'Expose', link: '/api/expose' },
-            { text: 'Slots', link: '/api/slots' },
+            { text: 'Table Props 表格配置', link: '/api/table-props' },
+            { text: 'StkTableColumn 列配置', link: '/api/stk-table-column' },
+            { text: 'Emits 事件', link: '/api/emits' },
+            { text: 'Expose 实例方法', link: '/api/expose' },
+            { text: 'Slots 插槽', link: '/api/slots' },
           ]
         }
         ]

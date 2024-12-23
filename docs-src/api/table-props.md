@@ -1,4 +1,4 @@
-# Table Props
+# Table Props 表格配置
 
 ```ts
 export type StkProps = {

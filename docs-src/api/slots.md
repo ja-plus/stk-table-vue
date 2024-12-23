@@ -1,4 +1,4 @@
-# Slots
+# Slots 插槽
 
 | slots | props | describe |
 | ---- | ---- | ---- |
