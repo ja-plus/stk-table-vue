@@ -50,9 +50,6 @@
     flex-direction: column;
     box-sizing: border-box;
 
-    /* 下面border用于表格内容不满高度时，绘制表格边界线 */
-    background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-
     /**深色模式 */
     &.dark {
         --th-bgc: #202029;
@@ -85,10 +82,17 @@
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
     }
+       
+    &.border{
+        /* 下面border用于表格内容不满高度时，绘制表格边界线 */
+        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+    }
 
     &.headless {
-        border-top: 1px solid var(--border-color);
-        background-image: var(--bg-border-right), var(--bg-border-bottom);
+        &.border {
+            border-top: 1px solid var(--border-color);
+            background-image: var(--bg-border-right), var(--bg-border-bottom);
+        }
     }
 
     /* 调整列宽的话，表格宽度应当自适应 */
