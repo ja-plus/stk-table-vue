@@ -17,7 +17,7 @@ const data = [
     ...new Array(20).fill(0).map((_, i) => ({
         id: i,
         title: Random.csentence(5, 15),
-        content: Random.cparagraph(2, 10),
+        content: Random.cparagraph(1, 10),
         date: Random.datetime('yyyy-MM-dd HH:mm'),
     })),
 ];
@@ -29,8 +29,8 @@ const data = [
         style="height: 400px"
         virtual
         headless
-        :row-active="false"
         :row-height="200"
+        :row-active="false"
         :bordered="false"
         :row-hover="false"
         :columns="columns"

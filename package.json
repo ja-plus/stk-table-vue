@@ -41,6 +41,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/d3-interpolate": "^3.0.4",
+    "@types/mockjs": "^1.0.10",
     "@types/node": "^20.12.10",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
     "@typescript-eslint/parser": "^7.7.0",

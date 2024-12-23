@@ -65,12 +65,12 @@ export default defineConfig({
             ]
           },
           {
-            text: '高级功能',
+            text: '进阶功能',
             collapsed: false,
             items: [
               { text: 'TODO:高亮行、单元格', link: '/todo-page', },
               { text: 'TODO:虚拟列表', link: '/todo-page', },
-              { text: 'TODO:不定行高虚拟列表', link: '/todo-page', },
+              { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
               { text: 'TODO:列宽调整', link: '/todo-page', },
               { text: 'TODO:列更换顺序', link: '/todo-page', },
               { text: 'TODO:自定义单元格', link: '/todo-page', },
