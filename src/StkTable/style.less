@@ -83,10 +83,6 @@
         color: #d1d1e0;
     }
        
-    &.border{
-        /* 下面border用于表格内容不满高度时，绘制表格边界线 */
-        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
-    }
 
     &.headless {
         &.border {
@@ -119,6 +115,8 @@
         * - sticky 定位方案需要占用位置。高度为0。
         */
         border-left: 1px solid var(--border-color);
+        /* 下面border用于表格内容不满高度时，绘制表格边界线 */
+        background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 
         th,
         td {
