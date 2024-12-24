@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import StkTable from '../../../StkTable.vue';
+import mockjs from 'mockjs';
 import { StkTableColumn } from '../../../../src/StkTable/index';
-import type { DataType } from './types';
+import StkTable from '../../../StkTable.vue';
 import Panel from './Panel.vue';
-import { Random } from 'mockjs-esm';
+import type { DataType } from './types';
 
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
+
 const data = [
     {
         id: 'a',
@@ -16,9 +17,9 @@ const data = [
     },
     ...new Array(20).fill(0).map((_, i) => ({
         id: i,
-        title: Random.csentence(5, 15),
-        content: Random.cparagraph(1, 10),
-        date: Random.datetime('yyyy-MM-dd HH:mm'),
+        title: mockjs.Random.csentence(5, 15),
+        content: mockjs.Random.cparagraph(1, 10),
+        date: mockjs.Random.datetime('yyyy-MM-dd HH:mm'),
     })),
 ];
 </script>

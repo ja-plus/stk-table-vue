@@ -10,6 +10,7 @@
         "baseUrl": ".",
         "moduleResolution": "node",
         "jsxImportSource": "vue",
+        "allowSyntheticDefaultImports": true,
         "lib": [
             "ESNext",
             "DOM",
