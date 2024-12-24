@@ -58,7 +58,7 @@ export default defineConfig({
               { text: '排序', link: '/table/basic/sort', },
               { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
               { text: '无头', link: '/table/basic/headless', },
-              { text: 'TODO:行展开', link: '/todo-page', },
+              { text: '行展开', link: '/table/basic/expand-row', },
               { text: 'TODO:多级表头', link: '/todo-page', },
               { text: 'TODO:序号列', link: '/todo-page', },
               { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
