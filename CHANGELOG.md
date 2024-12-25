@@ -3,10 +3,11 @@
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .
   - fix: when `props.border=false`, the border still shown.
+  - fix: expand row virtual mode not work correctly.
 
 ## 0.6.4
 * Feature
-  - Add: `StkTableColumn['sortConfig']` to support column localeCompare
+  - Add: `StkTableColumn['sortConfig']` to support column localeCompare.
   - `StkTableColumn['minWidth']` Can affect the minimum width of column width adjustment.
 * Optimize
   - `StkTableColumn['width']` if set number string, auto append `px`.

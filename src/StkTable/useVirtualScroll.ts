@@ -90,6 +90,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         scrollLeft: 0,
     });
 
+    const hasExpandCol = computed(() => {
+        return tableHeaderLast.value.some(col => col.type === 'expand');
+    });
+
     /** 是否虚拟滚动标志 */
     const virtual_on = computed(() => {
         return props.virtual && dataSourceCopy.value.length > virtualScroll.value.pageSize * 2;
@@ -200,10 +204,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             const headerToBodyRowHeightCount = Math.floor(headerHeight / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
-        /** 最大的scrollTop */
         const maxScrollTop = dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight;
         if (scrollTop > maxScrollTop) {
-            /** 用于修复： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
+            /** fix： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
             scrollTop = maxScrollTop;
         }
         Object.assign(virtualScroll.value, { containerHeight, pageSize, scrollHeight });
@@ -239,7 +242,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         let expectedHeight;
         if (storedHeight) {
             return storedHeight;
-        } else if ((expectedHeight = props.autoRowHeight?.expectedHeight)) {
+        }
+        if ((expectedHeight = props.autoRowHeight?.expectedHeight)) {
             if (typeof expectedHeight === 'function') {
                 return expectedHeight(row);
             } else {
@@ -280,6 +284,18 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                     break;
                 }
             }
+        } else if (hasExpandCol.value) {
+            const expandedRowHeight = props.expandConfig?.height || rowHeight;
+            for (let i = 0; i < dataSourceCopy.value.length; i++) {
+                const row = dataSourceCopy.value[i];
+                const height = row.__EXPANDED_ROW__ ? expandedRowHeight : rowHeight;
+                autoRowHeightTop += height;
+                if (autoRowHeightTop >= sTop) {
+                    startIndex = i + 1;
+                    autoRowHeightTop = autoRowHeightTop - height;
+                    break;
+                }
+            }
         } else {
             startIndex = Math.floor(sTop / rowHeight);
         }
@@ -292,6 +308,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             if (autoRowHeight) {
                 const height = getAutoRowHeight(dataSourceCopy.value[startIndex]);
                 autoRowHeightTop -= height;
+            }
+            if (hasExpandCol.value) {
+                autoRowHeightTop -= rowHeight;
             }
         }
 
@@ -310,7 +329,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         let offsetTop = 0;
-        if (autoRowHeight) {
+        if (autoRowHeight || hasExpandCol.value) {
             offsetTop = autoRowHeightTop;
         } else {
             if (oldStartIndex === startIndex && oldEndIndex === endIndex) {

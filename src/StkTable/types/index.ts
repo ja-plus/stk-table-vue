@@ -200,6 +200,7 @@ export type SeqConfig = {
 
 /** Configuration options for the expand column  */
 export type ExpandConfig = {
+    /** worked in virtual mode */
     height?: number;
 };
 
