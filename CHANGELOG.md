@@ -1,9 +1,10 @@
 ## 0.6.5
+* Feature
+  - support expand row in virtual mode.
 * Bugfix
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .
   - fix: when `props.border=false`, the border still shown.
-  - fix: expand row virtual mode not work correctly.
 
 ## 0.6.4
 * Feature

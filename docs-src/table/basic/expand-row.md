@@ -1,6 +1,11 @@
 # 行展开
 
+列配置添加 `type: 'expand'` 即可将列设置为内置的可展开单元格。
+再配置 slot `#expand="{row, col}` 设置展开内容。
 
+::: warning
+目前如果配置了展开行，虚拟列表的计算顶部距离的方式，是通过从第一条数据开始，累加行高实现，在数据量过多时可能有性能问题。
+:::
 ## 例子
 
 ### 基本展开
@@ -8,7 +13,6 @@
 
 ### 自定义展开单元格
 <demo vue="../../../docs-demo/basic/expand-row/CustomExpandRow.vue"></demo>
-
 
 ## API
 ### StkTableColumn配置
@@ -40,7 +44,7 @@ const columns = [
 
 ### props
 `props.expandConfig`
-| 属性 | 类型 |默认值 | 说明 |
+| 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
 | height | number | 表格行高 | 展开行的行高 |
 
@@ -52,7 +56,7 @@ const columns = [
  * @param rowKeyOrRow 行唯一键或行对象
  * @param expand 是否展开
  * @param data.col 列配置
- * @param data.silent i设为true则不触发 `@toggle-row-expand`, 默认:false
+ * @param data.silent 设为true则不触发 `@toggle-row-expand`, 默认:false
  */
 setRowExpand(
     rowKeyOrRow: string | undefined | DT,

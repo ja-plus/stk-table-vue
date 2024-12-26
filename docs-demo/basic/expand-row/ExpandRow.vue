@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { h, ref } from 'vue';
-import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
+import { ref } from 'vue';
+import StkTable from '../../StkTable.vue';
 import CheckItem from '../components/CheckItem.vue';
 
 const virtual = ref(false);
+const stripe = ref(false);
 
 const columns = ref<StkTableColumn<any>[]>([
     { type: 'expand', dataIndex: '', width: 50, align: 'center', fixed: 'left' },
@@ -27,10 +28,12 @@ function handleToggleRowExpand(data: any) {
 <template>
     <div>
         <CheckItem v-model="virtual" text="virtual"></CheckItem>
+        <CheckItem v-model="stripe" text="stripe"></CheckItem>
         <StkTable
             row-key="id"
             style="height: 200px"
             :virtual="virtual"
+            :stripe="stripe"
             :expand-config="{
                 height: 80,
             }"

@@ -253,6 +253,18 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         return props.rowHeight || DEFAULT_ROW_HEIGHT;
     };
 
+    const createGetRowHeightFn: () => (row: DT) => number = () => {
+        if (props.autoRowHeight) {
+            return (row: DT) => getAutoRowHeight(row);
+        }
+        if (hasExpandCol.value) {
+            const { rowHeight } = virtualScroll.value;
+            const expandedRowHeight: number = props.expandConfig?.height || rowHeight;
+            return (row: DT) => (row.__EXPANDED_ROW__ ? expandedRowHeight : rowHeight);
+        }
+        return () => props.rowHeight || (DEFAULT_ROW_HEIGHT as number);
+    };
+
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
         const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
@@ -263,36 +275,32 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (!virtual_on.value) {
             return;
         }
+
+        const dataSourceCopyTemp = dataSourceCopy.value;
         const { autoRowHeight, stripe, optimizeVue2Scroll } = props;
 
         let startIndex = 0;
-
         let autoRowHeightTop = 0;
-        if (autoRowHeight) {
-            trRef.value?.forEach(tr => {
-                const { rowKey } = tr.dataset;
-                if (!rowKey || autoRowHeightMap.has(rowKey)) return;
-                autoRowHeightMap.set(rowKey, tr.offsetHeight);
-            });
+        let getRowHeight: ReturnType<typeof createGetRowHeightFn> | null = null;
+        const dataLength = dataSourceCopyTemp.length;
 
-            for (let i = 0; i < dataSourceCopy.value.length; i++) {
-                const height = getAutoRowHeight(dataSourceCopy.value[i]);
+        if (autoRowHeight || hasExpandCol.value) {
+            if (autoRowHeight) {
+                trRef.value?.forEach(tr => {
+                    const { rowKey } = tr.dataset;
+                    if (!rowKey || autoRowHeightMap.has(rowKey)) return;
+                    autoRowHeightMap.set(rowKey, tr.offsetHeight);
+                });
+            }
+
+            getRowHeight = createGetRowHeightFn();
+
+            for (let i = 0; i < dataLength; i++) {
+                const height = getRowHeight(dataSourceCopyTemp[i]);
                 autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
                     startIndex = i;
-                    autoRowHeightTop = autoRowHeightTop - height;
-                    break;
-                }
-            }
-        } else if (hasExpandCol.value) {
-            const expandedRowHeight = props.expandConfig?.height || rowHeight;
-            for (let i = 0; i < dataSourceCopy.value.length; i++) {
-                const row = dataSourceCopy.value[i];
-                const height = row.__EXPANDED_ROW__ ? expandedRowHeight : rowHeight;
-                autoRowHeightTop += height;
-                if (autoRowHeightTop >= sTop) {
-                    startIndex = i + 1;
-                    autoRowHeightTop = autoRowHeightTop - height;
+                    autoRowHeightTop -= height;
                     break;
                 }
             }
@@ -305,19 +313,16 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (stripe && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
             startIndex -= 1; // 奇数-1变成偶数
-            if (autoRowHeight) {
-                const height = getAutoRowHeight(dataSourceCopy.value[startIndex]);
+            if (autoRowHeight || hasExpandCol.value) {
+                const height = getRowHeight!(dataSourceCopyTemp[startIndex]);
                 autoRowHeightTop -= height;
-            }
-            if (hasExpandCol.value) {
-                autoRowHeightTop -= rowHeight;
             }
         }
 
         startIndex = Math.max(0, startIndex);
 
         // 溢出修正
-        endIndex = Math.min(endIndex, dataSourceCopy.value.length);
+        endIndex = Math.min(endIndex, dataLength);
 
         if (startIndex >= endIndex) {
             // 兜底，不一定会执行到这里
