@@ -8,7 +8,7 @@ type Params<T extends Record<string, any>> = {
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
     getFixedColPosition: ComputedRef<(col: StkTableColumn<T>) => number>;
     tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
-    tableHeaderLast: ShallowRef<StkTableColumn<T>[]>;
+    tableHeadersForCalc: ShallowRef<StkTableColumn<T>[][]>;
     tableContainerRef: Ref<HTMLDivElement | undefined>;
 };
 
@@ -21,7 +21,7 @@ export function useFixedCol<DT extends Record<string, any>>({
     colKeyGen,
     getFixedColPosition,
     tableHeaders,
-    tableHeaderLast,
+    tableHeadersForCalc,
     tableContainerRef,
 }: Params<DT>) {
     /** 保存需要出现阴影的列 */
@@ -56,22 +56,22 @@ export function useFixedCol<DT extends Record<string, any>>({
      * @param type 1-shadow（阴影） 2-active(被固定的列)
      *
      */
-    function getColAndParentCols(col: StkTableColumn<DT> | null, type: 1 | 2 = 1) {
-        if (!col) return [];
-        const colsTemp: StkTableColumn<DT>[] = [];
-        let node: any = { __PARENT__: col };
-        while ((node = node.__PARENT__)) {
-            if (type === 1 && node.fixed) {
-                // shadow
-                colsTemp.push(node);
-            }
-            if (type === 2) {
-                // active
-                colsTemp.push(node);
-            }
-        }
-        return colsTemp;
-    }
+    // function getColAndParentCols(col: StkTableColumn<DT> | null, type: 1 | 2 = 1) {
+    //     if (!col) return [];
+    //     const colsTemp: StkTableColumn<DT>[] = [];
+    //     let node: any = { __PARENT__: col };
+    //     while ((node = node.__PARENT__)) {
+    //         if (type === 1 && node.fixed) {
+    //             // shadow
+    //             colsTemp.push(node);
+    //         }
+    //         if (type === 2) {
+    //             // active
+    //             colsTemp.push(node);
+    //         }
+    //     }
+    //     return colsTemp;
+    // }
 
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
@@ -95,30 +95,35 @@ export function useFixedCol<DT extends Record<string, any>>({
          * 根据横向滚动位置，计算出哪个列需要展示阴影
          *****/
         /** 左侧需要展示阴影的列 */
-        let leftShadowCol: StkTableColumn<DT> | null = null;
+        const leftShadowCol: StkTableColumn<DT>[] = [];
         /** 右侧展示阴影的列 */
-        let rightShadowCol: StkTableColumn<DT> | null = null;
-        let left = 0;
-        /**
-         * 左侧第n个fixed:left 计算要加上前面所有left 的列宽。
-         */
-        tableHeaderLast.value.forEach(col => {
-            const position = getFixedColPosition.value(col);
-            if (col.fixed === 'left' && position + scrollLeft > left) {
-                leftShadowCol = col;
-                fixedColsTemp.push(...getColAndParentCols(col, 2));
-            }
-            left += getCalculatedColWidth(col);
-            if (!rightShadowCol && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
-                rightShadowCol = col;
-            }
-            if (rightShadowCol && col.fixed === 'right') {
-                fixedColsTemp.push(...getColAndParentCols(col, 2));
-            }
+        const rightShadowCol: StkTableColumn<DT>[] = [];
+        tableHeadersForCalc.value.forEach((row, level) => {
+            /**
+             * 左侧第n个fixed:left 计算要加上前面所有left 的列宽。
+             */
+            let left = 0;
+            row.forEach(col => {
+                const position = getFixedColPosition.value(col);
+                if (col.fixed === 'left' && position + scrollLeft > left) {
+                    leftShadowCol[level] = col;
+                    fixedColsTemp.push(col);
+                    // fixedColsTemp.push(...getColAndParentCols(col, 2));
+                }
+                left += getCalculatedColWidth(col);
+                if (!rightShadowCol[level] && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
+                    rightShadowCol[level] = col;
+                }
+                if (rightShadowCol[level] && col.fixed === 'right') {
+                    // fixedColsTemp.push(...getColAndParentCols(col, 2));
+                    fixedColsTemp.push(col);
+                }
+            });
         });
 
         if (props.fixedColShadow) {
-            fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
+            fixedShadowColsTemp.push(...leftShadowCol, ...rightShadowCol);
+            // fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
             fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
         }
 

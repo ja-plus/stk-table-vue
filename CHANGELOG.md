@@ -5,6 +5,7 @@
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .
   - fix: when `props.border=false`, the border still shown.
+  - fix: `StkTableColumn['fixed']` column not work correctly in multi header table in some situation.
 
 ## 0.6.4
 * Feature

@@ -748,7 +748,7 @@ const { fixedCols, fixedColClassMap, updateFixedShadow } = useFixedCol({
     getFixedColPosition,
     tableContainerRef,
     tableHeaders,
-    tableHeaderLast,
+    tableHeadersForCalc,
 });
 
 const { isColResizing, onThResizeMouseDown } = useColResize({
