@@ -30,7 +30,7 @@ export default defineConfig({
     nav: [
       { text: '主页', link: '/' },
       { text: '文档', link: '/main/start/start' },
-      { text: '示例', link: '/demos/demo' }
+      { text: '示例', link: '/demos/huge-data' }
     ],
     sidebar: {
       '/main': {
@@ -103,7 +103,7 @@ export default defineConfig({
       '/demos':{
         base: '/demos',
         items: [
-          { text: '大量数据', link: '/demo' },
+          { text: '大量数据', link: '/huge-data' },
         ]
       }
     },

@@ -1,0 +1,1 @@
+<demo vue="demos/HugeData/index.vue"></demo>
