@@ -76,7 +76,6 @@ export function useFixedCol<DT extends Record<string, any>>({
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
         const fixedColsTemp: StkTableColumn<DT>[] = [];
-        const fixedShadowColsTemp: (StkTableColumn<DT> | null)[] = [];
         let clientWidth, /* scrollWidth, */ scrollLeft;
 
         if (virtualScrollX?.value) {
@@ -105,26 +104,28 @@ export function useFixedCol<DT extends Record<string, any>>({
             let left = 0;
             row.forEach(col => {
                 const position = getFixedColPosition.value(col);
-                if (col.fixed === 'left' && position + scrollLeft > left) {
+                const isFixedLeft = col.fixed === 'left';
+                const isFixedRight = col.fixed === 'right';
+
+                if (isFixedLeft && position + scrollLeft > left) {
+                    fixedColsTemp.push(col);
                     leftShadowCol[level] = col;
-                    fixedColsTemp.push(col);
-                    // fixedColsTemp.push(...getColAndParentCols(col, 2));
                 }
+
                 left += getCalculatedColWidth(col);
-                if (!rightShadowCol[level] && col.fixed === 'right' && scrollLeft + clientWidth - left < position) {
-                    rightShadowCol[level] = col;
-                }
-                if (rightShadowCol[level] && col.fixed === 'right') {
-                    // fixedColsTemp.push(...getColAndParentCols(col, 2));
+
+                if (isFixedRight && scrollLeft + clientWidth - left < position) {
                     fixedColsTemp.push(col);
+                    // 右固定列阴影，只要第一列
+                    if (!rightShadowCol[level]) {
+                        rightShadowCol[level] = col;
+                    }
                 }
             });
         });
 
         if (props.fixedColShadow) {
-            fixedShadowColsTemp.push(...leftShadowCol, ...rightShadowCol);
-            // fixedShadowColsTemp.push(...getColAndParentCols(leftShadowCol), ...getColAndParentCols(rightShadowCol));
-            fixedShadowCols.value = (fixedShadowColsTemp as (StkTableColumn<DT> | null)[]).filter(Boolean) as StkTableColumn<DT>[];
+            fixedShadowCols.value = [...leftShadowCol, ...rightShadowCol].filter(Boolean) as StkTableColumn<DT>[];
         }
 
         fixedCols.value = fixedColsTemp;
