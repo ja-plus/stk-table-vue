@@ -6,4 +6,4 @@
 * css style 配置表格高度。
 
 
-<demo vue="../../../docs-demo/basic/Basic.vue"></demo>
+<demo vue="basic/Basic.vue"></demo>

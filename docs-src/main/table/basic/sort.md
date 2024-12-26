@@ -3,7 +3,7 @@
 
 ## 基础排序
 点击表头即可触发排序。
-<demo vue="../../../docs-demo/basic/sort/Sort.vue"></demo>
+<demo vue="basic/sort/Sort.vue"></demo>
 
 ## 自定义排序
 通过 `sorter(data, { column, order })` 自定义排序规则。
@@ -17,20 +17,20 @@
 | order | `'desc'` \| `'asc'` \| `null` | 当前排序的顺序。
 
 下述表格中自定义了 `Rate` 列字段的大小排序规则。
-<demo vue="../../../docs-demo/basic/sort/CustomSort.vue"></demo>
+<demo vue="basic/sort/CustomSort.vue"></demo>
 
 ## sortField 排序字段
 有些字段可能会使用独立的字段来排序，比如年、月、日字段，此时可提供的一个排序专用字段，年、月都转换为最小单位日，便于排序，此时通过 `sortField` 指定该排序字段。
 
 下面表格 `period` 列指定了 `periodNumber` 作为排序字段。
-<demo vue="../../../docs-demo/basic/sort/SortField.vue"></demo>
+<demo vue="basic/sort/SortField.vue"></demo>
 
 ## 空字段不参与排序
 配置 `props.sortConfig.emptyToBottom` 空字段将始终置于列表底部
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
-<demo vue="../../../docs-demo/basic/sort/SortEmptyValue.vue"></demo>
+<demo vue="basic/sort/SortEmptyValue.vue"></demo>
 
 ## 指定默认排序列
 配置 `props.sortConfig.defaultSort` 控制默认排序。
@@ -39,7 +39,7 @@
 
 点击下方表格 `Name` 列排序观察其行为。
 :::
-<demo vue="../../../docs-demo/basic/sort/DefaultSort.vue"></demo>
+<demo vue="basic/sort/DefaultSort.vue"></demo>
 
 
 ## 服务端排序
@@ -51,7 +51,7 @@
 ```vue
 <StkTable sort-remote></StkTable>
 ```
-<demo vue="../../../docs-demo/basic/sort/SortRemote.vue"></demo>
+<demo vue="basic/sort/SortRemote.vue"></demo>
 
 ## API
 ### StkTableColumn列配置

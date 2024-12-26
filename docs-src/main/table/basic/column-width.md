@@ -16,7 +16,7 @@
 配置了 `StkTableColumn['width']` 就会同时配置 `StkTableColumn['minWidth']` 和 `StkTableColumn['maxWidth']`。
 :::
 
-<demo vue="../../../docs-demo/basic/column-width/ColumnWidth.vue"></demo>
+<demo vue="basic/column-width/ColumnWidth.vue"></demo>
 
 
 ## 表格不铺满
@@ -24,7 +24,7 @@
 
 如果希望不铺满，可以设置 `StkTable['minWidth']` 为 `unset`。
 
-<demo vue="../../../docs-demo/basic/column-width/TableWidthFit.vue"></demo>
+<demo vue="basic/column-width/TableWidthFit.vue"></demo>
 
 ## 横向虚拟列表
 在普通(非虚拟列表)模式与虚拟列表模式下的列宽控制行为有所不同。

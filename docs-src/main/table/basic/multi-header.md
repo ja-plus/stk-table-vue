@@ -27,7 +27,7 @@ const columns: StkTableColumn<any>[] = [
 ```
 
 
-<demo vue="../../../docs-demo/basic/multi-header/MultiHeader.vue"></demo>
+<demo vue="basic/multi-header/MultiHeader.vue"></demo>
 
 
 ## 列固定
@@ -73,11 +73,11 @@ const columns: StkTableColumn<any>[] = [
     },
 ]
 ```
-<demo vue="../../../docs-demo/basic/multi-header/MultiHeaderFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderFixed.vue"></demo>
 ### 仅配置叶子节点固定
-<demo vue="../../../docs-demo/basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderLeavesFixed.vue"></demo>
 ### 配置任意固定
-<demo vue="../../../docs-demo/basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
+<demo vue="basic/multi-header/MultiHeaderAnyFixed.vue"></demo>
 
 很有趣不是吗？这也归功于sticky的特性。
 

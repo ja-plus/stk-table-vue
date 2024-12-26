@@ -65,6 +65,6 @@ onBeforeUnmount(() => {
 ```
 
 运行结果
-<demo vue="../../docs-demo/start/Start.vue"></demo>
+<demo vue="start/Start.vue"></demo>
 
 

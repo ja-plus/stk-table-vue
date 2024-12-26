@@ -19,4 +19,4 @@ type AutoRowHeightConfig<DT> = {
 
 ### 单列表
 
-<demo vue="../../../docs-demo/advanced/auto-height-virtual/AutoHeightVirtualSingle/index.vue"></demo>
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtualSingle/index.vue"></demo>

@@ -1,7 +1,7 @@
 # 行、单元格选中/悬浮
 
 ## demo
-<demo vue="../../../docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
+<demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 
 ## API

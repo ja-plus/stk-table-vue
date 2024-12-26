@@ -9,10 +9,10 @@
 ## 例子
 
 ### 基本展开
-<demo vue="../../../docs-demo/basic/expand-row/ExpandRow.vue"></demo>
+<demo vue="basic/expand-row/ExpandRow.vue"></demo>
 
 ### 自定义展开单元格
-<demo vue="../../../docs-demo/basic/expand-row/CustomExpandRow.vue"></demo>
+<demo vue="basic/expand-row/CustomExpandRow.vue"></demo>
 
 ## API
 ### StkTableColumn配置

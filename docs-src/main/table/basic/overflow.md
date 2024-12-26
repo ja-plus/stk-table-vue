@@ -10,4 +10,4 @@
 :::
 
 
-<demo vue="../../../docs-demo/basic/overflow/Overflow.vue"></demo>
+<demo vue="basic/overflow/Overflow.vue"></demo>

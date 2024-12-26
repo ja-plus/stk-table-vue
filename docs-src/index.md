@@ -12,13 +12,16 @@ hero:
   actions:
     - theme: brand
       text: 开始
-      link: /start/start
+      link: /main/start/start
     # - theme: alt
     #   text: API Examples
     #   link: /api-examples
     - theme: alt
       text: 基本使用
-      link: /table/basic/basic
+      link: /main/table/basic/basic
+    - theme: alt
+      text: 示例
+      link: /main/table/demos/demo
 
 features:
   - title: 行/单元格高亮

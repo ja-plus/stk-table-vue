@@ -1,2 +1,2 @@
 # Basic
-<demo vue="../../../../docs-demo/basic/Basic.vue"></demo>
+<demo vue="basic/Basic.vue"></demo>

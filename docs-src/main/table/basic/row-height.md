@@ -16,6 +16,6 @@
 在**虚拟列表**的模式下，行高始终为设置的值。
 :::
 
-<demo vue="../../../docs-demo/basic/row-height/RowHeight.vue"></demo>
+<demo vue="basic/row-height/RowHeight.vue"></demo>
 
 在开启虚拟列表时，滚动会导致列宽度变化，是没有设置列宽导致的。

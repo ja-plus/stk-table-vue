@@ -10,7 +10,7 @@
 此模式仅生效 `StkTableColumn['width']`
 :::
 
-<demo vue="../../../docs-demo/basic/fixed-mode/FixedMode.vue"></demo>
+<demo vue="basic/fixed-mode/FixedMode.vue"></demo>
 
 
 

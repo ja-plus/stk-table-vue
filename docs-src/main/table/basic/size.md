@@ -10,7 +10,7 @@
 通过 `style` 控制表格宽度高度。
 :::     
 
-<demo vue="../../../docs-demo/basic/size/Default.vue"></demo>
+<demo vue="basic/size/Default.vue"></demo>
 
 ## Flex 布局
 
@@ -18,4 +18,4 @@
 控制外层 `flex` 弹性盒的高度，表格高度自适应。
 :::
 
-<demo vue="../../../docs-demo/basic/size/Flex.vue"></demo>
+<demo vue="basic/size/Flex.vue"></demo>

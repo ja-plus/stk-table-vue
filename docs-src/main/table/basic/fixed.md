@@ -29,7 +29,7 @@ const columns: StkTableColumn<any>[] = [
 如上表 `Gender` 列前的所有列必须都设置列宽。固定右侧同理。
 :::
 
-<demo vue="../../../docs-demo/basic/fixed/Fixed.vue"></demo>
+<demo vue="basic/fixed/Fixed.vue"></demo>
 
 可以看到，上面表格横向滚动时， `Gender` 列会自动吸附到左侧。
 
@@ -48,7 +48,7 @@ const columns: StkTableColumn<any>[] = [
 ## 虚拟列表列固定
 
 
-<demo vue="../../../docs-demo/basic/fixed/FixedVirtual.vue"></demo>
+<demo vue="basic/fixed/FixedVirtual.vue"></demo>
 
 ::: warning
 设置了 `props.virtual-x` 横向虚拟列表时，未设置列宽的列都会被强制设置为100px
