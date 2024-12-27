@@ -67,7 +67,7 @@ export default defineConfig({
                   { text: '序号列', link: '/table/basic/seq', },
                   { text: '空数据', link: '/table/basic/empty' },
                   { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
-                  { text: 'TODO:行、列唯一键', link: '/todo-page', },
+                  { text: '行、列唯一键', link: '/table/basic/key', },
                   { text: '滚动条样式', link: '/table/basic/scrollbar-style', },
                 ]
               },
