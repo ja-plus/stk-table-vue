@@ -52,9 +52,10 @@ export default defineConfig({
                 items: [
                   { text: '基础', link: '/table/basic/basic' },
                   { text: '宽高', link: '/table/basic/size' },
+                  { text: '边框', link: '/table/basic/bordered' },
+                  { text: 'TODO: 对齐方式', link: '/todo-page' },
                   { text: '列宽', link: '/table/basic/column-width', },
                   { text: '行高', link: '/table/basic/row-height', },
-                  { text: '边框', link: '/table/basic/bordered' },
                   { text: '斑马纹', link: '/table/basic/stripe', },
                   { text: '固定列', link: '/table/basic/fixed', },
                   { text: '内容溢出省略', link: '/table/basic/overflow', },
@@ -63,9 +64,11 @@ export default defineConfig({
                   { text: '无头', link: '/table/basic/headless', },
                   { text: '行展开', link: '/table/basic/expand-row', },
                   { text: '多级表头', link: '/table/basic/multi-header', },
-                  { text: 'TODO:序号列', link: '/todo-page', },
+                  { text: '序号列', link: '/table/basic/seq', },
                   { text: '空数据', link: '/table/basic/empty' },
                   { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
+                  { text: 'TODO:行、列唯一键', link: '/todo-page', },
+                  { text: '滚动条样式', link: '/table/basic/scrollbar-style', },
                 ]
               },
               {
