@@ -1,5 +1,5 @@
 # Expose 实例方法
-
+## 全部
 ```ts
 defineExpose({
   /** 初始化横向纵向虚拟滚动 */
@@ -35,4 +35,15 @@ defineExpose({
   /** 清除所有 auto-row-height 保存的高度 */
   clearAllAutoHeight,
 });
+```
+## API
+### initVirtualScroll
+初始化虚拟列表。相当于同时调用 `initVirtualScrollX` 和 `initVirtualScrollY`。
+
+```ts
+/**
+ * 初始化虚拟滚动参数
+ * @param {number} [height] 虚拟滚动的高度
+ */
+initVirtualScroll(height?: number)
 ```

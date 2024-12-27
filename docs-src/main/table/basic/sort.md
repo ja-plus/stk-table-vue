@@ -124,3 +124,22 @@ defineEmits 类型：
 
 ```
 
+### Expose
+```ts
+defineExpose({
+    /**
+     * 设置表头排序状态
+     */
+    setSorter,
+    /**
+     * 重置sorter状态
+     */
+    resetSorter,
+    /**
+     * 表格排序列顺序
+     */
+    getSortColumns,
+})
+```
+详情参考 [Expose 实例方法](/main/api/expose)
+
