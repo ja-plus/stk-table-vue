@@ -66,16 +66,16 @@ export default defineConfig({
                   { text: '多级表头', link: '/table/basic/multi-header', },
                   { text: '序号列', link: '/table/basic/seq', },
                   { text: '空数据', link: '/table/basic/empty' },
-                  { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
                   { text: '行、列唯一键', link: '/table/basic/key', },
                   { text: '滚动条样式', link: '/table/basic/scrollbar-style', },
+                  { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
                 ]
               },
               {
                 text: '进阶功能',
                 collapsed: false,
                 items: [
-                  { text: 'TODO:高亮行、单元格', link: '/todo-page', },
+                  { text: 'TODO:高亮行、单元格', link: '/table/advanced/highlight', },
                   { text: 'TODO:虚拟列表', link: '/todo-page', },
                   { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
                   { text: 'TODO:列宽调整', link: '/todo-page', },
