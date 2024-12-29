@@ -2,7 +2,7 @@
 import { StkTableColumn } from '@/StkTable/index';
 import { computed, ref } from 'vue';
 import StkTable from '../../StkTable.vue';
-import RadioGroup from '../components/RadioGroup.vue';
+import RadioGroup from '../../components/RadioGroup.vue';
 
 type Data = {
     name: string;

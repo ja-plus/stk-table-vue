@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
-import CheckItem from '../components/CheckItem.vue';
+import CheckItem from '../../components/CheckItem.vue';
 
 const rowActive = ref(true);
 const cellActive = ref(true);

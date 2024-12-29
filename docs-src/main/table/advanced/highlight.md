@@ -1,5 +1,7 @@
 # 高亮行、单元格
 
+这个是表格的特色功能，用与实时数据更新后设置高亮，以提醒用户。
+
 通过调用实例方法`setHighlightDimRow` & `setHighlightDimCell`，可以设置高亮行或高亮单元格。
 
 ::: tip 
