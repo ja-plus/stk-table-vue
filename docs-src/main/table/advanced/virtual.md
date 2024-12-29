@@ -2,9 +2,14 @@
 用于大量数据渲染时，提升性能。
 
 ## 配置
-`props.virtual` 控制是否启用虚拟列表，默认为 `false`。
+props:
 
-`props.virtualX` 控制是否启用横向虚拟列表，默认为 `false`。
+| 属性 | 类型 | 默认值 | 描述 |
+| --- | --- | --- | --- |
+| virtual | `boolean` | `false` | 是否启用虚拟列表 |
+| virtualX | `boolean` | `false` | 是否启用横向虚拟列表 |
+| autoResize | `boolean`\| `() => void` | `true` | 是否自动重新计算可视区域。如果传递回调函数，则此函数会在resize后被调用 |
+
 
 ## 纵向虚拟列表
 ::: warning
@@ -25,14 +30,11 @@
 ```
 <demo vue="advanced/virtual/VirtualX.vue"></demo>
 
-## 重新计算可视区域
+## 重新计算可视区域 autoResize
 很多情况下，虚拟列表区域的宽高会因为各种原因发生变化，这时需要重新计算可视区域。
 
 组件内部已基于 `ResizeObserver` 监听 `StkTable` 的尺寸变化，当尺寸变化时，会自动重新计算可视区域，该功能默认打开。
 
-| 属性 | 类型 | 默认值 | 描述 |
-| --- | --- | --- | --- |
-| autoResize | `boolean`\| `() => void` | `true` | 是否自动重新计算可视区域。如果传递回调函数，则此函数会在resize后被调用 |
 
 ::: warning
 不支持 `ResizeObserver` 的浏览器会使用 `onresize`兜底。
