@@ -21,7 +21,7 @@ hero:
       link: /main/table/basic/basic
     - theme: alt
       text: 示例
-      link: /main/table/demos/demo
+      link: /demos/huge-data
 
 features:
   - title: 行/单元格高亮

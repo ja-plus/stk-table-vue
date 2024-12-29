@@ -119,11 +119,11 @@ export default defineConfig({
       label: '中文',
       lang: 'zh',
     },
-    en: {
-      label: 'English',
-      lang: 'en',
-      ...enConfig
-    }
+    // en: {
+    //   label: 'English',
+    //   lang: 'en',
+    //   ...enConfig
+    // }
   },
   markdown: {
     config(md) {
