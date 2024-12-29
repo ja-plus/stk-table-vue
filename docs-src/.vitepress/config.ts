@@ -53,7 +53,7 @@ export default defineConfig({
                   { text: '基础', link: '/table/basic/basic' },
                   { text: '宽高', link: '/table/basic/size' },
                   { text: '边框', link: '/table/basic/bordered' },
-                  { text: 'TODO: 对齐方式', link: '/todo-page' },
+                  { text: '对齐方式', link: '/table/basic/align' },
                   { text: '列宽', link: '/table/basic/column-width', },
                   { text: '行高', link: '/table/basic/row-height', },
                   { text: '斑马纹', link: '/table/basic/stripe', },

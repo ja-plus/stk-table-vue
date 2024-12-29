@@ -11,7 +11,7 @@ type Data = {
 };
 
 const columns: StkTableColumn<Data>[] = [
-    { type: 'seq', title: 'No.', dataIndex: '', width: 50 },
+    { type: 'seq', title: 'No.', dataIndex: '' as any, width: 50 },
     { title: 'Name', dataIndex: 'name' },
     { title: 'Age', dataIndex: 'age', headerAlign: 'right', align: 'right' },
     { title: 'Gender', dataIndex: 'gender', align: 'center' },
