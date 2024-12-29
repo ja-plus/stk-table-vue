@@ -75,7 +75,7 @@ export default defineConfig({
                 text: '进阶功能',
                 collapsed: false,
                 items: [
-                  { text: 'TODO:高亮行、单元格', link: '/table/advanced/highlight', },
+                  { text: '高亮行、单元格', link: '/table/advanced/highlight', },
                   { text: 'TODO:虚拟列表', link: '/todo-page', },
                   { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
                   { text: 'TODO:列宽调整', link: '/todo-page', },

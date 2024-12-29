@@ -3,12 +3,10 @@
 通过调用实例方法`setHighlightDimRow` & `setHighlightDimCell`，可以设置高亮行或高亮单元格。
 
 ::: tip 
-高亮行、单元格，默认使用`animation`方式，如果需要自定义动画，可以传入`option`参数。
-
-`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API)
+* 高亮行、单元格，默认使用`animation`(el.animate() 方法触发动画)方式。如要自定义动画，可以传入`option`参数。`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API),兼容性 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
+* 高亮颜色不随主题实时变化。
 :::
 
-使用 el.animate() 方法触发动画，兼容性 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
 
 ## 内置的高亮动画
 
@@ -20,12 +18,46 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
 <demo vue="advanced/highlight/Highlight.vue"></demo>
 
+## 全局配置高亮
+`props.highlightConfig`
+
+```ts
+type HighlightConfig = {
+    /** 持续时间 */
+    duration?: number;
+    /** 高亮动画帧率 */
+    fps?: number;
+}
+
+```
+::: tip
+降低高亮帧率有利于提升性能。
+:::
+
+如果您想控制不同动画不同的帧率，参考 Animation API 的 step 实现。（同css animation-timing-function: step）
+
+
 ## 通过 animation api 自定义高亮动画
-animation api 拥有较强的灵活性，推荐使用此方式自定义动画。
+```ts
+stkTableRef.value?.setHighlightDimRow([id], {
+    keyframe: [
+        { backgroundColor: '#1e4c99', transform: 'translateY(-30px) scale(0.6)', opacity: 0, easing: 'cubic-bezier(.11,.1,.03,.98)' },
+        { backgroundColor: '#1B1B24', transform: 'translateY(0) scale(1)', opacity: 1 },
+    ],
+    duration: 1000,
+});
+
+stkTableRef.value?.setHighlightDimCell('id1', 'age', {
+    keyframe: {
+        color: ['#fff', '#C70000', '#fff'],
+        transform: ['scale(1)', 'scale(1.1)', 'scale(1)'],
+        boxShadow: ['unset', '0 0 10px #aaa', 'unset'],
+        easing: 'cubic-bezier(.11,.1,.03,.98)',
+    },
+});
+```
 
 <demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
-
-
 
 ## 通过css自定义高亮动画
 此api为旧版动画实现方式。出于`css`动画的**便捷**、**兼容性**好、**易于理解**等优点，依然保留此api。

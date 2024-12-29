@@ -89,7 +89,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                         const { ts, duration } = store;
                         const timeOffset = nowTs - ts;
                         if (nowTs - ts < duration) {
-                            updateRowBgc(rowKeyValue, store, timeOffset);
+                            updateRowAnimation(rowKeyValue, store, timeOffset);
                         } else {
                             highlightDimRowsAnimation.delete(rowKeyValue);
                         }
@@ -197,7 +197,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     const rowKeyValue = rowKeyValues[i];
                     const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
                     highlightDimRowsAnimation.set(rowKeyValue, store);
-                    updateRowBgc(rowKeyValue, store, 0);
+                    updateRowAnimation(rowKeyValue, store, 0);
                 }
                 calcRowHighlightLoop();
             } else {
@@ -279,7 +279,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param store highlightDimRowStore 的引用对象
      * @param timeOffset 距动画开始经过的时长
      */
-    function updateRowBgc(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
+    function updateRowAnimation(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
         const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
         const { visible, keyframe, duration: initialDuration } = store;
         if (!rowEl) {

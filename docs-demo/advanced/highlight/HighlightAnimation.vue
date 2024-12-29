@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
-import { columns, dataSource } from './const';
+import { columns, dataSource as dataSourceRaw } from './const';
 
 const stkTableRef = useTemplateRef('stkTableRef');
+const dataSource = shallowRef([...dataSourceRaw]);
 
 let intervals: number[] = [];
 onMounted(() => {
@@ -24,7 +25,39 @@ onMounted(() => {
 onBeforeUnmount(() => {
     intervals.forEach(n => window.clearInterval(n));
 });
+
+function addData() {
+    const id = 'id' + dataSource.value.length;
+    dataSource.value.unshift({
+        id,
+        name: 'name' + dataSource.value.length,
+        age: dataSource.value.length,
+        gender: dataSource.value.length % 2 === 0 ? 'male' : 'female',
+    });
+
+    dataSource.value = [...dataSource.value]; // trigger shallowRef
+
+    nextTick(() => {
+        addRowAnimation(id);
+    });
+}
+
+function addRowAnimation(id: string) {
+    stkTableRef.value?.setHighlightDimRow([id], {
+        keyframe: [
+            { backgroundColor: '#1e4c99', transform: 'translateY(-30px) scale(0.6)', opacity: 0, easing: 'cubic-bezier(.11,.1,.03,.98)' },
+            { backgroundColor: '#1B1B24', transform: 'translateY(0) scale(1)', opacity: 1 },
+        ],
+        duration: 1000,
+    });
+}
 </script>
 <template>
-    <StkTable ref="stkTableRef" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
+    <button class="btn" @click="addData">添加数据</button>
+    <StkTable ref="stkTableRef" style="height: 200px" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
+<style scoped>
+.btn:hover {
+    color: #1890ff;
+}
+</style>
