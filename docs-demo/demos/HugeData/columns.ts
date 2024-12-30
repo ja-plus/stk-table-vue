@@ -1,11 +1,12 @@
 import { StkTableColumn } from '@/StkTable';
 import { DataType } from './types';
+import SourceCell from './custom-cells/SourceCell.vue';
 
 export const columns: StkTableColumn<DataType>[] = [
     { type: 'seq', dataIndex: '' as any, title: '序号', fixed: 'left', width: 70 },
     { dataIndex: 'code', title: '债券代码', sortField: 'thsCode', fixed: 'left', headerAlign: 'left' },
-    { dataIndex: 'bondAbbreviation', title: '债券简称', fixed: 'left', width: 150, headerAlign: 'left' },
-    { dataIndex: 'source', title: '经纪商', sortField: 'source', align: 'center' },
+    { dataIndex: 'bondAbbreviation', title: '债券简称', fixed: 'left', width: 120, headerAlign: 'left' },
+    { dataIndex: 'source', title: '经纪商', sortField: 'source', align: 'center', customCell: SourceCell },
     { dataIndex: 'remainingPeriod', title: '剩余期限', sortField: 'remainingPeriodSort' },
     {
         dataIndex: 'bestBuyPrice',

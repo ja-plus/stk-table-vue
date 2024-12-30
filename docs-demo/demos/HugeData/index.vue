@@ -13,6 +13,8 @@ const dataSource = shallowRef<DataType[]>(
             return {
                 ...mockData,
                 code: Random.guid(),
+                // 1-6 interger random,
+                source: Random.integer(1, 6),
                 lastPrice: Random.float(1, 20, 2, 2),
                 cbOfrBp: Random.float(0, 10, 2, 2),
                 bestBuyPrice: Random.float(0, 10, 2, 2),
@@ -36,7 +38,7 @@ const dataSource = shallowRef<DataType[]>(
         :data-source="dataSource"
     ></StkTable>
 </template>
-<style scoped>
+<style scoped lang="less">
 :deep(.blue-cell) {
     color: #4f8df4;
 }
@@ -45,5 +47,31 @@ const dataSource = shallowRef<DataType[]>(
 }
 :deep(.green-cell) {
     color: #2fc87b;
+}
+:deep(.source-cell) {
+    border-radius: 4px;
+    background-color: #777;
+    display: inline-block;
+    padding: 0 8px;
+    font-size: 14px;
+    line-height: 20px;
+    &.source-1 {
+        background-color: rgba(39, 69, 159, 0.4);
+    }
+    &.source-2 {
+        background-color: rgba(171, 99, 0, 0.4);
+    }
+    &.source-3 {
+        background-color: rgba(0, 119, 143, 0.4);
+    }
+    &.source-4 {
+        background-color: rgba(171, 28, 0, 0.4);
+    }
+    &.source-5 {
+        background-color: rgba(199, 166, 0, 0.4);
+    }
+    &.source-6 {
+        background-color: rgba(113, 23, 204, 0.4);
+    }
 }
 </style>
