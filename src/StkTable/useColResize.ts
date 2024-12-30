@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, ShallowRef, onBeforeUnmount, onMounted, ref } from 'vue';
+import { ComputedRef, Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
@@ -47,6 +47,14 @@ export function useColResize<DT extends Record<string, any>>({
         revertMoveX: false,
     };
 
+    /** 是否可拖动 */
+    const colResizeOn = computed(() => {
+        if (Object.prototype.toString.call(props.colResizable) === '[object Object]') {
+            return (col: StkTableColumn<DT>) => !props.colResizable.disabled(col);
+        }
+        return () => props.colResizable;
+    });
+
     onMounted(() => {
         initColResizeEvent();
     });
@@ -93,7 +101,7 @@ export function useColResize<DT extends Record<string, any>>({
                 // 对于固定右侧的列，拖动左侧的把，需要反向计算
                 revertMoveX = true;
             } else {
-                // 默认拖动右侧的把，取上一列
+                // 取上一列
                 if (colIndex - 1 >= 0) {
                     col = tableHeaderLastValue[colIndex - 1];
                 }
@@ -198,6 +206,7 @@ export function useColResize<DT extends Record<string, any>>({
     }
 
     return {
+        colResizeOn,
         isColResizing,
         onThResizeMouseDown,
     };

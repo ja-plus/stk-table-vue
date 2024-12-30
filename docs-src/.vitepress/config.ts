@@ -78,7 +78,7 @@ export default defineConfig({
                   { text: '高亮行、单元格', link: '/table/advanced/highlight', },
                   { text: '虚拟列表(大量数据)', link: '/table/advanced/virtual', },
                   { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
-                  { text: 'TODO:列宽调整', link: '/todo-page', },
+                  { text: '列宽调整', link: '/table/advanced/column-resize', },
                   { text: 'TODO:列更换顺序', link: '/todo-page', },
                   { text: 'TODO:自定义单元格', link: '/todo-page', },
                   { text: 'TODO:自定义表头', link: '/todo-page', },
