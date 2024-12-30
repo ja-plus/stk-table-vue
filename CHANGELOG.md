@@ -1,6 +1,9 @@
 ## 0.6.5
 * Feature
   - support expand row in virtual mode.
+  - `props.colResizable` support `{disable: (col:StkTableColumn) => boolean}`
+* Change
+  - remove the table width style `!important` when colResizable is true. Support user set `props.width` to cover it.
 * Bugfix
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .

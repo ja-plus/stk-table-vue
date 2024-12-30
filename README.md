@@ -231,7 +231,7 @@ export type StkProps = {
    * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
    * - 会自动更新props.columns中的with属性
    */
-  colResizable?: boolean;
+  colResizable?: boolean | ColResizableConfig;
   /** 可拖动至最小的列宽 */
   colMinWidth?: number;
   /**

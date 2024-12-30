@@ -102,11 +102,11 @@
                             </span>
                             <!-- 列宽拖动handler -->
                             <div
-                                v-if="colResizable && colIndex > 0"
+                                v-if="colResizeOn(col) && colIndex > 0"
                                 class="table-header-resizer left"
                                 @mousedown="e => onThResizeMouseDown(e, col, true)"
                             ></div>
-                            <div v-if="colResizable" class="table-header-resizer right" @mousedown="e => onThResizeMouseDown(e, col)"></div>
+                            <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="e => onThResizeMouseDown(e, col)"></div>
                         </div>
                     </th>
                     <!-- 这个th用于横向虚拟滚动表格右边距 width、maxWidth 用于兼容低版本浏览器-->
@@ -254,6 +254,7 @@ import {
     StkTableColumn,
     TagType,
     UniqKeyProp,
+    ColResizableConfig,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -355,7 +356,7 @@ const props = withDefaults(
          * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
          * - 会自动更新props.columns中的with属性
          */
-        colResizable?: boolean;
+        colResizable?: boolean | ColResizableConfig;
         /** 可拖动至最小的列宽 */
         colMinWidth?: number;
         /**
@@ -751,7 +752,7 @@ const { fixedCols, fixedColClassMap, updateFixedShadow } = useFixedCol({
     tableHeadersForCalc,
 });
 
-const { isColResizing, onThResizeMouseDown } = useColResize({
+const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
     props,
     emits,
     colKeyGen,
