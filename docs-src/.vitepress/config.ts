@@ -1,7 +1,8 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
-import { enConfig } from './src/config/en';
+// import { enConfig } from './src/config/en';
 import path from 'path';
+
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -11,10 +12,33 @@ export default defineConfig({
   lastUpdated: true,
   lang: 'zh',
   appearance: 'dark',
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/stk-table-vue/assets/logo.svg' }],
+  ],
   themeConfig: {
     logo: '/assets/logo.svg',
     search: {
-      provider: 'local'
+      provider: 'local',
+      options: {
+        locales: {
+          zh: {
+            translations: {
+              button: {
+                buttonText: '搜索文档',
+                buttonAriaLabel: '搜索文档'
+              },
+              modal: {
+                noResultsText: '无法找到相关结果',
+                resetButtonTitle: '清除查询条件',
+                footer: {
+                  selectText: '选择',
+                  navigateText: '切换'
+                }
+              }
+            }
+          }
+        }
+      }
     },
     darkModeSwitchLabel: "主题",
     docFooter: { prev: "上一篇", next: "下一篇", },
@@ -133,3 +157,5 @@ export default defineConfig({
     },
   }
 })
+
+
