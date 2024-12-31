@@ -1,25 +1,19 @@
 export type DataType = {
     bestBidCbBp: number;
-    bestBidClearingSpeedShow: string;
-    bestBidClearingSpeedSort: string;
+    bestBidClearingSpeed: string;
     bestBidCsiBp: number;
     bestBidNetPrice: number;
     bestBuyPrice: number;
-    bestBuyPriceSort: number;
     bestBuyVol: number;
-    bestBuyVolSort: number;
     bestCbOfrBp: number;
     bestCsiOfrBp: number;
-    bestOfrClearingSpeedShow: string;
-    bestOfrClearingSpeedSort: string;
+    bestOfrClearingSpeed: string;
     bestOfrNetPrice: number;
     bestSellPrice: number;
-    bestSellPriceSort: number;
     bestSellVol: number;
-    bestSellVolSort: number;
     bestTime: string;
     bondAbbreviation: string;
-    bondTypeShow: string;
+    bondType: string;
     cbDuration: number;
     cbDurationStr: number;
     cbImpliedRating: string;
@@ -29,7 +23,6 @@ export type DataType = {
     code: string;
     couponRate: number;
     crossMarket: string;
-    crossMarketShow: string;
     csiCbBp: number;
     csiCbStr: number;
     csiImpliedRating: string;
@@ -50,8 +43,9 @@ export type DataType = {
     outlook: string;
     ratingOrg: string;
     remainingPeriod: string;
-    remainingPeriodSort: string;
     source: string;
     thsCode: string;
-    undefined: number;
+
+    _isExpand?: boolean;
+    _isChildren?: boolean;
 };

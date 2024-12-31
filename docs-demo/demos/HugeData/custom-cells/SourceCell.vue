@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { CustomCellProps } from '@/StkTable/types/index';
-const props = defineProps<CustomCellProps>();
-const sourceNameMap = {
+import { DataType } from '../types';
+const props = defineProps<CustomCellProps<DataType>>();
+const sourceNameMap: any = {
     1: 'Aa',
     2: 'Bb',
     3: 'Cc',
