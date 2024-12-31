@@ -4,6 +4,7 @@
   - `props.colResizable` support `{disable: (col:StkTableColumn) => boolean}`
 * Change
   - remove the table width style `!important` when colResizable is true. Support user set `props.width` to cover it.
+  - row hover & row active: background-color +1 css selector weight for custom row style.
 * Bugfix
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .
