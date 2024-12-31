@@ -23,8 +23,13 @@ const data = [
     <StkTable row-key="id" :row-active="false" :row-hover="false" :headless="headless" :columns="columns" :data-source="data"></StkTable>
 </template>
 <style scoped>
-:deep(.v-head) {
+.stk-table :deep(.v-head) {
+    background-color: #eee;
+}
+.stk-table.dark :deep(.v-head) {
     background-color: #333;
+}
+:deep(.v-head) {
     font-weight: bold;
 }
 </style>

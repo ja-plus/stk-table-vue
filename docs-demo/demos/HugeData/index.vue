@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mockjs from 'mockjs';
-import { shallowRef, ref } from 'vue';
+import { shallowRef, ref, onBeforeUnmount } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { columns as columnsRaw } from './columns';
 import { emitter } from './event';
@@ -12,28 +12,29 @@ emitter.on('toggle-expand', handleToggleExpand);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>(
-    [mockData as any].concat(
-        new Array(50000).fill(null).map(() => {
-            return {
-                ...mockData,
-                code: Random.id(),
-                // 1-6 interger random,
-                bestBuyVol: Random.integer(1, 6) * 1000,
-                bestSellVol: Random.integer(1, 6) * 1000,
-                source: Random.integer(1, 6),
-                lastPrice: Random.float(1, 20, 4, 4),
-                cbOfrBp: Random.float(0, 10, 4, 4),
-                bestBuyPrice: Random.float(0, 10, 4, 4),
-                bestSellPrice: Random.float(0, 10, 4, 4),
-            };
-        }),
-    ),
+    new Array(50000).fill(null).map((_, index) => {
+        return {
+            ...mockData,
+            code: 'id' + String(index).padStart(6, '0'),
+            // 1-6 interger random,
+            bestBuyVol: Random.integer(1, 6) * 1000,
+            bestSellVol: Random.integer(1, 6) * 1000,
+            source: Random.integer(1, 6),
+            lastPrice: Random.float(1, 20, 4, 4),
+            cbOfrBp: Random.float(0, 10, 4, 4),
+            bestBuyPrice: Random.float(0, 10, 4, 4),
+            bestSellPrice: Random.float(0, 10, 4, 4),
+        } as any;
+    }),
 );
 
 function handleToggleExpand(row: DataType) {
-    row._isExpand = !row._isExpand;
-    const expand = row._isExpand;
+    const expand = !row._isExpand;
     const rowIndex = dataSource.value.findIndex(item => item.code === row.code);
+    if (!rowIndex) {
+        console.error('can not expand:', row);
+        return;
+    }
     if (expand) {
         // 插入六条记录
         const insertRows: DataType[] = [...new Array(6).fill(null)].map((_, index) => {
@@ -53,9 +54,14 @@ function handleToggleExpand(row: DataType) {
     } else {
         dataSource.value.splice(rowIndex + 1, 6);
     }
+    dataSource.value[rowIndex]._isExpand = expand;
+
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
     dataSource.value = [...dataSource.value]; // trigger table update
 }
+onBeforeUnmount(() => {
+    console.log('sdfsdfsdf');
+});
 </script>
 <template>
     <StkTable
