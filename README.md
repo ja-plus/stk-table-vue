@@ -285,7 +285,7 @@ export type StkProps = {
   expandConfig?: {
     height?: number;
   };
-  /** 列拖动配置 */
+  /** 行拖动配置 */
   dragRowConfig?: {
     mode?: 'none' | 'insert' | 'swap';
   };

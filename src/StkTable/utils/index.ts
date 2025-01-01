@@ -1,8 +1,8 @@
 import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
 
 /** 是否空值 */
-function isEmptyValue(val: any, isNumber?: boolean) {
-    let isEmpty = val === null || val === '' || val === void 0;
+export function isEmptyValue(val: any, isNumber?: boolean) {
+    let isEmpty = val === null || val === void 0;
     if (isNumber) {
         isEmpty = isEmpty || typeof val === 'boolean' || Number.isNaN(+val);
     }

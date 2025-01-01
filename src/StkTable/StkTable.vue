@@ -387,7 +387,7 @@ const props = withDefaults(
         seqConfig?: SeqConfig;
         /** 展开行配置 */
         expandConfig?: ExpandConfig;
-        /** 列拖动配置 */
+        /** 行拖动配置 */
         dragRowConfig?: DragRowConfig;
         /**
          * 固定头，固定列实现方式。(非响应式)

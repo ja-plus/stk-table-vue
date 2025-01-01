@@ -1,5 +1,6 @@
 import { computed, ComputedRef } from 'vue';
 import { StkTableColumn, UniqKey } from './types';
+import { isEmptyValue } from './utils';
 
 type Params<T extends Record<string, any>> = {
     props: any;
@@ -57,7 +58,6 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
         const th = findParentTH(e);
         if (!th) return;
         const dragStartKey = e.dataTransfer?.getData('text');
-
         if (dragStartKey !== th.dataset.colKey) {
             handleColOrderChange(dragStartKey, th.dataset.colKey);
         }
@@ -66,7 +66,7 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
 
     /** 列拖动交换顺序 */
     function handleColOrderChange(dragStartKey: string | undefined, dragEndKey: string | undefined) {
-        if (!dragStartKey || !dragEndKey) return;
+        if (isEmptyValue(dragStartKey) || isEmptyValue(dragEndKey)) return;
 
         if (dragConfig.value.mode !== 'none') {
             const columns = [...props.columns];

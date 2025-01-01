@@ -2,14 +2,16 @@
 * Feature
   - support expand row in virtual mode.
   - `props.colResizable` support `{disable: (col:StkTableColumn) => boolean}`
-* Change
+* ⭐**Break Change**:
   - remove the table width style `!important` when colResizable is true. Support user set `props.width` to cover it.
   - row hover & row active: background-color +1 css selector weight for custom row style.
+  - empty string "" not trade as empty value. It will be sort.
 * Bugfix
   - fix: `StkTableColumn['width']` not work correctly.
   - fix: when props.showHeaderOverflow not set, the header row height not work correctly in virtual mode .
   - fix: when `props.border=false`, the border still shown.
   - fix: `StkTableColumn['fixed']` column not work correctly in multi header table in some situation.
+  - fix: dataIndex == "" column not be dragged to switch columns.
 
 ## 0.6.4
 * Feature
