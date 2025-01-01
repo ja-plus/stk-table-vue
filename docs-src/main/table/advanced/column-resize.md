@@ -1,11 +1,17 @@
 # 列宽调整
 
 ## 配置
-`props.colResizable` 即可打开列宽调整。
+* `props.colResizable` 即可打开列宽调整。
+* `props.columns` 需要修改为 `v-model` 修饰符，列宽修改后会直接变更 `StkTableColumn['width']` 的值。
+* `columns` 需要用 `ref` 包裹，以支持响应式。
 
-`props.columns` 需要修改为 `v-model` 修饰符，列宽修改后会直接变更 `StkTableColumn['width']` 的值。
-
-`columns` 需要用 `ref` 包裹，以支持响应式。
+```js
+<StkTable
+    col-resizable // [!code ++]
+    :columns="columns" // [!code --]
+    v-model:columns="columns" // [!code ++]
+></StkTable>
+```
 
 ::: warning
 打开列宽调整后，列宽不会默认铺满容器。表格的 `width` 将被设置为 `fit-content`。如果有异常，请检查是否传入了 `props.width` 。
