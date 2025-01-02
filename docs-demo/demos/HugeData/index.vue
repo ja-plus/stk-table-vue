@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import mockjs from 'mockjs';
-import { shallowRef, ref, onBeforeUnmount } from 'vue';
+import { shallowRef, ref, onMounted } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { columns as columnsRaw } from './columns';
 import { emitter } from './event';
 import { mockData } from './mockData';
 import { DataType } from './types';
+import RadioGroup from '../../components/RadioGroup.vue';
 
 const { Random } = mockjs;
 emitter.on('toggle-expand', handleToggleExpand);
 
+const dataSize = ref(5);
+
 const columns = ref(columnsRaw);
-const dataSource = shallowRef<DataType[]>(
-    new Array(50000).fill(null).map((_, index) => {
+const dataSource = shallowRef<DataType[]>([]);
+
+onMounted(() => {
+    initDataSource();
+});
+
+function initDataSource() {
+    dataSource.value = new Array(dataSize.value * 10000).fill(null).map((_, index) => {
         return {
             ...mockData,
             code: 'id' + String(index).padStart(6, '0'),
@@ -25,8 +34,8 @@ const dataSource = shallowRef<DataType[]>(
             bestBuyPrice: Random.float(0, 10, 4, 4),
             bestSellPrice: Random.float(0, 10, 4, 4),
         } as any;
-    }),
-);
+    });
+}
 
 function handleToggleExpand(row: DataType) {
     const expand = !row._isExpand;
@@ -59,11 +68,21 @@ function handleToggleExpand(row: DataType) {
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
     dataSource.value = [...dataSource.value]; // trigger table update
 }
-onBeforeUnmount(() => {
-    console.log('sdfsdfsdf');
-});
 </script>
 <template>
+    <RadioGroup
+        v-model="dataSize"
+        text="数据量"
+        :options="[
+            { label: '1w', value: 1 },
+            { label: '5w', value: 5 },
+            { label: '10w', value: 10 },
+            { label: '20w', value: 20 },
+            { label: '50w', value: 50 },
+            { label: '100w', value: 100 },
+        ]"
+        @change="initDataSource"
+    ></RadioGroup>
     <StkTable
         v-model:columns="columns"
         style="height: 700px"

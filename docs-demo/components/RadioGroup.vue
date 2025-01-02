@@ -10,13 +10,20 @@ const props = withDefaults(
         name: () => /**hash */ Math.random().toString(36).substring(7),
     },
 );
+const emits = defineEmits<{
+    (e: 'change', value: T | undefined): void;
+}>();
 const modelValue = defineModel<T>();
+
+function handleInputChange() {
+    emits('change', modelValue.value);
+}
 </script>
 <template>
     <div class="radio-group">
         <span class="main-label">{{ props.text }}:</span>
         <label v-for="(option, i) in options" :key="i">
-            <input v-model="modelValue" type="radio" :value="option.value" />
+            <input v-model="modelValue" type="radio" :value="option.value" @change="handleInputChange" />
             <span>{{ option.label }}</span>
         </label>
     </div>
