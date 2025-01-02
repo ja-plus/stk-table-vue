@@ -1,4 +1,6 @@
 import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
+/** 是否空值 */
+export declare function isEmptyValue(val: any, isNumber?: boolean): boolean;
 /**
  * 对有序数组插入新数据
  *
@@ -37,5 +39,5 @@ export declare function tableSort<T extends Record<string, any>>(sortOption: Sor
 /** 多级表头深度 从0开始为一级*/
 export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: number): number;
 /** number width +px */
-export declare function transformWidthToStr(width?: string | number): string;
+export declare function transformWidthToStr(width?: string | number): string | undefined;
 export declare function getBrowsersVersion(browserName: string): number;

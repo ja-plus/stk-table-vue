@@ -6,14 +6,14 @@ type Params<T extends Record<string, any>> = {
     colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
     getFixedColPosition: ComputedRef<(col: StkTableColumn<T>) => number>;
     tableHeaders: ShallowRef<StkTableColumn<T>[][]>;
-    tableHeaderLast: ShallowRef<StkTableColumn<T>[]>;
+    tableHeadersForCalc: ShallowRef<StkTableColumn<T>[][]>;
     tableContainerRef: Ref<HTMLDivElement | undefined>;
 };
 /**
  * 固定列处理
  * @returns
  */
-export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, getFixedColPosition, tableHeaders, tableHeaderLast, tableContainerRef, }: Params<DT>): {
+export declare function useFixedCol<DT extends Record<string, any>>({ props, colKeyGen, getFixedColPosition, tableHeaders, tableHeadersForCalc, tableContainerRef, }: Params<DT>): {
     /** 正在被固定的列 */
     fixedCols: ShallowRef<StkTableColumn<DT>[], StkTableColumn<DT>[]>;
     /** 固定列class */

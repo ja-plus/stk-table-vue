@@ -1,4 +1,8 @@
 # StkTable (Sticky Table)
+![NPM License](https://img.shields.io/npm/l/stk-table-vue)
+![NPM Version](https://img.shields.io/npm/v/stk-table-vue)
+![NPM Type Definitions](https://img.shields.io/npm/types/stk-table-vue)
+![NPM Downloads](https://img.shields.io/npm/dw/stk-table-vue)
 
 Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
 

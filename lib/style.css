@@ -38,8 +38,6 @@
   display:flex;
   flex-direction:column;
   box-sizing:border-box;
-  background-image:linear-gradient(180deg, #e8e8f4 1px, transparent 1px), linear-gradient(270deg, #e8e8f4 1px, transparent 1px), linear-gradient(0deg, #e8e8f4 1px, transparent 1px);
-  background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.dark{
   --th-bgc:#202029;
@@ -63,21 +61,22 @@
   --drag-handle-hover-color:#5d6064;
   color:#d1d1e0;
 }
-.stk-table.headless{
+.stk-table.headless.border{
   border-top:1px solid var(--border-color);
   background-image:var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.col-resizable .stk-table-main{
-  width:-moz-fit-content !important;
-  width:fit-content !important;
-  min-width:-moz-min-content !important;
-  min-width:min-content !important;
+  width:-moz-fit-content;
+  width:fit-content;
+  min-width:-moz-min-content;
+  min-width:min-content;
 }
 .stk-table.is-col-resizing th{
   pointer-events:none;
 }
 .stk-table.border{
   border-left:1px solid var(--border-color);
+  background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.border th,
 .stk-table.border td{
@@ -104,13 +103,13 @@
 .stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
   background-color:var(--stripe-bgc);
 }
-.stk-table.stripe.row-hover .stk-tbody-main tr:hover{
+.stk-table.stripe.row-hover .stk-table-main .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);
 }
-.stk-table.stripe.row-active .stk-tbody-main tr.active{
+.stk-table.stripe.row-active .stk-table-main .stk-tbody-main tr.active{
   background-color:var(--tr-active-bgc);
 }
-.stk-table.row-hover .stk-tbody-main tr:hover{
+.stk-table.row-hover .stk-table-main .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);
 }
 .stk-table.row-active .stk-tbody-main tr.active{
@@ -141,6 +140,9 @@
   overflow:hidden;
   max-height:calc(var(--header-row-height) * 1);
   max-height:calc(var(--header-row-height) * var(--row-span, 1));
+}
+.stk-table.virtual .table-header-cell-wrapper .table-header-title{
+  max-height:inherit;
 }
 .stk-table.virtual tbody td{
   height:var(--row-height);

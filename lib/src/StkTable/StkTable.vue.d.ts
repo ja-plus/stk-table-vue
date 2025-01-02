@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, UniqKeyProp, ColResizableConfig } from './types/index';
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
 /**
@@ -138,7 +138,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | undefined;
+    colResizable?: boolean | ColResizableConfig<any> | undefined;
     /** 可拖动至最小的列宽 */
     colMinWidth?: number | undefined;
     /**
@@ -169,7 +169,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     seqConfig?: SeqConfig | undefined;
     /** 展开行配置 */
     expandConfig?: ExpandConfig | undefined;
-    /** 列拖动配置 */
+    /** 行拖动配置 */
     dragRowConfig?: DragRowConfig | undefined;
     /**
      * 固定头，固定列实现方式。(非响应式)
@@ -383,7 +383,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | undefined;
+    colResizable?: boolean | ColResizableConfig<any> | undefined;
     /** 可拖动至最小的列宽 */
     colMinWidth?: number | undefined;
     /**
@@ -414,7 +414,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     seqConfig?: SeqConfig | undefined;
     /** 展开行配置 */
     expandConfig?: ExpandConfig | undefined;
-    /** 列拖动配置 */
+    /** 行拖动配置 */
     dragRowConfig?: DragRowConfig | undefined;
     /**
      * 固定头，固定列实现方式。(非响应式)
@@ -471,7 +471,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     selectedCellRevokable: boolean;
     headerDrag: HeaderDragConfig;
     rowClassName: (row: any, i: number) => string;
-    colResizable: boolean;
+    colResizable: boolean | ColResizableConfig<any>;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);

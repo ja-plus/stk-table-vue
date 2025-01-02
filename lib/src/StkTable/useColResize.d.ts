@@ -11,6 +11,7 @@ type Params<DT extends Record<string, any>> = {
 };
 /** 列宽拖动 */
 export declare function useColResize<DT extends Record<string, any>>({ tableContainerRef, tableHeaderLast, colResizeIndicatorRef, props, emits, colKeyGen, fixedCols, }: Params<DT>): {
+    colResizeOn: ComputedRef<((col: StkTableColumn<DT>) => boolean) | (() => any)>;
     isColResizing: Ref<boolean, boolean>;
     onThResizeMouseDown: (e: MouseEvent, col: StkTableColumn<DT>, leftHandle?: boolean) => void;
 };

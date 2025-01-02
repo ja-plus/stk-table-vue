@@ -185,6 +185,7 @@ export type SeqConfig = {
 };
 /** Configuration options for the expand column  */
 export type ExpandConfig = {
+    /** worked in virtual mode */
     height?: number;
 };
 export type ExpandedRow = PrivateRowDT & {
@@ -210,5 +211,8 @@ export type HeaderDragConfig<DT extends Record<string, any> = any> = boolean | {
 export type AutoRowHeightConfig<DT> = {
     /** Estimated row height */
     expectedHeight?: number | ((row: DT, index: number) => number);
+};
+export type ColResizableConfig<DT extends Record<string, any>> = {
+    disabled: (col: StkTableColumn<DT>) => boolean;
 };
 export {};
