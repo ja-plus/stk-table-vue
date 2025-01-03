@@ -1,3 +1,7 @@
 .no-aside-padding .VPContent.has-sidebar {
     padding-right: 16px;
 }
+
+.btn:hover {
+    color: #1890ff;
+}

@@ -105,7 +105,7 @@ export default defineConfig({
                   { text: '列宽调整', link: '/table/advanced/column-resize', },
                   { text: '列拖动更换顺序', link: '/table/advanced/header-drag', },
                   { text: '自定义单元格', link: '/table/advanced/custom-cell', },
-                  { text: 'TODO:自定义排序', link: '/todo-page', },
+                  { text: '自定义排序', link: '/table/advanced/custom-sort', },
                   { text: 'TODO:vue2 滚动优化', link: '/todo-page', },
 
                 ]

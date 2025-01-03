@@ -1288,6 +1288,7 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
+ * @return 表格数据
  */
 function setSorter(colKey: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
     const newOption = { silent: true, sortOption: null, sort: true, ...option };

@@ -13,6 +13,7 @@ type BaseStkTableType = InstanceType<typeof StkTableBase>;
 defineExpose({
     setHighlightDimCell: (...p: Parameters<BaseStkTableType['setHighlightDimCell']>) => baseStkTableRef.value?.setHighlightDimCell(...p),
     setHighlightDimRow: (...p: Parameters<BaseStkTableType['setHighlightDimRow']>) => baseStkTableRef.value?.setHighlightDimRow(...p),
+    setSorter: (...p: Parameters<BaseStkTableType['setSorter']>) => baseStkTableRef.value?.setSorter(...p),
 });
 </script>
 <template>

@@ -56,8 +56,3 @@ function addRowAnimation(id: string) {
     <button class="btn" @click="addData">添加数据</button>
     <StkTable ref="stkTableRef" style="height: 200px" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
-<style scoped>
-.btn:hover {
-    color: #1890ff;
-}
-</style>
