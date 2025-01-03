@@ -19,7 +19,7 @@
 下述表格中自定义了 `Rate` 列字段的大小排序规则。
 <demo vue="basic/sort/CustomSort.vue"></demo>
 
-更多排序用法请移步 [自定义排序](/main/table/advance/custom-sort)
+更多排序用法请移步 [自定义排序](/main/table/advanced/custom-sort)
 
 ## sortField 排序字段
 有些字段可能会使用独立的字段来排序，比如年、月、日字段，此时可提供的一个排序专用字段，年、月都转换为最小单位日，便于排序，此时通过 `sortField` 指定该排序字段。
