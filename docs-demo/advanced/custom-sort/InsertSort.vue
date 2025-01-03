@@ -35,7 +35,7 @@ const columns: StkTableColumn<DataType>[] = [
     { title: 'id', dataIndex: 'id', width: '50px', sorter: true },
     { title: 'name', dataIndex: 'name', width: '200px', sorter: true },
     { title: 'age(default desc)', dataIndex: 'age', width: '200px', sorter: true, sortType: 'number' },
-    { title: 'gender', dataIndex: 'gender', width: '100px' },
+    { title: 'gender', dataIndex: 'gender' },
 ];
 const dataSource = ref<DataType[]>(
     new Array(5).fill(null).map((it, i) => {

@@ -106,7 +106,7 @@ export default defineConfig({
                   { text: '列拖动更换顺序', link: '/table/advanced/header-drag', },
                   { text: '自定义单元格', link: '/table/advanced/custom-cell', },
                   { text: '自定义排序', link: '/table/advanced/custom-sort', },
-                  { text: 'TODO:vue2 滚动优化', link: '/todo-page', },
+                  { text: 'Vue2 滚动优化', link: '/table/advanced/vue2-scroll-optimize', },
 
                 ]
 
