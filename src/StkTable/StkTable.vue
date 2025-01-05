@@ -1326,7 +1326,10 @@ function getTableData() {
     return toRaw(dataSourceCopy.value);
 }
 
-/** get current sort info */
+/**
+ * get current sort info
+ * @return {{key:string,order:Order}[]}
+ */
 function getSortColumns() {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];
