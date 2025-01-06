@@ -14,3 +14,16 @@
 也可以自己通过原生 draggable API 来实现，下面是参考：
 
 <demo vue="advanced/row-drag/RowDragCustom.vue"></demo>
+
+## API
+
+### emits
+```ts
+/**
+ * 行拖动事件
+ *
+ * ```(dragStartKey: string, targetRowKey: string)```
+ */
+(e: 'row-order-change', dragStartKey: string, targetRowKey: string): void;
+```
+
