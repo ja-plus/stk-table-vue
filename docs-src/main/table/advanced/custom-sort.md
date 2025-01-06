@@ -48,7 +48,11 @@ function setSorter(
 import { tableSort, insertToOrderedArray } from 'stk-table-vue';
 ```
 ### tableSort 表格排序
-如果您在 `sortRemote` 开启的情况下，为了对齐表格内置的排序规则，可以调用 `tableSort` 函数，对数据进行排序。
+#### 使用场景
+为了获取更好的数据更新性能，可设置`props.sortRemote`来取消表格内置排序。在数据更新时，通过下面提供的 `insertToOrderedArray` 函数插入新数据。
+
+而点击表头触发排序时，我们依然想用内置的排序，则可以在 `@sort-change` 回调中，使用此函数进行排序。
+
 #### 代码示例
 ```ts
 // @sort-change="handleSortChange"
@@ -56,6 +60,7 @@ function handleSortChange(col: StkTableColumn<any>, order: Order, data: any[], s
     dataSource.value = tableSort(col, order, data, sortConfig);
 }
 ```
+
 #### 参数说明
 ```ts
 /**
