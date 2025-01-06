@@ -1,3 +1,7 @@
+## 0.6.6
+* Feature
+  - export `binarySearch` function.
+  
 ## 0.6.5
 * Feature
   - support expand row in virtual mode.
