@@ -128,9 +128,9 @@ function simulateUpdateData() {
         };
         const rowIndex = dataSource.value.findIndex(item => item.code === newData.code); // FIXME: 性能问题
         if (rowIndex === -1) return;
-        const row = dataSource.value.splice(rowIndex, 1)[0]; // delete old data
+        dataSource.value.splice(rowIndex, 1); // delete old data
         dataSource.value = insertToOrderedArray(currentSort, newData, dataSource.value);
-        highlightRow(row);
+        highlightRow(newData);
     }, updateFreq.value);
 }
 
@@ -161,6 +161,9 @@ function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: Dat
         v-model="dataSize"
         text="数据量"
         :options="[
+            { label: '0.5k', value: 0.05 },
+            { label: '1k', value: 0.1 },
+            { label: '5k', value: 0.5 },
             { label: '1w', value: 1 },
             { label: '5w', value: 5 },
             { label: '10w', value: 10 },
