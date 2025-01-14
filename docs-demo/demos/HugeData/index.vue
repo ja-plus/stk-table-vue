@@ -76,7 +76,7 @@ function initDataSource() {
 function handleToggleExpand(row: DataType) {
     const expand = !row._isExpand;
     const rowIndex = dataSource.value.findIndex(item => item.code === row.code);
-    if (!rowIndex) {
+    if (rowIndex === -1) {
         console.error('can not expand:', row);
         return;
     }
