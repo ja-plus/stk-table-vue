@@ -5,3 +5,7 @@
 .btn:hover {
     color: #1890ff;
 }
+
+.btn + .btn {
+    margin-left: 10px;
+}

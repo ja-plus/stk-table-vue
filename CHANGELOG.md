@@ -1,6 +1,7 @@
 ## 0.6.6
 * Feature
   - export `binarySearch` function.
+  - add: `customBottom` slots.
   
 ## 0.6.5
 * Feature

@@ -50,8 +50,4 @@ function handleSortAsc() {
     <button class="btn" @click="handleSortAsc">点击排序正序</button>
     <StkTable ref="stkTableRef" style="height: 200px" row-key="key" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
-<style scoped>
-.btn + .btn {
-    margin-left: 10px;
-}
-</style>
+<style scoped></style>
