@@ -26,6 +26,7 @@ declare function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option?: {
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
+ * @return 表格数据
  */
 declare function setSorter(colKey: string, order: Order, option?: {
     sortOption?: SortOption<DT>;
@@ -42,7 +43,10 @@ declare function resetSorter(): void;
 declare function scrollTo(top?: number | null, left?: number | null): void;
 /** get current table data */
 declare function getTableData(): any[];
-/** get current sort info */
+/**
+ * get current sort info
+ * @return {{key:string,order:Order}[]}
+ */
 declare function getSortColumns(): {
     key: string | number | symbol | undefined;
     order: "desc" | "asc";
@@ -492,6 +496,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
         col: any;
     }): any;
     empty?(_: {}): any;
+    customBottom?(_: {}): any;
 }>;
 export default _default;
 type __VLS_WithTemplateSlots<T, S> = T & {

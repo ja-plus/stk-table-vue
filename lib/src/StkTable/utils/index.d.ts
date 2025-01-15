@@ -15,13 +15,19 @@ export declare function isEmptyValue(val: any, isNumber?: boolean): boolean;
  */
 export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig?: SortConfig<T>): T[];
 /**
+ * 二分查找
+ *  @param searchArray 查找数组
+ *  @param compareCallback 比较函数，返回 -1|0|1
+ */
+export declare function binarySearch(searchArray: any[], compareCallback: (midIndex: number) => number): number;
+/**
  * 字符串比较
  * @param a
  * @param b
  * @param type 类型
  * @param isNumber 是否是数字类型
  * @param localeCompare 是否 使用Array.prototyshpe.localeCompare
- * @return {-1|0|1}
+ * @return {number} <0: a < b, 0: a = b, >0: a > b
  */
 export declare function strCompare(a: string, b: string, isNumber: boolean, localeCompare?: boolean): number;
 /**

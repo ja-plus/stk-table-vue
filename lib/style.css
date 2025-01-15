@@ -260,7 +260,7 @@
 .stk-table .expand-cell{
   cursor:pointer;
 }
-.stk-table .expand-cell .table-cell-wrapper.expanded-cell-wrapper::before{
+.stk-table .expand-cell .expanded-cell-wrapper::before{
   content:'';
   display:inline-block;
   margin:0 2px;
@@ -271,7 +271,7 @@
   border-bottom:4px solid transparent;
   transition:transform 0.2s ease;
 }
-.stk-table .expand-cell .table-cell-wrapper.expanded-cell-wrapper > span{
+.stk-table .expand-cell .expanded-cell-wrapper > span{
   margin-left:var(--cell-padding-x);
 }
 .stk-table .expand-cell.expanded .table-cell-wrapper::before{
