@@ -386,8 +386,7 @@
     .expand-cell {
         cursor: pointer;
 
-        .table-cell-wrapper {
-            &.expanded-cell-wrapper {
+            .expanded-cell-wrapper {
                 &::before {
                     content: '';
                     display: inline-block;
@@ -404,7 +403,6 @@
                     margin-left: var(--cell-padding-x)
                 }
             }
-        }
 
         &.expanded {
             .table-cell-wrapper::before {

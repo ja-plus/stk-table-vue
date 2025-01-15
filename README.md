@@ -12,7 +12,7 @@ Vue2.7支持引入源码(**ts**)使用。
 
 ## License
 MIT
-repo: 
+repo(求 star🌟): 
 - [Github](https://github.com/ja-plus/stk-table-vue)
 - [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
 

@@ -104,10 +104,10 @@ export default defineConfig({
                   { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
                   { text: '列宽调整', link: '/table/advanced/column-resize', },
                   { text: '列拖动更换顺序', link: '/table/advanced/header-drag', },
-                  { text: 'TODO:自定义单元格', link: '/todo-page', },
-                  { text: 'TODO:自定义表头', link: '/todo-page', },
-                  { text: 'TODO:自定义排序', link: '/todo-page', },
-                  { text: 'TODO:vue2 滚动优化', link: '/todo-page', },
+                  { text: '行拖动更换顺序', link: '/table/advanced/row-drag', },
+                  { text: '自定义单元格', link: '/table/advanced/custom-cell', },
+                  { text: '自定义排序', link: '/table/advanced/custom-sort', },
+                  { text: 'Vue2 滚动优化', link: '/table/advanced/vue2-scroll-optimize', },
 
                 ]
 

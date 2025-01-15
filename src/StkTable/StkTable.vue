@@ -227,6 +227,7 @@
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
+        <slot name="customBottom"></slot>
     </div>
 </template>
 
@@ -1288,6 +1289,7 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
+ * @return 表格数据
  */
 function setSorter(colKey: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
     const newOption = { silent: true, sortOption: null, sort: true, ...option };
@@ -1325,7 +1327,10 @@ function getTableData() {
     return toRaw(dataSourceCopy.value);
 }
 
-/** get current sort info */
+/**
+ * get current sort info
+ * @return {{key:string,order:Order}[]}
+ */
 function getSortColumns() {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];

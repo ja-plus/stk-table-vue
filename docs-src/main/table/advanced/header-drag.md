@@ -15,8 +15,7 @@
 
 ## API
 
-### type
-`props.headerDrag`
+### props.headerDrag
 
 ```ts
 /** header drag config */

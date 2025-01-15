@@ -1,46 +1,82 @@
 <script setup lang="ts">
 import mockjs from 'mockjs';
-import { shallowRef, ref, onMounted } from 'vue';
+import { shallowRef, ref, onMounted, useTemplateRef, nextTick } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { columns as columnsRaw } from './columns';
 import { emitter } from './event';
 import { mockData } from './mockData';
 import { DataType } from './types';
 import RadioGroup from '../../components/RadioGroup.vue';
+import { Order, SortConfig, SortState, StkTableColumn } from '@/StkTable/types';
+import { tableSort, insertToOrderedArray, binarySearch, strCompare } from '../../../src/StkTable/index';
 
 const { Random } = mockjs;
 emitter.on('toggle-expand', handleToggleExpand);
+const sortConfig = {
+    defaultSort: {
+        dataIndex: 'bestTime' as keyof DataType,
+        order: 'desc' as Order,
+        sortType: 'string' as 'string' | 'number' | undefined,
+    },
+} satisfies SortConfig<DataType>;
+
+const currentSort: SortState<DataType> = {
+    dataIndex: 'bestTime',
+    order: 'desc',
+    sortType: 'string',
+};
+const stkTableRef = useTemplateRef('stkTableRef');
 
 const dataSize = ref(5);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>([]);
+const updateFreq = ref(200);
+
+const createCode = (i: number) => 'c' + String(i).padStart(6, '0');
+const createData = (i: number) => {
+    return {
+        code: createCode(i),
+        bestBuyVol: Random.integer(1, 6) * 1000,
+        bestSellVol: Random.integer(1, 6) * 1000,
+        source: Random.integer(1, 6),
+        lastPrice: Random.float(1, 20, 4, 4),
+        cbOfrBp: Random.float(0, 10, 4, 4),
+        bestBuyPrice: Random.float(0, 10, 4, 4),
+        bestSellPrice: Random.float(0, 10, 4, 4),
+    };
+};
 
 onMounted(() => {
     initDataSource();
 });
 
 function initDataSource() {
-    dataSource.value = new Array(dataSize.value * 10000).fill(null).map((_, index) => {
+    const curDate = new Date();
+    const curHour = curDate.getHours();
+    const curMinute = curDate.getMinutes();
+    const dataSourceTemp = new Array(dataSize.value * 10000).fill(null).map((_, index) => {
         return {
             ...mockData,
-            code: 'id' + String(index).padStart(6, '0'),
-            // 1-6 interger random,
-            bestBuyVol: Random.integer(1, 6) * 1000,
-            bestSellVol: Random.integer(1, 6) * 1000,
-            source: Random.integer(1, 6),
-            lastPrice: Random.float(1, 20, 4, 4),
-            cbOfrBp: Random.float(0, 10, 4, 4),
-            bestBuyPrice: Random.float(0, 10, 4, 4),
-            bestSellPrice: Random.float(0, 10, 4, 4),
+            ...createData(index),
+            bestTime:
+                String(Random.integer(7, Math.max(7, curHour))).padStart(2, '0') +
+                ':' +
+                String(Random.integer(0, curMinute - 1)).padStart(2, '0') +
+                ':' +
+                String(Random.integer(0, 59)).padStart(2, '0') +
+                '.' +
+                String(Random.integer(0, 999)).padStart(3, '0'),
         } as any;
     });
+
+    dataSource.value = tableSort({ dataIndex: 'bestTime', sorter: true }, 'desc', dataSourceTemp, sortConfig);
 }
 
 function handleToggleExpand(row: DataType) {
     const expand = !row._isExpand;
     const rowIndex = dataSource.value.findIndex(item => item.code === row.code);
-    if (!rowIndex) {
+    if (rowIndex === -1) {
         console.error('can not expand:', row);
         return;
     }
@@ -68,12 +104,66 @@ function handleToggleExpand(row: DataType) {
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
     dataSource.value = [...dataSource.value]; // trigger table update
 }
+
+const timeout = ref(0);
+function simulateUpdateData() {
+    timeout.value = window.setTimeout(() => {
+        simulateUpdateData();
+        const curDate = new Date();
+        const curHour = curDate.getHours();
+        const curMinute = curDate.getMinutes();
+        const curSeconds = curDate.getSeconds();
+        const curMilliseconds = curDate.getMilliseconds();
+        const newData: any = {
+            ...mockData,
+            ...createData(Random.integer(0, dataSource.value.length - 1)),
+            bestTime:
+                String(curHour).padStart(2, '0') +
+                ':' +
+                String(curMinute).padStart(2, '0') +
+                ':' +
+                String(curSeconds).padStart(2, '0') +
+                '.' +
+                String(curMilliseconds).padStart(3, '0'),
+        };
+        const rowIndex = dataSource.value.findIndex(item => item.code === newData.code); // FIXME: 性能问题
+        if (rowIndex === -1) return;
+        dataSource.value.splice(rowIndex, 1); // delete old data
+        dataSource.value = insertToOrderedArray(currentSort, newData, dataSource.value);
+        highlightRow(newData);
+    }, updateFreq.value);
+}
+
+function stopSimulateUpdateData() {
+    if (timeout.value) {
+        window.clearTimeout(timeout.value);
+        timeout.value = 0;
+    }
+}
+
+function highlightRow(row: DataType) {
+    nextTick(() => {
+        const key = row.code;
+        stkTableRef.value?.setHighlightDimRow([key]);
+    });
+}
+
+function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: DataType[], sortConfig: SortConfig<DataType>) {
+    currentSort.dataIndex = col.dataIndex;
+    currentSort.order = order;
+    currentSort.sortType = col.sortType;
+
+    dataSource.value = tableSort(col, order, data, sortConfig);
+}
 </script>
 <template>
     <RadioGroup
         v-model="dataSize"
         text="数据量"
         :options="[
+            { label: '0.5k', value: 0.05 },
+            { label: '1k', value: 0.1 },
+            { label: '5k', value: 0.5 },
             { label: '1w', value: 1 },
             { label: '5w', value: 5 },
             { label: '10w', value: 10 },
@@ -83,7 +173,16 @@ function handleToggleExpand(row: DataType) {
         ]"
         @change="initDataSource"
     ></RadioGroup>
+    <button class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
+        模拟更新数据({{ timeout ? '停止' : '开始' }})
+    </button>
+    <label style="margin-left: 16px">
+        <span>更新频率:</span>
+        <input v-model="updateFreq" type="range" min="16" max="500" />
+        <span>{{ updateFreq }}ms</span>
+    </label>
     <StkTable
+        ref="stkTableRef"
         v-model:columns="columns"
         style="height: 700px"
         row-key="code"
@@ -95,9 +194,12 @@ function handleToggleExpand(row: DataType) {
         show-header-overflow
         stripe
         col-resizable
+        sort-remote
+        :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"
         :data-source="dataSource"
+        @sort-change="handleSortChange"
     ></StkTable>
 </template>
 <style scoped lang="less">

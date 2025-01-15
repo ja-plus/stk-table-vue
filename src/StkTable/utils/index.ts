@@ -26,7 +26,6 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;
     if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
-    const isNumber = sortType === 'number';
     const data = [...targetArray];
 
     if (!order || !data.length) {
@@ -40,31 +39,43 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
         data.push(newItem);
     }
 
+    const isNumber = sortType === 'number';
+
     // 二分插入
-    let sIndex = 0;
-    let eIndex = data.length - 1;
     const targetVal: any = newItem[dataIndex];
-    while (sIndex <= eIndex) {
-        // console.log(sIndex, eIndex);
-        const midIndex = Math.floor((sIndex + eIndex) / 2);
+    const sIndex = binarySearch(data, midIndex => {
         const midVal: any = data[midIndex][dataIndex];
         const compareRes = strCompare(midVal, targetVal, isNumber, sortConfig.stringLocaleCompare);
+        return order === 'asc' ? compareRes : -compareRes;
+    });
+    data.splice(sIndex, 0, newItem);
+    return data;
+}
+
+/**
+ * 二分查找
+ *  @param searchArray 查找数组
+ *  @param compareCallback 比较函数，返回 -1|0|1
+ */
+export function binarySearch(searchArray: any[], compareCallback: (midIndex: number) => number) {
+    let sIndex = 0;
+    let eIndex = searchArray.length - 1;
+    while (sIndex <= eIndex) {
+        const midIndex = Math.floor((sIndex + eIndex) / 2);
+        const compareRes = compareCallback(midIndex);
         if (compareRes === 0) {
             //midVal == targetVal
             sIndex = midIndex;
             break;
-        } else if (compareRes === -1) {
+        } else if (compareRes < 0) {
             // midVal < targetVal
-            if (order === 'asc') sIndex = midIndex + 1;
-            else eIndex = midIndex - 1;
+            sIndex = midIndex + 1;
         } else {
             //midVal > targetVal
-            if (order === 'asc') eIndex = midIndex - 1;
-            else sIndex = midIndex + 1;
+            eIndex = midIndex - 1;
         }
     }
-    data.splice(sIndex, 0, newItem);
-    return data;
+    return sIndex;
 }
 /**
  * 字符串比较
@@ -73,7 +84,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
  * @param type 类型
  * @param isNumber 是否是数字类型
  * @param localeCompare 是否 使用Array.prototyshpe.localeCompare
- * @return {-1|0|1}
+ * @return {number} <0: a < b, 0: a = b, >0: a > b
  */
 export function strCompare(a: string, b: string, isNumber: boolean, localeCompare = false): number {
     let _a: number | string = a;
