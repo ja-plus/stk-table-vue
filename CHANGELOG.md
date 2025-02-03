@@ -1,3 +1,7 @@
+## 0.6.7
+* Bugfix
+  - style: `tr:hover` & `tr.active` has double `.stk-tbody-main` selector before it. Which will cause the `:hover` style cover the `.active` style.
+
 ## 0.6.6
 * Feature
   - export `binarySearch` function.

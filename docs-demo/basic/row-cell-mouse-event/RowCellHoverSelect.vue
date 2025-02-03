@@ -4,6 +4,7 @@ import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
 
+const stripe = ref(true);
 const rowActive = ref(true);
 const cellActive = ref(true);
 const rowHover = ref(true);
@@ -26,6 +27,8 @@ const dataSource = ref([
 ]);
 </script>
 <template>
+    <CheckItem v-model="stripe" text="斑马纹(stripe)"></CheckItem>
+    <br />
     <CheckItem v-model="rowActive" text="行选中状态(rowActive)"></CheckItem>
     <CheckItem v-model="cellActive" text="单元格选中状态(cellActive)"></CheckItem>
     <br />
@@ -36,6 +39,7 @@ const dataSource = ref([
     <br />
     <CheckItem v-model="selectedCellRevokable" text="单元格选中状态是否可取消(selectedCellRevokable)"></CheckItem>
     <StkTable
+        :stripe="stripe"
         :row-active="rowActive"
         :cell-active="cellActive"
         :row-hover="rowHover"
