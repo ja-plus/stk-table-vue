@@ -122,12 +122,19 @@ export default defineConfig({
                   { text: 'Expose 实例方法', link: '/api/expose' },
                   { text: 'Slots 插槽', link: '/api/slots' },
                 ]
+              },
+              {
+                text: '其他',
+                collapsed: false,
+                items: [
+                  { text: '优化方向', link: '/other/optimize' },
+                ]
               }
             ]
           }
         ]
       },
-      '/demos':{
+      '/demos': {
         base: '/demos',
         items: [
           { text: '大量数据', link: '/huge-data' },
@@ -152,8 +159,8 @@ export default defineConfig({
   },
   markdown: {
     config(md) {
-      md.use(vitepressDemoPlugin,{
-        demoDir: path.resolve(__dirname, '../../docs-demo'), 
+      md.use(vitepressDemoPlugin, {
+        demoDir: path.resolve(__dirname, '../../docs-demo'),
       });
     },
   }
