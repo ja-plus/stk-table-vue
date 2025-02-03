@@ -9,6 +9,7 @@
     /* contain: strict;*/
     --row-height: 28px;
     --header-row-height: var(--row-height);
+    --cell-padding-y: 0;
     --cell-padding-x: 8px;
     --resize-handle-width: 4px;
     --border-color: #e8e8f4;
@@ -157,18 +158,18 @@
             background-color: var(--stripe-bgc);
         }
 
-        &.row-hover .stk-table-main tr:hover {
+        &.row-hover .stk-tbody-main tr:hover {
             background-color: var(--tr-hover-bgc);
         }
 
-        &.row-active .stk-table-main tr.active {
+        &.row-active .stk-tbody-main tr.active {
             background-color: var(--tr-active-bgc);
         }
     }
 
 
     /** more weight for custom row background*/
-    &.row-hover .stk-table-main tr:hover {
+    &.row-hover .stk-tbody-main tr:hover {
         background-color: var(--tr-hover-bgc);
     }
 
@@ -271,7 +272,7 @@
     td {
         font-size: 14px;
         box-sizing: border-box;
-        padding: 0 var(--cell-padding-x);
+        padding: var(--cell-padding-y) var(--cell-padding-x);
     }
 
     th {

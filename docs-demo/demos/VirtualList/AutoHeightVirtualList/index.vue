@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import mockjs from 'mockjs';
-import { StkTableColumn } from '../../../../src/StkTable/index';
+import { StkTableColumn } from '@/StkTable/index';
 import StkTable from '../../../StkTable.vue';
 import Panel from './Panel.vue';
 import type { DataType } from './types';

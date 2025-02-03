@@ -12,10 +12,7 @@
 <demo vue="basic/headless/Headless.vue"></demo>
 
 ### 虚拟单列表
-* `props.bordered=false` 去除表格的边框。
-* `StkTableColumn['customCell']` 自定义单元格内容与样式，实现虚拟单列表效果。
-
-<demo vue="basic/headless/HeadlessSingle/index.vue"></demo>
+配置无头，可以实现单列表。查看[虚拟单列表示例](/demos/virtual-list)
 
 
 

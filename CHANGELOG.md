@@ -1,6 +1,8 @@
 ## 0.6.7
+* Feature
+  - add: css var `--cell-padding-y` to change td padding y.
 * Bugfix
-  - style: `tr:hover` & `tr.active` has double `.stk-tbody-main` selector before it. Which will cause the `:hover` style cover the `.active` style.
+  - fix: `:hover` style cover the `.active` style.
 
 ## 0.6.6
 * Feature

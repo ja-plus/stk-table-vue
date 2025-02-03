@@ -9,14 +9,29 @@
 ### AutoRowHeightConfig&lt;DT&gt;
 ```ts
 type AutoRowHeightConfig<DT> = {
-    /** Estimated row height */
+    /** 期望行高 */
     expectedHeight?: number | ((row: DT, index: number) => number);
 };
 ```
 
+::: tip 期望行高
+预计一行的高度为多少，用于计算当前表格高度下，能放下几行。
+:::
+::: tip 优先级
+`props.autoRowHeight.expectedHeight` > `props.rowHeight`
+:::
+
+
 ## 示例
 
+<demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
-### 单列表
+如果你你想控制单元格上下的padding，可以通过覆盖css变量实现：
+```css
+.stk-table {
+    --cell-padding-y: 8px;
+}
+```
 
-<demo vue="advanced/auto-height-virtual/AutoHeightVirtualSingle/index.vue"></demo>
+## 单列表
+请移步至[虚拟单列表示例](/demos/virtual-list.html#不等高)
