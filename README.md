@@ -122,23 +122,8 @@ const dataSource = [
 [StkTableColumn 列配置](https://ja-plus.github.io/stk-table-vue/main/api/stk-table-column.html)
 
 ### setHighlightDimCell & setHighlightDimRow
-[文档](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
+[高亮使用文档](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
 
-#### option
-| key |value| default |desc |
-| ---- | ---- | ---- | ---- |
-| method | `css` `animation` `js` | `animation` | 设置高亮方式。 |
-| ~~useCss~~  `deprecated` | `boolean`| false | ~~是否使用css~~ |
-| className | `string` | `highlight-row`/`highlight-cell` | 自定义 css 动画。method == 'css' 生效 |
-| keyframe | `Parameters<Animatable['animate']>['0']` | ... | 自定义高亮动画。method == 'animation' 生效。 |
-| duration | `number` | 2000 | 设置高亮动画持续时间ms。 method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。|
-
-##### option.method
-| `option.method`| desc |
-| ---- | ---- |
-| animation | animation api 实现高亮。(default) |
-| css | css @keyframes 实现高亮。 |
-| js | js 循环计算颜色实现高亮。 |
 
 ### Example
 ```vue
@@ -215,16 +200,12 @@ const dataSource = [
 ### Filter过滤器
 * 暂不支持。用户可以自行通过 `customHeaderCell` 实现功能。
 
-
-
 ## Tips
 ### props.fixedMode
 * **低版本浏览器** 需要设置 `props.width`（default: width=fit-content不生效）。否则列宽不设宽度会变为0。
 
-
 ## Other
 * `$*$` 兼容注释
-
 
 ### Planed removal APi
 * `setHighlightDimRow` 中的 `method="js"`。观察animation Api 是否足够满足使用场景。若足够满足计划在后期移除，并且可以移除 `d3-interpolate` 依赖。
