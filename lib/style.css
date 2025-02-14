@@ -6,6 +6,7 @@
 .stk-table{
   --row-height:28px;
   --header-row-height:var(--row-height);
+  --cell-padding-y:0;
   --cell-padding-x:8px;
   --resize-handle-width:4px;
   --border-color:#e8e8f4;
@@ -103,13 +104,13 @@
 .stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
   background-color:var(--stripe-bgc);
 }
-.stk-table.stripe.row-hover .stk-table-main .stk-tbody-main tr:hover{
+.stk-table.stripe.row-hover .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);
 }
-.stk-table.stripe.row-active .stk-table-main .stk-tbody-main tr.active{
+.stk-table.stripe.row-active .stk-tbody-main tr.active{
   background-color:var(--tr-active-bgc);
 }
-.stk-table.row-hover .stk-table-main .stk-tbody-main tr:hover{
+.stk-table.row-hover .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);
 }
 .stk-table.row-active .stk-tbody-main tr.active{
@@ -177,7 +178,7 @@
 .stk-table td{
   font-size:14px;
   box-sizing:border-box;
-  padding:0 var(--cell-padding-x);
+  padding:var(--cell-padding-y) var(--cell-padding-x);
 }
 .stk-table th{
   color:var(--th-color);
