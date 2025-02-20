@@ -1,6 +1,6 @@
 {
   "name": "stk-table-vue",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "Simple realtime virtual table for vue3 and vue2.7",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/src/StkTable/index.d.ts",
@@ -62,7 +62,7 @@
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
     "vite": "^5.4.10",
-    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-dts": "3.9.1",
     "vitepress": "^1.5.0",
     "vitepress-demo-plugin": "^1.2.2",
     "vitest": "^2.1.3",

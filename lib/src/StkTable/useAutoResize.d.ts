@@ -1,4 +1,5 @@
 import { Ref } from 'vue';
+
 type Options = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;

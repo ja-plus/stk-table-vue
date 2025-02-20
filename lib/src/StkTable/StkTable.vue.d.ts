@@ -1,4 +1,5 @@
 import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, UniqKeyProp, ColResizableConfig } from './types/index';
+
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
 /**
@@ -62,7 +63,7 @@ declare function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boo
     col?: StkTableColumn<DT>;
     silent?: boolean;
 }): void;
-declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
+declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -191,7 +192,56 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
-}, {
+}>, {
+    width: string;
+    fixedMode: boolean;
+    stripe: boolean;
+    minWidth: string;
+    maxWidth: string;
+    headless: boolean;
+    theme: string;
+    rowHeight: number;
+    autoRowHeight: boolean;
+    rowHover: boolean;
+    rowActive: boolean;
+    rowCurrentRevokable: boolean;
+    headerRowHeight: number;
+    virtual: boolean;
+    virtualX: boolean;
+    columns: () => never[];
+    dataSource: () => never[];
+    rowKey: string;
+    colKey: string;
+    emptyCellText: string;
+    noDataFull: boolean;
+    showNoData: boolean;
+    sortRemote: boolean;
+    showHeaderOverflow: boolean;
+    showOverflow: boolean;
+    showTrHoverClass: boolean;
+    cellHover: boolean;
+    cellActive: boolean;
+    selectedCellRevokable: boolean;
+    headerDrag: boolean;
+    rowClassName: () => "";
+    colResizable: boolean;
+    colMinWidth: number;
+    bordered: boolean;
+    autoResize: boolean;
+    fixedColShadow: boolean;
+    optimizeVue2Scroll: boolean;
+    sortConfig: () => {
+        emptyToBottom: boolean;
+        stringLocaleCompare: boolean;
+    };
+    hideHeaderTitle: boolean;
+    highlightConfig: () => {};
+    seqConfig: () => {};
+    expandConfig: () => {};
+    dragRowConfig: () => {};
+    cellFixedMode: string;
+    smoothScroll: boolean;
+}>>, {
     /**
      * 重新计算虚拟列表宽高
      *
@@ -304,10 +354,41 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      */
     clearAllAutoHeight: () => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    [x: string]: any;
-} & {
-    [x: string]: any;
-}, string, import('vue').PublicProps, Readonly<{
+    "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
+    "row-click": (ev: MouseEvent, row: any) => void;
+    "current-change": (ev: MouseEvent | null, row: any, data: {
+        select: boolean;
+    }) => void;
+    "cell-selected": (ev: MouseEvent | null, data: {
+        select: boolean;
+        row: any;
+        col: StkTableColumn<any> | undefined;
+    }) => void;
+    "row-dblclick": (ev: MouseEvent, row: any) => void;
+    "header-row-menu": (ev: MouseEvent) => void;
+    "row-menu": (ev: MouseEvent, row: any) => void;
+    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
+    scroll: (ev: Event, data: {
+        startIndex: number;
+        endIndex: number;
+    }) => void;
+    "scroll-x": (ev: Event) => void;
+    "col-order-change": (dragStartKey: string, targetColKey: string) => void;
+    "th-drag-start": (dragStartKey: string) => void;
+    "th-drop": (targetColKey: string) => void;
+    "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
+    "col-resize": (cols: StkTableColumn<any>) => void;
+    "toggle-row-expand": (data: {
+        expanded: boolean;
+        row: any;
+        col: StkTableColumn<any> | null;
+    }) => void;
+    "update:columns": (cols: StkTableColumn<any>[]) => void;
+}, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string | undefined;
     /** 最小表格宽度 */
     minWidth?: string | undefined;
@@ -436,8 +517,90 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
-}> & Readonly<{
-    [x: `on${Capitalize<any>}`]: ((...args: any[] | unknown[]) => any) | undefined;
+}>, {
+    width: string;
+    fixedMode: boolean;
+    stripe: boolean;
+    minWidth: string;
+    maxWidth: string;
+    headless: boolean;
+    theme: string;
+    rowHeight: number;
+    autoRowHeight: boolean;
+    rowHover: boolean;
+    rowActive: boolean;
+    rowCurrentRevokable: boolean;
+    headerRowHeight: number;
+    virtual: boolean;
+    virtualX: boolean;
+    columns: () => never[];
+    dataSource: () => never[];
+    rowKey: string;
+    colKey: string;
+    emptyCellText: string;
+    noDataFull: boolean;
+    showNoData: boolean;
+    sortRemote: boolean;
+    showHeaderOverflow: boolean;
+    showOverflow: boolean;
+    showTrHoverClass: boolean;
+    cellHover: boolean;
+    cellActive: boolean;
+    selectedCellRevokable: boolean;
+    headerDrag: boolean;
+    rowClassName: () => "";
+    colResizable: boolean;
+    colMinWidth: number;
+    bordered: boolean;
+    autoResize: boolean;
+    fixedColShadow: boolean;
+    optimizeVue2Scroll: boolean;
+    sortConfig: () => {
+        emptyToBottom: boolean;
+        stringLocaleCompare: boolean;
+    };
+    hideHeaderTitle: boolean;
+    highlightConfig: () => {};
+    seqConfig: () => {};
+    expandConfig: () => {};
+    dragRowConfig: () => {};
+    cellFixedMode: string;
+    smoothScroll: boolean;
+}>>> & Readonly<{
+    onScroll?: ((ev: Event, data: {
+        startIndex: number;
+        endIndex: number;
+    }) => any) | undefined;
+    "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
+    "onCol-resize"?: ((cols: StkTableColumn<any>) => any) | undefined;
+    "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
+    "onTh-drop"?: ((targetColKey: string) => any) | undefined;
+    "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
+    "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
+    "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
+        select: boolean;
+    }) => any) | undefined;
+    "onCell-selected"?: ((ev: MouseEvent | null, data: {
+        select: boolean;
+        row: any;
+        col: StkTableColumn<any> | undefined;
+    }) => any) | undefined;
+    "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
+    "onRow-menu"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
+    "onScroll-x"?: ((ev: Event) => any) | undefined;
+    "onToggle-row-expand"?: ((data: {
+        expanded: boolean;
+        row: any;
+        col: StkTableColumn<any> | null;
+    }) => any) | undefined;
 }>, {
     width: string;
     minWidth: string;
@@ -487,7 +650,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     dragRowConfig: DragRowConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
-}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, any>, {
+}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
     }): any;
@@ -499,6 +662,23 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<{
     customBottom?(_: {}): any;
 }>;
 export default _default;
+type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
+type __VLS_TypePropsToRuntimeProps<T> = {
+    [K in keyof T]-?: {} extends Pick<T, K> ? {
+        type: import('vue').PropType<__VLS_NonUndefinedable<T[K]>>;
+    } : {
+        type: import('vue').PropType<T[K]>;
+        required: true;
+    };
+};
+type __VLS_WithDefaults<P, D> = {
+    [K in keyof Pick<P, keyof P>]: K extends keyof D ? __VLS_Prettify<P[K] & {
+        default: D[K];
+    }> : P[K];
+};
+type __VLS_Prettify<T> = {
+    [K in keyof T]: T[K];
+} & {};
 type __VLS_WithTemplateSlots<T, S> = T & {
     new (): {
         $slots: S;

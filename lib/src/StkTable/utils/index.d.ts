@@ -1,4 +1,5 @@
 import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
+
 /** 是否空值 */
 export declare function isEmptyValue(val: any, isNumber?: boolean): boolean;
 /**

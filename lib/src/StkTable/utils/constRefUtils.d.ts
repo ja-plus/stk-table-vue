@@ -1,4 +1,5 @@
 import { PrivateStkTableColumn, StkTableColumn } from '../types';
+
 /**
  * 获取列宽
  *

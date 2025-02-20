@@ -1,3 +1,7 @@
+## 0.6.8
+* Bugfix
+  - fix: StkTable emit function's type definition.
+
 ## 0.6.7
 * Feature
   - add: css var `--cell-padding-y` to change td padding y.

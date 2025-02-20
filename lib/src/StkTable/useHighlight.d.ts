@@ -1,6 +1,7 @@
 import { Ref } from 'vue';
 import { UniqKey } from './types';
 import { HighlightDimCellOption, HighlightDimRowOption } from './types/highlightDimOptions';
+
 type Params = {
     props: any;
     stkTableId: string;
