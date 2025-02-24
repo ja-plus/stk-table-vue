@@ -1,3 +1,7 @@
+## 0.6.9
+* Feature
+  - add: `emits['cell-mousedown']`
+
 ## 0.6.8
 * Bugfix
   - fix: StkTable emit function's type definition.

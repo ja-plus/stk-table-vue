@@ -181,6 +181,7 @@
                                     onCellClick(e, row, col);
                                 }
                             "
+                            @mousedown="e => onCellMouseDown(e, row, col)"
                             @mouseenter="e => onCellMouseEnter(e, row, col)"
                             @mouseleave="e => onCellMouseLeave(e, row, col)"
                             @mouseover="e => onCellMouseOver(e, row, col)"
@@ -526,6 +527,12 @@ const emits = defineEmits<{
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
      */
     (e: 'cell-mouseover', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
+     * 单元格鼠标按下事件
+     *
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mousedown', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
      * 表头单元格点击事件
      *
@@ -1147,6 +1154,10 @@ function onCellMouseLeave(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
 /** td mouseover event */
 function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
     emits('cell-mouseover', e, row, col);
+}
+
+function onCellMouseDown(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    emits('cell-mousedown', e, row, col);
 }
 
 /**

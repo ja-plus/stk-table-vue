@@ -58,6 +58,12 @@
      */
     (e: 'cell-mouseover', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
+     * 单元格鼠标按下事件
+     *
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     */
+    (e: 'cell-mousedown', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    /**
      * 表头单元格点击事件
      * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
      */
