@@ -129,6 +129,7 @@ export default defineConfig({
                 items: [
                   { text: '优化方向', link: '/other/optimize' },
                   { text: 'Tips', link: '/other/tips' },
+                  { text: 'Q&A', link: '/other/qa' },
                 ]
               }
             ]

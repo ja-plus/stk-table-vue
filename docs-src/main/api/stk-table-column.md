@@ -1,5 +1,18 @@
 # StkTableColumn
 
+传入的columns配置项
+
+```vue
+<StkTable :columns="columns"></StkTable>
+```
+::: warning 
+组件内部**没有**深度监听(deep watch) `columns` 属性，因此如果您发现 push 列不生效，则考虑使用如下方式更新表格列配置。
+:::
+
+```ts
+columns.value = [...columns.value]; // 触发更新
+```
+
 ### StkTableColumn 列配置
 ``` ts
 type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
