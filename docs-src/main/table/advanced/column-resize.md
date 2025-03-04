@@ -25,9 +25,9 @@
 /**
  * 列宽变动时触发
  *
- *  ```(cols: StkTableColumn<DT>)```
+ *  ```(col: StkTableColumn<DT>)```
  */
-(e: 'col-resize', cols: StkTableColumn<DT>): void;
+(e: 'col-resize', col: StkTableColumn<DT>): void;
 ```
 
 这样，您可以不用在 `columns` 前添加 `v-model` 修饰符，手动更新 `StkTableColumn['width']` 的值即可。

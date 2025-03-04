@@ -101,7 +101,7 @@
     /**
      * 列宽变动时触发
      */
-    (e: 'col-resize', cols: StkTableColumn<DT>): void;
+    (e: 'col-resize', col: StkTableColumn<DT>): void;
     /**
      * 展开行触发
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```

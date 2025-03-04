@@ -578,9 +578,9 @@ const emits = defineEmits<{
     /**
      * 列宽变动时触发
      *
-     *  ```(cols: StkTableColumn<DT>)```
+     *  ```(col: StkTableColumn<DT>)```
      */
-    (e: 'col-resize', cols: StkTableColumn<DT>): void;
+    (e: 'col-resize', col: StkTableColumn<DT>): void;
     /**
      * 展开行触发
      *
