@@ -24,6 +24,7 @@
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
             'auto-row-height': props.autoRowHeight,
+            'scroll-row-by-row': props.scrollRowByRow,
         }"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
@@ -34,13 +35,13 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <!-- 这个元素用于虚拟滚动时，撑开父容器的高度 （已弃用，因为滚动条拖动过快，下方tr为加载出来时，会导致表头sticky闪动）
+        <!-- 这个元素用于整数行虚拟滚动时，撑开父容器的高度） -->
         <div
-          v-if="virtual"
-          class="virtual-table-height"
-          :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
+            v-if="props.scrollRowByRow && virtual"
+            class="row-by-row-table-height"
+            :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
         ></div>
-      -->
+
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <!-- 表格主体 -->
         <table
@@ -118,7 +119,7 @@
             <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
             <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
-                <tr v-if="virtual_on" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                <tr v-if="virtual_on && !props.scrollRowByRow" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
@@ -222,7 +223,7 @@
                         </td>
                     </template>
                 </tr>
-                <tr v-if="virtual_on" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                <tr v-if="virtual_on && !props.scrollRowByRow" :style="`height: ${virtual_offsetBottom}px`"></tr>
             </tbody>
         </table>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
@@ -407,6 +408,8 @@ const props = withDefaults(
          * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
          */
         smoothScroll?: boolean;
+        /** 按整数行纵向滚动 */
+        scrollRowByRow?: boolean;
     }>(),
     {
         width: '',
@@ -457,6 +460,7 @@ const props = withDefaults(
         dragRowConfig: () => ({}),
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
+        scrollRowByRow: false,
     },
 );
 

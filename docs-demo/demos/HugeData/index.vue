@@ -9,6 +9,7 @@ import { DataType } from './types';
 import RadioGroup from '../../components/RadioGroup.vue';
 import { Order, SortConfig, SortState, StkTableColumn } from '@/StkTable/types';
 import { tableSort, insertToOrderedArray, binarySearch, strCompare } from '../../../src/StkTable/index';
+import CheckItem from '../../components/CheckItem.vue';
 
 const { Random } = mockjs;
 emitter.on('toggle-expand', handleToggleExpand);
@@ -28,6 +29,7 @@ const currentSort: SortState<DataType> = {
 const stkTableRef = useTemplateRef('stkTableRef');
 
 const dataSize = ref(5);
+const rowByRow = ref(false);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>([]);
@@ -169,6 +171,7 @@ function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: Dat
             { label: '10w', value: 10 },
             { label: '20w', value: 20 },
             { label: '50w', value: 50 },
+            { label: '70w', value: 70 },
             { label: '100w', value: 100 },
         ]"
         @change="initDataSource"
@@ -181,6 +184,7 @@ function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: Dat
         <input v-model="updateFreq" type="range" min="16" max="500" />
         <span>{{ updateFreq }}ms</span>
     </label>
+    <CheckItem v-model="rowByRow" text="整数行滚动" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
@@ -195,6 +199,7 @@ function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: Dat
         stripe
         col-resizable
         sort-remote
+        :scroll-row-by-row="rowByRow"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"

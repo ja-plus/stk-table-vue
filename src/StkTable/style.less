@@ -54,7 +54,7 @@
     /**深色模式 */
     &.dark {
         --th-bgc: #202029;
-        --th-color: #C0C0D1;
+        --th-color: #c0c0d1;
         --td-bgc: #1b1b24;
         --td-hover-color: #70a6ff;
         --td-active-color: #386ccc;
@@ -83,7 +83,6 @@
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
     }
-       
 
     &.headless {
         &.border {
@@ -140,8 +139,6 @@
         --bg-border-top: linear-gradient(transparent, transparent);
     }
 
-
-
     &.border-body-v {
         tbody {
             --bg-border-bottom: linear-gradient(transparent, transparent);
@@ -167,12 +164,10 @@
         }
     }
 
-
     /** more weight for custom row background*/
     &.row-hover .stk-tbody-main tr:hover {
         background-color: var(--tr-hover-bgc);
     }
-
 
     &.row-active .stk-tbody-main tr.active {
         background-color: var(--tr-active-bgc);
@@ -212,7 +207,6 @@
 
     /**虚拟滚动模式 */
     &.virtual {
-
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
             overflow: hidden;
@@ -246,7 +240,6 @@
     }
 
     &.auto-row-height {
-
         tbody td {
             height: unset;
 
@@ -255,7 +248,6 @@
                 overflow: initial;
             }
         }
-
     }
 
     &.fixed-relative-mode {
@@ -266,6 +258,19 @@
         .fixed-cell--active {
             position: relative;
         }
+    }
+
+    &.scroll-row-by-row {
+        .stk-table-main {
+            position: sticky;
+            top: 0;
+        }
+    }
+
+    .row-by-row-table-height {
+        width: 1px;
+        position: absolute;
+        left: 0;
     }
 
     th,
@@ -322,7 +327,6 @@
                 fill: var(--sort-arrow-active-sub-color);
             }
         }
-
     }
 
     thead tr {
@@ -330,12 +334,10 @@
         height: var(--header-row-height);
     }
 
-
     tbody tr {
         background-color: var(--td-bgc);
         height: var(--row-height);
     }
-
 
     .vt-x-left,
     .vt-x-right {
@@ -343,7 +345,6 @@
         background: none;
         pointer-events: none;
     }
-
 
     /** 列宽调整指示器 */
     .column-resize-indicator {
@@ -387,23 +388,23 @@
     .expand-cell {
         cursor: pointer;
 
-            .expanded-cell-wrapper {
-                &::before {
-                    content: '';
-                    display: inline-block;
-                    margin: 0 2px;
-                    width: 0;
-                    height: 0;
-                    border-left: 5px solid #757699;
-                    border-top: 4px solid transparent;
-                    border-bottom: 4px solid transparent;
-                    transition: transform 0.2s ease;
-                }
-
-                >span {
-                    margin-left: var(--cell-padding-x)
-                }
+        .expanded-cell-wrapper {
+            &::before {
+                content: '';
+                display: inline-block;
+                margin: 0 2px;
+                width: 0;
+                height: 0;
+                border-left: 5px solid #757699;
+                border-top: 4px solid transparent;
+                border-bottom: 4px solid transparent;
+                transition: transform 0.2s ease;
             }
+
+            > span {
+                margin-left: var(--cell-padding-x);
+            }
+        }
 
         &.expanded {
             .table-cell-wrapper::before {
@@ -430,14 +431,14 @@
                 cursor: grabbing;
             }
 
-            >svg {
+            > svg {
                 vertical-align: -2px;
             }
         }
     }
 
     .tr-dragging {
-        opacity: .5;
+        opacity: 0.5;
     }
 
     .tr-dragging-over {
@@ -470,7 +471,7 @@
         top: 0px;
         position: absolute;
         pointer-events: none;
-        background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to)),
+        background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to));
     }
 
     .fixed-cell--active {
@@ -551,7 +552,4 @@
             flex: 1;
         }
     }
-
-
-
 }
