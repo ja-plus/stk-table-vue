@@ -93,6 +93,7 @@ export default defineConfig({
                   { text: '行、列唯一键', link: '/table/basic/key', },
                   { text: '滚动条样式', link: '/table/basic/scrollbar-style', },
                   { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
+                  { text: '按行滚动', link: '/table/basic/scroll-row-by-row', },
                 ]
               },
               {

@@ -1,6 +1,7 @@
 ## 0.6.9
 * Feature
   - add: `emits['cell-mousedown']`
+  - add: `props.scrollRowByRow` to support scroll row by row.
 
 ## 0.6.8
 * Bugfix
