@@ -13,6 +13,17 @@
 
 <demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
 
+## 通过事件更改顺序
+```ts
+/**
+ * 表头列拖动事件
+ * ```(dragStartKey: string, targetColKey: string)```
+ */
+(e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
+```
+
+这样，您可以不用在 `columns` 前添加 `v-model` 修饰符，手动更新 `columns` 数组的顺序即可。
+
 ## API
 
 ### props.headerDrag
