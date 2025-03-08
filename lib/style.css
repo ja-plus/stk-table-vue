@@ -42,7 +42,7 @@
 }
 .stk-table.dark{
   --th-bgc:#202029;
-  --th-color:#C0C0D1;
+  --th-color:#c0c0d1;
   --td-bgc:#1b1b24;
   --td-hover-color:#70a6ff;
   --td-active-color:#386ccc;
@@ -173,6 +173,15 @@
 }
 .stk-table.fixed-relative-mode .fixed-cell--active{
   position:relative;
+}
+.stk-table.scroll-row-by-row .stk-table-main{
+  position:sticky;
+  top:0;
+}
+.stk-table .row-by-row-table-height{
+  width:1px;
+  position:absolute;
+  left:0;
 }
 .stk-table th,
 .stk-table td{

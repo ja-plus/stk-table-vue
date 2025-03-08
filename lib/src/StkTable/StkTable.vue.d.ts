@@ -192,6 +192,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
+    /** 按整数行纵向滚动 */
+    scrollRowByRow?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -241,6 +243,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     dragRowConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
+    scrollRowByRow: boolean;
 }>>, {
     /**
      * 重新计算虚拟列表宽高
@@ -371,6 +374,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mousedown": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
     scroll: (ev: Event, data: {
         startIndex: number;
@@ -381,7 +385,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "th-drag-start": (dragStartKey: string) => void;
     "th-drop": (targetColKey: string) => void;
     "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
-    "col-resize": (cols: StkTableColumn<any>) => void;
+    "col-resize": (col: StkTableColumn<any>) => void;
     "toggle-row-expand": (data: {
         expanded: boolean;
         row: any;
@@ -517,6 +521,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean | undefined;
+    /** 按整数行纵向滚动 */
+    scrollRowByRow?: boolean | undefined;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -566,13 +572,14 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     dragRowConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
+    scrollRowByRow: boolean;
 }>>> & Readonly<{
     onScroll?: ((ev: Event, data: {
         startIndex: number;
         endIndex: number;
     }) => any) | undefined;
     "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
-    "onCol-resize"?: ((cols: StkTableColumn<any>) => any) | undefined;
+    "onCol-resize"?: ((col: StkTableColumn<any>) => any) | undefined;
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
@@ -594,6 +601,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mousedown"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
@@ -650,6 +658,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     dragRowConfig: DragRowConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
+    scrollRowByRow: boolean;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>, {
     tableHeader?(_: {
         col: StkTableColumn<any>;
