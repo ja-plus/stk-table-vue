@@ -676,24 +676,21 @@ const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
-/**
- * 列唯一键
- * @param col
- */
 const colKeyGen = computed<(col: StkTableColumn<DT>) => string>(() => {
-    if (typeof props.colKey === 'function') {
-        return col => (props.colKey as (col: StkTableColumn<DT>) => string)(col);
+    const { colKey } = props;
+    if (typeof colKey === 'function') {
+        return col => (colKey as (col: StkTableColumn<DT>) => string)(col);
     } else {
-        return col => (col ? (col as any)[props.colKey as string] : null);
+        return col => (col as any)[colKey];
     }
 });
 
-/** 空单元格占位字符 */
 const getEmptyCellText = computed(() => {
-    if (typeof props.emptyCellText === 'string') {
-        return () => props.emptyCellText;
+    const { emptyCellText } = props;
+    if (typeof emptyCellText === 'string') {
+        return () => emptyCellText;
     } else {
-        return (col: StkTableColumn<DT>, row: DT) => (props.emptyCellText as any)({ row, col });
+        return (col: StkTableColumn<DT>, row: DT) => emptyCellText({ row, col });
     }
 });
 
