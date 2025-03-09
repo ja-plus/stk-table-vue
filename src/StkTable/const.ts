@@ -26,7 +26,7 @@ const _firefoxVersion = getBrowsersVersion('firefox');
 export const IS_LEGACY_MODE = _chromeVersion < 56 || _firefoxVersion < 59;
 
 /** default props.smoothDefault */
-export const DEFAULT_SMOOTH_SCROLL = _chromeVersion < 85 || _chromeVersion > 133;
+export const DEFAULT_SMOOTH_SCROLL = _chromeVersion < 85 || _chromeVersion > 120;
 
 export const STK_ID_PREFIX = 'stk';
 

@@ -163,7 +163,7 @@ export type StkProps = {
   cellFixedMode?: 'sticky' | 'relative';
   /**
    * 是否平滑滚动
-   * - default: chrome < 85 || chrome > 133 ? true : false
+   * - default: chrome < 85 || chrome > 120 ? true : false
    * - false: 使用 wheel 事件滚动。为了防止滚动过快导致白屏。
    * - true: 不使用 wheel 事件滚动。滚轮滚动时更加平滑。滚动过快时会白屏。
    */
