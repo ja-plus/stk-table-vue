@@ -983,14 +983,15 @@ function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
+    const { virtualX, colResizable } = props;
     tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
             const colKey = colKeyGen.value(col);
-            const width = props.virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
+            const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
                 width,
             };
-            if (props.colResizable) {
+            if (colResizable) {
                 // 如果要调整列宽，列宽必须固定。
                 style.minWidth = width;
                 style.maxWidth = width;
