@@ -403,7 +403,7 @@ const props = withDefaults(
          */
         cellFixedMode?: 'sticky' | 'relative';
         /**
-         * 是否平滑滚动。default: chrome < 85 ? true : false
+         * 是否平滑滚动。default: chrome < 85 || chrome > 133 ? true : false
          * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
          * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
          */
