@@ -148,6 +148,10 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/ja-plus/stk-table-vue' }
     ],
+    footer: {
+      message: '根据 MIT 许可证发布',
+      copyright: 'Copyright © 2024-present japlus'
+    }
   },
   locales: {
     root: {
