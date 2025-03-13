@@ -1,26 +1,26 @@
 <svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
  <g id="Layer_1">
   <title>Layer 1</title>
-  <rect rx="10" stroke-width="0" id="svg_1" height="50" width="50" y="68" x="39" stroke="#000" fill="#42b883"/>
-  <rect rx="10" stroke="#000" stroke-width="0" id="svg_6" height="50" width="50" y="188" x="99" fill="#42b883"/>
-  <rect rx="10" stroke-width="0" id="svg_24" height="50" width="50" y="128" x="70" stroke="#000" fill="#42b883"/>
-  <rect rx="10" stroke-width="0" id="svg_26" height="50" width="50" y="68" x="159" stroke="#000" fill="#42b883"/>
-  <rect rx="10" stroke-width="0" id="svg_28" height="50" width="50" y="127" x="131" stroke="#000" fill="#42b883"/>
-  <path id="svg_31" d="m128.99999,113.4l-2.99999,16.6" opacity="NaN" stroke-width="0" stroke="#000" fill="#42b883"/>
-  <rect rx="10" stroke="#000" stroke-width="0" id="svg_32" height="50" width="50" y="67" x="99" fill="#35495e"/>
-  <rect y="13" rx="10" stroke-width="0" id="svg_33" height="50" width="50" x="11" stroke="#000" fill="#42b883"/>
-  <rect transform="translate(0 -1) translate(0 1) translate(0 1) translate(0 1) translate(0 1) translate(0 -1) translate(1 -3)" stroke-width="0" y="13" rx="10" stroke="#000" id="svg_35" height="50" width="50" x="70" fill="url(#svg_10)"/>
-  <rect rx="10" stroke="#000" stroke-width="0" id="svg_36" height="50" width="50" y="12" x="129" fill="url(#svg_15)"/>
-  <rect rx="10" stroke-width="0" id="svg_37" height="50" width="50" y="12" x="187" stroke="#000" fill="#42b883"/>
+  <rect fill="#42b883" stroke="#000" x="39" y="69" width="50" height="50" id="svg_1" stroke-width="0" rx="10"/>
+  <rect fill="#42b883" x="99" y="189" width="50" height="50" id="svg_6" stroke-width="0" stroke="#000" rx="10"/>
+  <rect fill="#42b883" stroke="#000" x="69" y="129" width="50" height="50" id="svg_24" stroke-width="0" rx="10"/>
+  <rect fill="#42b883" stroke="#000" x="159" y="68" width="50" height="50" id="svg_26" stroke-width="0" rx="10"/>
+  <rect fill="#42b883" stroke="#000" x="129" y="129" width="50" height="50" id="svg_28" stroke-width="0" rx="10"/>
+  <path fill="#42b883" stroke="#000" stroke-width="0" opacity="NaN" d="m126.99999,109.4l-2.99999,16.6" id="svg_31"/>
+  <rect fill="#35495e" x="99" y="69" width="50" height="50" id="svg_32" stroke-width="0" stroke="#000" rx="10"/>
+  <rect fill="#42b883" stroke="#000" x="9" width="50" height="50" id="svg_33" stroke-width="0" rx="10" y="9"/>
+  <rect fill="url(#svg_10)" x="69" width="50" height="50" id="svg_35" stroke="#000" rx="10" y="9" stroke-width="0"/>
+  <rect fill="url(#svg_15)" x="129" y="9" width="50" height="50" id="svg_36" stroke-width="0" stroke="#000" rx="10"/>
+  <rect fill="#42b883" stroke="#000" x="189" y="9" width="50" height="50" id="svg_37" stroke-width="0" rx="10"/>
  </g>
  <defs>
-  <linearGradient id="svg_10" x1="0.59375" y1="0.19453" x2="1" y2="0.00312">
-   <stop stop-color="#35495e" offset="0.49219"/>
-   <stop stop-color="rgba(255,255,255,0)" offset="0.49609"/>
+  <linearGradient y2="0.00312" x2="1" y1="0.19453" x1="0.59375" id="svg_10">
+   <stop offset="0.49219" stop-color="#35495e"/>
+   <stop offset="0.49609" stop-color="rgba(255,255,255,0)"/>
   </linearGradient>
-  <linearGradient id="svg_15" x1="0.39453" y1="0.19844" x2="0" y2="0">
-   <stop stop-color="#35495e" offset="0.49219"/>
-   <stop stop-color="rgba(255,255,255,0)" offset="0.49609"/>
+  <linearGradient y2="0" x2="0" y1="0.19844" x1="0.39453" id="svg_15">
+   <stop offset="0.49219" stop-color="#35495e"/>
+   <stop offset="0.49609" stop-color="rgba(255,255,255,0)"/>
   </linearGradient>
  </defs>
 </svg>
