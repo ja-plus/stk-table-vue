@@ -1,6 +1,9 @@
 ## 0.6.10
 * Change
   - `props.smoothScroll` will be set true, if chrome version > 120
+* Optimize 
+  - optimize scroll performance.(Fix: Execute code branches that do not meet expectations, when scrolling y)
+
 ## 0.6.9
 * Feature
   - add: `emits['cell-mousedown']`

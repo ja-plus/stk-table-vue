@@ -676,6 +676,15 @@ const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 
 const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
 
+const rowKeyGenComputed = computed(() => {
+    const { rowKey } = props;
+    if (typeof rowKey === 'function') {
+        return (row: DT) => (rowKey as (row: DT) => string)(row);
+    } else {
+        return (row: DT) => (row as any)[rowKey];
+    }
+});
+
 const colKeyGen = computed<(col: StkTableColumn<DT>) => string>(() => {
     const { colKey } = props;
     if (typeof colKey === 'function') {
@@ -957,13 +966,9 @@ function dealColumns() {
  */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
-    let key = rowKeyGenStore.get(row);
+    let key = rowKeyGenStore.get(row) || (row as PrivateRowDT).__ROW_KEY__;
     if (!key) {
-        if ((row as PrivateRowDT).__ROW_KEY__) {
-            key = (row as PrivateRowDT).__ROW_KEY__;
-        } else {
-            key = typeof props.rowKey === 'function' ? props.rowKey(row) : row[props.rowKey];
-        }
+        key = rowKeyGenComputed.value(row);
 
         if (key === void 0) {
             // key为undefined时，不应该高亮行。因此重新生成key

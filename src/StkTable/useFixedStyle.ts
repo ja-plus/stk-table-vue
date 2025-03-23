@@ -36,22 +36,19 @@ export function useFixedStyle<DT extends Record<string, any>>({
         if (tagType === TagType.TD && !fixed) return null;
 
         const style: CSSProperties = {};
-        const { scrollTop } = virtualScroll.value;
         const { headerRowHeight, rowHeight } = props;
         const isFixedLeft = fixed === 'left';
+        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
+        const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
         if (tagType === TagType.TH) {
             // TH
             if (isRelativeMode.value) {
-                style.top = scrollTop + 'px';
+                style.top = virtualScroll.value.scrollTop + 'px';
             } else {
-                const height = headerRowHeight ?? rowHeight;
-                style.top = depth * height + 'px';
+                style.top = depth * (headerRowHeight ?? rowHeight) + 'px';
             }
         }
-        const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
-
-        const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
         if (fixed === 'left' || fixed === 'right') {
             if (isRelativeMode.value) {
