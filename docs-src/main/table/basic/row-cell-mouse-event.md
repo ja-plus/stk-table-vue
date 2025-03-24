@@ -5,7 +5,7 @@
 
 
 ## API
-defineProps:
+相关 Props:
 | key | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
 | rowHover | boolean | true | 是否高亮鼠标悬浮的行 |

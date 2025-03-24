@@ -1,5 +1,6 @@
 <template>
     <button class="btn" @click="addRow">插入一行</button>
+    <button class="btn" @click="clear">清除数据</button>
     <StkTable
         ref="stkTableRef"
         row-key="id"
@@ -72,5 +73,9 @@ function addRow() {
     nextTick(() => {
         stkTableRef.value?.setHighlightDimRow([item.id]);
     });
+}
+
+function clear() {
+    dataSource.value = [];
 }
 </script>

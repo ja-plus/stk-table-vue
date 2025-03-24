@@ -43,7 +43,7 @@ function setSorter(
     - 优先级最高，如果配置了这个，则不会用 `colKey` 去找对应的列排序。
 
 ## 内置排序函数
-可以引入源码导出的排序函数，使其对其表格的排序行为。
+可以引入源码导出的排序函数，对齐表格内置的排序行为。
 ```ts
 import { tableSort, insertToOrderedArray } from 'stk-table-vue';
 ```
@@ -57,6 +57,7 @@ import { tableSort, insertToOrderedArray } from 'stk-table-vue';
 ```ts
 // @sort-change="handleSortChange"
 function handleSortChange(col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) {
+    // 可以做其他操作
     dataSource.value = tableSort(col, order, data, sortConfig);
 }
 ```
@@ -101,7 +102,13 @@ dataSource.value = insertToOrderedArray(tableSortStore, item, dataSource.value);
  * @param targetArray 表格数据
  * @return targetArray 的浅拷贝
  */
-export function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig: SortConfig<T> = {}) 
+export function insertToOrderedArray<T extends object>(
+    sortState: SortState<T>,
+    newItem: T,
+    targetArray: T[],
+    sortConfig: SortConfig<T> = {}
+): T[] 
+
 ```
 
 ### 示例
