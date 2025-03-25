@@ -823,7 +823,7 @@ watch(
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
         }
-        dataSourceCopy.value = [...val];
+        dataSourceCopy.value = val.slice(); // 浅拷贝
         // 数据长度没变则不计算虚拟滚动
         if (needInitVirtualScrollY) {
             // 表格渲染后再执行。initVirtualScrollY 中有获取dom的操作。
