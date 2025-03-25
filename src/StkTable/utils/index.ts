@@ -26,7 +26,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;
     if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
-    const data = [...targetArray];
+    const data = targetArray.slice();
 
     if (!order || !data.length) {
         // 没有排序的情况，插入在最上方
@@ -146,7 +146,7 @@ export function tableSort<T extends Record<string, any>>(
     if (!dataSource?.length || !sortOption) return dataSource || [];
 
     sortConfig = { emptyToBottom: false, ...sortConfig };
-    let targetDataSource = [...dataSource];
+    let targetDataSource = dataSource.slice();
     let sortField = sortOption.sortField || sortOption.dataIndex;
 
     if (!order && sortConfig.defaultSort) {
@@ -172,9 +172,9 @@ export function tableSort<T extends Record<string, any>>(
         }
 
         if (order === 'desc' || sortConfig.emptyToBottom) {
-            targetDataSource = [...valueArr, ...emptyArr];
+            targetDataSource = valueArr.concat(emptyArr);
         } else {
-            targetDataSource = [...emptyArr, ...valueArr];
+            targetDataSource = emptyArr.concat(valueArr);
         }
     }
     return targetDataSource;

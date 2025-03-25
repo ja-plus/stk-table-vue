@@ -93,7 +93,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
         if (sourceIndex === endIndex) return;
 
         if (mode !== 'none') {
-            const dataSourceTemp = [...dataSourceCopy.value];
+            const dataSourceTemp = dataSourceCopy.value.slice();
             const sourceRow = dataSourceTemp[sourceIndex];
             if (mode === 'swap') {
                 dataSourceTemp[sourceIndex] = dataSourceTemp[endIndex];
@@ -102,7 +102,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
                 dataSourceTemp.splice(sourceIndex, 1);
                 dataSourceTemp.splice(endIndex, 0, sourceRow);
             }
-            dataSourceCopy.value = [...dataSourceTemp];
+            dataSourceCopy.value = dataSourceTemp;
         }
         emits('row-order-change', sourceIndex, endIndex);
     }

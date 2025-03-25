@@ -69,7 +69,7 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
         if (isEmptyValue(dragStartKey) || isEmptyValue(dragEndKey)) return;
 
         if (dragConfig.value.mode !== 'none') {
-            const columns = [...props.columns];
+            const columns: StkTableColumn<any> = props.columns.slice();
 
             const dragStartIndex = columns.findIndex(col => colKeyGen.value(col) === dragStartKey);
             const dragEndIndex = columns.findIndex(col => colKeyGen.value(col) === dragEndKey);

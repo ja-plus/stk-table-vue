@@ -32,3 +32,6 @@ export const STK_ID_PREFIX = 'stk';
 
 /** expanded row key prefix */
 export const EXPANDED_ROW_KEY_PREFIX = 'expanded-';
+
+/** cell key 的分隔符 */
+export const CELL_KEY_SEPARATE = '--';

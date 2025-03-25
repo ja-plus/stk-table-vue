@@ -125,7 +125,7 @@ export function useFixedCol<DT extends Record<string, any>>({
         });
 
         if (props.fixedColShadow) {
-            fixedShadowCols.value = [...leftShadowCol, ...rightShadowCol].filter(Boolean) as StkTableColumn<DT>[];
+            fixedShadowCols.value = leftShadowCol.concat(rightShadowCol).filter(Boolean) as StkTableColumn<DT>[];
         }
 
         fixedCols.value = fixedColsTemp;

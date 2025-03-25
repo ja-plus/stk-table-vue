@@ -240,7 +240,7 @@
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
-import { DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
+import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
 import {
     AutoRowHeightConfig,
     DragRowConfig,
@@ -674,7 +674,7 @@ const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
  */
 const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 
-const dataSourceCopy = shallowRef<DT[]>([...props.dataSource]);
+const dataSourceCopy = shallowRef<DT[]>(props.dataSource.slice());
 
 const rowKeyGenComputed = computed(() => {
     const { rowKey } = props;
@@ -883,7 +883,7 @@ function dealColumns() {
                 centerCol.push(col);
             }
         });
-        copyColumn = [...leftCol, ...centerCol, ...rightCol];
+        copyColumn = leftCol.concat(centerCol).concat(rightCol);
     }
     const maxDeep = howDeepTheHeader(copyColumn);
     const tempHeaderLast: StkTableColumn<DT>[] = [];
@@ -981,7 +981,7 @@ function rowKeyGen(row: DT | null | undefined) {
 
 /** 单元格唯一值 */
 function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
-    return rowKeyGen(row) + '--' + colKeyGen.value(col);
+    return rowKeyGen(row) + CELL_KEY_SEPARATE + colKeyGen.value(col);
 }
 
 /** 单元格样式 */
@@ -1326,7 +1326,7 @@ function setSorter(colKey: string, order: Order, option: { sortOption?: SortOpti
 function resetSorter() {
     sortCol.value = void 0;
     sortOrderIndex.value = 0;
-    dataSourceCopy.value = [...props.dataSource];
+    dataSourceCopy.value = props.dataSource.slice();
 }
 
 /**
@@ -1375,7 +1375,7 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
     } else {
         rowKey = rowKeyGen(rowKeyOrRow);
     }
-    const tempData = [...dataSourceCopy.value];
+    const tempData = dataSourceCopy.value.slice();
     const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
     if (index === -1) {
         console.warn('expandRow failed.rowKey:', rowKey);
