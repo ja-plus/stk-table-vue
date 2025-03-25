@@ -1,8 +1,9 @@
-## 0.6.10
+## 0.7.0
 * Change
   - `props.smoothScroll` will be set true, if chrome version > 120
 * Optimize 
   - optimize scroll performance.(Fix: Execute code branches that do not meet expectations, when scrolling y)
+  - optimize code performance(Array shallow copy)
 
 ## 0.6.9
 * Feature

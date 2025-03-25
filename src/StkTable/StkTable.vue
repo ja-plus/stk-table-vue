@@ -176,12 +176,7 @@
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
-                            @click="
-                                e => {
-                                    col.type === 'expand' && toggleExpandRow(row, col);
-                                    onCellClick(e, row, col);
-                                }
-                            "
+                            @click="e => onCellClick(e, row, col)"
                             @mousedown="e => onCellMouseDown(e, row, col)"
                             @mouseenter="e => onCellMouseEnter(e, row, col)"
                             @mouseleave="e => onCellMouseLeave(e, row, col)"
@@ -1126,8 +1121,39 @@ function onRowMenu(e: MouseEvent, row: DT) {
     emits('row-menu', e, row);
 }
 
+/**
+ * proxy events
+ */
+// function onTbodyClick(e: MouseEvent, type: 1 | 2) {
+//     const el = (e.target as HTMLElement).closest<HTMLElement>('td,tr');
+//     if (!el) return;
+//     if (el.tagName === 'TD') {
+//         const [rowKey, colKey] = el.dataset.cellKey?.split(CELL_KEY_SEPARATE) || [];
+//         const row = dataSourceCopy.value.find(item => rowKeyGen(item) === rowKey);
+//         const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
+//         if (col) {
+//             if (col.type === 'expand') {
+//                 toggleExpandRow(row, col);
+//             }
+//             if (type === 1) {
+//                 onCellClick(e, row, col);
+//             } else if (type === 2) {
+//                 onCellMouseDown(e, row, col);
+//             }
+//         }
+//         if (type === 1) {
+//             onRowClick(e, row);
+//         }
+//     } else if (el.tagName === 'TR') {
+//         const rowKey = el.dataset.rowKey;
+//         const row = dataSourceCopy.value.find(item => rowKeyGen(item) === rowKey);
+//         onRowClick(e, row);
+//     }
+// }
+
 /** 单元格单击 */
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+    col.type === 'expand' && toggleExpandRow(row, col);
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
         if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
