@@ -884,7 +884,7 @@ function dealColumns() {
     const tempHeaderLast: StkTableColumn<DT>[] = [];
 
     if (maxDeep > 0 && props.virtualX) {
-        console.error('多级表头不支持横向虚拟滚动');
+        console.error('StkTableVue:多级表头不支持横向虚拟滚动!');
     }
 
     for (let i = 0; i <= maxDeep; i++) {
@@ -1036,7 +1036,7 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
  */
 function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, options: { force?: boolean; emit?: boolean } = {}) {
     if (!col) {
-        console.warn('onColumnSort: col is not found');
+        console.warn('onColumnSort: not found col:', col);
         return;
     }
     if (!col.sorter && click) {
@@ -1099,12 +1099,11 @@ function onRowClick(e: MouseEvent, row: DT) {
         // 点击同一行，取消当前选中行。
         currentRow.value = void 0;
         currentRowKey.value = void 0;
-        emits('current-change', e, row, { select: false });
     } else {
         currentRow.value = row;
         currentRowKey.value = rowKeyGen(row);
-        emits('current-change', e, row, { select: true });
     }
+    emits('current-change', e, row, { select: !isCurrentRow });
 }
 
 function onRowDblclick(e: MouseEvent, row: DT) {
@@ -1153,16 +1152,19 @@ function onRowMenu(e: MouseEvent, row: DT) {
 
 /** 单元格单击 */
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    col.type === 'expand' && toggleExpandRow(row, col);
+    if (col.type === 'expand') {
+        toggleExpandRow(row, col);
+    }
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
+        const result = { row, col, select: false };
         if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
             currentSelectedCellKey.value = void 0;
-            emits('cell-selected', e, { select: false, row, col });
         } else {
             currentSelectedCellKey.value = cellKey;
-            emits('cell-selected', e, { select: true, row, col });
+            result.select = true;
         }
+        emits('cell-selected', e, result);
     }
     emits('cell-click', e, row, col);
 }
@@ -1174,13 +1176,11 @@ function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
 
 /** td mouseenter */
 function onCellMouseEnter(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    // currentColHoverKey.value = colKeyGen(col);
     emits('cell-mouseenter', e, row, col);
 }
 
 /** td mouseleave */
 function onCellMouseLeave(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    // currentColHoverKey.value = null;
     emits('cell-mouseleave', e, row, col);
 }
 
