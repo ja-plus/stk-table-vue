@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Stk Table Vue"
   text: "高性能虚拟表格"
-  tagline: vue表格新选择，聚焦实时数据。
+  tagline: 实时大数据，何必基于canvas，流畅体验这里有！
   image:
     src: /assets/logo.svg
     alt: Stk Table Vue
@@ -32,7 +32,7 @@ features:
     details: 支持横向、纵向、不等高虚拟列表。
   - icon: 🔩
     title: 灵活
-    details: 配置式自定义单元格。
+    details: 配置式自定义单元格。基于DOM。
   - icon: 🔑
     title: 完全类型化的API
     details: 灵活的 API 和完整的 TypeScript 类型。
