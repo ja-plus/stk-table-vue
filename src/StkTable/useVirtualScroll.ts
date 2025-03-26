@@ -225,25 +225,26 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     /** every row actual height */
     const autoRowHeightMap = new Map<UniqKey, number>();
     /** 如果行高度有变化，则要调用此方法清除保存的行高 */
-    const setAutoHeight = (rowKey: UniqKey, height?: number | null) => {
+    function setAutoHeight(rowKey: UniqKey, height?: number | null) {
         if (!height) {
             autoRowHeightMap.delete(rowKey);
         } else {
             autoRowHeightMap.set(rowKey, height);
         }
-    };
-    const clearAllAutoHeight = () => {
-        autoRowHeightMap.clear();
-    };
+    }
 
-    const getAutoRowHeight = (row: DT) => {
+    function clearAllAutoHeight() {
+        autoRowHeightMap.clear();
+    }
+
+    function getAutoRowHeight(row: DT) {
         const rowKey = String(rowKeyGen(row));
         const storedHeight = autoRowHeightMap.get(rowKey);
-        let expectedHeight;
         if (storedHeight) {
             return storedHeight;
         }
-        if ((expectedHeight = props.autoRowHeight?.expectedHeight)) {
+        const expectedHeight = props.autoRowHeight?.expectedHeight;
+        if (expectedHeight) {
             if (typeof expectedHeight === 'function') {
                 return expectedHeight(row);
             } else {
@@ -251,9 +252,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             }
         }
         return props.rowHeight || DEFAULT_ROW_HEIGHT;
-    };
+    }
 
-    const createGetRowHeightFn: () => (row: DT) => number = () => {
+    function createGetRowHeightFn(): (row: DT) => number {
         if (props.autoRowHeight) {
             return (row: DT) => getAutoRowHeight(row);
         }
@@ -263,7 +264,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             return (row: DT) => (row.__EXPANDED_ROW__ ? expandedRowHeight : rowHeight);
         }
         return () => props.rowHeight || (DEFAULT_ROW_HEIGHT as number);
-    };
+    }
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {

@@ -831,9 +831,6 @@ watch(
             onColumnSort(column, false);
         }
     },
-    {
-        deep: false,
-    },
 );
 
 watch(
