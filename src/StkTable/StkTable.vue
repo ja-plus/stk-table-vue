@@ -86,31 +86,25 @@
                         @drop="onThDrop"
                         @dragover="onThDragOver"
                     >
+                        <!-- 列宽拖动handler -->
+                        <div
+                            v-if="colResizeOn(col) && colIndex > 0"
+                            class="table-header-resizer left"
+                            @mousedown="e => onThResizeMouseDown(e, col, true)"
+                        ></div>
                         <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.rowSpan }">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
-                            <template v-else-if="col.type === 'seq'">
-                                <span class="table-header-title">{{ col.title }}</span>
-                            </template>
                             <template v-else>
                                 <slot name="tableHeader" :col="col">
                                     <span class="table-header-title">{{ col.title }}</span>
                                 </slot>
                             </template>
-
-                            <!-- 排序图图标 -->
-                            <span v-if="col.sorter" class="table-header-sorter">
-                                <SortIcon />
-                            </span>
-                            <!-- 列宽拖动handler -->
-                            <div
-                                v-if="colResizeOn(col) && colIndex > 0"
-                                class="table-header-resizer left"
-                                @mousedown="e => onThResizeMouseDown(e, col, true)"
-                            ></div>
-                            <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="e => onThResizeMouseDown(e, col)"></div>
+                            <SortIcon v-if="col.sorter" class="table-header-sorter" />
                         </div>
+                        <!-- 列宽拖动handler -->
+                        <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="e => onThResizeMouseDown(e, col)"></div>
                     </th>
-                    <!-- 这个th用于横向虚拟滚动表格右边距 width、maxWidth 用于兼容低版本浏览器-->
+                    <!-- 这个th用于横向虚拟滚动表格右边距 width, min-width 用于兼容低版本浏览器-->
                     <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                 </tr>
             </thead>
