@@ -89,8 +89,9 @@ export function useColResize<DT extends Record<string, any>>({
         const { left } = tableContainerRef.value.getBoundingClientRect();
         const tableHeaderLastValue = tableHeaderLast.value;
         let revertMoveX = false;
+        const colKey = colKeyGen.value;
         /** 列下标 */
-        const colIndex = tableHeaderLastValue.findIndex(it => colKeyGen.value(it) === colKeyGen.value(col));
+        const colIndex = tableHeaderLastValue.findIndex(it => colKey(it) === colKey(col));
         const fixedIndex = fixedCols.value.indexOf(col);
         /** 是否正在被固定 */
         const isFixed = fixedIndex !== -1;
@@ -171,7 +172,9 @@ export function useColResize<DT extends Record<string, any>>({
         let width = getCalculatedColWidth(lastCol) + moveX;
         if (width < props.colMinWidth) width = props.colMinWidth;
 
-        const curCol = tableHeaderLast.value.find(it => colKeyGen.value(it) === colKeyGen.value(lastCol));
+        const colKey = colKeyGen.value;
+
+        const curCol = tableHeaderLast.value.find(it => colKey(it) === colKey(lastCol));
         if (!curCol) return;
         curCol.width = width + 'px';
 

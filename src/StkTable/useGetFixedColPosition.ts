@@ -19,6 +19,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
         const colKeyStore: Record<string, number> = {};
         /** 没有 colKey 的多级表头列，使用对象引用做标识 */
         const refStore = new WeakMap<StkTableColumn<DT>, number>();
+        const colKeyGenValue = colKeyGen.value;
         tableHeadersForCalc.value.forEach(cols => {
             let left = 0;
             /**遍历右侧fixed时，因为left已经遍历过一次了。所以，可以拿到right遍历边界 */
@@ -26,7 +27,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
             for (let i = 0; i < cols.length; i++) {
                 const item = cols[i];
                 if (item.fixed === 'left') {
-                    const colKey = colKeyGen.value(item);
+                    const colKey = colKeyGenValue(item);
                     if (colKey) {
                         colKeyStore[colKey] = left;
                     } else {
@@ -42,7 +43,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
             let right = 0;
             for (let i = cols.length - 1; i >= rightStartIndex; i--) {
                 const item = cols[i];
-                const colKey = colKeyGen.value(item);
+                const colKey = colKeyGenValue(item);
                 if (item.fixed === 'right') {
                     if (colKey) {
                         colKeyStore[colKey] = right;
@@ -55,7 +56,7 @@ export function useGetFixedColPosition<DT extends Record<string, any>>({ tableHe
         });
 
         return (col: StkTableColumn<any>) => {
-            const colKey = colKeyGen.value(col);
+            const colKey = colKeyGenValue(col);
             return colKey ? colKeyStore[colKey] : refStore.get(col) || 0;
         };
     });

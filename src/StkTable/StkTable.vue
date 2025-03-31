@@ -818,10 +818,11 @@ watch(
             // 表格渲染后再执行。initVirtualScrollY 中有获取dom的操作。
             nextTick(() => initVirtualScrollY());
         }
-
-        if (sortCol.value) {
+        const sortColValue = sortCol.value;
+        if (sortColValue) {
             // 排序
-            const column = tableHeaderLast.value.find(it => colKeyGen.value(it) === sortCol.value);
+            const colKey = colKeyGen.value;
+            const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
             onColumnSort(column, false);
         }
     },
@@ -991,16 +992,8 @@ const cellStyleMap = computed(() => {
                 style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
             }
 
-            thMap.set(colKey, {
-                ...style,
-                ...getFixedStyle(TagType.TH, col, depth),
-                textAlign: col.headerAlign,
-            });
-            tdMap.set(colKey, {
-                ...style,
-                ...getFixedStyle(TagType.TD, col, depth),
-                textAlign: col.align,
-            });
+            thMap.set(colKey, Object.assign({ textAlign: col.headerAlign }, style, getFixedStyle(TagType.TH, col, depth)));
+            tdMap.set(colKey, Object.assign({ textAlign: col.align }, style, getFixedStyle(TagType.TD, col, depth), { textAlign: col.align }));
         });
     });
     return {
@@ -1047,6 +1040,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     let order = sortSwitchOrder[sortOrderIndex.value];
     const sortConfig = { ...props.sortConfig, ...col.sortConfig };
     const defaultSort = sortConfig.defaultSort;
+    const colKeyGenValue = colKeyGen.value;
 
     if (!order && defaultSort) {
         // if no order ,use default order
@@ -1060,7 +1054,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
         sortCol.value = colKey as string;
         col = null;
         for (const row of tableHeaders.value) {
-            const c = row.find(item => colKeyGen.value(item) === colKey);
+            const c = row.find(item => colKeyGenValue(item) === colKey);
             if (c) {
                 col = c;
                 break;
@@ -1235,7 +1229,7 @@ function onTableScroll(e: Event) {
     if (!e?.target) return;
 
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
-    const { scrollTop: vScrollTop } = virtualScroll.value;
+    const { scrollTop: vScrollTop, startIndex, endIndex } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
     const isYScroll = scrollTop !== vScrollTop;
     const isXScroll = scrollLeft !== vScrollLeft;
@@ -1256,10 +1250,8 @@ function onTableScroll(e: Event) {
         updateFixedShadow(virtualScrollX);
     }
 
-    const { startIndex, endIndex } = virtualScroll.value;
-    const data = { startIndex, endIndex };
     if (isYScroll) {
-        emits('scroll', e, data);
+        emits('scroll', e, { startIndex, endIndex });
     }
     if (isXScroll) {
         emits('scroll-x', e);
@@ -1330,10 +1322,11 @@ function setSorter(colKey: string, order: Order, option: { sortOption?: SortOpti
     const newOption = { silent: true, sortOption: null, sort: true, ...option };
     sortCol.value = colKey;
     sortOrderIndex.value = sortSwitchOrder.indexOf(order);
+    const colKeyGenValue = colKeyGen.value;
 
     if (newOption.sort && dataSourceCopy.value?.length) {
         // 如果表格有数据，则进行排序
-        const column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGen.value(it) === sortCol.value);
+        const column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGenValue(it) === sortCol.value);
         if (column) onColumnSort(column, false, { force: option.force ?? true, emit: !newOption.silent });
         else console.warn('Can not find column by key:', sortCol.value);
     }

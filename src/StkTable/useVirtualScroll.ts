@@ -166,9 +166,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     function getTableHeaderHeight() {
         const { headerRowHeight } = props;
         return headerRowHeight * tableHeaders.value.length;
-        // if (props.virtual) {
-        // }
-        // return theadRef.value?.offsetHeight || 0;
     }
 
     /**
@@ -369,7 +366,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const headerLength = tableHeaderLastValue?.length;
         if (!headerLength) return;
 
-        const { scrollLeft } = virtualScrollX.value;
+        const { scrollLeft, containerWidth } = virtualScrollX.value;
         let startIndex = 0;
         let offsetLeft = 0;
         /** 列宽累加 */
@@ -399,13 +396,13 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
         // -----
         colWidthSum = leftFirstColRestWidth;
-        const containerWidth = virtualScrollX.value.containerWidth - leftColWidthSum;
+        const containerW = containerWidth - leftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLastValue[colIndex];
             colWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
-            if (colWidthSum >= containerWidth) {
+            if (colWidthSum >= containerW) {
                 endIndex = colIndex + 1; // slice endIndex + 1
                 break;
             }

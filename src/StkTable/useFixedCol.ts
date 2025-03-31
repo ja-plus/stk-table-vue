@@ -33,18 +33,25 @@ export function useFixedCol<DT extends Record<string, any>>({
     /** 固定列的class */
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
-        // console.log('tableHeaderForCalc', tableHeaderForCalc.value);
         const fixedShadowColsValue = fixedShadowCols.value;
+        const fixedColsValue = fixedCols.value;
+        const colKey = colKeyGen.value;
+        const fixedColShadow = props.fixedColShadow;
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {
-                const showShadow = props.fixedColShadow && col.fixed && fixedShadowColsValue.includes(col);
-                const classObj = {
-                    'fixed-cell': col.fixed,
-                    ['fixed-cell--' + col.fixed]: col.fixed,
-                    'fixed-cell--shadow': showShadow,
-                    ['fixed-cell--active']: fixedCols.value.includes(col), // 表示该列正在被固定
+                const fixed = col.fixed;
+                const showShadow = fixedColShadow && fixed && fixedShadowColsValue.includes(col);
+                const classObj: Record<string, any> = {
+                    'fixed-cell--active': fixedColsValue.includes(col), // 表示该列正在被固定
                 };
-                colMap.set(colKeyGen.value(col), classObj);
+                if (fixed) {
+                    classObj['fixed-cell'] = true;
+                    classObj['fixed-cell--' + fixed] = true;
+                }
+                if (showShadow) {
+                    classObj['fixed-cell--shadow'] = true;
+                }
+                colMap.set(colKey(col), classObj);
             });
         });
         return colMap;
@@ -76,17 +83,16 @@ export function useFixedCol<DT extends Record<string, any>>({
     /** 滚动条变化时，更新需要展示阴影的列 */
     function updateFixedShadow(virtualScrollX?: Ref<VirtualScrollXStore>) {
         const fixedColsTemp: StkTableColumn<DT>[] = [];
-        let clientWidth, /* scrollWidth, */ scrollLeft;
+        const getFixedColPositionValue = getFixedColPosition.value;
+        let clientWidth, scrollLeft;
 
         if (virtualScrollX?.value) {
-            const { containerWidth: cw, /* scrollWidth: sw, */ scrollLeft: sl } = virtualScrollX.value;
+            const { containerWidth: cw, scrollLeft: sl } = virtualScrollX.value;
             clientWidth = cw;
-            // scrollWidth = sw;
             scrollLeft = sl;
         } else {
-            const { clientWidth: cw, /* scrollWidth: sw, */ scrollLeft: sl } = tableContainerRef.value as HTMLDivElement;
+            const { clientWidth: cw, scrollLeft: sl } = tableContainerRef.value as HTMLDivElement;
             clientWidth = cw;
-            // scrollWidth = sw;
             scrollLeft = sl;
         }
 
@@ -103,7 +109,7 @@ export function useFixedCol<DT extends Record<string, any>>({
              */
             let left = 0;
             row.forEach(col => {
-                const position = getFixedColPosition.value(col);
+                const position = getFixedColPositionValue(col);
                 const isFixedLeft = col.fixed === 'left';
                 const isFixedRight = col.fixed === 'right';
 
