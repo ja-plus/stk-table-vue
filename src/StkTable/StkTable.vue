@@ -640,8 +640,6 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
  * ```
  */
 const tableHeaders = shallowRef<StkTableColumn<DT>[][]>([]);
-/** 若有多级表头时，最后一行的tableHeaders.内容是 props.columns 的引用集合  */
-const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
 
 /**
  * 用于计算多级表头的tableHeaders。模拟rowSpan 位置的辅助数组。用于计算固定列。
@@ -662,6 +660,9 @@ const tableHeaderLast = shallowRef<StkTableColumn<DT>[]>([]);
  * ```
  */
 const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
+
+/** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
+const tableHeaderLast = computed(() => tableHeadersForCalc.value.at(-1) || []);
 
 const dataSourceCopy = shallowRef<DT[]>(props.dataSource.slice());
 
@@ -873,7 +874,6 @@ function dealColumns() {
         copyColumn = leftCol.concat(centerCol).concat(rightCol);
     }
     const maxDeep = howDeepTheHeader(copyColumn);
-    const tempHeaderLast: StkTableColumn<DT>[] = [];
 
     if (maxDeep > 0 && props.virtualX) {
         console.error('StkTableVue:多级表头不支持横向虚拟滚动!');
@@ -918,7 +918,6 @@ function dealColumns() {
                 tableHeadersForCalcTemp[depth].push(col);
             } else {
                 colWidth = getColWidth(col);
-                tempHeaderLast.push(col); // 没有children的列作为colgroup
                 for (let i = depth; i <= maxDeep; i++) {
                     // 如有rowSpan 向下复制一个表头col，用于计算固定列
                     tableHeadersForCalcTemp[i].push(col);
@@ -944,7 +943,6 @@ function dealColumns() {
 
     flat(copyColumn, null);
     tableHeaders.value = tableHeadersTemp;
-    tableHeaderLast.value = tempHeaderLast;
     tableHeadersForCalc.value = tableHeadersForCalcTemp;
 }
 
