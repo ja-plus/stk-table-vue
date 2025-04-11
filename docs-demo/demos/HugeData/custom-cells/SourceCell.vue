@@ -12,5 +12,7 @@ const sourceNameMap: any = {
 };
 </script>
 <template>
-    <div class="source-cell" :class="['source-' + props.cellValue]">{{ sourceNameMap[props.cellValue] }}</div>
+    <div>
+        <div class="source-cell" :class="['source-' + props.cellValue]">{{ sourceNameMap[props.cellValue] }}</div>
+    </div>
 </template>

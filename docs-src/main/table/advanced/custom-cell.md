@@ -1,9 +1,13 @@
 # 自定义单元格
 
-* 通过 `StkTableColumn['customCell']` 自定义单元格内容。
-* 通过 `StkTableColumn['customHeaderCell']` 自定义单元格内容。
+* 通过 `StkTableColumn['customCell']` 自定义**表体**单元格内容。
+* 通过 `StkTableColumn['customHeaderCell']` 自定义**表头**单元格内容。
 
 `customCell` 和 `customHeaderCell` 使用方式基本相同，下面以 `customCell` 为例子进行说明。
+
+::: warning
+`customCell` 的根元素请不要设置为 `inline`/`inline-block`/`inline-flex` 等行内元素，否则在虚拟列表中可能会撑开行高。
+:::
 
 ### 通过vue SFC 使用
 支持传入vue SFC 组件，vue 组件的 props 需要用 `CustomCellProps` 类型特殊定义。
