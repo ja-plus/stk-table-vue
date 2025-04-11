@@ -2,10 +2,14 @@
 
 
 ## 基础排序
+列配置中`StkTableColumn['sorter']` 设置为 `true` 即可开启排序。
+
 点击表头即可触发排序。
 <demo vue="basic/sort/Sort.vue"></demo>
 
 ## 自定义排序
+列配置中`StkTableColumn['sorter']` 可以设置为一个函数。
+
 通过 `sorter(data, { column, order })` 自定义排序规则。
 
 该函数会在排序时触发，表格将使用函数的**返回值**展示。

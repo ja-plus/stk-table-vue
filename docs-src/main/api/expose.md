@@ -1,7 +1,14 @@
 # Expose 实例方法
 ## API
 ### initVirtualScroll
-初始化虚拟列表。相当于同时调用 `initVirtualScrollX` 和 `initVirtualScrollY`。
+初始化虚拟列表可视区的行数和列数。相当于同时调用 `initVirtualScrollX` 和 `initVirtualScrollY`。
+
+表格的 `props.autoResize` 默认为 `true`，因此在宽高变化时会自动调用该函数。
+
+您也可以通过调用此函数，重新计算虚拟列表可视区。比如在用户手动拖动调整宽高的时候，鼠标抬起事件后调用。
+
+参数height, 不传则默认使用表格容器的高度。如果您想多渲染几行，则可在获取容器高度后，再加上几行的高度。
+
 
 ```ts
 /**
@@ -12,7 +19,7 @@ initVirtualScroll(height?: number)
 ```
 
 ### initVirtualScrollX
-初始化横向虚拟滚动。
+初始化横向虚拟滚动列数。
 
 ```ts
 /**
@@ -22,7 +29,7 @@ initVirtualScrollX()
 ```
 
 ### initVirtualScrollY
-初始化纵向虚拟滚动。
+初始化纵向虚拟滚动行数。
 
 ```ts
 /**
