@@ -25,3 +25,5 @@ export declare const DEFAULT_SMOOTH_SCROLL: boolean;
 export declare const STK_ID_PREFIX = "stk";
 /** expanded row key prefix */
 export declare const EXPANDED_ROW_KEY_PREFIX = "expanded-";
+/** cell key 的分隔符 */
+export declare const CELL_KEY_SEPARATE = "--";

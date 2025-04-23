@@ -63,89 +63,100 @@ declare function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boo
     col?: StkTableColumn<DT>;
     silent?: boolean;
 }): void;
-declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
-    width?: string | undefined;
+declare function __VLS_template(): {
+    tableHeader?(_: {
+        col: StkTableColumn<any>;
+    }): any;
+    expand?(_: {
+        row: any;
+        col: any;
+    }): any;
+    empty?(_: {}): any;
+    customBottom?(_: {}): any;
+};
+declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    width?: string;
     /** 最小表格宽度 */
-    minWidth?: string | undefined;
+    minWidth?: string;
     /** 表格最大宽度*/
-    maxWidth?: string | undefined;
+    maxWidth?: string;
     /** 斑马线条纹 */
-    stripe?: boolean | undefined;
+    stripe?: boolean;
     /** 是否使用 table-layout:fixed(低版本浏览器需要设置table) */
-    fixedMode?: boolean | undefined;
+    fixedMode?: boolean;
     /** 是否隐藏表头 */
-    headless?: boolean | undefined;
+    headless?: boolean;
     /** 主题，亮、暗 */
-    theme?: "light" | "dark" | undefined;
+    theme?: "light" | "dark";
     /**
      * 行高
      * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
      */
-    rowHeight?: number | undefined;
+    rowHeight?: number;
     /**
      * 是否可变行高
      * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
      */
-    autoRowHeight?: boolean | AutoRowHeightConfig<any> | undefined;
+    autoRowHeight?: boolean | AutoRowHeightConfig<DT>;
     /** 是否高亮鼠标悬浮的行 */
-    rowHover?: boolean | undefined;
+    rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean | undefined;
+    rowActive?: boolean;
     /** 当前行再次点击否可以取消 (rowActive=true)*/
-    rowCurrentRevokable?: boolean | undefined;
+    rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | null | undefined;
+    headerRowHeight?: number | null;
     /** 虚拟滚动 */
-    virtual?: boolean | undefined;
+    virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
-    virtualX?: boolean | undefined;
+    virtualX?: boolean;
     /** 表格列配置 */
-    columns?: StkTableColumn<any>[] | undefined;
+    columns?: StkTableColumn<DT>[];
     /** 表格数据源 */
-    dataSource?: any[] | undefined;
+    dataSource?: DT[];
     /** 行唯一键 （行唯一值不能为undefined） */
-    rowKey?: UniqKeyProp | undefined;
+    rowKey?: UniqKeyProp;
     /** 列唯一键 */
-    colKey?: UniqKeyProp | undefined;
+    colKey?: UniqKeyProp;
     /** 空值展示文字 */
     emptyCellText?: string | ((option: {
-        row: any;
-        col: StkTableColumn<any>;
-    }) => string) | undefined;
+        row: DT;
+        col: StkTableColumn<DT>;
+    }) => string);
     /** 暂无数据兜底高度是否撑满 */
-    noDataFull?: boolean | undefined;
+    noDataFull?: boolean;
     /** 是否展示暂无数据 */
-    showNoData?: boolean | undefined;
+    showNoData?: boolean;
     /** 是否服务端排序，true则不排序数据 */
-    sortRemote?: boolean | undefined;
+    sortRemote?: boolean;
     /** 表头是否溢出展示... */
-    showHeaderOverflow?: boolean | undefined;
+    showHeaderOverflow?: boolean;
     /** 表体溢出是否展示... */
-    showOverflow?: boolean | undefined;
+    showOverflow?: boolean;
     /** 是否增加行hover class $*$ rename*/
-    showTrHoverClass?: boolean | undefined;
+    showTrHoverClass?: boolean;
     /** 是否高亮鼠标悬浮的单元格 */
-    cellHover?: boolean | undefined;
+    cellHover?: boolean;
     /** 是否高亮选中的单元格 */
-    cellActive?: boolean | undefined;
+    cellActive?: boolean;
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
-    selectedCellRevokable?: boolean | undefined;
+    selectedCellRevokable?: boolean;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: HeaderDragConfig | undefined;
+    headerDrag?: HeaderDragConfig;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
-    rowClassName?: ((row: any, i: number) => string) | undefined;
+    rowClassName?: (row: DT, i: number) => string;
     /**
      * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | ColResizableConfig<any> | undefined;
+    colResizable?: boolean | ColResizableConfig<DT>;
     /** 可拖动至最小的列宽 */
-    colMinWidth?: number | undefined;
+    colMinWidth?: number;
     /**
      * 单元格分割线。
      * 默认横竖都有
@@ -153,29 +164,29 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * "v" - 仅展示竖线
      * "body-v" - 仅表体展示竖线
      */
-    bordered?: boolean | "h" | "v" | "body-v" | undefined;
+    bordered?: boolean | "h" | "v" | "body-v";
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
      * 传入方法表示resize后的回调
      */
-    autoResize?: boolean | (() => void) | undefined;
+    autoResize?: boolean | (() => void);
     /** 是否展示固定列阴影。为节省性能，默认false。 */
-    fixedColShadow?: boolean | undefined;
+    fixedColShadow?: boolean;
     /** 优化vue2 滚动 */
-    optimizeVue2Scroll?: boolean | undefined;
+    optimizeVue2Scroll?: boolean;
     /** 排序配置 */
-    sortConfig?: SortConfig<any> | undefined;
+    sortConfig?: SortConfig<DT>;
     /** 隐藏头部title。可传入colKey数组 */
-    hideHeaderTitle?: boolean | string[] | undefined;
+    hideHeaderTitle?: boolean | string[];
     /** 高亮配置 */
-    highlightConfig?: HighlightConfig | undefined;
+    highlightConfig?: HighlightConfig;
     /** 序号列配置 */
-    seqConfig?: SeqConfig | undefined;
+    seqConfig?: SeqConfig;
     /** 展开行配置 */
-    expandConfig?: ExpandConfig | undefined;
+    expandConfig?: ExpandConfig;
     /** 行拖动配置 */
-    dragRowConfig?: DragRowConfig | undefined;
+    dragRowConfig?: DragRowConfig;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -185,15 +196,15 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      *
      * 低版本浏览器强制为'relative'，
      */
-    cellFixedMode?: "sticky" | "relative" | undefined;
+    cellFixedMode?: "sticky" | "relative";
     /**
-     * 是否平滑滚动。default: chrome < 85 ? true : false
+     * 是否平滑滚动。default: chrome < 85 || chrome > 120 ? true : false
      * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
-    smoothScroll?: boolean | undefined;
+    smoothScroll?: boolean;
     /** 按整数行纵向滚动 */
-    scrollRowByRow?: boolean | undefined;
+    scrollRowByRow?: boolean;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -251,7 +262,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * en: calc virtual scroll x & y info
      * @see {@link initVirtualScroll}
      */
-    initVirtualScroll: (height?: number | undefined) => void;
+    initVirtualScroll: (height?: number) => void;
     /**
      * 重新计算虚拟列表宽度
      *
@@ -265,7 +276,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * en: calc virtual scroll y
      * @see {@link initVirtualScrollY}
      */
-    initVirtualScrollY: (height?: number | undefined) => void;
+    initVirtualScrollY: (height?: number) => void;
     /**
      * 选中一行
      *
@@ -348,7 +359,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * en: When the row height is not fixed, call this method to update the row height if the row height changes.
      * @see {@link setAutoHeight}
      */
-    setAutoHeight: (rowKey: import('./types/index').UniqKey, height?: number | null | undefined) => void;
+    setAutoHeight: (rowKey: import('./types/index').UniqKey, height?: number | null) => void;
     /**
      * 清除所有行高
      *
@@ -364,8 +375,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }) => void;
     "cell-selected": (ev: MouseEvent | null, data: {
         select: boolean;
-        row: any;
-        col: StkTableColumn<any> | undefined;
+        row: DT | undefined;
+        col: StkTableColumn<DT> | undefined;
     }) => void;
     "row-dblclick": (ev: MouseEvent, row: any) => void;
     "header-row-menu": (ev: MouseEvent) => void;
@@ -388,93 +399,93 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "col-resize": (col: StkTableColumn<any>) => void;
     "toggle-row-expand": (data: {
         expanded: boolean;
-        row: any;
-        col: StkTableColumn<any> | null;
+        row: DT;
+        col: StkTableColumn<DT> | null;
     }) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
-    width?: string | undefined;
+    width?: string;
     /** 最小表格宽度 */
-    minWidth?: string | undefined;
+    minWidth?: string;
     /** 表格最大宽度*/
-    maxWidth?: string | undefined;
+    maxWidth?: string;
     /** 斑马线条纹 */
-    stripe?: boolean | undefined;
+    stripe?: boolean;
     /** 是否使用 table-layout:fixed(低版本浏览器需要设置table) */
-    fixedMode?: boolean | undefined;
+    fixedMode?: boolean;
     /** 是否隐藏表头 */
-    headless?: boolean | undefined;
+    headless?: boolean;
     /** 主题，亮、暗 */
-    theme?: "light" | "dark" | undefined;
+    theme?: "light" | "dark";
     /**
      * 行高
      * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
      */
-    rowHeight?: number | undefined;
+    rowHeight?: number;
     /**
      * 是否可变行高
      * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
      */
-    autoRowHeight?: boolean | AutoRowHeightConfig<any> | undefined;
+    autoRowHeight?: boolean | AutoRowHeightConfig<DT>;
     /** 是否高亮鼠标悬浮的行 */
-    rowHover?: boolean | undefined;
+    rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean | undefined;
+    rowActive?: boolean;
     /** 当前行再次点击否可以取消 (rowActive=true)*/
-    rowCurrentRevokable?: boolean | undefined;
+    rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | null | undefined;
+    headerRowHeight?: number | null;
     /** 虚拟滚动 */
-    virtual?: boolean | undefined;
+    virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
-    virtualX?: boolean | undefined;
+    virtualX?: boolean;
     /** 表格列配置 */
-    columns?: StkTableColumn<any>[] | undefined;
+    columns?: StkTableColumn<DT>[];
     /** 表格数据源 */
-    dataSource?: any[] | undefined;
+    dataSource?: DT[];
     /** 行唯一键 （行唯一值不能为undefined） */
-    rowKey?: UniqKeyProp | undefined;
+    rowKey?: UniqKeyProp;
     /** 列唯一键 */
-    colKey?: UniqKeyProp | undefined;
+    colKey?: UniqKeyProp;
     /** 空值展示文字 */
     emptyCellText?: string | ((option: {
-        row: any;
-        col: StkTableColumn<any>;
-    }) => string) | undefined;
+        row: DT;
+        col: StkTableColumn<DT>;
+    }) => string);
     /** 暂无数据兜底高度是否撑满 */
-    noDataFull?: boolean | undefined;
+    noDataFull?: boolean;
     /** 是否展示暂无数据 */
-    showNoData?: boolean | undefined;
+    showNoData?: boolean;
     /** 是否服务端排序，true则不排序数据 */
-    sortRemote?: boolean | undefined;
+    sortRemote?: boolean;
     /** 表头是否溢出展示... */
-    showHeaderOverflow?: boolean | undefined;
+    showHeaderOverflow?: boolean;
     /** 表体溢出是否展示... */
-    showOverflow?: boolean | undefined;
+    showOverflow?: boolean;
     /** 是否增加行hover class $*$ rename*/
-    showTrHoverClass?: boolean | undefined;
+    showTrHoverClass?: boolean;
     /** 是否高亮鼠标悬浮的单元格 */
-    cellHover?: boolean | undefined;
+    cellHover?: boolean;
     /** 是否高亮选中的单元格 */
-    cellActive?: boolean | undefined;
+    cellActive?: boolean;
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
-    selectedCellRevokable?: boolean | undefined;
+    selectedCellRevokable?: boolean;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: HeaderDragConfig | undefined;
+    headerDrag?: HeaderDragConfig;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
-    rowClassName?: ((row: any, i: number) => string) | undefined;
+    rowClassName?: (row: DT, i: number) => string;
     /**
      * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | ColResizableConfig<any> | undefined;
+    colResizable?: boolean | ColResizableConfig<DT>;
     /** 可拖动至最小的列宽 */
-    colMinWidth?: number | undefined;
+    colMinWidth?: number;
     /**
      * 单元格分割线。
      * 默认横竖都有
@@ -482,29 +493,29 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * "v" - 仅展示竖线
      * "body-v" - 仅表体展示竖线
      */
-    bordered?: boolean | "h" | "v" | "body-v" | undefined;
+    bordered?: boolean | "h" | "v" | "body-v";
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
      * 传入方法表示resize后的回调
      */
-    autoResize?: boolean | (() => void) | undefined;
+    autoResize?: boolean | (() => void);
     /** 是否展示固定列阴影。为节省性能，默认false。 */
-    fixedColShadow?: boolean | undefined;
+    fixedColShadow?: boolean;
     /** 优化vue2 滚动 */
-    optimizeVue2Scroll?: boolean | undefined;
+    optimizeVue2Scroll?: boolean;
     /** 排序配置 */
-    sortConfig?: SortConfig<any> | undefined;
+    sortConfig?: SortConfig<DT>;
     /** 隐藏头部title。可传入colKey数组 */
-    hideHeaderTitle?: boolean | string[] | undefined;
+    hideHeaderTitle?: boolean | string[];
     /** 高亮配置 */
-    highlightConfig?: HighlightConfig | undefined;
+    highlightConfig?: HighlightConfig;
     /** 序号列配置 */
-    seqConfig?: SeqConfig | undefined;
+    seqConfig?: SeqConfig;
     /** 展开行配置 */
-    expandConfig?: ExpandConfig | undefined;
+    expandConfig?: ExpandConfig;
     /** 行拖动配置 */
-    dragRowConfig?: DragRowConfig | undefined;
+    dragRowConfig?: DragRowConfig;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -514,15 +525,15 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      *
      * 低版本浏览器强制为'relative'，
      */
-    cellFixedMode?: "sticky" | "relative" | undefined;
+    cellFixedMode?: "sticky" | "relative";
     /**
-     * 是否平滑滚动。default: chrome < 85 ? true : false
+     * 是否平滑滚动。default: chrome < 85 || chrome > 120 ? true : false
      * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
-    smoothScroll?: boolean | undefined;
+    smoothScroll?: boolean;
     /** 按整数行纵向滚动 */
-    scrollRowByRow?: boolean | undefined;
+    scrollRowByRow?: boolean;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -591,8 +602,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }) => any) | undefined;
     "onCell-selected"?: ((ev: MouseEvent | null, data: {
         select: boolean;
-        row: any;
-        col: StkTableColumn<any> | undefined;
+        row: DT | undefined;
+        col: StkTableColumn<DT> | undefined;
     }) => any) | undefined;
     "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
     "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
@@ -606,18 +617,18 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     "onScroll-x"?: ((ev: Event) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
         expanded: boolean;
-        row: any;
-        col: StkTableColumn<any> | null;
+        row: DT;
+        col: StkTableColumn<DT> | null;
     }) => any) | undefined;
 }>, {
     width: string;
     minWidth: string;
     maxWidth: string;
-    sortConfig: SortConfig<any>;
+    sortConfig: SortConfig<DT>;
     rowHeight: number;
     headerRowHeight: number | null;
     headless: boolean;
-    autoRowHeight: boolean | AutoRowHeightConfig<any>;
+    autoRowHeight: boolean | AutoRowHeightConfig<DT>;
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
@@ -629,11 +640,11 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     rowCurrentRevokable: boolean;
     virtual: boolean;
     virtualX: boolean;
-    columns: StkTableColumn<any>[];
-    dataSource: any[];
+    columns: StkTableColumn<DT>[];
+    dataSource: DT[];
     emptyCellText: string | ((option: {
-        row: any;
-        col: StkTableColumn<any>;
+        row: DT;
+        col: StkTableColumn<DT>;
     }) => string);
     noDataFull: boolean;
     showNoData: boolean;
@@ -645,8 +656,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     cellActive: boolean;
     selectedCellRevokable: boolean;
     headerDrag: HeaderDragConfig;
-    rowClassName: (row: any, i: number) => string;
-    colResizable: boolean | ColResizableConfig<any>;
+    rowClassName: (row: DT, i: number) => string;
+    colResizable: boolean | ColResizableConfig<DT>;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v";
     autoResize: boolean | (() => void);
@@ -659,17 +670,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
     scrollRowByRow: boolean;
-}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>, {
-    tableHeader?(_: {
-        col: StkTableColumn<any>;
-    }): any;
-    expand?(_: {
-        row: any;
-        col: any;
-    }): any;
-    empty?(_: {}): any;
-    customBottom?(_: {}): any;
-}>;
+}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
+declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;
 type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
 type __VLS_TypePropsToRuntimeProps<T> = {

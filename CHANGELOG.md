@@ -1,9 +1,9 @@
-## 0.7.0
-* Change
-  - `props.smoothScroll` will be set true, if chrome version > 120
+## 0.6.10
 * Optimize 
-  - optimize scroll performance.(Fix: Execute code branches that do not meet expectations, when scrolling y)
-  - optimize code performance(Array shallow copy)
+  - Optimize scroll performance.(Fix: Execute code branches that do not meet expectations, when scrolling y)
+  - Optimize code performance(Array shallow copy)
+* Change
+  - Change th background-color in `light` theme.
 
 ## 0.6.9
 * Feature
