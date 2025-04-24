@@ -35,9 +35,15 @@ const dataSource = ref([
     <CheckItem v-model="rowHover" text="行悬浮状态(rowHover)"></CheckItem>
     <CheckItem v-model="cellHover" text="单元格悬浮状态(cellHover)"></CheckItem>
     <br />
-    <CheckItem v-model="rowCurrentRevokable" text="行选中状态是否可取消(rowCurrentRevokable)"></CheckItem>
+    <CheckItem
+        v-model="rowCurrentRevokable"
+        text="行选中状态是否可取消(rowCurrentRevokable)"
+    ></CheckItem>
     <br />
-    <CheckItem v-model="selectedCellRevokable" text="单元格选中状态是否可取消(selectedCellRevokable)"></CheckItem>
+    <CheckItem
+        v-model="selectedCellRevokable"
+        text="单元格选中状态是否可取消(selectedCellRevokable)"
+    ></CheckItem>
     <StkTable
         :stripe="stripe"
         :row-active="rowActive"

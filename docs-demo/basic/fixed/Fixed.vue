@@ -17,15 +17,54 @@ const columns: StkTableColumn<any>[] = [
     { title: 'Operation', dataIndex: 'operation', fixed: 'right', width: 100 },
 ];
 const dataSource = ref([
-    { key: '1', name: 'John Brown', age: 32, address: 'New York No. 1 Lake Park', gender: 'male', email: 'john@example.com' },
-    { key: '2', name: 'Jim Green', age: 42, address: 'London No. 1 Lake Park', gender: 'male', email: 'jim@example.com' },
-    { key: '3', name: 'Joe Black', age: 32, address: 'Sidney No. 1 Lake Park', gender: 'male', email: 'joe@example.com' },
-    { key: '4', name: 'Jim Red', age: 32, address: 'London No. 2 Lake Park', gender: 'male', email: 'jim@example.com' },
-    { key: '5', name: 'Jake White', age: 32, address: 'New York No. 2 Lake Park', gender: 'male', email: 'jake@example.com' },
+    {
+        key: '1',
+        name: 'John Brown',
+        age: 32,
+        address: 'New York No. 1 Lake Park',
+        gender: 'male',
+        email: 'john@example.com',
+    },
+    {
+        key: '2',
+        name: 'Jim Green',
+        age: 42,
+        address: 'London No. 1 Lake Park',
+        gender: 'male',
+        email: 'jim@example.com',
+    },
+    {
+        key: '3',
+        name: 'Joe Black',
+        age: 32,
+        address: 'Sidney No. 1 Lake Park',
+        gender: 'male',
+        email: 'joe@example.com',
+    },
+    {
+        key: '4',
+        name: 'Jim Red',
+        age: 32,
+        address: 'London No. 2 Lake Park',
+        gender: 'male',
+        email: 'jim@example.com',
+    },
+    {
+        key: '5',
+        name: 'Jake White',
+        age: 32,
+        address: 'New York No. 2 Lake Park',
+        gender: 'male',
+        email: 'jake@example.com',
+    },
 ]);
 </script>
 
 <template>
     <CheckItem v-model="fixedColShadow" text="show fixed shadow"></CheckItem>
-    <StkTable :fixed-col-shadow="fixedColShadow" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        :fixed-col-shadow="fixedColShadow"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

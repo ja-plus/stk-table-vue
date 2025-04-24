@@ -23,7 +23,12 @@ function handleInputChange() {
     <div class="radio-group">
         <span class="main-label">{{ props.text }}:</span>
         <label v-for="(option, i) in options" :key="i">
-            <input v-model="modelValue" type="radio" :value="option.value" @change="handleInputChange" />
+            <input
+                v-model="modelValue"
+                type="radio"
+                :value="option.value"
+                @change="handleInputChange"
+            />
             <span>{{ option.label }}</span>
         </label>
     </div>

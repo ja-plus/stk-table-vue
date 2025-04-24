@@ -1,3 +1,7 @@
+## 0.6.11
+* Feature
+  - add: Support `Home` `End` key to scroll table.
+
 ## 0.6.10
 * Optimize 
   - Optimize scroll performance.(Fix: Execute code branches that do not meet expectations, when scrolling y)

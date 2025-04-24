@@ -16,5 +16,10 @@ const noDataFull = ref(true);
         <input v-model="noDataFull" type="checkbox" />
         <span>no-data-full</span>
     </label>
-    <StkTable style="height: 200px" :no-data-full="noDataFull" :columns="columns" :data-source="[]"></StkTable>
+    <StkTable
+        style="height: 200px"
+        :no-data-full="noDataFull"
+        :columns="columns"
+        :data-source="[]"
+    ></StkTable>
 </template>

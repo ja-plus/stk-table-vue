@@ -18,7 +18,10 @@ const columns = ref<StkTableColumn<any>[]>([
             if (props.expanded && props.expanded.dataIndex === 'name') {
                 className += ' custom-expand-icon-active';
             }
-            return h('div', { style: 'display: flex; align-items: center; ' }, [h('span', { class: className }), h('span', props.cellValue)]);
+            return h('div', { style: 'display: flex; align-items: center; ' }, [
+                h('span', { class: className }),
+                h('span', props.cellValue),
+            ]);
         },
     },
     { dataIndex: 'id', title: 'id(100px)', width: '100px' },

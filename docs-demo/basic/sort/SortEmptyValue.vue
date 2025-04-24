@@ -24,5 +24,11 @@ const dataSource = ref<DataType[]>([
 ]);
 </script>
 <template>
-    <StkTable style="height: 200px" row-key="key" :sort-config="{ emptyToBottom: true }" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        style="height: 200px"
+        row-key="key"
+        :sort-config="{ emptyToBottom: true }"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

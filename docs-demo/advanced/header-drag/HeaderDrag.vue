@@ -24,5 +24,12 @@ const dataSource = [
 ];
 </script>
 <template>
-    <StkTable v-model:columns="columns" row-key="name" virtual header-drag fixed-col-shadow :data-source="dataSource"></StkTable>
+    <StkTable
+        v-model:columns="columns"
+        row-key="name"
+        virtual
+        header-drag
+        fixed-col-shadow
+        :data-source="dataSource"
+    ></StkTable>
 </template>

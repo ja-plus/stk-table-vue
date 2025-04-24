@@ -22,5 +22,11 @@ const dataSource = ref(
 );
 </script>
 <template>
-    <StkTable style="height: 200px" virtual stripe :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        style="height: 200px"
+        virtual
+        stripe
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

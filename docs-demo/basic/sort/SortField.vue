@@ -13,7 +13,13 @@ type DataType = {
 const columns: StkTableColumn<DataType>[] = [
     { type: 'seq', title: 'No.', dataIndex: '' as any, width: 50 },
     { title: 'Name', dataIndex: 'name' },
-    { title: 'Period', dataIndex: 'period', align: 'right', sorter: true, sortField: 'periodNumber' },
+    {
+        title: 'Period',
+        dataIndex: 'period',
+        align: 'right',
+        sorter: true,
+        sortField: 'periodNumber',
+    },
     { title: 'PeriodNumber', dataIndex: 'periodNumber', align: 'right' },
 ];
 
@@ -31,5 +37,10 @@ const dataSource = ref<DataType[]>([
 ]);
 </script>
 <template>
-    <StkTable style="height: 200px" row-key="key" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        style="height: 200px"
+        row-key="key"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

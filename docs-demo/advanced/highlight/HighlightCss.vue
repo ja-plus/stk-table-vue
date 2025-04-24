@@ -11,13 +11,25 @@ onMounted(() => {
         stkTableRef.value?.setHighlightDimRow(['id0'], { method: 'css' });
     }, 1000);
     const interval2 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimRow(['id1'], { method: 'css', className: 'special-highlight-row', duration: 2000 });
+        stkTableRef.value?.setHighlightDimRow(['id1'], {
+            method: 'css',
+            className: 'special-highlight-row',
+            duration: 2000,
+        });
     }, 1600);
     const interval3 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimCell('id2', 'name', { method: 'css', className: 'special-highlight-cell', duration: 1000 });
+        stkTableRef.value?.setHighlightDimCell('id2', 'name', {
+            method: 'css',
+            className: 'special-highlight-cell',
+            duration: 1000,
+        });
     }, 2300);
     const interval4 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimCell('id3', 'age', { method: 'css', className: 'special-highlight-cell-red', duration: 1500 });
+        stkTableRef.value?.setHighlightDimCell('id3', 'age', {
+            method: 'css',
+            className: 'special-highlight-cell-red',
+            duration: 1500,
+        });
     }, 2600);
     intervals.push(interval1, interval2, interval3, interval4);
 });
@@ -27,7 +39,12 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <StkTable ref="stkTableRef" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        ref="stkTableRef"
+        row-key="id"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>
 <style scoped>
 @keyframes my-highlight-row {

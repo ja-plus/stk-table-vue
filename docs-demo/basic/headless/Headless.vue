@@ -20,7 +20,14 @@ const data = [
 
 <template>
     <CheckItem v-model="headless" text="headless"></CheckItem>
-    <StkTable row-key="id" :row-active="false" :row-hover="false" :headless="headless" :columns="columns" :data-source="data"></StkTable>
+    <StkTable
+        row-key="id"
+        :row-active="false"
+        :row-hover="false"
+        :headless="headless"
+        :columns="columns"
+        :data-source="data"
+    ></StkTable>
 </template>
 <style scoped>
 .stk-table :deep(.v-head) {

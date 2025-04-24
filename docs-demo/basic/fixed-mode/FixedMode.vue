@@ -16,7 +16,14 @@ const data = new Array(200).fill(0).map((it, index) => {
 <template>
     <div>
         <input v-model="width" type="range" min="0" max="100" /> <span>width: {{ width }}%</span>
-        <StkTable style="height: 150px" row-key="id" :width="width + '%'" fixed-mode :columns="columns" :data-source="data"></StkTable>
+        <StkTable
+            style="height: 150px"
+            row-key="id"
+            :width="width + '%'"
+            fixed-mode
+            :columns="columns"
+            :data-source="data"
+        ></StkTable>
         <div>headless</div>
         <StkTable
             style="height: 140px"
