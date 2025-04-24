@@ -263,6 +263,12 @@ function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: Dat
 .stk-table.stripe.vt-on {
     :deep(.stk-tbody-main .child-row) {
         background-color: var(--child-bgc);
+        &.active {
+            background-color: var(--tr-active-bgc);
+        }
+        &:hover {
+            background-color: var(--tr-hover-bgc);
+        }
     }
 }
 </style>
