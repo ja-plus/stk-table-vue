@@ -25,8 +25,8 @@
 | --- | --- | --- |
 | `ArrowUp` | 上方向键 | 向上滚动一行 |
 | `ArrowDown`| 下方向键 | 向下滚动一行 |
-| `ArrowLeft`| 左方向键 | 向左滚动50像素 |
-| `ArrowRight`| 右方向键 | 向右滚动50像素 |
+| `ArrowLeft`| 左方向键 | 向左滚动50px |
+| `ArrowRight`| 右方向键 | 向右滚动50px |
 | `PageUp`| -- | 向上滚动一页 |
 | `PageDown`| -- | 向下滚动一页 |
 | `Home`| -- | 滚动到顶部 |

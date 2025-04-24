@@ -32,18 +32,26 @@ const dataSource = new Array(100).fill(0).map((_, index) => {
     ></StkTable>
 </template>
 <style scoped>
+.scrollbar.light {
+    --scrollbar-thumb-color: #b0b0b0;
+    --scrollbar-thumb-hover-color: #888;
+}
+.scrollbar.dark {
+    --scrollbar-thumb-color: #393838;
+    --scrollbar-thumb-hover-color: #555;
+}
+
 .scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 .scrollbar::-webkit-scrollbar-thumb {
-    /* background-color: #b0b0b0; */
     border-radius: 4px;
     border: 2px solid transparent;
-    box-shadow: inset 0 0 0 4px #b0b0b0;
+    box-shadow: inset 0 0 0 4px var(--scrollbar-thumb-color);
 }
 .scrollbar::-webkit-scrollbar-thumb:hover {
-    box-shadow: inset 0 0 0 4px #888;
+    box-shadow: inset 0 0 0 4px var(--scrollbar-thumb-hover-color);
 }
 .scrollbar::-webkit-scrollbar-track {
     background-color: transparent;

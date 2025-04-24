@@ -7,6 +7,7 @@
             virtual,
             'virtual-x': virtualX,
             'vt-on': virtual_on,
+            light: theme === 'light',
             dark: theme === 'dark',
             headless,
             'is-col-resizing': isColResizing,

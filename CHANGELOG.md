@@ -1,6 +1,8 @@
 ## 0.6.11
 * Feature
   - add: Support `Home` `End` key to scroll table.
+* Bugfix
+  - fix: theme `light`, not append class `light` to stk-table root element.
 
 ## 0.6.10
 * Optimize 
