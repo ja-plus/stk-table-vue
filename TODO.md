@@ -1,4 +1,5 @@
 [x] emit scroll data startIndex and endIndex is not correct in normal scroll mode
 [] add version to stk-table element
 [] proxy th event listener
-[] customHeaderCell wrapper
+[X] customHeaderCell wrapper
+[] `onRowClick` should return rowIndex use cellClick instead
