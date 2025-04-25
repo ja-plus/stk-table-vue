@@ -17,7 +17,12 @@ const columns = computed(() => {
     ] as StkTableColumn<Data>[];
 });
 
-const dataSource = ref<Data[]>([{ name: 'John Brown' }, { name: 'Jim Green' }, { name: 'Joe Black' }, { name: 'Jim Red' }]);
+const dataSource = ref<Data[]>([
+    { name: 'John Brown' },
+    { name: 'Jim Green' },
+    { name: 'Joe Black' },
+    { name: 'Jim Red' },
+]);
 </script>
 <template>
     <RadioGroup

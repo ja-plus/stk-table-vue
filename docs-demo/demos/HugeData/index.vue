@@ -8,7 +8,12 @@ import { mockData } from './mockData';
 import { DataType } from './types';
 import RadioGroup from '../../components/RadioGroup.vue';
 import { Order, SortConfig, SortState, StkTableColumn } from '@/StkTable/types';
-import { tableSort, insertToOrderedArray, binarySearch, strCompare } from '../../../src/StkTable/index';
+import {
+    tableSort,
+    insertToOrderedArray,
+    binarySearch,
+    strCompare,
+} from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
 
 const { Random } = mockjs;
@@ -72,7 +77,12 @@ function initDataSource() {
         } as any;
     });
 
-    dataSource.value = tableSort({ dataIndex: 'bestTime', sorter: true }, 'desc', dataSourceTemp, sortConfig);
+    dataSource.value = tableSort(
+        { dataIndex: 'bestTime', sorter: true },
+        'desc',
+        dataSourceTemp,
+        sortConfig,
+    );
 }
 
 function handleToggleExpand(row: DataType) {
@@ -150,7 +160,12 @@ function highlightRow(row: DataType) {
     });
 }
 
-function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: DataType[], sortConfig: SortConfig<DataType>) {
+function handleSortChange(
+    col: StkTableColumn<DataType>,
+    order: Order,
+    data: DataType[],
+    sortConfig: SortConfig<DataType>,
+) {
     currentSort.dataIndex = col.dataIndex;
     currentSort.order = order;
     currentSort.sortType = col.sortType;

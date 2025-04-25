@@ -32,7 +32,23 @@ function handleHeightInput(e) {
 }
 </script>
 <template>
-    <div>width:<input :value="width" type="range" min="100" max="800" @input="handleWidthInput" />{{ width }}px</div>
-    <div>height:<input :value="height" type="range" min="100" max="800" @input="handleHeightInput" />{{ height }}px</div>
-    <StkTable :style="{ width: width + 'px', height: height + 'px' }" :columns="columns" :data-source="dataSource"></StkTable>
+    <div>
+        width:<input :value="width" type="range" min="100" max="800" @input="handleWidthInput" />{{
+            width
+        }}px
+    </div>
+    <div>
+        height:<input
+            :value="height"
+            type="range"
+            min="100"
+            max="800"
+            @input="handleHeightInput"
+        />{{ height }}px
+    </div>
+    <StkTable
+        :style="{ width: width + 'px', height: height + 'px' }"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

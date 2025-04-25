@@ -26,5 +26,10 @@ const dataSource = ref<Data[]>([
 ]);
 </script>
 <template>
-    <StkTable style="height: 200px" row-key="name" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        style="height: 200px"
+        row-key="name"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

@@ -10,6 +10,8 @@ enum ScrollCodes {
     ArrowLeft = 'ArrowLeft',
     PageUp = 'PageUp',
     PageDown = 'PageDown',
+    Home = 'Home',
+    End = 'End',
 }
 /** 所有翻页按键数组 */
 const ScrollCodesValues = Object.values(ScrollCodes);
@@ -66,7 +68,7 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
-        const { scrollTop, rowHeight, containerHeight } = virtualScroll.value;
+        const { scrollTop, rowHeight, containerHeight, scrollHeight } = virtualScroll.value;
         const { scrollLeft } = virtualScrollX.value;
         const { headless, headerRowHeight } = props;
 
@@ -78,15 +80,19 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         if (e.code === ScrollCodes.ArrowUp) {
             scrollTo(scrollTop - rowHeight, null);
         } else if (e.code === ScrollCodes.ArrowRight) {
-            scrollTo(null, scrollLeft + rowHeight);
+            scrollTo(null, scrollLeft + 50);
         } else if (e.code === ScrollCodes.ArrowDown) {
             scrollTo(scrollTop + rowHeight, null);
         } else if (e.code === ScrollCodes.ArrowLeft) {
-            scrollTo(null, scrollLeft - rowHeight);
+            scrollTo(null, scrollLeft - 50);
         } else if (e.code === ScrollCodes.PageUp) {
             scrollTo(scrollTop - rowHeight * bodyPageSize + headerHeight, null);
         } else if (e.code === ScrollCodes.PageDown) {
             scrollTo(scrollTop + rowHeight * bodyPageSize - headerHeight, null);
+        } else if (e.code === ScrollCodes.Home) {
+            scrollTo(0, null);
+        } else if (e.code === ScrollCodes.End) {
+            scrollTo(scrollHeight, null);
         }
     }
 

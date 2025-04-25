@@ -33,5 +33,10 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <StkTable ref="stkTableRef" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        ref="stkTableRef"
+        row-key="id"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

@@ -45,7 +45,12 @@ function addData() {
 function addRowAnimation(id: string) {
     stkTableRef.value?.setHighlightDimRow([id], {
         keyframe: [
-            { backgroundColor: '#1e4c99', transform: 'translateY(-30px) scale(0.6)', opacity: 0, easing: 'cubic-bezier(.11,.1,.03,.98)' },
+            {
+                backgroundColor: '#1e4c99',
+                transform: 'translateY(-30px) scale(0.6)',
+                opacity: 0,
+                easing: 'cubic-bezier(.11,.1,.03,.98)',
+            },
             { backgroundColor: '#1B1B24', transform: 'translateY(0) scale(1)', opacity: 1 },
         ],
         duration: 1000,
@@ -54,5 +59,11 @@ function addRowAnimation(id: string) {
 </script>
 <template>
     <button class="btn" @click="addData">添加数据</button>
-    <StkTable ref="stkTableRef" style="height: 200px" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        ref="stkTableRef"
+        style="height: 200px"
+        row-key="id"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>

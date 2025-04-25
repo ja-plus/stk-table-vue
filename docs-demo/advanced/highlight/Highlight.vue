@@ -42,7 +42,13 @@ function addData() {
 </script>
 <template>
     <button class="btn" @click="addData">添加数据</button>
-    <StkTable ref="stkTableRef" row-key="id" style="height: 200px" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        ref="stkTableRef"
+        row-key="id"
+        style="height: 200px"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>
 <style scoped>
 .btn:hover {

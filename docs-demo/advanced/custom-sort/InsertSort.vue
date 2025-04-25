@@ -35,7 +35,13 @@ type DataType = {
 const columns: StkTableColumn<DataType>[] = [
     { title: 'id', dataIndex: 'id', width: '50px', sorter: true },
     { title: 'name', dataIndex: 'name', width: '200px', sorter: true },
-    { title: 'age(default desc)', dataIndex: 'age', width: '200px', sorter: true, sortType: 'number' },
+    {
+        title: 'age(default desc)',
+        dataIndex: 'age',
+        width: '200px',
+        sorter: true,
+        sortType: 'number',
+    },
     { title: 'gender', dataIndex: 'gender' },
 ];
 const dataSource = ref<DataType[]>(
@@ -55,7 +61,12 @@ const defaultSort: SortState<DataType> = {
 const tableSortStore: SortState<DataType> = {
     ...defaultSort,
 };
-function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: DataType[], sortConfig: SortConfig<DataType>) {
+function handleSortChange(
+    col: StkTableColumn<DataType>,
+    order: Order,
+    data: DataType[],
+    sortConfig: SortConfig<DataType>,
+) {
     dataSource.value = tableSort(col, order, data, sortConfig);
     tableSortStore.dataIndex = col.dataIndex;
     tableSortStore.order = order;

@@ -63,5 +63,13 @@ const dataSource = new Array(50).fill(0).map((it, i) => {
 });
 </script>
 <template>
-    <StkTable style="height: 200px" row-key="id" fixed-col-shadow virtual :columns="columns" :data-source="dataSource"> </StkTable>
+    <StkTable
+        style="height: 200px"
+        row-key="id"
+        fixed-col-shadow
+        virtual
+        :columns="columns"
+        :data-source="dataSource"
+    >
+    </StkTable>
 </template>

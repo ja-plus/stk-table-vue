@@ -25,6 +25,12 @@ const dataSource = new Array(100).fill(0).map((_, index) => {
 <template>
     <div>
         <CheckItem v-model="rowByRow" text="scroll-row-by-row" />
-        <StkTable style="height: 200px" :scroll-row-by-row="rowByRow" virtual :columns="columns" :data-source="dataSource"></StkTable>
+        <StkTable
+            style="height: 200px"
+            :scroll-row-by-row="rowByRow"
+            virtual
+            :columns="columns"
+            :data-source="dataSource"
+        ></StkTable>
     </div>
 </template>

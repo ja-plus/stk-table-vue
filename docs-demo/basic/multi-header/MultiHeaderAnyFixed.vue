@@ -75,5 +75,14 @@ onMounted(() => {
 });
 </script>
 <template>
-    <StkTable ref="stkTableRef" style="height: 200px" row-key="id" fixed-col-shadow virtual :columns="columns" :data-source="dataSource"> </StkTable>
+    <StkTable
+        ref="stkTableRef"
+        style="height: 200px"
+        row-key="id"
+        fixed-col-shadow
+        virtual
+        :columns="columns"
+        :data-source="dataSource"
+    >
+    </StkTable>
 </template>

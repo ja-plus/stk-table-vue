@@ -30,7 +30,11 @@ function handleHeightInput(e) {
 }
 </script>
 <template>
-    <div><input :value="height" type="range" min="100" max="800" @input="handleHeightInput" />{{ height }}px</div>
+    <div>
+        <input :value="height" type="range" min="100" max="800" @input="handleHeightInput" />{{
+            height
+        }}px
+    </div>
     <article :class="{ dark: isDark }" :style="{ height: height + 'px' }">
         <header>Flex Content</header>
         <StkTable :columns="columns" :data-source="dataSource"></StkTable>

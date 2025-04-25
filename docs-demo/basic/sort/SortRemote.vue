@@ -21,7 +21,12 @@ const dataSource = ref<DataType[]>(
     })),
 );
 
-async function handleSortChange(col: StkTableColumn<DataType>, order: Order, data: DataType[], sortType: SortConfig<DataType>) {
+async function handleSortChange(
+    col: StkTableColumn<DataType>,
+    order: Order,
+    data: DataType[],
+    sortType: SortConfig<DataType>,
+) {
     // 模拟远程排序，实际应用中，这里应该调用接口，将排序参数传递给后端，后端返回排序后的数据
     const result = await new Promise<DataType[]>(resolve => {
         if (order === 'desc') {
@@ -48,5 +53,12 @@ async function handleSortChange(col: StkTableColumn<DataType>, order: Order, dat
 }
 </script>
 <template>
-    <StkTable style="height: 200px" row-key="key" sort-remote :columns="columns" :data-source="dataSource" @sort-change="handleSortChange"></StkTable>
+    <StkTable
+        style="height: 200px"
+        row-key="key"
+        sort-remote
+        :columns="columns"
+        :data-source="dataSource"
+        @sort-change="handleSortChange"
+    ></StkTable>
 </template>

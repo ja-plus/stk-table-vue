@@ -35,13 +35,25 @@ onMounted(() => {
         stkTableRef.value?.setHighlightDimRow(['id3'], { method: 'css' });
     }, 1000);
     const interval5 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimRow(['id4'], { method: 'css', className: 'special-highlight-row', duration: 2000 });
+        stkTableRef.value?.setHighlightDimRow(['id4'], {
+            method: 'css',
+            className: 'special-highlight-row',
+            duration: 2000,
+        });
     }, 1600);
     const interval6 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimCell('id5', 'name', { method: 'css', className: 'special-highlight-cell', duration: 1000 });
+        stkTableRef.value?.setHighlightDimCell('id5', 'name', {
+            method: 'css',
+            className: 'special-highlight-cell',
+            duration: 1000,
+        });
     }, 2300);
     const interval7 = window.setInterval(() => {
-        stkTableRef.value?.setHighlightDimCell('id6', 'age', { method: 'css', className: 'special-highlight-cell-red', duration: 1500 });
+        stkTableRef.value?.setHighlightDimCell('id6', 'age', {
+            method: 'css',
+            className: 'special-highlight-cell-red',
+            duration: 1500,
+        });
     }, 2600);
     const interval8 = window.setInterval(() => {
         stkTableRef.value?.setHighlightDimCell('id7', 'name', {
@@ -54,7 +66,16 @@ onMounted(() => {
             duration: 1000,
         });
     }, 1790);
-    intervals.push(interval1, interval2, interval3, interval4, interval5, interval6, interval7, interval8);
+    intervals.push(
+        interval1,
+        interval2,
+        interval3,
+        interval4,
+        interval5,
+        interval6,
+        interval7,
+        interval8,
+    );
 });
 
 onBeforeUnmount(() => {
@@ -64,7 +85,12 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <StkTable ref="stkTableRef" row-key="id" :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable
+        ref="stkTableRef"
+        row-key="id"
+        :columns="columns"
+        :data-source="dataSource"
+    ></StkTable>
 </template>
 
 <style scoped>
