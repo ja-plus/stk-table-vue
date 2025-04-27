@@ -54,7 +54,7 @@
         >
             <!-- transform: virtualX_on ? `translateX(${virtualScrollX.offsetLeft}px)` : null, 用transform控制虚拟滚动左边距，sticky会有问题 -->
             <thead v-if="!headless" ref="theadRef">
-                <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="$attrs.onHeaderRowMenu && (e => onHeaderMenu(e))">
+                <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="e => onHeaderMenu(e)">
                     <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
                     <th
                         v-if="virtualX_on"
@@ -139,8 +139,8 @@
                             row && row.__EXPANDED_ROW__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
                     @click="e => onRowClick(e, row)"
-                    @dblclick="$attrs.onRowDblclick && (e => onRowDblclick(e, row))"
-                    @contextmenu="$attrs.onRowMenu && (e => onRowMenu(e, row))"
+                    @dblclick="e => onRowDblclick(e, row)"
+                    @contextmenu="e => onRowMenu(e, row)"
                     @mouseover="e => onTrMouseOver(e, row)"
                     @drop="e => onTrDrop(e, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)"
                 >
@@ -172,10 +172,10 @@
                                 },
                             ]"
                             @click="e => onCellClick(e, row, col)"
-                            @mousedown="$attrs.onCellMousedown && (e => onCellMouseDown(e, row, col))"
-                            @mouseenter="$attrs.onCellMouseenter && (e => onCellMouseEnter(e, row, col))"
-                            @mouseleave="$attrs.onCellMouseleave && (e => onCellMouseLeave(e, row, col))"
-                            @mouseover="$attrs.onCellMouseover && (e => onCellMouseOver(e, row, col))"
+                            @mousedown="e => onCellMouseDown(e, row, col)"
+                            @mouseenter="e => onCellMouseEnter(e, row, col)"
+                            @mouseleave="e => onCellMouseLeave(e, row, col)"
+                            @mouseover="e => onCellMouseOver(e, row, col)"
                         >
                             <component
                                 :is="col.customCell"
