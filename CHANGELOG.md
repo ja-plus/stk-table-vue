@@ -1,4 +1,4 @@
-## 0.6.11
+## ~~0.6.11~~ 0.6.12
 * Feature
   - add: Support `Home` `End` key to scroll table.
 * Bugfix
