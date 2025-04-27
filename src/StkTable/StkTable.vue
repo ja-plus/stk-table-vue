@@ -663,7 +663,7 @@ const tableHeaders = shallowRef<StkTableColumn<DT>[][]>([]);
 const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
-const tableHeaderLast = computed(() => tableHeadersForCalc.value.at(-1) || []);
+const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
 
 const dataSourceCopy = shallowRef<DT[]>(props.dataSource.slice());
 
@@ -977,7 +977,6 @@ const cellStyleMap = computed(() => {
     const { virtualX, colResizable } = props;
     tableHeaders.value.forEach((cols, depth) => {
         cols.forEach(col => {
-            const colKey = colKeyGen.value(col);
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
                 width,
@@ -990,9 +989,9 @@ const cellStyleMap = computed(() => {
                 style.minWidth = transformWidthToStr(col.minWidth) ?? width;
                 style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
             }
-
+            const colKey = colKeyGen.value(col);
             thMap.set(colKey, Object.assign({ textAlign: col.headerAlign }, style, getFixedStyle(TagType.TH, col, depth)));
-            tdMap.set(colKey, Object.assign({ textAlign: col.align }, style, getFixedStyle(TagType.TD, col, depth), { textAlign: col.align }));
+            tdMap.set(colKey, Object.assign({ textAlign: col.align }, style, getFixedStyle(TagType.TD, col, depth)));
         });
     });
     return {
@@ -1004,7 +1003,7 @@ const cellStyleMap = computed(() => {
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
     const colKey = colKeyGen.value(col);
-    // 不展示title
+    // hide title
     if (props.hideHeaderTitle === true || (Array.isArray(props.hideHeaderTitle) && props.hideHeaderTitle.includes(colKey))) {
         return '';
     }

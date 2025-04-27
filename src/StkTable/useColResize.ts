@@ -202,7 +202,7 @@ export function useColResize<DT extends Record<string, any>>({
     /**获取最后一个叶子 */
     function findLastChildCol(column: StkTableColumn<DT> | null) {
         if (column?.children?.length) {
-            const lastChild = column.children.at(-1) as StkTableColumn<DT>;
+            const lastChild = column.children.slice(-1)[0] as StkTableColumn<DT>;
             return findLastChildCol(lastChild);
         }
         return column;

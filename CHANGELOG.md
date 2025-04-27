@@ -3,6 +3,7 @@
   - add: Support `Home` `End` key to scroll table.
 * Bugfix
   - fix: theme `light`, not append class `light` to stk-table root element.
+  - fix: `.at(-1)` syntax to `.slice(-1)[0]` to support old browser.
 
 ## 0.6.10
 * Optimize 
