@@ -4,6 +4,7 @@
 * Bugfix
   - fix: theme `light`, not append class `light` to stk-table root element.
   - fix: `.at(-1)` syntax to `.slice(-1)[0]` to support old browser.
+  - fix: `defaultSort` not work correctly when `sortConfig.defaultSort.order` is `asc`.
 
 ## 0.6.10
 * Optimize 
