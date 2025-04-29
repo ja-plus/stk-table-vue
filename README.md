@@ -1,18 +1,30 @@
-# StkTable (Sticky Table)
-![NPM License](https://img.shields.io/npm/l/stk-table-vue)
-![NPM Version](https://img.shields.io/npm/v/stk-table-vue)
-![NPM Type Definitions](https://img.shields.io/npm/types/stk-table-vue)
-![NPM Downloads](https://img.shields.io/npm/dw/stk-table-vue)
+<p align="center">
+    <a href="https://ja-plus.github.io/stk-table-vue/">
+        <img src="./docs-src/public/assets/logo.svg" width="152">
+    </a>
+    <div align='center' style="font-size: 36px;margin-bottom: 12px;">Stk Table Vue</div>
+    <p align="center">
+        <a href="https://www.npmjs.com/package/stk-table-vue"><img src="https://img.shields.io/npm/v/stk-table-vue"></a>
+        <a href="https://www.npmjs.com/package/stk-table-vue"><img src="https://img.shields.io/npm/dw/stk-table-vue"></a>
+        <a href="https://github.com/ja-plus/stk-table-vue/stargazers"><img src="https://img.shields.io/github/stars/ja-plus/stk-table-vue.svg"></a>
+        <a href="https://raw.githubusercontent.com/ja-plus/stk-table-vue/master/LICENSE"><img src="https://img.shields.io/npm/l/stk-table-vue"></a>
+        <a href="https://github.com/ja-plus/stk-table-vue"><img src="https://img.shields.io/npm/types/stk-table-vue"></a>
+    </p>
+</p>
 
-Vue3 简易虚拟滚动表格。用于实时数据展示，新数据行高亮渐暗动效。
+> StK Table (Sticky Table) 是一个基于Vue 的高性能虚拟列表组件。
+> 用于实时数据展示，数据高亮动效。
 
-Vue2.7支持引入源码(**ts**)使用。
+> Vue2.7支持引入源码(**ts**)使用。
 
-[Stk Table Vue Doc](https://ja-plus.github.io/stk-table-vue/)
+## Doc
+文档： [Stk Table Vue 高性能虚拟表格](https://ja-plus.github.io/stk-table-vue/)
 
-repo(求 star🌟): 
+## Repo: 
 - [Github](https://github.com/ja-plus/stk-table-vue)
 - [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
+
+## Demo
 
 [<span style="font-size: 16px;font-weight: bold;">Online Demo</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
 
