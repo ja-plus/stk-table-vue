@@ -2,7 +2,7 @@
     <a href="https://ja-plus.github.io/stk-table-vue/">
         <img src="./docs-src/public/assets/logo.svg" width="152">
     </a>
-    <div align='center' style="font-size: 36px;margin-bottom: 12px;">Stk Table Vue</div>
+    <h3 align='center'>Stk Table Vue</h3>
     <p align="center">
         <a href="https://www.npmjs.com/package/stk-table-vue"><img src="https://img.shields.io/npm/v/stk-table-vue"></a>
         <a href="https://www.npmjs.com/package/stk-table-vue"><img src="https://img.shields.io/npm/dw/stk-table-vue"></a>
