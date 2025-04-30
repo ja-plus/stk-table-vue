@@ -1,20 +1,15 @@
 <script setup lang="ts">
+import { Order, SortConfig, SortState, StkTableColumn } from '@/StkTable/types';
 import mockjs from 'mockjs';
-import { shallowRef, ref, onMounted, useTemplateRef, nextTick } from 'vue';
+import { nextTick, onMounted, ref, shallowRef, useTemplateRef } from 'vue';
+import { insertToOrderedArray, tableSort } from '../../../src/StkTable/index';
+import CheckItem from '../../components/CheckItem.vue';
+import RadioGroup from '../../components/RadioGroup.vue';
 import StkTable from '../../StkTable.vue';
 import { columns as columnsRaw } from './columns';
 import { emitter } from './event';
 import { mockData } from './mockData';
 import { DataType } from './types';
-import RadioGroup from '../../components/RadioGroup.vue';
-import { Order, SortConfig, SortState, StkTableColumn } from '@/StkTable/types';
-import {
-    tableSort,
-    insertToOrderedArray,
-    binarySearch,
-    strCompare,
-} from '../../../src/StkTable/index';
-import CheckItem from '../../components/CheckItem.vue';
 
 const { Random } = mockjs;
 emitter.on('toggle-expand', handleToggleExpand);
@@ -33,12 +28,13 @@ const currentSort: SortState<DataType> = {
 };
 const stkTableRef = useTemplateRef('stkTableRef');
 
-const dataSize = ref(5);
+const dataSize = ref(50000);
 const rowByRow = ref(false);
+const translateZ = ref(false);
+const updateFreq = ref(100);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>([]);
-const updateFreq = ref(200);
 
 const createCode = (i: number) => 'c' + String(i).padStart(6, '0');
 const createData = (i: number) => {
@@ -62,7 +58,7 @@ function initDataSource() {
     const curDate = new Date();
     const curHour = curDate.getHours();
     const curMinute = curDate.getMinutes();
-    const dataSourceTemp = new Array(dataSize.value * 10000).fill(null).map((_, index) => {
+    const dataSourceTemp = new Array(dataSize.value).fill(null).map((_, index) => {
         return {
             ...mockData,
             ...createData(index),
@@ -172,25 +168,38 @@ function handleSortChange(
 
     dataSource.value = tableSort(col, order, data, sortConfig);
 }
+function handleDataSizeChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const value = Number(input.value);
+    if (isNaN(value)) return;
+    dataSize.value = value;
+    initDataSource();
+}
 </script>
 <template>
-    <RadioGroup
-        v-model="dataSize"
-        text="数据量"
-        :options="[
-            { label: '0.5k', value: 0.05 },
-            { label: '1k', value: 0.1 },
-            { label: '5k', value: 0.5 },
-            { label: '1w', value: 1 },
-            { label: '5w', value: 5 },
-            { label: '10w', value: 10 },
-            { label: '20w', value: 20 },
-            { label: '50w', value: 50 },
-            { label: '70w', value: 70 },
-            { label: '100w', value: 100 },
-        ]"
-        @change="initDataSource"
-    ></RadioGroup>
+    <div class="row">
+        <RadioGroup
+            v-model="dataSize"
+            text="数据量"
+            :options="[
+                { label: '1k', value: 1000 },
+                { label: '5k', value: 5000 },
+                { label: '1w', value: 10000 },
+                { label: '5w', value: 50000 },
+                { label: '10w', value: 100_000 },
+                { label: '50w', value: 500_000 },
+                { label: '100w', value: 1_000_000 },
+            ]"
+            @change="initDataSource"
+        ></RadioGroup>
+        <input
+            class="input"
+            :value="dataSize"
+            type="number"
+            style="width: 70px; margin-left: 6px"
+            @change="handleDataSizeChange"
+        />
+    </div>
     <button class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
         模拟更新数据({{ timeout ? '停止' : '开始' }})
     </button>
@@ -200,9 +209,11 @@ function handleSortChange(
         <span>{{ updateFreq }}ms</span>
     </label>
     <CheckItem v-model="rowByRow" text="整数行滚动" />
+    <CheckItem v-model="translateZ" text="tr分层" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
+        :class="{ stack: translateZ }"
         style="height: 700px"
         row-key="code"
         no-data-full
@@ -223,6 +234,14 @@ function handleSortChange(
     ></StkTable>
 </template>
 <style scoped lang="less">
+.row {
+    display: flex;
+}
+.stack {
+    :deep(.stk-tbody-main tr) {
+        transform: translateZ(0);
+    }
+}
 :deep(.blue-cell) {
     color: #4f8df4;
 }

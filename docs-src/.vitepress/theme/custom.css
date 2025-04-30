@@ -17,3 +17,13 @@
 .btn+.btn {
     margin-left: 10px;
 }
+
+.input {
+    border: 1px solid var(--vp-c-border);
+    border-radius: 4px;
+    padding: 0 6px;
+}
+
+.input:focus {
+    border: 1px solid var(--vp-c-brand);
+}

@@ -18,6 +18,9 @@
             "ScriptHost"
         ],
         "paths": {
+            "@/*": [
+                "../src/*"
+            ]
         },
     },
     "include": [
