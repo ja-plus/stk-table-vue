@@ -108,7 +108,6 @@ function handleToggleExpand(row: DataType) {
         dataSource.value.splice(rowIndex + 1, 6);
     }
     dataSource.value[rowIndex]._isExpand = expand;
-
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
     dataSource.value = [...dataSource.value]; // trigger table update
 }
@@ -134,9 +133,10 @@ function simulateUpdateData() {
                 '.' +
                 String(curMilliseconds).padStart(3, '0'),
         };
-        const rowIndex = dataSource.value.findIndex(item => item.code === newData.code); // FIXME: 性能问题
+        const rowIndex = dataSource.value.findIndex(item => item.code === newData.code);
         if (rowIndex === -1) return;
         dataSource.value.splice(rowIndex, 1); // delete old data
+        // 二分插入
         dataSource.value = insertToOrderedArray(currentSort, newData, dataSource.value);
         highlightRow(newData);
     }, updateFreq.value);
@@ -165,7 +165,6 @@ function handleSortChange(
     currentSort.dataIndex = col.dataIndex;
     currentSort.order = order;
     currentSort.sortType = col.sortType;
-
     dataSource.value = tableSort(col, order, data, sortConfig);
 }
 function handleDataSizeChange(e: Event) {
@@ -237,11 +236,13 @@ function handleDataSizeChange(e: Event) {
 .row {
     display: flex;
 }
+
 .stack {
     :deep(.stk-tbody-main tr) {
         transform: translateZ(0);
     }
 }
+
 :deep(.blue-cell) {
     color: #4f8df4;
 }
@@ -294,12 +295,15 @@ function handleDataSizeChange(e: Event) {
 .stk-table.dark {
     --child-bgc: #303039;
 }
+
 .stk-table.stripe.vt-on {
     :deep(.stk-tbody-main .child-row) {
         background-color: var(--child-bgc);
+
         &.active {
             background-color: var(--tr-active-bgc);
         }
+
         &:hover {
             background-color: var(--tr-hover-bgc);
         }
