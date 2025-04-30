@@ -61,7 +61,7 @@
                         class="vt-x-left"
                         :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
                     ></th>
-                    <!-- v for中最后一行才用 切割。TODO:不支持多级表头虚拟横向滚动 -->
+                    <!-- v for中最后一行才用 切割。-->
                     <th
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="colKeyGen(col)"

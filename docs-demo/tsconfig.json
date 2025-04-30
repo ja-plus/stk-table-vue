@@ -18,21 +18,12 @@
             "ScriptHost"
         ],
         "paths": {
-            "@/*": [
-                "./src/*"
-            ]
         },
-        "outDir": "./dist",
     },
     "include": [
-        "./src/**/*.js",
-        "./src/**/*.ts",
-        "./src/**/*.tsx",
-        "./src/**/*.d.ts",
-        "./src/**/*.vue",
-        "./test/**/*.js"
+        "./demos/**/*.vue",
+
     ],
     "exclude": [
-        "node_modules"
     ]
 }
