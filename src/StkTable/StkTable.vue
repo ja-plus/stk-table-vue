@@ -123,14 +123,14 @@
                 </tr>
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
-                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)"
+                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : getRowIndex(rowIndex))"
                     ref="trRef"
-                    :key="rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
-                    :data-row-key="rowKey ? rowKeyGen(row) : (virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
+                    :key="rowKey ? rowKeyGen(row) : getRowIndex(rowIndex)"
+                    :data-row-key="rowKey ? rowKeyGen(row) : getRowIndex(rowIndex)"
                     :class="{
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
-                        [rowClassName(row, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)]: true,
+                        [rowClassName(row, getRowIndex(rowIndex))]: true,
                         expanded: row?.__EXPANDED__,
                         'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
@@ -138,11 +138,11 @@
                         '--row-height':
                             row && row.__EXPANDED_ROW__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
-                    @click="e => onRowClick(e, row)"
-                    @dblclick="e => onRowDblclick(e, row)"
-                    @contextmenu="e => onRowMenu(e, row)"
+                    @click="e => onRowClick(e, row, getRowIndex(rowIndex))"
+                    @dblclick="e => onRowDblclick(e, row, getRowIndex(rowIndex))"
+                    @contextmenu="e => onRowMenu(e, row, getRowIndex(rowIndex))"
                     @mouseover="e => onTrMouseOver(e, row)"
-                    @drop="e => onTrDrop(e, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)"
+                    @drop="e => onTrDrop(e, getRowIndex(rowIndex))"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -171,8 +171,8 @@
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
-                            @click="e => onCellClick(e, row, col)"
-                            @mousedown="e => onCellMouseDown(e, row, col)"
+                            @click="e => onCellClick(e, row, col, getRowIndex(rowIndex))"
+                            @mousedown="e => onCellMouseDown(e, row, col, getRowIndex(rowIndex))"
                             @mouseenter="e => onCellMouseEnter(e, row, col)"
                             @mouseleave="e => onCellMouseLeave(e, row, col)"
                             @mouseover="e => onCellMouseOver(e, row, col)"
@@ -183,7 +183,7 @@
                                 class="table-cell-wrapper"
                                 :col="col"
                                 :row="row"
-                                :rowIndex="(virtual_on ? virtualScroll.startIndex : 0) + rowIndex"
+                                :rowIndex="getRowIndex(rowIndex)"
                                 :colIndex="colIndex"
                                 :cellValue="row?.[col.dataIndex]"
                                 :expanded="row?.__EXPANDED__ || null"
@@ -195,13 +195,13 @@
                                 :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
                             >
                                 <template v-if="col.type === 'seq'">
-                                    {{ (props.seqConfig.startIndex || 0) + (virtual_on ? virtualScroll.startIndex : 0) + rowIndex + 1 }}
+                                    {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
                                 </template>
                                 <span v-else-if="col.type === 'expand'">
                                     {{ row?.[col.dataIndex] ?? '' }}
                                 </span>
                                 <template v-else-if="col.type === 'dragRow'">
-                                    <DragHandle @dragstart="e => onTrDragStart(e, (virtual_on ? virtualScroll.startIndex : 0) + rowIndex)" />
+                                    <DragHandle @dragstart="e => onTrDragStart(e, getRowIndex(rowIndex))" />
                                     <span>
                                         {{ row?.[col.dataIndex] ?? '' }}
                                     </span>
@@ -464,15 +464,15 @@ const emits = defineEmits<{
     /**
      * 一行点击事件
      *
-     * ```(ev: MouseEvent, row: DT)```
+     * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
-    (e: 'row-click', ev: MouseEvent, row: DT): void;
+    (e: 'row-click', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
      *
-     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean })```
+     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean, rowIndex: number } })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean; rowIndex: number }): void;
     /**
      * 选中单元格触发。ev返回null表示不是点击事件触发的
      *
@@ -482,9 +482,9 @@ const emits = defineEmits<{
     /**
      * 行双击事件
      *
-     * ```(ev: MouseEvent, row: DT)```
+     * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
-    (e: 'row-dblclick', ev: MouseEvent, row: DT): void;
+    (e: 'row-dblclick', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
      * 表头右键事件
      *
@@ -494,15 +494,15 @@ const emits = defineEmits<{
     /**
      * 表体行右键点击事件
      *
-     * ```(ev: MouseEvent, row: DT)```
+     * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
-    (e: 'row-menu', ev: MouseEvent, row: DT): void;
+    (e: 'row-menu', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
      * 单元格点击事件
      *
-     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number })```
      */
-    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }): void;
     /**
      * 单元格鼠标进入事件
      *
@@ -524,9 +524,9 @@ const emits = defineEmits<{
     /**
      * 单元格鼠标按下事件
      *
-     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
+     * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number })```
      */
-    (e: 'cell-mousedown', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
+    (e: 'cell-mousedown', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }): void;
     /**
      * 表头单元格点击事件
      *
@@ -1000,6 +1000,10 @@ const cellStyleMap = computed(() => {
     };
 });
 
+function getRowIndex(rowIndex: number) {
+    return rowIndex + (virtual_on ? virtualScroll.value.startIndex : 0);
+}
+
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
     const colKey = colKeyGen.value(col);
@@ -1076,8 +1080,8 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     }
 }
 
-function onRowClick(e: MouseEvent, row: DT) {
-    emits('row-click', e, row);
+function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
+    emits('row-click', e, row, { rowIndex });
     const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
     if (isCurrentRow) {
         if (!props.rowCurrentRevokable) {
@@ -1091,11 +1095,11 @@ function onRowClick(e: MouseEvent, row: DT) {
         currentRow.value = row;
         currentRowKey.value = rowKeyGen(row);
     }
-    emits('current-change', e, row, { select: !isCurrentRow });
+    emits('current-change', e, row, { select: !isCurrentRow, rowIndex });
 }
 
-function onRowDblclick(e: MouseEvent, row: DT) {
-    emits('row-dblclick', e, row);
+function onRowDblclick(e: MouseEvent, row: DT, rowIndex: number) {
+    emits('row-dblclick', e, row, { rowIndex });
 }
 
 /** 表头行右键 */
@@ -1104,8 +1108,8 @@ function onHeaderMenu(e: MouseEvent) {
 }
 
 /** 表体行右键 */
-function onRowMenu(e: MouseEvent, row: DT) {
-    emits('row-menu', e, row);
+function onRowMenu(e: MouseEvent, row: DT, rowIndex: number) {
+    emits('row-menu', e, row, { rowIndex });
 }
 
 /**
@@ -1139,13 +1143,13 @@ function onRowMenu(e: MouseEvent, row: DT) {
 // }
 
 /** 单元格单击 */
-function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
     if (col.type === 'expand') {
         toggleExpandRow(row, col);
     }
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
-        const result = { row, col, select: false };
+        const result = { row, col, select: false, rowIndex };
         if (props.selectedCellRevokable && currentSelectedCellKey.value === cellKey) {
             currentSelectedCellKey.value = void 0;
         } else {
@@ -1154,7 +1158,7 @@ function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
         }
         emits('cell-selected', e, result);
     }
-    emits('cell-click', e, row, col);
+    emits('cell-click', e, row, col, { rowIndex });
 }
 
 /** 表头单元格单击 */
@@ -1177,8 +1181,8 @@ function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
     emits('cell-mouseover', e, row, col);
 }
 
-function onCellMouseDown(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-    emits('cell-mousedown', e, row, col);
+function onCellMouseDown(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
+    emits('cell-mousedown', e, row, col, { rowIndex });
 }
 
 /**
