@@ -369,7 +369,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     clearAllAutoHeight: () => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
-    "row-click": (ev: MouseEvent, row: any) => void;
+    "row-click": (ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => void;
     "current-change": (ev: MouseEvent | null, row: any, data: {
         select: boolean;
     }) => void;
@@ -378,14 +380,22 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT | undefined;
         col: StkTableColumn<DT> | undefined;
     }) => void;
-    "row-dblclick": (ev: MouseEvent, row: any) => void;
+    "row-dblclick": (ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => void;
     "header-row-menu": (ev: MouseEvent) => void;
-    "row-menu": (ev: MouseEvent, row: any) => void;
-    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "row-menu": (ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => void;
+    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+        rowIndex: number;
+    }) => void;
     "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
     "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mousedown": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
+    "cell-mousedown": (ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+        rowIndex: number;
+    }) => void;
     "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
     scroll: (ev: Event, data: {
         startIndex: number;
@@ -596,7 +606,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
-    "onRow-click"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onRow-click"?: ((ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => any) | undefined;
     "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
         select: boolean;
     }) => any) | undefined;
@@ -605,14 +617,22 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT | undefined;
         col: StkTableColumn<DT> | undefined;
     }) => any) | undefined;
-    "onRow-dblclick"?: ((ev: MouseEvent, row: any) => any) | undefined;
+    "onRow-dblclick"?: ((ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => any) | undefined;
     "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
-    "onRow-menu"?: ((ev: MouseEvent, row: any) => any) | undefined;
-    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onRow-menu"?: ((ev: MouseEvent, row: any, data: {
+        rowIndex: number;
+    }) => any) | undefined;
+    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+        rowIndex: number;
+    }) => any) | undefined;
     "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
     "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mousedown"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
+    "onCell-mousedown"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+        rowIndex: number;
+    }) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
