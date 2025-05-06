@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress';
 import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
 // import { enConfig } from './src/config/en';
+import llmstxt from 'vitepress-plugin-llms'
 import path from 'path';
 
 
@@ -12,6 +13,11 @@ export default defineConfig({
   lastUpdated: true,
   lang: 'zh',
   appearance: 'dark',
+  vite:{
+    plugins: [
+      llmstxt()
+    ]
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/stk-table-vue/assets/logo.svg' }],
   ],
