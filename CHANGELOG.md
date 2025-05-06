@@ -1,6 +1,8 @@
 ## 0.6.13
 * Feature
   - emits : `row-click` `current-change` `row-dblclick` `row-menu` `cell-click` `cell-mousedown` add `rowIndex` param
+* fix
+  - expandRow error: `dataIndex` of undefined
 
 ## ~~0.6.11~~ 0.6.12
 * Feature

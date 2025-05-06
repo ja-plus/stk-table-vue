@@ -17,9 +17,9 @@
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
      *
-     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean, rowIndex: number } })```
+     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean } })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean; rowIndex: number }): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
     /**
      * 选中单元格触发。ev返回null表示不是点击事件触发的
      *

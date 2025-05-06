@@ -167,7 +167,7 @@
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     'expand-cell': col.type === 'expand',
-                                    expanded: col.type === 'expand' && colKeyGen(row?.__EXPANDED__) === colKeyGen(col),
+                                    expanded: col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
@@ -185,8 +185,8 @@
                                 :row="row"
                                 :rowIndex="getRowIndex(rowIndex)"
                                 :colIndex="colIndex"
-                                :cellValue="row?.[col.dataIndex]"
-                                :expanded="row?.__EXPANDED__ || null"
+                                :cellValue="row && row[col.dataIndex]"
+                                :expanded="(row && row.__EXPANDED__) || null"
                             />
                             <div
                                 v-else
@@ -470,9 +470,9 @@ const emits = defineEmits<{
     /**
      * 选中一行触发。ev返回null表示不是点击事件触发的
      *
-     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean, rowIndex: number } })```
+     * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean} })```
      */
-    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean; rowIndex: number }): void;
+    (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
     /**
      * 选中单元格触发。ev返回null表示不是点击事件触发的
      *
@@ -1095,7 +1095,7 @@ function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
         currentRow.value = row;
         currentRowKey.value = rowKeyGen(row);
     }
-    emits('current-change', e, row, { select: !isCurrentRow, rowIndex });
+    emits('current-change', e, row, { select: !isCurrentRow });
 }
 
 function onRowDblclick(e: MouseEvent, row: DT, rowIndex: number) {
