@@ -1,3 +1,7 @@
+## 0.6.14
+* Change
+  - `virtual_on` policy changed: if props.dataSource length > pageSize, `virtual_on` will set true.
+  
 ## 0.6.13
 * Feature
   - emits : `row-click` `current-change` `row-dblclick` `row-menu` `cell-click` `cell-mousedown` add `rowIndex` param

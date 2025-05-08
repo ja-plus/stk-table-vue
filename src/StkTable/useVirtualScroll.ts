@@ -71,7 +71,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
-        pageSize: 10,
+        pageSize: 0,
         startIndex: 0,
         endIndex: 0,
         offsetTop: 0,
@@ -96,7 +96,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 是否虚拟滚动标志 */
     const virtual_on = computed(() => {
-        return props.virtual && dataSourceCopy.value.length > virtualScroll.value.pageSize * 2;
+        return props.virtual && dataSourceCopy.value.length > virtualScroll.value.pageSize;
     });
 
     const virtual_dataSourcePart = computed(() => {
@@ -162,10 +162,22 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         return width;
     });
 
-    /** 表头高度 */
+    const getRowHeightFn = computed(() => {
+        let rowHeightFn: (row?: DT) => number = () => props.rowHeight || DEFAULT_ROW_HEIGHT;
+        if (props.autoRowHeight) {
+            const tempRowHeightFn = rowHeightFn;
+            rowHeightFn = (row?: DT) => getAutoRowHeight(row) || tempRowHeightFn(row);
+        }
+        if (hasExpandCol.value) {
+            const expandedRowHeight = props.expandConfig?.height;
+            const tempRowHeightFn = rowHeightFn;
+            rowHeightFn = (row?: DT) => (row && row.__EXPANDED_ROW__ && expandedRowHeight) || tempRowHeightFn(row);
+        }
+        return rowHeightFn;
+    });
+
     function getTableHeaderHeight() {
-        const { headerRowHeight } = props;
-        return headerRowHeight * tableHeaders.value.length;
+        return props.headerRowHeight * tableHeaders.value.length;
     }
 
     /**
@@ -234,8 +246,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         autoRowHeightMap.clear();
     }
 
-    function getAutoRowHeight(row: DT) {
-        const rowKey = String(rowKeyGen(row));
+    function getAutoRowHeight(row?: DT) {
+        if (!row) return;
+        const rowKey = rowKeyGen(row);
         const storedHeight = autoRowHeightMap.get(rowKey);
         if (storedHeight) {
             return storedHeight;
@@ -248,19 +261,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 return expectedHeight;
             }
         }
-        return props.rowHeight || DEFAULT_ROW_HEIGHT;
-    }
-
-    function createGetRowHeightFn(): (row: DT) => number {
-        if (props.autoRowHeight) {
-            return (row: DT) => getAutoRowHeight(row);
-        }
-        if (hasExpandCol.value) {
-            const { rowHeight } = virtualScroll.value;
-            const expandedRowHeight: number = props.expandConfig?.height || rowHeight;
-            return (row: DT) => (row.__EXPANDED_ROW__ ? expandedRowHeight : rowHeight);
-        }
-        return () => props.rowHeight || (DEFAULT_ROW_HEIGHT as number);
     }
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
@@ -279,7 +279,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
         let startIndex = 0;
         let autoRowHeightTop = 0;
-        let getRowHeight: ReturnType<typeof createGetRowHeightFn> | null = null;
         const dataLength = dataSourceCopyTemp.length;
 
         if (autoRowHeight || hasExpandCol.value) {
@@ -291,10 +290,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 });
             }
 
-            getRowHeight = createGetRowHeightFn();
-
             for (let i = 0; i < dataLength; i++) {
-                const height = getRowHeight(dataSourceCopyTemp[i]);
+                const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
                 autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
                     startIndex = i;
@@ -312,7 +309,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
             startIndex -= 1; // 奇数-1变成偶数
             if (autoRowHeight || hasExpandCol.value) {
-                const height = getRowHeight!(dataSourceCopyTemp[startIndex]);
+                const height = getRowHeightFn.value(dataSourceCopyTemp[startIndex]);
                 autoRowHeightTop -= height;
             }
         }

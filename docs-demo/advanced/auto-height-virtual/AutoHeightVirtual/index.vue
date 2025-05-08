@@ -19,7 +19,16 @@ const data = new Array(50).fill(0).map((_, i) => ({
 </script>
 
 <template>
-    <StkTable row-key="id" style="height: 400px" stripe virtual auto-row-height :row-height="50" :columns="columns" :data-source="data"></StkTable>
+    <StkTable
+        row-key="id"
+        style="height: 400px"
+        stripe
+        virtual
+        auto-row-height
+        :row-height="50"
+        :columns="columns"
+        :data-source="data"
+    ></StkTable>
 </template>
 <style scoped>
 :deep(.v-head) {
