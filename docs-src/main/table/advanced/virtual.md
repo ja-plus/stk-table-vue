@@ -64,3 +64,6 @@ initVirtualScroll(height?: number)
 <StkTable :autoResize="false"></StkTable>
 ```
 
+## 单列表
+请移步至[虚拟单列表](/demos/virtual-list.html)
+
