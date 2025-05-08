@@ -26,7 +26,7 @@ export type StkProps = {
    */
   autoRowHeight?: boolean | {
     /** 预估行高(优先级高于rowHeight) */
-    expectedHeight?: number | ((row: DT, index: number) => number);
+    expectedHeight?: number | ((row: DT) => number);
   };
   /** 是否高亮鼠标悬浮的行 */
   rowHover?: boolean;

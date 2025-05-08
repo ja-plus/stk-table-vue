@@ -10,7 +10,7 @@
 ```ts
 type AutoRowHeightConfig<DT> = {
     /** 期望行高 */
-    expectedHeight?: number | ((row: DT, index: number) => number);
+    expectedHeight?: number | ((row: DT) => number);
 };
 ```
 

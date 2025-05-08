@@ -1,6 +1,6 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
-import { StkTableColumn, UniqKey } from './types';
+import { AutoRowHeightConfig, StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Option<DT extends Record<string, any>> = {
@@ -253,7 +253,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (storedHeight) {
             return storedHeight;
         }
-        const expectedHeight = props.autoRowHeight?.expectedHeight;
+        const expectedHeight: AutoRowHeightConfig<DT>['expectedHeight'] = props.autoRowHeight?.expectedHeight;
         if (expectedHeight) {
             if (typeof expectedHeight === 'function') {
                 return expectedHeight(row);
