@@ -11,6 +11,8 @@
 ></StkTable>
 ```
 
+尝试拖动表头
+
 <demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
 
 ## 通过事件更改顺序
