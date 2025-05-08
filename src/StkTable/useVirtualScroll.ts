@@ -107,7 +107,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     const virtual_offsetBottom = computed(() => {
         if (!virtual_on.value) return 0;
-        const { startIndex, rowHeight } = virtualScroll.value;
+        const { startIndex } = virtualScroll.value;
+        const rowHeight = getRowHeightFn.value();
         return (dataSourceCopy.value.length - startIndex - virtual_dataSourcePart.value.length) * rowHeight;
     });
 
@@ -198,11 +199,10 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             console.warn('initVirtualScrollY: height must be a number');
             height = 0;
         }
-        if (!virtual_on.value) return;
         const { offsetHeight, scrollHeight } = tableContainerRef.value || {};
         let scrollTop = tableContainerRef.value?.scrollTop || 0;
 
-        const { rowHeight } = virtualScroll.value;
+        const rowHeight = getRowHeightFn.value(props.dataSource[0]);
         const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
         const { headless } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
@@ -265,7 +265,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { rowHeight, pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
+        const { pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
@@ -275,6 +275,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         const dataSourceCopyTemp = dataSourceCopy.value;
+        const rowHeight = getRowHeightFn.value(dataSourceCopyTemp[0]);
         const { autoRowHeight, stripe, optimizeVue2Scroll } = props;
 
         let startIndex = 0;

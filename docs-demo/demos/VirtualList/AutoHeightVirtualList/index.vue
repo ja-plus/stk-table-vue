@@ -20,7 +20,9 @@ const data = new Array(20).fill(0).map((_, i) => ({
         style="height: 400px"
         virtual
         headless
-        auto-row-height
+        :auto-row-height="{
+            expectedHeight: 200,
+        }"
         :row-height="200"
         :row-active="false"
         :bordered="false"
