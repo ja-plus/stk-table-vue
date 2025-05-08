@@ -646,12 +646,12 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     maxWidth: string;
     sortConfig: SortConfig<DT>;
     rowHeight: number;
-    headerRowHeight: number | null;
     headless: boolean;
     autoRowHeight: boolean | AutoRowHeightConfig<DT>;
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
+    headerRowHeight: number | null;
     colKey: UniqKeyProp;
     fixedMode: boolean;
     theme: "light" | "dark";

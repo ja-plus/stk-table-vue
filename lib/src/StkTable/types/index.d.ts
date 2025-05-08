@@ -211,7 +211,7 @@ export type HeaderDragConfig<DT extends Record<string, any> = any> = boolean | {
 };
 export type AutoRowHeightConfig<DT> = {
     /** Estimated row height */
-    expectedHeight?: number | ((row: DT, index: number) => number);
+    expectedHeight?: number | ((row: DT) => number);
 };
 export type ColResizableConfig<DT extends Record<string, any>> = {
     disabled: (col: StkTableColumn<DT>) => boolean;
