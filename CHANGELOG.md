@@ -1,3 +1,8 @@
+## 0.6.15
+* Optimize
+  - autoRowHeight scroll behavior. If all rows height has got, virtual list offset bottom will be calculated
+* Bugfix:
+  - fix: autoRowHeight not work property, when rowKey is number. Now if rowKey is number,  deal as string
 ## 0.6.14
 * Change
   - `virtual_on` policy changed: if props.dataSource length > pageSize, `virtual_on` will set true.

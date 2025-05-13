@@ -6,10 +6,10 @@ import Panel from './Panel.vue';
 import type { DataType } from './types';
 
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
-const data = new Array(20).fill(0).map((_, i) => ({
+const data = new Array(10).fill(0).map((_, i) => ({
     id: i,
     title: mockjs.Random.csentence(3, 15),
-    content: mockjs.Random.cparagraph(1, 10),
+    content: mockjs.Random.cparagraph(0.5, 20),
     date: mockjs.Random.datetime('yyyy-MM-dd HH:mm'),
 }));
 </script>

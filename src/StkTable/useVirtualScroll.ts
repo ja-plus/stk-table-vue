@@ -107,9 +107,19 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     const virtual_offsetBottom = computed(() => {
         if (!virtual_on.value) return 0;
-        const { startIndex } = virtualScroll.value;
+        const { startIndex, endIndex } = virtualScroll.value;
+        const dataSourceCopyValue = dataSourceCopy.value;
         const rowHeight = getRowHeightFn.value();
-        return (dataSourceCopy.value.length - startIndex - virtual_dataSourcePart.value.length) * rowHeight;
+        if (props.autoRowHeight) {
+            let offsetBottom = 0;
+            for (let i = endIndex; i < dataSourceCopyValue.length; i++) {
+                const rowHeight = getRowHeightFn.value(dataSourceCopyValue[i]);
+                offsetBottom += rowHeight;
+            }
+            return offsetBottom;
+        }
+
+        return (dataSourceCopyValue.length - startIndex - virtual_dataSourcePart.value.length) * rowHeight;
     });
 
     const virtualX_on = computed(() => {
@@ -232,13 +242,13 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     let vue2ScrollYTimeout: null | number = null;
 
     /** every row actual height */
-    const autoRowHeightMap = new Map<UniqKey, number>();
+    const autoRowHeightMap = new Map<string, number>();
     /** 如果行高度有变化，则要调用此方法清除保存的行高 */
     function setAutoHeight(rowKey: UniqKey, height?: number | null) {
         if (!height) {
-            autoRowHeightMap.delete(rowKey);
+            autoRowHeightMap.delete(String(rowKey));
         } else {
-            autoRowHeightMap.set(rowKey, height);
+            autoRowHeightMap.set(String(rowKey), height);
         }
     }
 
@@ -249,7 +259,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     function getAutoRowHeight(row?: DT) {
         if (!row) return;
         const rowKey = rowKeyGen(row);
-        const storedHeight = autoRowHeightMap.get(rowKey);
+        const storedHeight = autoRowHeightMap.get(String(rowKey));
         if (storedHeight) {
             return storedHeight;
         }
@@ -294,7 +304,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             for (let i = 0; i < dataLength; i++) {
                 const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
                 autoRowHeightTop += height;
-                if (autoRowHeightTop >= sTop) {
+                if (autoRowHeightTop > sTop) {
                     startIndex = i;
                     autoRowHeightTop -= height;
                     break;
