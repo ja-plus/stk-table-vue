@@ -112,7 +112,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const rowHeight = getRowHeightFn.value();
         if (props.autoRowHeight) {
             let offsetBottom = 0;
-            for (let i = endIndex; i < dataSourceCopyValue.length; i++) {
+            for (let i = endIndex + 1; i < dataSourceCopyValue.length; i++) {
                 const rowHeight = getRowHeightFn.value(dataSourceCopyValue[i]);
                 offsetBottom += rowHeight;
             }
