@@ -1,6 +1,7 @@
 ## 0.6.16
 * Bugfix:
-  - fix: autoRowHeight offsetButtom calculation error.
+  - fix: `autoRowHeight` offsetBottom calculation error.
+  - fix: `autoRowHeight` pageSize should be dynamic.
 
 ## 0.6.15
 * Optimize

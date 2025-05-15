@@ -9,7 +9,7 @@ const row = computed(() => props.row);
 </script>
 <template>
     <div class="panel">
-        <header>{{ row.title }}</header>
+        <header>{{ row.id + 1 }}.{{ row.title }}</header>
         <article>{{ row.content }}</article>
         <footer>{{ row.date }}</footer>
     </div>

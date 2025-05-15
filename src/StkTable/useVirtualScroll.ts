@@ -212,7 +212,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const { offsetHeight, scrollHeight } = tableContainerRef.value || {};
         let scrollTop = tableContainerRef.value?.scrollTop || 0;
 
-        const rowHeight = getRowHeightFn.value(props.dataSource[0]);
+        const rowHeight = getRowHeightFn.value();
         const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
         const { headless } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
@@ -275,7 +275,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     /** 通过滚动条位置，计算虚拟滚动的参数 */
     function updateVirtualScrollY(sTop = 0) {
-        const { pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex } = virtualScroll.value;
+        const { pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex, containerHeight } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
@@ -285,12 +285,13 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         const dataSourceCopyTemp = dataSourceCopy.value;
-        const rowHeight = getRowHeightFn.value(dataSourceCopyTemp[0]);
+        const rowHeight = getRowHeightFn.value();
         const { autoRowHeight, stripe, optimizeVue2Scroll } = props;
+        const dataLength = dataSourceCopyTemp.length;
 
         let startIndex = 0;
+        let endIndex = dataLength;
         let autoRowHeightTop = 0;
-        const dataLength = dataSourceCopyTemp.length;
 
         if (autoRowHeight || hasExpandCol.value) {
             if (autoRowHeight) {
@@ -300,21 +301,29 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                     autoRowHeightMap.set(rowKey, tr.offsetHeight);
                 });
             }
-
+            // calculate startIndex
             for (let i = 0; i < dataLength; i++) {
                 const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
                 autoRowHeightTop += height;
-                if (autoRowHeightTop > sTop) {
+                if (autoRowHeightTop >= sTop) {
                     startIndex = i;
                     autoRowHeightTop -= height;
                     break;
                 }
             }
+            // calculate endIndex
+            let containerHeightSum = 0;
+            for (let i = startIndex + 1; i < dataLength; i++) {
+                containerHeightSum += getRowHeightFn.value(dataSourceCopyTemp[i]);
+                if (containerHeightSum >= containerHeight) {
+                    endIndex = i;
+                    break;
+                }
+            }
         } else {
             startIndex = Math.floor(sTop / rowHeight);
+            endIndex = startIndex + pageSize;
         }
-
-        let endIndex = startIndex + pageSize;
 
         if (stripe && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
@@ -326,8 +335,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         startIndex = Math.max(0, startIndex);
-
-        // 溢出修正
         endIndex = Math.min(endIndex, dataLength);
 
         if (startIndex >= endIndex) {

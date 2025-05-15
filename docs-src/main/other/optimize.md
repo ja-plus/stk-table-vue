@@ -7,12 +7,14 @@
     - ~~在 `customCell` 较多且复杂时~~。
     - ~~大量 highlight 动画时~~。
 
-请尝试添加下方css后，滚动卡顿感是否有可感知的降低（在低性能机器上较明显）。
+请尝试添加下方css后，滚动卡顿是否有可感知的降低（在低性能机器上较明显）。
 ```css
 .stk-table tbody tr {
   transform: translateZ(0);
 }
 ```
+## 滚动白屏
+ 尝试tr分层。
     
 ## 高亮
 * 配置 `props.highlightConfig.fps` 指定高亮帧率。降低帧率有利于减少资源占用。
