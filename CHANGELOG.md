@@ -1,3 +1,7 @@
+## 0.6.17
+* Bugfix
+  - fix: function `insertToOrderedArray()` if `sortConfig.emptyToBottom` is true, empty value should be insert to the bottom.
+
 ## 0.6.16
 * Bugfix:
   - fix: `autoRowHeight` offsetBottom calculation error.

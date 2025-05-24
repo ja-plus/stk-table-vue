@@ -34,21 +34,21 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
         return data;
     }
 
-    if (sortConfig.emptyToBottom && isEmptyValue(newItem)) {
+    const targetVal: any = newItem[dataIndex];
+    if (sortConfig.emptyToBottom && isEmptyValue(targetVal)) {
         // 空值排在最下方
         data.push(newItem);
+    } else {
+        const isNumber = sortType === 'number';
+        // 二分插入
+        const sIndex = binarySearch(data, midIndex => {
+            const midVal: any = data[midIndex][dataIndex];
+            const compareRes = strCompare(midVal, targetVal, isNumber, sortConfig.stringLocaleCompare);
+            return order === 'asc' ? compareRes : -compareRes;
+        });
+        data.splice(sIndex, 0, newItem);
     }
 
-    const isNumber = sortType === 'number';
-
-    // 二分插入
-    const targetVal: any = newItem[dataIndex];
-    const sIndex = binarySearch(data, midIndex => {
-        const midVal: any = data[midIndex][dataIndex];
-        const compareRes = strCompare(midVal, targetVal, isNumber, sortConfig.stringLocaleCompare);
-        return order === 'asc' ? compareRes : -compareRes;
-    });
-    data.splice(sIndex, 0, newItem);
     return data;
 }
 
