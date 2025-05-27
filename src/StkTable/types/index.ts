@@ -51,8 +51,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - seq 序号列
      * - expand 展开列
      * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
+     * - tree-node 树节点列，这一列前面有展开收起箭头
      */
-    type?: 'seq' | 'expand' | 'dragRow';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -128,12 +129,19 @@ export type PrivateRowDT = {
      * If user define the `__ROW_KEY__` in table data, this value will be used as the row key
      * @private
      */
-    __ROW_KEY__: string;
+    __ROW_KEY__?: string;
     /**
      * if row expanded
      * @private
      */
     __EXPANDED__?: StkTableColumn<any> | null;
+    /**
+     * if tree node row expanded
+     * @private
+     */
+    __TREE_EXPANDED__?: StkTableColumn<any> | null;
+    __TREE_PARENT_KEY__?: UniqKey;
+    __TREE_LEVEL__?: number;
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
@@ -214,20 +222,24 @@ export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
     // disabled?: (row: T, rowIndex: number) => boolean;
 };
+
+/** 树形配置 */
+export type TreeConfig = {
+    childrenField?: string;
+};
+
 /** header drag config */
-export type HeaderDragConfig<DT extends Record<string, any> = any> =
-    | boolean
-    | {
-          /**
-           * 列交换模式
-           * - none - 不做任何事
-           * - insert - 插入(默认值)
-           * - swap - 交换
-           */
-          mode?: 'none' | 'insert' | 'swap';
-          /** 禁用拖动的列 */
-          disabled?: (col: StkTableColumn<DT>) => boolean;
-      };
+export type HeaderDragConfig<DT extends Record<string, any> = any> = {
+    /**
+     * 列交换模式
+     * - none - 不做任何事
+     * - insert - 插入(默认值)
+     * - swap - 交换
+     */
+    mode?: 'none' | 'insert' | 'swap';
+    /** 禁用拖动的列 */
+    disabled?: (col: StkTableColumn<DT>) => boolean;
+};
 
 export type AutoRowHeightConfig<DT> = {
     /** Estimated row height */
