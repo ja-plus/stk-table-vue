@@ -1,7 +1,7 @@
 import { ShallowRef } from 'vue';
 import { PrivateRowDT, StkTableColumn, UniqKey } from './types';
 
-type DT = PrivateRowDT;
+type DT = PrivateRowDT & { children?: PrivateRowDT[] };
 type Option<DT extends Record<string, any>> = {
     rowKeyGen: (row: any) => UniqKey;
     dataSourceCopy: ShallowRef<DT[]>;
@@ -11,7 +11,7 @@ type Option<DT extends Record<string, any>> = {
 export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
     /** click expended icon to toggle expand row */
     function toggleTreeNode(row: DT, col: StkTableColumn<DT>) {
-        const isExpand = row?.__TREE_EXPANDED__ === col ? !row?.__TREE_EXPANDED__ : true;
+        const isExpand = row?.__T_EXPANDED__ === col ? !row?.__T_EXPANDED__ : true;
         setTreeExpand(row, isExpand, { col });
     }
 
@@ -39,32 +39,33 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         const row = tempData[index];
         const col = data?.col || null;
 
+        const level = row.__T_LV__ || 0;
         if (expand) {
             // insert new children row
-            const children: PrivateRowDT[] = (row as any).children;
-            const level = (row as any).__TREE_LEVEL__ || 0;
+            const children = row.children;
             if (children) {
                 children.forEach(child => {
-                    child.__TREE_LEVEL__ = level + 1;
-                    child.__TREE_PARENT_KEY__ = rowKey;
+                    child.__T_LV__ = level + 1;
+                    child.__T_PARENT_K__ = rowKey;
                 });
+                tempData.splice(index + 1, 0, ...children);
             }
-            tempData.splice(index + 1, 0, ...children);
         } else {
             // delete all child nodes from i
+            let deleteCount = 0;
             for (let i = index + 1; i < tempData.length; i++) {
                 const child = tempData[i];
-                if (child.__TREE_PARENT_KEY__ === rowKey) {
-                    tempData.splice(i, 1);
-                    i--;
+                if (child.__T_LV__ && child.__T_LV__ > level) {
+                    deleteCount++;
                 } else {
                     break;
                 }
             }
+            tempData.splice(index + 1, deleteCount);
         }
 
         if (row) {
-            row.__TREE_EXPANDED__ = expand ? col : null;
+            row.__T_EXPANDED__ = expand ? col : null;
         }
 
         dataSourceCopy.value = tempData;
@@ -73,8 +74,22 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         }
     }
 
+    function flatTreeData(data: DT[]) {
+        const result: DT[] = [];
+        // 根据保存的展开状态，深度遍历，展平树形数据。
+        data.forEach(function recursion(item) {
+            result.push(item);
+            if (!item.__T_EXPANDED__) return;
+            const children = item.children;
+            if (!children) return;
+            children.forEach(recursion);
+        });
+        return result;
+    }
+
     return {
         toggleTreeNode,
         setTreeExpand,
+        flatTreeData,
     };
 }
