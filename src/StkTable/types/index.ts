@@ -139,9 +139,17 @@ export type PrivateRowDT = {
      * if tree node row expanded
      * @private
      */
-    __TREE_EXPANDED__?: StkTableColumn<any> | null;
-    __TREE_PARENT_KEY__?: UniqKey;
-    __TREE_LEVEL__?: number;
+    __T_EXPANDED__?: StkTableColumn<any> | null;
+    /**
+     * tree parent key
+     * @private
+     */
+    __T_PARENT_K__?: UniqKey;
+    /**
+     * tree level
+     * @private
+     */
+    __T_LV__?: number;
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;

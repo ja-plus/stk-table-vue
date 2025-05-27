@@ -159,7 +159,7 @@ const dataSource = shallowRef<any>(
             children: new Array(5).fill(0).map((it, i) => {
                 const key2 = key1 + '-children' + i;
                 return {
-                    name: 'children-name' + i,
+                    name: key2,
                     age: Math.ceil(Math.random() * 100),
                     email: 'add@sa.com',
                     gender: Number(Math.random() * 100 - 50).toFixed(2),
@@ -167,7 +167,7 @@ const dataSource = shallowRef<any>(
                     children: new Array(5).fill(0).map((it, i) => {
                         const key3 = key2 + '-child' + i;
                         return {
-                            name: 'children-child-name' + i,
+                            name: key3,
                             age: Math.ceil(Math.random() * 100),
                             email: 'add@sa.com',
                             gender: Number(Math.random() * 100 - 50).toFixed(2),

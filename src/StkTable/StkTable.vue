@@ -168,8 +168,7 @@
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     expanded: col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
                                     'tree-expanded':
-                                        col.type === 'tree-node' &&
-                                        (row.__TREE_EXPANDED__ ? colKeyGen(row.__TREE_EXPANDED__) === colKeyGen(col) : false),
+                                        col.type === 'tree-node' && (row.__T_EXPANDED__ ? colKeyGen(row.__T_EXPANDED__) === colKeyGen(col) : false),
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
@@ -183,7 +182,7 @@
                                 <div
                                     class="table-cell-wrapper"
                                     :title="row?.[col.dataIndex]"
-                                    :style="{ paddingLeft: row.__TREE_LEVEL__ && row.__TREE_LEVEL__ * 16 + 'px' }"
+                                    :style="{ paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' }"
                                 >
                                     <component
                                         :is="col.customCell"
@@ -194,6 +193,7 @@
                                         :colIndex="colIndex"
                                         :cellValue="row && row[col.dataIndex]"
                                         :expanded="(row && row.__EXPANDED__) || null"
+                                        :tree-expanded="(row && row.__T_EXPANDED__) || null"
                                     >
                                         <template #foldIcon>
                                             <TriangleIcon></TriangleIcon>
@@ -692,6 +692,10 @@ const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
 
+const isTreeData = computed(() => {
+    return props.columns.some(col => col.type === 'tree-node');
+});
+
 const dataSourceCopy = shallowRef<DT[]>(props.dataSource.slice());
 
 const rowKeyGenComputed = computed(() => {
@@ -721,8 +725,7 @@ const getEmptyCellText = computed(() => {
     }
 });
 
-/** rowKey缓存 */
-const rowKeyGenStore = new WeakMap();
+const rowKeyGenCache = new WeakMap();
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
 
@@ -746,7 +749,6 @@ const {
     clearAllAutoHeight,
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen });
 
-/** 获取固定列的位置 */
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeadersForCalc });
 
 const getFixedStyle = useFixedStyle<DT>({
@@ -759,9 +761,6 @@ const getFixedStyle = useFixedStyle<DT>({
     virtualX_offsetRight,
 });
 
-/**
- * 高亮行，高亮单元格
- */
 const { highlightSteps, setHighlightDimCell, setHighlightDimRow } = useHighlight({ props, stkTableId, tableContainerRef });
 
 if (props.autoResize) {
@@ -799,7 +798,8 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
 });
 
 const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
-const { toggleTreeNode, setTreeExpand } = useTree({ dataSourceCopy, rowKeyGen, emits });
+
+const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ dataSourceCopy, rowKeyGen, emits });
 
 watch(
     () => props.columns,
@@ -852,15 +852,20 @@ watch(
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
         }
-        dataSourceCopy.value = val.slice(); // 浅拷贝
-        // 数据长度没变则不计算虚拟滚动
+        let dataSourceTemp = val.slice(); // hallow copy
+        if (isTreeData.value) {
+            // only tree data need flat
+            dataSourceTemp = flatTreeData(dataSourceTemp);
+        }
+        dataSourceCopy.value = dataSourceTemp;
+        // if data length is not change, not init virtual scroll
         if (needInitVirtualScrollY) {
-            // 表格渲染后再执行。initVirtualScrollY 中有获取dom的操作。
+            // wait for table render,initVirtualScrollY has get `dom` operation.
             nextTick(() => initVirtualScrollY());
         }
         const sortColValue = sortCol.value;
         if (sortColValue) {
-            // 排序
+            // sort
             const colKey = colKeyGen.value;
             const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
             onColumnSort(column, false);
@@ -881,7 +886,6 @@ onMounted(() => {
     dealDefaultSorter();
 });
 
-/** 处理默认排序 */
 function dealDefaultSorter() {
     if (!props.sortConfig.defaultSort) return;
     const { key, dataIndex, order, silent } = { silent: false, ...props.sortConfig.defaultSort };
@@ -889,7 +893,7 @@ function dealDefaultSorter() {
 }
 
 /**
- * 处理多级表头
+ *  deal multi-level header
  */
 function dealColumns() {
     // reset
@@ -924,7 +928,7 @@ function dealColumns() {
     }
 
     /**
-     * 展开columns
+     * flat columns
      * @param arr
      * @param depth 深度
      * @param parent 父节点引用，用于构建双向链表。
@@ -943,7 +947,6 @@ function dealColumns() {
             // if (parentFixed) {
             //     col.fixed = parentFixed;
             // }
-            // 构建指向父节点的引用
             col.__PARENT__ = parent;
             /** 一列中的子节点数量 */
             let colChildrenLen = 1;
@@ -990,7 +993,7 @@ function dealColumns() {
  */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
-    let key = rowKeyGenStore.get(row) || (row as PrivateRowDT).__ROW_KEY__;
+    let key = rowKeyGenCache.get(row) || (row as PrivateRowDT).__ROW_KEY__;
     if (!key) {
         key = rowKeyGenComputed.value(row);
 
@@ -998,7 +1001,7 @@ function rowKeyGen(row: DT | null | undefined) {
             // key为undefined时，不应该高亮行。因此重新生成key
             key = Math.random().toString();
         }
-        rowKeyGenStore.set(row, key);
+        rowKeyGenCache.set(row, key);
     }
     return key;
 }
