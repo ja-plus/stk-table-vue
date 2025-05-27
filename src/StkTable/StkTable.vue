@@ -337,7 +337,7 @@ const props = withDefaults(
         /** 单元格再次点击否可以取消选中 (cellActive=true)*/
         selectedCellRevokable?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
-        headerDrag?: HeaderDragConfig;
+        headerDrag?: boolean | HeaderDragConfig;
         /**
          * 给行附加className<br>
          * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
