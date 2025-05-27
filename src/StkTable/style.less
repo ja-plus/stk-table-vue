@@ -530,8 +530,11 @@
         }
     }
 
-    .expanded,.tree-expanded>.table-cell-wrapper .stk-fold-icon::before {
-        transform: rotate(90deg);
+    .expanded,
+    .tree-expanded {
+        >.table-cell-wrapper .stk-fold-icon::before {
+            transform: rotate(90deg);
+        }
     }
 
 

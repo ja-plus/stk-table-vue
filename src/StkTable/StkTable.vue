@@ -54,7 +54,7 @@
         >
             <!-- transform: virtualX_on ? `translateX(${virtualScrollX.offsetLeft}px)` : null, 用transform控制虚拟滚动左边距，sticky会有问题 -->
             <thead v-if="!headless" ref="theadRef">
-                <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="e => onHeaderMenu(e)">
+                <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
                     <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
                     <th
                         v-if="virtualX_on"
@@ -91,7 +91,7 @@
                         <div
                             v-if="colResizeOn(col) && colIndex > 0"
                             class="table-header-resizer left"
-                            @mousedown="e => onThResizeMouseDown(e, col, true)"
+                            @mousedown="onThResizeMouseDown($event, col, true)"
                         ></div>
                         <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.rowSpan }">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
@@ -103,7 +103,7 @@
                             <SortIcon v-if="col.sorter" class="table-header-sorter" />
                         </div>
                         <!-- 列宽拖动handler -->
-                        <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="e => onThResizeMouseDown(e, col)"></div>
+                        <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
                     </th>
                     <!-- 这个th用于横向虚拟滚动表格右边距 width, min-width 用于兼容低版本浏览器-->
                     <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
@@ -138,11 +138,11 @@
                         '--row-height':
                             row && row.__EXPANDED_ROW__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
-                    @click="e => onRowClick(e, row, getRowIndex(rowIndex))"
-                    @dblclick="e => onRowDblclick(e, row, getRowIndex(rowIndex))"
-                    @contextmenu="e => onRowMenu(e, row, getRowIndex(rowIndex))"
-                    @mouseover="e => onTrMouseOver(e, row)"
-                    @drop="e => onTrDrop(e, getRowIndex(rowIndex))"
+                    @click="onRowClick($event, row, getRowIndex(rowIndex))"
+                    @dblclick="onRowDblclick($event, row, getRowIndex(rowIndex))"
+                    @contextmenu="onRowMenu($event, row, getRowIndex(rowIndex))"
+                    @mouseover="onTrMouseOver($event, row)"
+                    @drop="onTrDrop($event, getRowIndex(rowIndex))"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -172,11 +172,11 @@
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
-                            @click="e => onCellClick(e, row, col, getRowIndex(rowIndex))"
-                            @mousedown="e => onCellMouseDown(e, row, col, getRowIndex(rowIndex))"
-                            @mouseenter="e => onCellMouseEnter(e, row, col)"
-                            @mouseleave="e => onCellMouseLeave(e, row, col)"
-                            @mouseover="e => onCellMouseOver(e, row, col)"
+                            @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
+                            @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
+                            @mouseenter="onCellMouseEnter($event, row, col)"
+                            @mouseleave="onCellMouseLeave($event, row, col)"
+                            @mouseover="onCellMouseOver($event, row, col)"
                         >
                             <template v-if="col.type === 'expand' || col.type === 'tree-node'">
                                 <div
@@ -200,8 +200,13 @@
                                         </template>
                                     </component>
                                     <template v-else>
-                                        <TriangleIcon v-if="row.children && row.children.length" />
-                                        <span :style="!row.children ? 'padding-left: 16px;' : ''"> {{ row?.[col.dataIndex] ?? '' }} </span>
+                                        <TriangleIcon
+                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children && row.children.length)"
+                                            @click="triangleClick($event, row, col)"
+                                        />
+                                        <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                            {{ row?.[col.dataIndex] ?? '' }}
+                                        </span>
                                     </template>
                                 </div>
                             </template>
@@ -221,7 +226,7 @@
                                         {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
                                     </template>
                                     <template v-else-if="col.type === 'dragRow'">
-                                        <DragHandle @dragstart="e => onTrDragStart(e, getRowIndex(rowIndex))" />
+                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
                                         <span>
                                             {{ row?.[col.dataIndex] ?? '' }}
                                         </span>
@@ -1183,13 +1188,16 @@ function onRowMenu(e: MouseEvent, row: DT, rowIndex: number) {
 //     }
 // }
 
-/** 单元格单击 */
-function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
+function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
     if (col.type === 'expand') {
         toggleExpandRow(row, col);
     } else if (col.type === 'tree-node') {
         toggleTreeNode(row, col);
     }
+}
+
+/** 单元格单击 */
+function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
         const result = { row, col, select: false, rowIndex };
