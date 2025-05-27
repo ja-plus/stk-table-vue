@@ -230,12 +230,12 @@
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
-import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, EXPANDED_ROW_KEY_PREFIX, IS_LEGACY_MODE } from './const';
+import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, IS_LEGACY_MODE } from './const';
 import {
     AutoRowHeightConfig,
+    ColResizableConfig,
     DragRowConfig,
     ExpandConfig,
-    ExpandedRow,
     HeaderDragConfig,
     HighlightConfig,
     Order,
@@ -247,7 +247,6 @@ import {
     StkTableColumn,
     TagType,
     UniqKeyProp,
-    ColResizableConfig,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
 import { useColResize } from './useColResize';
@@ -256,6 +255,7 @@ import { useFixedStyle } from './useFixedStyle';
 import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
+import { useRowExpand } from './useRowExpand';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useVirtualScroll } from './useVirtualScroll';
@@ -770,6 +770,8 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
     tableHeaderLast,
     fixedCols,
 });
+
+const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
 
 watch(
     () => props.columns,
@@ -1370,68 +1372,6 @@ function getSortColumns() {
     const sortOrder = sortSwitchOrder[sortOrderIndex.value];
     if (!sortOrder) return [];
     return [{ key: sortCol.value, order: sortOrder }];
-}
-
-/** click expended icon to toggle expand row */
-function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
-    const isExpand = row?.__EXPANDED__ === col ? !row?.__EXPANDED__ : true;
-    setRowExpand(row, isExpand, { col });
-}
-
-/**
- *
- * @param rowKeyOrRow rowKey or row
- * @param expand expand or collapse
- * @param data { col?: StkTableColumn<DT> }
- * @param data.silent if set true, not emit `toggle-row-expand`, default:false
- */
-function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
-    let rowKey: string;
-    if (typeof rowKeyOrRow === 'string') {
-        rowKey = rowKeyOrRow;
-    } else {
-        rowKey = rowKeyGen(rowKeyOrRow);
-    }
-    const tempData = dataSourceCopy.value.slice();
-    const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
-    if (index === -1) {
-        console.warn('expandRow failed.rowKey:', rowKey);
-        return;
-    }
-
-    // delete other expanded row below the target row
-    for (let i = index + 1; i < tempData.length; i++) {
-        const item: PrivateRowDT = tempData[i];
-        const rowKey = item.__ROW_KEY__;
-        if (rowKey?.startsWith(EXPANDED_ROW_KEY_PREFIX)) {
-            tempData.splice(i, 1);
-            i--;
-        } else {
-            break;
-        }
-    }
-
-    const row = tempData[index];
-    const col = data?.col || null;
-
-    if (expand) {
-        // insert new expanded row
-        const newExpandRow: ExpandedRow = {
-            __ROW_KEY__: EXPANDED_ROW_KEY_PREFIX + rowKey,
-            __EXPANDED_ROW__: row,
-            __EXPANDED_COL__: col,
-        };
-        tempData.splice(index + 1, 0, newExpandRow);
-    }
-
-    if (row) {
-        row.__EXPANDED__ = expand ? col : null;
-    }
-
-    dataSourceCopy.value = tempData;
-    if (!data?.silent) {
-        emits('toggle-row-expand', { expanded: Boolean(expand), row, col });
-    }
 }
 
 defineExpose({
