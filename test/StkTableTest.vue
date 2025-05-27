@@ -147,14 +147,37 @@ const props = ref({
 });
 
 const dataSource = shallowRef<any>(
-    [{}, null],
-    // new Array(30).fill(0).map((it, i) => ({
-    //     name: 'name' + i,
-    //     age: Math.ceil(Math.random() * 100),
-    //     email: 'add@sa.com',
-    //     gender: Number(Math.random() * 100 - 50).toFixed(2),
-    //     address: 'ahshshsshshhs',
-    // })),
+    // [{}, null],
+    new Array(30).fill(0).map((it, i) => {
+        const key1 = 'name' + i;
+        return {
+            name: key1,
+            age: Math.ceil(Math.random() * 100),
+            email: 'add@sa.com',
+            gender: Number(Math.random() * 100 - 50).toFixed(2),
+            address: 'ahshshsshshhs',
+            children: new Array(5).fill(0).map((it, i) => {
+                const key2 = key1 + '-children' + i;
+                return {
+                    name: 'children-name' + i,
+                    age: Math.ceil(Math.random() * 100),
+                    email: 'add@sa.com',
+                    gender: Number(Math.random() * 100 - 50).toFixed(2),
+                    address: 'ahshshsshshhs',
+                    children: new Array(5).fill(0).map((it, i) => {
+                        const key3 = key2 + '-child' + i;
+                        return {
+                            name: 'children-child-name' + i,
+                            age: Math.ceil(Math.random() * 100),
+                            email: 'add@sa.com',
+                            gender: Number(Math.random() * 100 - 50).toFixed(2),
+                            address: 'ahshshsshshhs',
+                        };
+                    }),
+                };
+            }),
+        };
+    }),
 );
 
 const isCheckAll = computed(() => dataSource.value.every(it => it?.isChecked));
@@ -201,6 +224,7 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         // },
     },
     {
+        type: 'tree-node',
         title: 'Name',
         dataIndex: 'name',
         // fixed: 'left',
@@ -210,9 +234,9 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         customHeaderCell: props => {
             return h('span', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, props.col.title + '(render) text-overflow,');
         },
-        customCell: props => {
-            return props.cellValue;
-        },
+        // customCell: props => {
+        //     return props.cellValue;
+        // },
     },
     {
         title: 'Age',

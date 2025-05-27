@@ -166,8 +166,10 @@
                                 {
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
-                                    'expand-cell': col.type === 'expand',
                                     expanded: col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
+                                    'tree-expanded':
+                                        col.type === 'tree-node' &&
+                                        (row.__TREE_EXPANDED__ ? colKeyGen(row.__TREE_EXPANDED__) === colKeyGen(col) : false),
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
@@ -177,39 +179,58 @@
                             @mouseleave="e => onCellMouseLeave(e, row, col)"
                             @mouseover="e => onCellMouseOver(e, row, col)"
                         >
-                            <component
-                                :is="col.customCell"
-                                v-if="col.customCell"
-                                class="table-cell-wrapper"
-                                :col="col"
-                                :row="row"
-                                :rowIndex="getRowIndex(rowIndex)"
-                                :colIndex="colIndex"
-                                :cellValue="row && row[col.dataIndex]"
-                                :expanded="(row && row.__EXPANDED__) || null"
-                            />
-                            <div
-                                v-else
-                                class="table-cell-wrapper"
-                                :class="{ 'expanded-cell-wrapper': col.type === 'expand' }"
-                                :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
-                            >
-                                <template v-if="col.type === 'seq'">
-                                    {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                </template>
-                                <span v-else-if="col.type === 'expand'">
-                                    {{ row?.[col.dataIndex] ?? '' }}
-                                </span>
-                                <template v-else-if="col.type === 'dragRow'">
-                                    <DragHandle @dragstart="e => onTrDragStart(e, getRowIndex(rowIndex))" />
-                                    <span>
-                                        {{ row?.[col.dataIndex] ?? '' }}
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                                </template>
-                            </div>
+                            <template v-if="col.type === 'expand' || col.type === 'tree-node'">
+                                <div
+                                    class="table-cell-wrapper"
+                                    :title="row?.[col.dataIndex]"
+                                    :style="{ paddingLeft: row.__TREE_LEVEL__ && row.__TREE_LEVEL__ * 16 + 'px' }"
+                                >
+                                    <component
+                                        :is="col.customCell"
+                                        v-if="col.customCell"
+                                        :col="col"
+                                        :row="row"
+                                        :rowIndex="getRowIndex(rowIndex)"
+                                        :colIndex="colIndex"
+                                        :cellValue="row && row[col.dataIndex]"
+                                        :expanded="(row && row.__EXPANDED__) || null"
+                                    >
+                                        <template #foldIcon>
+                                            <TriangleIcon></TriangleIcon>
+                                        </template>
+                                    </component>
+                                    <template v-else>
+                                        <TriangleIcon v-if="row.children && row.children.length" />
+                                        <span :style="!row.children ? 'padding-left: 16px;' : ''"> {{ row?.[col.dataIndex] ?? '' }} </span>
+                                    </template>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <component
+                                    :is="col.customCell"
+                                    v-if="col.customCell"
+                                    class="table-cell-wrapper"
+                                    :col="col"
+                                    :row="row"
+                                    :rowIndex="getRowIndex(rowIndex)"
+                                    :colIndex="colIndex"
+                                    :cellValue="row && row[col.dataIndex]"
+                                />
+                                <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
+                                    <template v-if="col.type === 'seq'">
+                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                    </template>
+                                    <template v-else-if="col.type === 'dragRow'">
+                                        <DragHandle @dragstart="e => onTrDragStart(e, getRowIndex(rowIndex))" />
+                                        <span>
+                                            {{ row?.[col.dataIndex] ?? '' }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                    </template>
+                                </div>
+                            </template>
                         </td>
                     </template>
                 </tr>
@@ -230,6 +251,7 @@
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
+import TriangleIcon from './components/TriangleIcon.vue';
 import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, IS_LEGACY_MODE } from './const';
 import {
     AutoRowHeightConfig,
@@ -246,6 +268,7 @@ import {
     SortOption,
     StkTableColumn,
     TagType,
+    TreeConfig,
     UniqKeyProp,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -261,6 +284,7 @@ import { useTrDrag } from './useTrDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
+import { useTree } from './useTree';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -382,6 +406,8 @@ const props = withDefaults(
         expandConfig?: ExpandConfig;
         /** 行拖动配置 */
         dragRowConfig?: DragRowConfig;
+        /** 树形配置 */
+        treeConfig?: TreeConfig;
         /**
          * 固定头，固定列实现方式。(非响应式)
          *
@@ -448,6 +474,7 @@ const props = withDefaults(
         seqConfig: () => ({}),
         expandConfig: () => ({}),
         dragRowConfig: () => ({}),
+        treeConfig: () => ({}),
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
         scrollRowByRow: false,
@@ -772,6 +799,7 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
 });
 
 const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
+const { toggleTreeNode, setTreeExpand } = useTree({ dataSourceCopy, rowKeyGen, emits });
 
 watch(
     () => props.columns,
@@ -1156,6 +1184,8 @@ function onRowMenu(e: MouseEvent, row: DT, rowIndex: number) {
 function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
     if (col.type === 'expand') {
         toggleExpandRow(row, col);
+    } else if (col.type === 'tree-node') {
+        toggleTreeNode(row, col);
     }
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
@@ -1494,5 +1524,12 @@ defineExpose({
      * @see {@link clearAllAutoHeight}
      */
     clearAllAutoHeight,
+    /**
+     * 设置树节点展开状态
+     *
+     * en: Set tree node expand state
+     * @see {@link setTreeExpand}
+     */
+    setTreeExpand,
 });
 </script>
