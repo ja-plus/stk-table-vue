@@ -1,7 +1,7 @@
 import { ShallowRef } from 'vue';
 import { PrivateRowDT, StkTableColumn, UniqKey } from './types';
 
-type DT = PrivateRowDT & { children?: PrivateRowDT[] };
+type DT = PrivateRowDT & { children?: DT[] };
 type Option<DT extends Record<string, any>> = {
     rowKeyGen: (row: any) => UniqKey;
     dataSourceCopy: ShallowRef<DT[]>;
@@ -43,14 +43,16 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         const expanded = Boolean(option?.expand);
         if (expanded) {
             // insert new children row
-            const children = row.children;
-            if (children) {
-                children.forEach(child => {
-                    child.__T_LV__ = level + 1;
-                    child.__T_PARENT_K__ = rowKey;
-                });
-                tempData.splice(index + 1, 0, ...children);
-            }
+            // const children = row.children;
+            // if (children) {
+            //     children.forEach(child => {
+            //         child.__T_LV__ = level + 1;
+            //         child.__T_PARENT_K__ = rowKey;
+            //     });
+            //     tempData.splice(index + 1, 0, ...children);
+            // }
+            const children = expandNode(row, level, rowKey);
+            tempData.splice(index + 1, 0, ...children);
         } else {
             // delete all child nodes from i
             let deleteCount = 0;
@@ -86,6 +88,23 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
             if (!children) return;
             children.forEach(recursion);
         });
+        return result;
+    }
+
+    function expandNode(row: DT, level: number, rowKey: UniqKey) {
+        let result: DT[] = [];
+        row.children &&
+            row.children.forEach(child => {
+                result.push(child);
+                const childLv = level + 1;
+                if (child.__T_EXPANDED__ && child.children) {
+                    const res = expandNode(child, childLv, rowKeyGen(child));
+                    result = result.concat(res);
+                } else {
+                    child.__T_LV__ = childLv;
+                    child.__T_PARENT_K__ = rowKey;
+                }
+            });
         return result;
     }
 

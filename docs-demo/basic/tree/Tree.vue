@@ -5,9 +5,9 @@ import { StkTableColumn } from '../../../src/StkTable/index';
 
 const columns: StkTableColumn<any>[] = [
     { type: 'tree-node', title: 'Area', dataIndex: 'area' },
-    { title: 'GDP', dataIndex: 'gdp' },
-    { title: 'Population', dataIndex: 'population' },
-    { title: 'GDP per capita', dataIndex: 'gdpPerCapita' },
+    { title: 'GDP', dataIndex: 'gdp', align: 'right' },
+    { title: 'Population', dataIndex: 'population', align: 'right' },
+    { title: 'GDP per capita', dataIndex: 'gdpPerCapita', align: 'right' },
 ];
 
 const dataSource = ref([
@@ -50,5 +50,5 @@ const dataSource = ref([
 ]);
 </script>
 <template>
-    <StkTable :columns="columns" :data-source="dataSource"></StkTable>
+    <StkTable style="max-height: 300px" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
