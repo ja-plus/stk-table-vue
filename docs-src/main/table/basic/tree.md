@@ -3,3 +3,6 @@
 
 ## 简单树形
 <demo vue="basic/tree/Tree.vue"></demo>
+
+## 默认展开节点
+<demo vue="basic/tree/TreeDefaultExpand.vue"></demo>
