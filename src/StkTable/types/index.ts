@@ -233,7 +233,10 @@ export type DragRowConfig = {
 
 /** 树形配置 */
 export type TreeConfig = {
-    childrenField?: string;
+    // childrenField?: string;
+    defaultExpandAll?: boolean;
+    defaultExpandKeys?: UniqKey[];
+    defaultExpandLevel?: number;
 };
 
 /** header drag config */

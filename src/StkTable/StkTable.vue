@@ -613,6 +613,12 @@ const emits = defineEmits<{
      */
     (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
     /**
+     * 点击展开树行触发
+     *
+     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
+     */
+    (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
+    /**
      * v-model:columns col resize 时更新宽度
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
@@ -700,7 +706,7 @@ const isTreeData = computed(() => {
     return props.columns.some(col => col.type === 'tree-node');
 });
 
-const dataSourceCopy = shallowRef<DT[]>(props.dataSource.slice());
+const dataSourceCopy = shallowRef<DT[]>([]);
 
 const rowKeyGenComputed = computed(() => {
     const { rowKey } = props;
@@ -803,7 +809,7 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
 
 const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
 
-const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ dataSourceCopy, rowKeyGen, emits });
+const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
 watch(
     () => props.columns,
@@ -847,7 +853,7 @@ watch(
 watch(
     () => props.dataSource,
     val => {
-        if (!val) {
+        if (!Array.isArray(val)) {
             console.warn('invalid dataSource');
             return;
         }
@@ -856,12 +862,7 @@ watch(
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
         }
-        let dataSourceTemp = val.slice(); // hallow copy
-        if (isTreeData.value) {
-            // only tree data need flat
-            dataSourceTemp = flatTreeData(dataSourceTemp);
-        }
-        dataSourceCopy.value = dataSourceTemp;
+        initDataSource(val);
         // if data length is not change, not init virtual scroll
         if (needInitVirtualScrollY) {
             // wait for table render,initVirtualScrollY has get `dom` operation.
@@ -883,12 +884,22 @@ watch(
 );
 
 dealColumns();
+initDataSource();
 
 onMounted(() => {
     initVirtualScroll();
     updateFixedShadow();
     dealDefaultSorter();
 });
+
+function initDataSource(v = props.dataSource) {
+    let dataSourceTemp = v.slice(); // shallow copy
+    if (isTreeData.value) {
+        // only tree data need flat
+        dataSourceTemp = flatTreeData(dataSourceTemp);
+    }
+    dataSourceCopy.value = dataSourceTemp;
+}
 
 function dealDefaultSorter() {
     if (!props.sortConfig.defaultSort) return;

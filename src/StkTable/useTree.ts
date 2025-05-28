@@ -1,111 +1,144 @@
 import { ShallowRef } from 'vue';
-import { PrivateRowDT, StkTableColumn, UniqKey } from './types';
+import { PrivateRowDT, TreeConfig, UniqKey } from './types';
 
 type DT = PrivateRowDT & { children?: DT[] };
 type Option<DT extends Record<string, any>> = {
+    props: any;
     rowKeyGen: (row: any) => UniqKey;
     dataSourceCopy: ShallowRef<DT[]>;
     emits: any;
 };
 
-export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
+export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
+    const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = props.treeConfig;
+
     /** click expended icon to toggle expand row */
-    function toggleTreeNode(row: DT, col: StkTableColumn<DT>) {
+    function toggleTreeNode(row: DT, col: any) {
         const expand = row ? !row.__T_EXPANDED__ : false;
-        setTreeExpand(row, { expand, col });
+        privateSetTreeExpand(row, { expand, col, isClick: true });
     }
 
     /**
      *
-     * @param rowKeyOrRow rowKey or row
-     * @param option { col?: StkTableColumn<DT> }
+     * @param row rowKey or row
+     * @param option
      * @param option.expand expand or collapse
-     * @param option.silent if set true, not emit `toggle-row-expand`, default:false
+     * @param option.silent if set true, not emit `toggle-tree-expand`, default:false
      */
-    function setTreeExpand(rowKeyOrRow: string | undefined | DT, option?: { expand?: boolean; col?: StkTableColumn<DT>; silent?: boolean }) {
-        let rowKey: UniqKey;
-        if (typeof rowKeyOrRow === 'string') {
-            rowKey = rowKeyOrRow;
-        } else {
-            rowKey = rowKeyGen(rowKeyOrRow);
-        }
+    function privateSetTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option: { expand?: boolean; col?: any; isClick: boolean }) {
+        const rowKeyOrRowArr: (UniqKey | DT)[] = Array.isArray(row) ? row : [row];
+
         const tempData = dataSourceCopy.value.slice();
-        const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
-        if (index === -1) {
-            console.warn('treeExpandRow failed.rowKey:', rowKey);
-            return;
-        }
-
-        const row = tempData[index];
-        const col = option?.col || null;
-
-        const level = row.__T_LV__ || 0;
-        const expanded = Boolean(option?.expand);
-        if (expanded) {
-            // insert new children row
-            // const children = row.children;
-            // if (children) {
-            //     children.forEach(child => {
-            //         child.__T_LV__ = level + 1;
-            //         child.__T_PARENT_K__ = rowKey;
-            //     });
-            //     tempData.splice(index + 1, 0, ...children);
-            // }
-            const children = expandNode(row, level, rowKey);
-            tempData.splice(index + 1, 0, ...children);
-        } else {
-            // delete all child nodes from i
-            let deleteCount = 0;
-            for (let i = index + 1; i < tempData.length; i++) {
-                const child = tempData[i];
-                if (child.__T_LV__ && child.__T_LV__ > level) {
-                    deleteCount++;
-                } else {
-                    break;
-                }
+        for (let i = 0; i < rowKeyOrRowArr.length; i++) {
+            const rowKeyOrRow = rowKeyOrRowArr[i];
+            let rowKey: UniqKey;
+            if (typeof rowKeyOrRow === 'string') {
+                rowKey = rowKeyOrRow;
+            } else {
+                rowKey = rowKeyGen(rowKeyOrRow);
             }
-            tempData.splice(index + 1, deleteCount);
-        }
+            const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
+            if (index === -1) {
+                console.warn('treeExpandRow failed.rowKey:', rowKey);
+                return;
+            }
 
-        if (row) {
-            row.__T_EXPANDED__ = Boolean(expanded);
+            const row = tempData[index];
+            const level = row.__T_LV__ || 0;
+            const expanded = Boolean(option?.expand);
+            if (expanded) {
+                const children = expandNode(row, level);
+                tempData.splice(index + 1, 0, ...children);
+            } else {
+                // delete all child nodes from i
+                const deleteCount = foldNode(index, tempData, level);
+                tempData.splice(index + 1, deleteCount);
+            }
+
+            setNodeExpanded(row, expanded, level);
+
+            if (option.isClick) {
+                emits('toggle-tree-expand', { expanded: Boolean(expanded), row, col: option.col });
+            }
         }
 
         dataSourceCopy.value = tempData;
+    }
 
-        if (!option?.silent) {
-            emits('toggle-tree-row-expand', { expanded: Boolean(expanded), row, col });
+    function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean }) {
+        privateSetTreeExpand(row, { ...option, isClick: false });
+    }
+
+    function setNodeExpanded(row: DT, expanded: boolean, level: number, parent?: DT) {
+        row.__T_EXPANDED__ = expanded;
+        row.__T_LV__ = level;
+        if (parent) {
+            row.__T_PARENT_K__ = rowKeyGen(parent);
         }
     }
 
+    /**
+     * 根据保存的展开状态，深度遍历，展平树形数据。
+     * @param data
+     * @returns
+     */
     function flatTreeData(data: DT[]) {
         const result: DT[] = [];
-        // 根据保存的展开状态，深度遍历，展平树形数据。
-        data.forEach(function recursion(item) {
-            result.push(item);
-            if (!item.__T_EXPANDED__) return;
-            const children = item.children;
-            if (!children) return;
-            children.forEach(recursion);
-        });
+        (function recursion(data: DT[] | undefined, level: number, parent?: DT) {
+            if (!data) return;
+            for (let i = 0; i < data.length; i++) {
+                const item = data[i];
+                result.push(item);
+                if (!item.__T_EXPANDED__) {
+                    if (defaultExpandAll) {
+                        setNodeExpanded(item, true, level, parent);
+                    } else {
+                        if (defaultExpandLevel) {
+                            if (item.__T_LV__ && item.__T_LV__ <= defaultExpandLevel) {
+                                setNodeExpanded(item, true, level, parent);
+                            }
+                        } else if (defaultExpandKeys) {
+                            if (defaultExpandKeys.includes(rowKeyGen(item))) {
+                                setNodeExpanded(item, true, level, parent);
+                            }
+                        } else {
+                            return;
+                        }
+                    }
+                }
+                recursion(item.children, level + 1, item);
+            }
+        })(data, 0);
         return result;
     }
 
-    function expandNode(row: DT, level: number, rowKey: UniqKey) {
+    function expandNode(row: DT, level: number) {
         let result: DT[] = [];
         row.children &&
             row.children.forEach(child => {
                 result.push(child);
                 const childLv = level + 1;
                 if (child.__T_EXPANDED__ && child.children) {
-                    const res = expandNode(child, childLv, rowKeyGen(child));
+                    const res = expandNode(child, childLv);
                     result = result.concat(res);
                 } else {
-                    child.__T_LV__ = childLv;
-                    child.__T_PARENT_K__ = rowKey;
+                    setNodeExpanded(child, false, childLv, row);
                 }
             });
         return result;
+    }
+
+    function foldNode(index: number, tempData: DT[], level: number) {
+        let deleteCount = 0;
+        for (let i = index + 1; i < tempData.length; i++) {
+            const child = tempData[i];
+            if (child.__T_LV__ && child.__T_LV__ > level) {
+                deleteCount++;
+            } else {
+                break;
+            }
+        }
+        return deleteCount;
     }
 
     return {
