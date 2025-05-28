@@ -139,7 +139,7 @@ export type PrivateRowDT = {
      * if tree node row expanded
      * @private
      */
-    __T_EXPANDED__?: StkTableColumn<any> | null;
+    __T_EXPANDED__?: boolean;
     /**
      * tree parent key
      * @private

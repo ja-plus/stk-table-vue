@@ -11,18 +11,18 @@ type Option<DT extends Record<string, any>> = {
 export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
     /** click expended icon to toggle expand row */
     function toggleTreeNode(row: DT, col: StkTableColumn<DT>) {
-        const isExpand = row?.__T_EXPANDED__ === col ? !row?.__T_EXPANDED__ : true;
-        setTreeExpand(row, isExpand, { col });
+        const expand = row ? !row.__T_EXPANDED__ : false;
+        setTreeExpand(row, { expand, col });
     }
 
     /**
      *
      * @param rowKeyOrRow rowKey or row
-     * @param expand expand or collapse
-     * @param data { col?: StkTableColumn<DT> }
-     * @param data.silent if set true, not emit `toggle-row-expand`, default:false
+     * @param option { col?: StkTableColumn<DT> }
+     * @param option.expand expand or collapse
+     * @param option.silent if set true, not emit `toggle-row-expand`, default:false
      */
-    function setTreeExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
+    function setTreeExpand(rowKeyOrRow: string | undefined | DT, option?: { expand?: boolean; col?: StkTableColumn<DT>; silent?: boolean }) {
         let rowKey: UniqKey;
         if (typeof rowKeyOrRow === 'string') {
             rowKey = rowKeyOrRow;
@@ -37,10 +37,11 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         }
 
         const row = tempData[index];
-        const col = data?.col || null;
+        const col = option?.col || null;
 
         const level = row.__T_LV__ || 0;
-        if (expand) {
+        const expanded = Boolean(option?.expand);
+        if (expanded) {
             // insert new children row
             const children = row.children;
             if (children) {
@@ -65,12 +66,13 @@ export function useTree({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         }
 
         if (row) {
-            row.__T_EXPANDED__ = expand ? col : null;
+            row.__T_EXPANDED__ = Boolean(expanded);
         }
 
         dataSourceCopy.value = tempData;
-        if (!data?.silent) {
-            emits('toggle-tree-row-expand', { expanded: Boolean(expand), row, col });
+
+        if (!option?.silent) {
+            emits('toggle-tree-row-expand', { expanded: Boolean(expanded), row, col });
         }
     }
 

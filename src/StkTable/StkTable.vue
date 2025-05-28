@@ -167,8 +167,7 @@
                                     'seq-column': col.type === 'seq',
                                     active: currentSelectedCellKey === cellKeyGen(row, col),
                                     expanded: col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
-                                    'tree-expanded':
-                                        col.type === 'tree-node' && (row.__T_EXPANDED__ ? colKeyGen(row.__T_EXPANDED__) === colKeyGen(col) : false),
+                                    'tree-expanded': col.type === 'tree-node' && row.__T_EXPANDED__,
                                     'drag-row-cell': col.type === 'dragRow',
                                 },
                             ]"
@@ -201,7 +200,7 @@
                                     </component>
                                     <template v-else>
                                         <TriangleIcon
-                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children && row.children.length)"
+                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
                                             @click="triangleClick($event, row, col)"
                                         />
                                         <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
