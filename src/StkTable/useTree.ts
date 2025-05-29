@@ -101,14 +101,15 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
                             if (level < defaultExpandLevel) {
                                 setNodeExpanded(item, true);
                             }
-                        } else if (defaultExpandKeys) {
+                        }
+                        if (defaultExpandKeys) {
                             if (defaultExpandKeys.includes(rowKeyGen(item))) {
                                 setNodeExpanded(item, true);
                             }
                         }
-                    }
-                    if (!item.__T_EXPANDED__) {
-                        continue;
+                        if (!item.__T_EXPANDED__) {
+                            continue;
+                        }
                     }
                 }
                 recursion(item.children, level + 1, item);
