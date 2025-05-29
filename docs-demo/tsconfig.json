@@ -24,7 +24,7 @@
         },
     },
     "include": [
-        "./demos/**/*.vue",
+        "./**/*.vue",
 
     ],
     "exclude": [
