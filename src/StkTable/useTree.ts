@@ -69,9 +69,11 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
         privateSetTreeExpand(row, { ...option, isClick: false });
     }
 
-    function setNodeExpanded(row: DT, expanded: boolean, level: number, parent?: DT) {
+    function setNodeExpanded(row: DT, expanded: boolean, level?: number, parent?: DT) {
         row.__T_EXPANDED__ = expanded;
-        row.__T_LV__ = level;
+        if (level !== void 0) {
+            row.__T_LV__ = level;
+        }
         if (parent) {
             row.__T_PARENT_K__ = rowKeyGen(parent);
         }
@@ -89,21 +91,24 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
                 result.push(item);
-                if (!item.__T_EXPANDED__) {
+                const isExpanded = Boolean(item.__T_EXPANDED__);
+                setNodeExpanded(item, isExpanded, level, parent);
+                if (!isExpanded) {
                     if (defaultExpandAll) {
-                        setNodeExpanded(item, true, level, parent);
+                        setNodeExpanded(item, true);
                     } else {
                         if (defaultExpandLevel) {
-                            if (item.__T_LV__ && item.__T_LV__ <= defaultExpandLevel) {
-                                setNodeExpanded(item, true, level, parent);
+                            if (level < defaultExpandLevel) {
+                                setNodeExpanded(item, true);
                             }
                         } else if (defaultExpandKeys) {
                             if (defaultExpandKeys.includes(rowKeyGen(item))) {
-                                setNodeExpanded(item, true, level, parent);
+                                setNodeExpanded(item, true);
                             }
-                        } else {
-                            return;
                         }
+                    }
+                    if (!item.__T_EXPANDED__) {
+                        continue;
                     }
                 }
                 recursion(item.children, level + 1, item);
