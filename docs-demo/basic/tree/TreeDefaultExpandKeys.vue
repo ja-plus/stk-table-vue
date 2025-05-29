@@ -6,8 +6,9 @@ const dataSource = getDataSource();
 <template>
     <StkTable
         style="max-height: 250px"
+        row-key="area"
         :tree-config="{
-            defaultExpandAll: true,
+            defaultExpandKeys: ['Asia', 'China', 'Zhejiang'],
         }"
         :columns="columns"
         :data-source="dataSource"
