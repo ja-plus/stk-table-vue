@@ -93,7 +93,7 @@ export default defineConfig({
                   { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
                   { text: '无头', link: '/table/basic/headless', },
                   { text: '行展开', link: '/table/basic/expand-row', },
-                  { text: '树形', link: '/table/basic/tree', },
+                  { text: '树形(✨NEW)', link: '/table/basic/tree', },
                   { text: '多级表头', link: '/table/basic/multi-header', },
                   { text: '序号列', link: '/table/basic/seq', },
                   { text: '空数据', link: '/table/basic/empty' },
