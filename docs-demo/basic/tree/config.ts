@@ -90,3 +90,23 @@ export const getDataSource = () => [
     },
     { area: 'Australia', gdp: 3000, population: 251000000 },
 ];
+
+/** 生成深度为3的，每层1000条的树 */
+export function getDataSource2(): any[] {
+    return getChildren(0) as any[];
+}
+function getChildren(level: number, prefix = '') {
+    if (level === 3) return void 0;
+    const children: any[] = [];
+    for (let i = 0; i < 100; i++) {
+        const key: string = prefix ? `${prefix}-${i}` : String(i);
+        children.push({
+            area: `Area${key}`,
+            gdp: 10000,
+            population: 50000000,
+            gdpPerCapita: 20000,
+            children: getChildren(level + 1, key),
+        });
+    }
+    return children;
+}
