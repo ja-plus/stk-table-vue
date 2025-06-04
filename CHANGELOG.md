@@ -1,3 +1,7 @@
+## 0.6.18
+* Bugfix
+  - fix: `props.rowHeight` changed, but row height not change.
+  
 ## 0.6.17
 * Bugfix
   - fix: function `insertToOrderedArray()` if `sortConfig.emptyToBottom` is true, empty value should be insert to the bottom.

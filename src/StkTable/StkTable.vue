@@ -792,6 +792,14 @@ watch(
         });
     },
 );
+
+watch(
+    () => props.rowHeight,
+    () => {
+        initVirtualScrollY();
+    },
+);
+
 watch(
     () => props.virtualX,
     () => {
