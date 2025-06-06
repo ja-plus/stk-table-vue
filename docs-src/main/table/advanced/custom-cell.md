@@ -6,7 +6,7 @@
 `customCell` 和 `customHeaderCell` 使用方式基本相同，下面以 `customCell` 为例子进行说明。
 
 ::: warning
-`customCell` 的根元素请不要设置为 `inline`/`inline-block`/`inline-flex` 等行内元素，否则在虚拟列表中可能会撑开行高。
+`customCell` 的根元素请**谨慎**设置 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在虚拟列表中可能会撑开行高。
 :::
 
 ### 通过vue SFC 使用

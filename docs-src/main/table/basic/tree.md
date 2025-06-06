@@ -12,7 +12,7 @@ const columns: StkTableColumn<any>[] = [
 
 2. 数据源加 `children` 字段。点击后会将数据中的 `children` 字段中的内容，作为子节点进行展示。
 ```ts
-export const getDataSource = () => [
+export const getDataSource = () => [ 
     {
         area: 'Asia',
         gdp: 10000,

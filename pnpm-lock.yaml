@@ -72,6 +72,9 @@ importers:
       prettier:
         specifier: ^3.2.5
         version: 3.5.3
+      stk-table-vue:
+        specifier: ^0.6.17
+        version: 0.6.17
       typescript:
         specifier: ^5.4.5
         version: 5.8.2
@@ -2385,6 +2388,9 @@ packages:
 
   std-env@3.8.1:
     resolution: {integrity: sha512-vj5lIj3Mwf9D79hBkltk5qmkFI+biIKWS2IBxEyEU3AX1tUf7AoL8nSazCOiiqQsGKIq01SClsKEzweu34uwvA==}
+
+  stk-table-vue@0.6.17:
+    resolution: {integrity: sha512-iFLmwSQdaEbJML5xIKOgcjiaLDL2I6xZ653uYMAlsM00CHHoGF9V0zv/08w2ZFHMOuhPCsddKG2hvfHoPu0IaQ==}
 
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
@@ -5214,6 +5220,10 @@ snapshots:
   stackback@0.0.2: {}
 
   std-env@3.8.1: {}
+
+  stk-table-vue@0.6.17:
+    dependencies:
+      d3-interpolate: 3.0.1
 
   string-argv@0.3.2: {}
 

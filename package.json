@@ -60,6 +60,7 @@
     "postcss-discard-comments": "^6.0.2",
     "postcss-preset-env": "^9.5.11",
     "prettier": "^3.2.5",
+    "stk-table-vue": "^0.6.17",
     "typescript": "^5.4.5",
     "vite": "^5.4.10",
     "vite-plugin-dts": "3.9.1",

@@ -149,6 +149,7 @@ export default defineConfig({
         items: [
           { text: '大量数据', link: '/huge-data' },
           { text: '虚拟单列表', link: '/virtual-list' },
+          { text: '矩阵', link: '/matrix' },
         ]
       }
     },
