@@ -7,6 +7,7 @@
 ::: tip 
 * 高亮行、单元格，默认使用`animation`(el.animate() 方法触发动画)方式。如要自定义动画，可以传入`option`参数。`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API),兼容性 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
 * 高亮颜色不随主题实时变化。
+* 高亮不生效？确认是否指定了`props.rowKey`。
 :::
 
 

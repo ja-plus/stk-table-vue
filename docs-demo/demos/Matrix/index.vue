@@ -1,21 +1,28 @@
 <template>
-    <StkTable
-        :row-height="60"
-        cell-hover
-        cell-active
-        :row-hover="false"
-        :row-active="false"
-        :columns="columns"
-        :data-source="tableData"
-    />
+    <div>
+        <button class="btn" @click="updateCell">更新第一个单元格</button>
+        <StkTable
+            ref="stkTableRef"
+            row-key="rowTitle"
+            :row-height="60"
+            cell-hover
+            cell-active
+            :row-hover="false"
+            :row-active="false"
+            :columns="columns"
+            :data-source="tableData"
+        />
+    </div>
 </template>
 
 <script setup lang="ts">
-import StkTable from '../../StkTable.vue';
 import type { StkTableColumn } from '@/StkTable/index'; // 请替换为实际的导入路径
+import { ref, useTemplateRef } from 'vue';
+import StkTable from '../../StkTable.vue';
 import MatrixCell from './MatrixCell.vue';
 import { CellDataType, RowDataType } from './type';
-import { ref } from 'vue';
+
+const stkTableRef = useTemplateRef('stkTableRef');
 
 const columns: StkTableColumn<any>[] = [
     { title: '', dataIndex: 'rowTitle', className: 'col-title', width: 100 },
@@ -32,17 +39,14 @@ initTableData();
 
 function initTableData() {
     tableData.value = colTitle.map(title => {
-        // 初始化 row 对象，包含 rowTitle 字段
-        let row: RowDataType = {
+        let row: any = {
             rowTitle: title,
         };
-        // 为 columns 里除 rowTitle 外的其他属性设置默认的 CellDataType 值
         columns.forEach((col, colIndex) => {
-            if (colIndex > 0) {
-                row[col.dataIndex] = createCellData();
-            }
+            if (colIndex === 0) return;
+            row[col.dataIndex] = createCellData();
         });
-        return row;
+        return row as RowDataType;
     });
 }
 
@@ -55,6 +59,11 @@ function createCellData(): CellDataType {
         // 随机正负数
         bp: (Math.random() * 4 - 2).toFixed(2),
     };
+}
+
+function updateCell() {
+    tableData.value[0].m1 = createCellData();
+    stkTableRef.value?.setHighlightDimCell('AAA+', 'm1');
 }
 </script>
 
