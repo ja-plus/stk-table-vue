@@ -45,7 +45,10 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
 
             const row = tempData[index];
             const level = row.__T_LV__ || 0;
-            const expanded = Boolean(option?.expand);
+            let expanded = option?.expand;
+            if (expanded === void 0) {
+                expanded = !row.__T_EXPANDED__;
+            }
             if (expanded) {
                 const children = expandNode(row, level);
                 tempData.splice(index + 1, 0, ...children);

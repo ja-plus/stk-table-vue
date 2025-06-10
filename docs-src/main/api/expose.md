@@ -171,3 +171,13 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
 
 ### clearAllAutoHeight
 清除所有 auto-row-height 保存的高度
+
+### setTreeExpand
+设置树状结构展开行
+```ts
+/**
+ * @param row rowKey or row or row
+ * @param option.expand 不传则根据当前状态取反
+ */
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+```

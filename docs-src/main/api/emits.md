@@ -125,9 +125,15 @@
     /**
      * 展开行触发
      *
-     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT> })```
+     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT>|null })```
      */
     (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
+    /**
+     * 点击展开树行触发
+     *
+     * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT>|null })```
+     */
+    (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
     /**
      * v-model:columns col resize 时更新宽度
      */
