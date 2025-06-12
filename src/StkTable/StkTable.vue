@@ -450,7 +450,6 @@ const props = withDefaults(
         columns: () => [],
         dataSource: () => [],
         rowKey: '',
-        colKey: 'dataIndex',
         emptyCellText: '--',
         noDataFull: false,
         showNoData: true,
@@ -719,7 +718,9 @@ const rowKeyGenComputed = computed(() => {
 
 const colKeyGen = computed<(col: StkTableColumn<DT>) => string>(() => {
     const { colKey } = props;
-    if (typeof colKey === 'function') {
+    if (colKey === void 0) {
+        return col => col.key || col.dataIndex;
+    } else if (typeof colKey === 'function') {
         return col => (colKey as (col: StkTableColumn<DT>) => string)(col);
     } else {
         return col => (col as any)[colKey];

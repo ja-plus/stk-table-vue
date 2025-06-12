@@ -154,10 +154,8 @@ export type PrivateRowDT = {
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 
-export type SortState<T> = {
-    dataIndex: keyof T;
+export type SortState<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'dataIndex' | 'sortField' | 'sortType'> & {
     order: Order;
-    sortType?: 'number' | 'string';
 };
 
 export type UniqKey = string | number;

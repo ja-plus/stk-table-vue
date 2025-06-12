@@ -1,3 +1,10 @@
+## 0.7.0
+* Feature:
+  - add: TreeTable
+* Change:
+  - type `SortState` add `sortField` property, and `insertToOrderedArray` function priority use `sortField` property.
+  - colKey priority use `StkTableColumn['key']` property.
+
 ## 0.6.18
 * Bugfix
   - fix: `props.rowHeight` changed, but row height not change.

@@ -22,10 +22,11 @@ export function isEmptyValue(val: any, isNumber?: boolean) {
  * @return targetArray 的浅拷贝
  */
 export function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig: SortConfig<T> = {}) {
-    const { dataIndex, order } = sortState;
+    const { dataIndex, sortField, order } = sortState;
     sortConfig = { emptyToBottom: false, ...sortConfig };
     let { sortType } = sortState;
-    if (!sortType) sortType = typeof newItem[dataIndex] as 'number' | 'string';
+    const field = sortField || dataIndex;
+    if (!sortType) sortType = typeof newItem[field] as 'number' | 'string';
     const data = targetArray.slice();
 
     if (!order || !data.length) {
@@ -34,7 +35,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
         return data;
     }
 
-    const targetVal: any = newItem[dataIndex];
+    const targetVal: any = newItem[field];
     if (sortConfig.emptyToBottom && isEmptyValue(targetVal)) {
         // 空值排在最下方
         data.push(newItem);
@@ -42,7 +43,7 @@ export function insertToOrderedArray<T extends object>(sortState: SortState<T>, 
         const isNumber = sortType === 'number';
         // 二分插入
         const sIndex = binarySearch(data, midIndex => {
-            const midVal: any = data[midIndex][dataIndex];
+            const midVal: any = data[midIndex][field];
             const compareRes = strCompare(midVal, targetVal, isNumber, sortConfig.stringLocaleCompare);
             return order === 'asc' ? compareRes : -compareRes;
         });

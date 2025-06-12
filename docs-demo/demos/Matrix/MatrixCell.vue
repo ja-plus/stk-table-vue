@@ -34,6 +34,7 @@ const data = toRef(props, 'cellValue');
     flex-direction: column;
     justify-content: center;
     padding: 0 8px;
+    cursor: default;
     // align-items: center;
     background-image: linear-gradient(
         90deg,

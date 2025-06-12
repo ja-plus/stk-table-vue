@@ -1,6 +1,10 @@
 export type RowDataType = {
     rowTitle: string;
-} & Partial<Record<string, CellDataType>>;
+    m1: CellDataType;
+    m3: CellDataType;
+    m6: CellDataType;
+    y1: CellDataType;
+};
 
 export type CellDataType = {
     code: string;
