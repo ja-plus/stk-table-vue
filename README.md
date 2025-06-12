@@ -208,6 +208,3 @@ const dataSource = [
 
 ## Other
 * `$*$` 兼容注释
-
-### Planed removal APi
-* `setHighlightDimRow` 中的 `method="js"`。观察animation Api 是否足够满足使用场景。若足够满足计划在后期移除，并且可以移除 `d3-interpolate` 依赖。

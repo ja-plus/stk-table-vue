@@ -1,6 +1,6 @@
-import { interpolateRgb } from 'd3-interpolate';
+// import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed } from 'vue';
-import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_FREQ, HIGHLIGHT_ROW_CLASS } from './const';
+import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_ROW_CLASS } from './const';
 import { HighlightConfig, UniqKey } from './types';
 import { HighlightDimCellOption, HighlightDimRowOption } from './types/highlightDimOptions';
 
@@ -41,8 +41,8 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     /** 高亮开始 */
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
     /** 高亮结束 */
-    const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
-    const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
+    // const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
+    // const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
 
     /**
      * 存放高亮行的状态-使用js计算颜色
@@ -51,7 +51,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      */
     const highlightDimRowsJs = new Map<UniqKey, number>();
     /** 是否正在计算高亮行的循环-使用js计算颜色 */
-    let calcHighlightDimLoopJs = false;
+    const calcHighlightDimLoopJs = false;
     /**
      * 存放高亮行的状态-使用animation api实现
      * @key 行唯一键
@@ -112,37 +112,37 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     /**
      * js计算高亮渐暗颜色的循环
      */
-    function calcRowHighlightLoopJs() {
-        if (calcHighlightDimLoopJs) return;
-        calcHighlightDimLoopJs = true;
-        // js计算gradient
-        const recursion = () => {
-            window.setTimeout(() => {
-                const nowTs = Date.now();
-                highlightDimRowsJs.forEach((highlightStart, rowKeyValue) => {
-                    /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-                    const progress = (nowTs - highlightStart) / highlightDuration;
-                    let bgc = '';
-                    if (0 <= progress && progress <= 1) {
-                        bgc = highlightInter.value(progress);
-                    } else {
-                        highlightDimRowsJs.delete(rowKeyValue);
-                    }
-                    updateRowBgcJs(rowKeyValue, bgc);
-                });
+    // function calcRowHighlightLoopJs() {
+    //     if (calcHighlightDimLoopJs) return;
+    //     calcHighlightDimLoopJs = true;
+    //     // js计算gradient
+    //     const recursion = () => {
+    //         window.setTimeout(() => {
+    //             const nowTs = Date.now();
+    //             highlightDimRowsJs.forEach((highlightStart, rowKeyValue) => {
+    //                 /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
+    //                 const progress = (nowTs - highlightStart) / highlightDuration;
+    //                 let bgc = '';
+    //                 if (0 <= progress && progress <= 1) {
+    //                     bgc = highlightInter.value(progress);
+    //                 } else {
+    //                     highlightDimRowsJs.delete(rowKeyValue);
+    //                 }
+    //                 updateRowBgcJs(rowKeyValue, bgc);
+    //             });
 
-                if (highlightDimRowsJs.size > 0) {
-                    // 还有高亮的行,则下一次循环
-                    recursion();
-                } else {
-                    // 没有则停止循环
-                    calcHighlightDimLoopJs = false;
-                    highlightDimRowsJs.clear(); // TODO: 是否需要 清除
-                }
-            }, highlightFrequency || HIGHLIGHT_FREQ);
-        };
-        recursion();
-    }
+    //             if (highlightDimRowsJs.size > 0) {
+    //                 // 还有高亮的行,则下一次循环
+    //                 recursion();
+    //             } else {
+    //                 // 没有则停止循环
+    //                 calcHighlightDimLoopJs = false;
+    //                 highlightDimRowsJs.clear(); // TODO: 是否需要 清除
+    //             }
+    //         }, highlightFrequency || HIGHLIGHT_FREQ);
+    //     };
+    //     recursion();
+    // }
 
     /**
      * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
@@ -208,16 +208,17 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     rowEl.animate(keyframe, duration);
                 }
             }
-        } else if (method === 'js') {
-            // -------- 用js计算颜色渐变的高亮方案
-            const nowTs = Date.now();
-            for (let i = 0; i < rowKeyValues.length; i++) {
-                const rowKeyValue = rowKeyValues[i];
-                highlightDimRowsJs.set(rowKeyValue, nowTs);
-                updateRowBgcJs(rowKeyValue, highlightFrom.value);
-            }
-            calcRowHighlightLoopJs();
         }
+        //  else if (method === 'js') {
+        //     // -------- 用js计算颜色渐变的高亮方案
+        //     const nowTs = Date.now();
+        //     for (let i = 0; i < rowKeyValues.length; i++) {
+        //         const rowKeyValue = rowKeyValues[i];
+        //         highlightDimRowsJs.set(rowKeyValue, nowTs);
+        //         updateRowBgcJs(rowKeyValue, highlightFrom.value);
+        //     }
+        //     calcRowHighlightLoopJs();
+        // }
     }
 
     /**
@@ -304,11 +305,11 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     }
 
     /** 更新行状态 */
-    function updateRowBgcJs(rowKeyValue: UniqKey, color: string) {
-        const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
-        if (!rowEl) return;
-        rowEl.style.backgroundColor = color;
-    }
+    // function updateRowBgcJs(rowKeyValue: UniqKey, color: string) {
+    //     const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
+    //     if (!rowEl) return;
+    //     rowEl.style.backgroundColor = color;
+    // }
 
     return {
         highlightSteps,

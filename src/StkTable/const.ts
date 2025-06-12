@@ -14,7 +14,7 @@ export const HIGHLIGHT_COLOR = {
 export const HIGHLIGHT_DURATION = 2000;
 
 /** highlight change frequency 1000/30 -> 30FPS */
-export const HIGHLIGHT_FREQ = 1000 / 30;
+// export const HIGHLIGHT_FREQ = 1000 / 30;
 
 export const HIGHLIGHT_ROW_CLASS = 'highlight-row';
 export const HIGHLIGHT_CELL_CLASS = 'highlight-cell';

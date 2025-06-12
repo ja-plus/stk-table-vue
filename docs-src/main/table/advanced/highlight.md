@@ -86,14 +86,19 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
 ```
 <demo vue="advanced/highlight/HighlightCss.vue"></demo>
 
-## 通过js自定义高亮动画
-```ts
+## ~~通过js自定义高亮动画~~ (`v0.7.0`已废弃)
+<details>
+<summary>
+    点击查看
+</summary>
+<pre>
 stkTableRef.value?.setHighlightDimRow(['id1'], { 
     method: 'js',
     duration: 2000
 });
-```
-不推荐使用，因为需要手动计算颜色，且性能较差。依赖 `d3-interpolate`。在后续版本中，如果 `animation` 方式能满足所有需求，会将此api移除。
+</pre>
+不推荐使用，因为需要手动计算颜色，且性能较差。依赖 `d3-interpolate`。
+</details>
 
 
 ## API
@@ -103,7 +108,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
 /**
  * 高亮一行
  * @param rowKeyValues 行唯一键的数组
- * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
+ * @param option.method css-使用css渲染，animation-使用animation api。默认animation
  * @param option.className 自定义css动画的class。
  * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
@@ -146,12 +151,8 @@ type HighlightDimCssOption = HighlightDimBaseOption & {
     /** control delay time to remove className */
     duration?: number;
 };
-type HighlightDimJsOption = HighlightDimBaseOption & {
-    /** use d3-interpolate js to change background color */
-    method: 'js';
-};
 
 export type HighlightDimCellOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption;
-export type HighlightDimRowOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption | HighlightDimJsOption;
+export type HighlightDimRowOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption;
 
 ```

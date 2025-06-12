@@ -12,7 +12,7 @@ export default defineConfig({
             formats: ['es'],
         },
         rollupOptions: {
-            external: ['vue', 'd3-interpolate'],
+            external: ['vue'],
         },
     },
     resolve: {
