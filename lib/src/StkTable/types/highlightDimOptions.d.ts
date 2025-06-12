@@ -16,10 +16,6 @@ type HighlightDimCssOption = HighlightDimBaseOption & {
     /** control delay time to remove className */
     duration?: number;
 };
-type HighlightDimJsOption = HighlightDimBaseOption & {
-    /** use d3-interpolate js to change background color */
-    method: 'js';
-};
 export type HighlightDimCellOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption;
-export type HighlightDimRowOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption | HighlightDimJsOption;
+export type HighlightDimRowOption = HighlightDimBaseOption | HighlightDimAnimationOption | HighlightDimCssOption;
 export {};

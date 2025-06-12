@@ -11,7 +11,7 @@ type Params = {
  * 高亮单元格，行
  */
 export declare function useHighlight({ props, stkTableId, tableContainerRef }: Params): {
-    highlightSteps: number | null;
+    highlightSteps: import('vue').ComputedRef<number | null>;
     setHighlightDimRow: (rowKeyValues: UniqKey[], option?: HighlightDimRowOption) => void;
     setHighlightDimCell: (rowKeyValue: UniqKey, colKeyValue: string, option?: HighlightDimCellOption) => void;
 };

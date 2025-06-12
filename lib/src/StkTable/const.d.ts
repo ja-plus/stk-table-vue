@@ -15,7 +15,6 @@ export declare const HIGHLIGHT_COLOR: {
 };
 export declare const HIGHLIGHT_DURATION = 2000;
 /** highlight change frequency 1000/30 -> 30FPS */
-export declare const HIGHLIGHT_FREQ: number;
 export declare const HIGHLIGHT_ROW_CLASS = "highlight-row";
 export declare const HIGHLIGHT_CELL_CLASS = "highlight-cell";
 /** legacy sticky compatible mode  */

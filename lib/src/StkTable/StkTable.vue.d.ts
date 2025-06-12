@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, UniqKeyProp, ColResizableConfig } from './types/index';
+import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKeyProp } from './types/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -52,17 +52,6 @@ declare function getSortColumns(): {
     key: string | number | symbol | undefined;
     order: "desc" | "asc";
 }[];
-/**
- *
- * @param rowKeyOrRow rowKey or row
- * @param expand expand or collapse
- * @param data { col?: StkTableColumn<DT> }
- * @param data.silent if set true, not emit `toggle-row-expand`, default:false
- */
-declare function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: {
-    col?: StkTableColumn<DT>;
-    silent?: boolean;
-}): void;
 declare function __VLS_template(): {
     tableHeader?(_: {
         col: StkTableColumn<any>;
@@ -142,7 +131,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: HeaderDragConfig;
+    headerDrag?: boolean | HeaderDragConfig;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -187,6 +176,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     expandConfig?: ExpandConfig;
     /** 行拖动配置 */
     dragRowConfig?: DragRowConfig;
+    /** 树形配置 */
+    treeConfig?: TreeConfig;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -224,7 +215,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     columns: () => never[];
     dataSource: () => never[];
     rowKey: string;
-    colKey: string;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -252,6 +242,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     seqConfig: () => {};
     expandConfig: () => {};
     dragRowConfig: () => {};
+    treeConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
     scrollRowByRow: boolean;
@@ -352,7 +343,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: Set expanded rows
      * @see {@link setRowExpand}
      */
-    setRowExpand: typeof setRowExpand;
+    setRowExpand: (rowKeyOrRow: string | undefined | PrivateRowDT, expand?: boolean, data?: {
+        col?: StkTableColumn<PrivateRowDT>;
+        silent?: boolean;
+    }) => void;
     /**
      * 不定行高时，如果行高有变化，则调用此方法更新行高。
      *
@@ -367,6 +361,19 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * @see {@link clearAllAutoHeight}
      */
     clearAllAutoHeight: () => void;
+    /**
+     * 设置树节点展开状态
+     *
+     * en: Set tree node expand state
+     * @see {@link setTreeExpand}
+     */
+    setTreeExpand: (row: (import('./types/index').UniqKey | (PrivateRowDT & {
+        children?: (PrivateRowDT & /*elided*/ any)[];
+    })) | (import('./types/index').UniqKey | (PrivateRowDT & {
+        children?: (PrivateRowDT & /*elided*/ any)[];
+    }))[], option?: {
+        expand? /** 是否高亮选中的行 */: boolean;
+    }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any, data: {
@@ -408,6 +415,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
     "col-resize": (col: StkTableColumn<any>) => void;
     "toggle-row-expand": (data: {
+        expanded: boolean;
+        row: DT;
+        col: StkTableColumn<DT> | null;
+    }) => void;
+    "toggle-tree-expand": (data: {
         expanded: boolean;
         row: DT;
         col: StkTableColumn<DT> | null;
@@ -481,7 +493,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: HeaderDragConfig;
+    headerDrag?: boolean | HeaderDragConfig;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -526,6 +538,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     expandConfig?: ExpandConfig;
     /** 行拖动配置 */
     dragRowConfig?: DragRowConfig;
+    /** 树形配置 */
+    treeConfig?: TreeConfig;
     /**
      * 固定头，固定列实现方式。(非响应式)
      *
@@ -563,7 +577,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     columns: () => never[];
     dataSource: () => never[];
     rowKey: string;
-    colKey: string;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -591,6 +604,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     seqConfig: () => {};
     expandConfig: () => {};
     dragRowConfig: () => {};
+    treeConfig: () => {};
     cellFixedMode: string;
     smoothScroll: boolean;
     scrollRowByRow: boolean;
@@ -601,10 +615,20 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => any) | undefined;
     "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
     "onCol-resize"?: ((col: StkTableColumn<any>) => any) | undefined;
+    "onToggle-row-expand"?: ((data: {
+        expanded: boolean;
+        row: DT;
+        col: StkTableColumn<DT> | null;
+    }) => any) | undefined;
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
     "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
+    "onToggle-tree-expand"?: ((data: {
+        expanded: boolean;
+        row: DT;
+        col: StkTableColumn<DT> | null;
+    }) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any, data: {
         rowIndex: number;
@@ -635,11 +659,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
-    "onToggle-row-expand"?: ((data: {
-        expanded: boolean;
-        row: DT;
-        col: StkTableColumn<DT> | null;
-    }) => any) | undefined;
 }>, {
     width: string;
     minWidth: string;
@@ -652,7 +671,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | null;
-    colKey: UniqKeyProp;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
@@ -675,7 +693,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellHover: boolean;
     cellActive: boolean;
     selectedCellRevokable: boolean;
-    headerDrag: HeaderDragConfig;
+    headerDrag: boolean | HeaderDragConfig;
     rowClassName: (row: DT, i: number) => string;
     colResizable: boolean | ColResizableConfig<DT>;
     colMinWidth: number;
@@ -687,6 +705,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     seqConfig: SeqConfig;
     expandConfig: ExpandConfig;
     dragRowConfig: DragRowConfig;
+    treeConfig: TreeConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
     scrollRowByRow: boolean;

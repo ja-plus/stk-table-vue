@@ -46,8 +46,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - seq 序号列
      * - expand 展开列
      * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
+     * - tree-node 树节点列，这一列前面有展开收起箭头
      */
-    type?: 'seq' | 'expand' | 'dragRow';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -122,18 +123,31 @@ export type PrivateRowDT = {
      * If user define the `__ROW_KEY__` in table data, this value will be used as the row key
      * @private
      */
-    __ROW_KEY__: string;
+    __ROW_KEY__?: string;
     /**
      * if row expanded
      * @private
      */
     __EXPANDED__?: StkTableColumn<any> | null;
+    /**
+     * if tree node row expanded
+     * @private
+     */
+    __T_EXPANDED__?: boolean;
+    /**
+     * tree parent key
+     * @private
+     */
+    __T_PARENT_K__?: UniqKey;
+    /**
+     * tree level
+     * @private
+     */
+    __T_LV__?: number;
 };
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
-export type SortState<T> = {
-    dataIndex: keyof T;
+export type SortState<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'dataIndex' | 'sortField' | 'sortType'> & {
     order: Order;
-    sortType?: 'number' | 'string';
 };
 export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
@@ -197,8 +211,14 @@ export type ExpandedRow = PrivateRowDT & {
 export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
 };
+/** 树形配置 */
+export type TreeConfig = {
+    defaultExpandAll?: boolean;
+    defaultExpandKeys?: UniqKey[];
+    defaultExpandLevel?: number;
+};
 /** header drag config */
-export type HeaderDragConfig<DT extends Record<string, any> = any> = boolean | {
+export type HeaderDragConfig<DT extends Record<string, any> = any> = {
     /**
      * 列交换模式
      * - none - 不做任何事

@@ -30,6 +30,8 @@
   --sort-arrow-hover-color:#8f90b5;
   --sort-arrow-active-color:#1b63d9;
   --sort-arrow-active-sub-color:#cbcbe1;
+  --fold-icon-color:#757699;
+  --fold-icon-hover-color:#8f90b5;
   --col-resize-indicator-color:#87879c;
   --fixed-col-shadow-color-from:rgba(0, 0, 0, 0.1);
   --fixed-col-shadow-color-to:rgba(0, 0, 0, 0);
@@ -56,6 +58,8 @@
   --sort-arrow-hover-color:#727782;
   --sort-arrow-active-color:#d0d1d2;
   --sort-arrow-active-sub-color:#5d6064;
+  --fold-icon-color:#5d6064;
+  --fold-icon-hover-color:#727782;
   --col-resize-indicator-color:#5d6064;
   --fixed-col-shadow-color-from:rgba(135, 135, 156, 0.1);
   --fixed-col-shadow-color-to:rgba(135, 135, 156, 0);
@@ -267,26 +271,6 @@
 .stk-table .seq-column{
   text-align:center;
 }
-.stk-table .expand-cell{
-  cursor:pointer;
-}
-.stk-table .expand-cell .expanded-cell-wrapper::before{
-  content:'';
-  display:inline-block;
-  margin:0 2px;
-  width:0;
-  height:0;
-  border-left:5px solid #757699;
-  border-top:4px solid transparent;
-  border-bottom:4px solid transparent;
-  transition:transform 0.2s ease;
-}
-.stk-table .expand-cell .expanded-cell-wrapper > span{
-  margin-left:var(--cell-padding-x);
-}
-.stk-table .expand-cell.expanded .table-cell-wrapper::before{
-  transform:rotate(90deg);
-}
 .stk-table .drag-row-cell .table-cell-wrapper{
   display:inline-flex;
   align-items:center;
@@ -392,4 +376,29 @@
 }
 .stk-table .stk-table-no-data.no-data-full{
   flex:1;
+}
+.stk-table .expanded > .table-cell-wrapper .stk-fold-icon::before,
+.stk-table .tree-expanded > .table-cell-wrapper .stk-fold-icon::before{
+  transform:rotate(90deg);
+}
+.stk-table .stk-fold-icon{
+  display:inline-flex;
+  width:16px;
+  height:16px;
+  cursor:pointer;
+  align-items:center;
+}
+.stk-table .stk-fold-icon::before{
+  content:'';
+  display:block;
+  margin:0 2px;
+  width:0;
+  height:0;
+  border-left:5px solid var(--fold-icon-color);
+  border-top:4px solid transparent;
+  border-bottom:4px solid transparent;
+  transition:transform 0.2s ease;
+}
+.stk-table .stk-fold-icon:hover::before{
+  border-left:5px solid var(--fold-icon-hover-color);
 }
