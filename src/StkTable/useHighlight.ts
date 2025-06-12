@@ -33,11 +33,11 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         dark: HIGHLIGHT_COLOR.dark,
     };
     /** 持续时间 */
-    const highlightDuration = config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION;
+    const highlightDuration = computed(() => (config.duration ? config.duration * 1000 : HIGHLIGHT_DURATION));
     /** 高亮频率*/
-    const highlightFrequency = config.fps && config.fps > 0 ? 1000 / config.fps : null;
+    const highlightFrequency = computed(() => (config.fps && config.fps > 0 ? 1000 / config.fps : null));
     /** 高亮帧数（非帧率），用于 timing-function: steps() */
-    const highlightSteps = highlightFrequency ? Math.round(highlightDuration / highlightFrequency) : null;
+    const highlightSteps = computed(() => (highlightFrequency.value ? Math.round(highlightDuration.value / highlightFrequency.value) : null));
     /** 高亮开始 */
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
     /** 高亮结束 */
@@ -49,9 +49,10 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @key 行唯一键
      * @value 记录高亮开始时间
      */
-    const highlightDimRowsJs = new Map<UniqKey, number>();
+    // const highlightDimRowsJs = new Map<UniqKey, number>();
     /** 是否正在计算高亮行的循环-使用js计算颜色 */
-    const calcHighlightDimLoopJs = false;
+    // const calcHighlightDimLoopJs = false;
+
     /**
      * 存放高亮行的状态-使用animation api实现
      * @key 行唯一键
@@ -67,13 +68,13 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const highlightDimCellsTimeout = new Map();
 
     /** 高亮函数的默认参数 */
-    const defaultHighlightDimOption = (() => {
+    const defaultHighlightDimOption = computed(() => {
         const keyframe: PropertyIndexedKeyframes = { backgroundColor: [highlightFrom.value, ''] };
-        if (highlightSteps) {
-            keyframe.easing = `steps(${highlightSteps})`;
+        if (highlightSteps.value) {
+            keyframe.easing = `steps(${highlightSteps.value})`;
         }
-        return { duration: highlightDuration, keyframe };
-    })();
+        return { duration: highlightDuration.value, keyframe };
+    });
 
     /**
      * 计算高亮渐暗颜色的循环
@@ -158,7 +159,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
             method: 'animation',
-            ...defaultHighlightDimOption,
+            ...defaultHighlightDimOption.value,
             ...option,
         };
         if (!cellEl) return;
@@ -182,7 +183,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         const { className, method, keyframe, duration } = {
             className: HIGHLIGHT_ROW_CLASS,
             method: 'animation',
-            ...defaultHighlightDimOption,
+            ...defaultHighlightDimOption.value,
             ...option,
         };
 

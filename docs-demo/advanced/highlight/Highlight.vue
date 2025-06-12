@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue';
+import { HighlightConfig } from '@/StkTable/types';
+import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef } from 'vue';
+import RangeInput from '../../components/RangeInput.vue';
 import StkTable from '../../StkTable.vue';
 import { columns, dataSource as dataSourceRaw } from './const';
 
 const stkTableRef = useTemplateRef('stkTableRef');
 const dataSource = shallowRef([...dataSourceRaw]);
+
+const highlightConfig = ref<HighlightConfig>({
+    duration: 2,
+    fps: 0,
+});
 
 let intervals: number[] = [];
 onMounted(() => {
@@ -41,17 +48,28 @@ function addData() {
 }
 </script>
 <template>
-    <button class="btn" @click="addData">添加数据</button>
+    <button class="btn" style="margin-right: 20px" @click="addData">添加数据</button>
+    <RangeInput
+        v-model="highlightConfig.duration"
+        min="0.1"
+        max="5"
+        step="0.1"
+        label="高亮持续时间"
+        suffix="s"
+    ></RangeInput>
+    <RangeInput
+        v-model="highlightConfig.fps"
+        min="0"
+        max="30"
+        label="帧率"
+        suffix="fps"
+    ></RangeInput>
     <StkTable
         ref="stkTableRef"
         row-key="id"
         style="height: 200px"
+        :highlight-config="highlightConfig"
         :columns="columns"
         :data-source="dataSource"
     ></StkTable>
 </template>
-<style scoped>
-.btn:hover {
-    color: #1890ff;
-}
-</style>

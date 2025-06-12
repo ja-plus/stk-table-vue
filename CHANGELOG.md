@@ -1,9 +1,12 @@
 ## 0.7.0
 * Feature:
   - add: TreeTable
+  - `props.highlightConfig` support reactive
 * Change:
   - type `SortState` add `sortField` property, and `insertToOrderedArray` function priority use `sortField` property.
   - colKey priority use `StkTableColumn['key']` property.
+* Deprecate:
+  - `setHighlightDimRow` not support method `js`
 
 ## 0.6.18
 * Bugfix

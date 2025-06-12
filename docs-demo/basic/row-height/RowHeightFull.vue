@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import RangeInput from '../../components/RangeInput.vue';
 
 const height = ref(300);
 
@@ -19,10 +20,7 @@ const dataSource = ref([
 </script>
 <template>
     <div class="container" :style="{ height: height + 'px' }">
-        <div>
-            <input v-model="height" type="range" min="0" max="600" />
-            <span>height: {{ height }}px</span>
-        </div>
+        <RangeInput v-model="height" min="0" max="600" label="height" suffix="px"></RangeInput>
         <StkTable header-row-height="50" :columns="columns" :data-source="dataSource"></StkTable>
     </div>
 </template>

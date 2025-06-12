@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import { useData } from 'vitepress';
+import RangeInput from '../../components/RangeInput.vue';
 const { isDark } = useData();
 
 const height = ref(150);
@@ -24,17 +25,9 @@ const dataSource = ref(
         };
     }),
 );
-
-function handleHeightInput(e) {
-    height.value = e.target.value;
-}
 </script>
 <template>
-    <div>
-        <input :value="height" type="range" min="100" max="800" @input="handleHeightInput" />{{
-            height
-        }}px
-    </div>
+    <RangeInput v-model="height" min="100" max="800" label="height" suffix="px"></RangeInput>
     <article :class="{ dark: isDark }" :style="{ height: height + 'px' }">
         <header>Flex Content</header>
         <StkTable :columns="columns" :data-source="dataSource"></StkTable>

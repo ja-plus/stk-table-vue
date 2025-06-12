@@ -10,6 +10,7 @@ import { columns as columnsRaw } from './columns';
 import { emitter } from './event';
 import { mockData } from './mockData';
 import { DataType } from './types';
+import RangeInput from '../../components/RangeInput.vue';
 
 const { Random } = mockjs;
 emitter.on('toggle-expand', handleToggleExpand);
@@ -203,9 +204,13 @@ function handleDataSizeChange(e: Event) {
         模拟更新数据({{ timeout ? '停止' : '开始' }})
     </button>
     <label style="margin-left: 16px">
-        <span>更新频率:</span>
-        <input v-model="updateFreq" type="range" min="16" max="500" />
-        <span>{{ updateFreq }}ms</span>
+        <RangeInput
+            v-model="updateFreq"
+            min="16"
+            max="500"
+            label="更新频率"
+            suffix="ms"
+        ></RangeInput>
     </label>
     <CheckItem v-model="rowByRow" text="整数行滚动" />
     <CheckItem v-model="translateZ" text="tr分层" />

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import RangeInput from '../../components/RangeInput.vue';
 
 const width = ref(400);
 const height = ref(150);
@@ -23,32 +24,27 @@ const dataSource = ref(
         };
     }),
 );
-
-function handleWidthInput(e) {
-    width.value = e.target.value;
-}
-function handleHeightInput(e) {
-    height.value = e.target.value;
-}
 </script>
 <template>
     <div>
-        width:<input :value="width" type="range" min="100" max="800" @input="handleWidthInput" />{{
-            width
-        }}px
+        <div>
+            <RangeInput v-model="width" min="100" max="800" label="width" suffix="px"></RangeInput>
+        </div>
+        <div>
+            <RangeInput
+                v-model="height"
+                min="100"
+                max="800"
+                label="height"
+                suffix="px"
+            ></RangeInput>
+        </div>
+        <div style="overflow: auto">
+            <StkTable
+                :style="{ width: width + 'px', height: height + 'px' }"
+                :columns="columns"
+                :data-source="dataSource"
+            ></StkTable>
+        </div>
     </div>
-    <div>
-        height:<input
-            :value="height"
-            type="range"
-            min="100"
-            max="800"
-            @input="handleHeightInput"
-        />{{ height }}px
-    </div>
-    <StkTable
-        :style="{ width: width + 'px', height: height + 'px' }"
-        :columns="columns"
-        :data-source="dataSource"
-    ></StkTable>
 </template>
