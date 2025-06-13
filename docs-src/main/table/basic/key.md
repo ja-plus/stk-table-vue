@@ -15,16 +15,14 @@
 ```
 
 ## 列唯一键 colKey
-默认情况下列唯一键为 ``StkTableColumn['dataIndex']``，当 `dataIndex` 相同的时候，需要指定 `colKey`。
+默认情况下，优先取 `StkTableColumn['key']`作为列唯一键，如果key为空，则取 `StkTableColumn['dataIndex']`作为列唯一键。
 
-如果你想要配置相同`dataIndex` 的多列，这时候就需要使用 `colKey` 来指定列的唯一键，否则在虚拟列表模式下会出现渲染问题。
-
-列配置里有可选参数，`StkTableColumns['key']` 用于处理`dataIndex` 相同情况下的唯一键。
-
-::: warning
-出于向下兼容考虑，目前版本默认是不生效的。只有重写了 `props.colKey` 才生效。如下
-:::
-
-```vue
-<StkTable :colKey="col => col.key || col.dataIndex"></StkTable>
+如果您想要配置相同`dataIndex` 的多列，这时候就需要使用 `key` 字段来指定列的唯一键，*key是可选字段*，参考[StkTableColumn 类型定义](/main/api/stk-table-column.html)
+```ts
+const columns:StkTableColumn[] = [
+    { key: '1', dataIndex: 'a'，title: 'A1' },
+    { key: '2', dataIndex: 'a', title: 'A2' },
+    { dataIndex: 'b', title: 'B' },
+    { dataIndex: 'c', title: 'C' },
+] 
 ```

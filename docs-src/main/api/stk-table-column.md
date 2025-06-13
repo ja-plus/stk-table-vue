@@ -5,21 +5,20 @@
 ```vue
 <StkTable :columns="columns"></StkTable>
 ```
-::: warning 
-组件内部**没有**深度监听(deep watch) `columns` 属性，因此如果您发现 push 列不生效，则考虑使用如下方式更新表格列配置。
+::: warning 浅层监听
+组件内部**没有**深度监听(deep watch) `columns` 属性，因此如果您发现 push 列不生效，则考虑更新引用，参考如下
 :::
 
 ```ts
-columns.value = [...columns.value]; // 触发更新
+columns.value = columns.value.slice(); // 更新数组引用
 ```
 
 ### StkTableColumn 列配置
 ``` ts
 type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
 export type StkTableColumn<T extends Record<string, any>> = {
-   /**
-     * 用于区分相同dataIndex 的列。
-     * 需要自行配置colKey="(col: StkTableColumn<any>) => col.key ?? col.dataIndex"
+    /**
+     * 列唯一键，(可选)，不传则默认取dataIndex 字段作为列唯一键。
      */
     key?: any;
     /**

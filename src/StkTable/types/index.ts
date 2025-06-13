@@ -43,7 +43,7 @@ export type CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, 
 /** 表格列配置 */
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
-     * 用于区分相同dataIndex 的列。
+     * 列唯一键，(可选)，不传则默认取dataIndex 字段作为列唯一键。
      */
     key?: any;
     /**
