@@ -1,3 +1,7 @@
+## 0.7.1
+* Feature
+  - `insertToOrderedArray` support `customCompare` 
+  
 ## 0.7.0
 * Feature:
   - add: TreeTable

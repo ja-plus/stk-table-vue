@@ -3,7 +3,7 @@ import { insertToOrderedArray } from '@/StkTable/utils';
 
 /** 并发测试 */
 describe.concurrent('insertToOrderedArray', () => {
-    function fn(source, newItem, target, order = 'asc') {
+    function fn(source, newItem, target = [], order = 'asc') {
         const sourceArr = source.map(id => ({
             id,
         }));
@@ -59,5 +59,52 @@ describe.concurrent('insertToOrderedArray', () => {
         expect(result).toStrictEqual(expectResult);
         const [result2, expectResult2] = fn([], 1, [1]);
         expect(result2).toStrictEqual(expectResult2);
+    });
+
+    it.concurrent('huge-data', ({ expect }) => {
+        const source = Array.from({ length: 1000000 }, (_, i) => i);
+        const newItem = Math.random() * 1000000;
+
+        const [result] = fn(source, newItem);
+        let isValidResult = true;
+        for (let i = 0; i < result.length - 1; i++) {
+            if (result[i].id > result[i + 1].id) {
+                isValidResult = false;
+                break;
+            }
+        }
+        expect(isValidResult).toBe(true);
+    });
+
+    it.concurrent('customCompare', ({ expect }) => {
+        const source = [
+            { id: 1, no: 0 },
+            { id: 1, no: 1 },
+            { id: 2, no: 0 },
+        ];
+        const newItem = { id: 1, no: 2 };
+
+        const sortState = { dataIndex: 'id', order: 'asc', sortType: 'number' };
+        const result = insertToOrderedArray(sortState, newItem, source, {
+            customCompare(a, b) {
+                if (a.id === b.id) {
+                    return a.no - b.no;
+                }
+                return a.id - b.id;
+            },
+        });
+        let isValidResult = true;
+        for (let i = 0; i < result.length - 1; i++) {
+            if (result[i].id === result[i + 1].id) {
+                if (result[i].no > result[i + 1].no) {
+                    isValidResult = false;
+                    break;
+                }
+            } else if (result[i].id > result[i + 1].id) {
+                isValidResult = false;
+                break;
+            }
+        }
+        expect(isValidResult).toBe(true);
     });
 });
