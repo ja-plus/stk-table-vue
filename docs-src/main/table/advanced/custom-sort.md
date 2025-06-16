@@ -94,27 +94,27 @@ dataSource.value = insertToOrderedArray(tableSortStore, item, dataSource.value);
  * 对有序数组插入新数据
  *
  * 注意：不会改变原数组，返回新数组
- * @param sortState
+ * @param sortState 排序状态
  * @param sortState.dataIndex 排序的字段
  * @param sortState.order 排序顺序
  * @param sortState.sortType 排序方式
  * @param newItem 要插入的数据
  * @param targetArray 表格数据
+ * @param sortConfig SortConfig参考 https://github.com/ja-plus/stk-table-vue/blob/master/src/StkTable/types/index.ts
+ * @param sortConfig.customCompare 自定义比较规则
  * @return targetArray 的浅拷贝
  */
 export function insertToOrderedArray<T extends object>(
     sortState: SortState<T>,
     newItem: T,
     targetArray: T[],
-    sortConfig: SortConfig<T> = {}
+    sortConfig: SortConfig<T> & { customCompare?: (a: T, b: T) => number } = {}
 ): T[] 
 
 ```
 
 ### 示例
 以下示例包含了 `tableSort` 和 `insertToOrderedArray` 的使用。点击插入一行观察插入排序效果。
-
-
 
 <demo vue="advanced/custom-sort/InsertSort.vue"></demo>
 

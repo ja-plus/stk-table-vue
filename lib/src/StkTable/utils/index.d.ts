@@ -14,7 +14,9 @@ export declare function isEmptyValue(val: any, isNumber?: boolean): boolean;
  * @param targetArray 表格数据
  * @return targetArray 的浅拷贝
  */
-export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig?: SortConfig<T>): T[];
+export declare function insertToOrderedArray<T extends object>(sortState: SortState<T>, newItem: T, targetArray: T[], sortConfig?: SortConfig<T> & {
+    customCompare?: (a: T, b: T) => number;
+}): T[];
 /**
  * 二分查找
  *  @param searchArray 查找数组
