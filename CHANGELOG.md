@@ -1,3 +1,7 @@
+## 0.7.2
+* Performance
+  - highlight: `Date.now()` change to `performance.now()`
+  
 ## 0.7.1
 * Feature
   - `insertToOrderedArray` support `customCompare` 

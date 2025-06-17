@@ -5,7 +5,7 @@
 通过调用实例方法`setHighlightDimRow` & `setHighlightDimCell`，可以设置高亮行或高亮单元格。
 
 ::: tip 
-* 高亮行、单元格，默认使用`animation`(el.animate() 方法触发动画)方式。如要自定义动画，可以传入`option`参数。`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API),兼容性 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
+* 高亮行、单元格，默认使用`animation`(el.animate() 方法触发动画)方式。如要自定义动画，可以传入`option`参数。`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API), [兼容性 MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
 * 高亮颜色不随主题实时变化。
 * 高亮不生效？确认是否指定了`props.rowKey`。
 :::
@@ -34,10 +34,14 @@ type HighlightConfig = {
 
 ```
 ::: tip
-降低高亮帧率有利于提升性能。
+- 降低高亮帧率有利于提升性能。
+- 如果您想指定动画的帧率，参考 Animation API 的 `easing: 'step(xx)'` 实现。（同css animation-timing-function: step）
 :::
 
-如果您想控制不同动画不同的帧率，参考 Animation API 的 step 实现。（同css animation-timing-function: step）
+::: warning
+如果自定义 keyframe，则 `HighlightConfig.fps` **将会失效**!
+:::
+
 
 
 ## 通过 animation api 自定义高亮动画
@@ -110,7 +114,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
  * @param rowKeyValues 行唯一键的数组
  * @param option.method css-使用css渲染，animation-使用animation api。默认animation
  * @param option.className 自定义css动画的class。
- * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
  */
 setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {}): void;
@@ -124,7 +128,7 @@ setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {}):
  * @param colKeyValue 列key
  * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
  * @param option.className 自定义css动画的class。
- * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
  */
 setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {}): void;

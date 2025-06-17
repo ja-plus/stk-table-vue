@@ -40,18 +40,6 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     const highlightSteps = computed(() => (highlightFrequency.value ? Math.round(highlightDuration.value / highlightFrequency.value) : null));
     /** 高亮开始 */
     const highlightFrom = computed(() => highlightColor[props.theme as 'light' | 'dark'].from);
-    /** 高亮结束 */
-    // const highlightTo = computed(() => highlightColor[props.theme as 'light' | 'dark'].to);
-    // const highlightInter = computed(() => interpolateRgb(highlightFrom.value, highlightTo.value));
-
-    /**
-     * 存放高亮行的状态-使用js计算颜色
-     * @key 行唯一键
-     * @value 记录高亮开始时间
-     */
-    // const highlightDimRowsJs = new Map<UniqKey, number>();
-    /** 是否正在计算高亮行的循环-使用js计算颜色 */
-    // const calcHighlightDimLoopJs = false;
 
     /**
      * 存放高亮行的状态-使用animation api实现
@@ -85,7 +73,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
         const recursion = () => {
             window.requestAnimationFrame(
                 () => {
-                    const nowTs = Date.now();
+                    const nowTs = performance.now();
                     highlightDimRowsAnimation.forEach((store, rowKeyValue) => {
                         const { ts, duration } = store;
                         const timeOffset = nowTs - ts;
@@ -111,58 +99,23 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
     }
 
     /**
-     * js计算高亮渐暗颜色的循环
-     */
-    // function calcRowHighlightLoopJs() {
-    //     if (calcHighlightDimLoopJs) return;
-    //     calcHighlightDimLoopJs = true;
-    //     // js计算gradient
-    //     const recursion = () => {
-    //         window.setTimeout(() => {
-    //             const nowTs = Date.now();
-    //             highlightDimRowsJs.forEach((highlightStart, rowKeyValue) => {
-    //                 /** 经过的时间 ÷ 高亮持续时间 计算出 颜色过渡进度 (0-1) */
-    //                 const progress = (nowTs - highlightStart) / highlightDuration;
-    //                 let bgc = '';
-    //                 if (0 <= progress && progress <= 1) {
-    //                     bgc = highlightInter.value(progress);
-    //                 } else {
-    //                     highlightDimRowsJs.delete(rowKeyValue);
-    //                 }
-    //                 updateRowBgcJs(rowKeyValue, bgc);
-    //             });
-
-    //             if (highlightDimRowsJs.size > 0) {
-    //                 // 还有高亮的行,则下一次循环
-    //                 recursion();
-    //             } else {
-    //                 // 没有则停止循环
-    //                 calcHighlightDimLoopJs = false;
-    //                 highlightDimRowsJs.clear(); // TODO: 是否需要 清除
-    //             }
-    //         }, highlightFrequency || HIGHLIGHT_FREQ);
-    //     };
-    //     recursion();
-    // }
-
-    /**
      * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
      * @param rowKeyValue 一行的key
      * @param colKeyValue 列key
      * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
      * @param option.className 自定义css动画的class。
-     * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+     * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
     function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {}) {
         const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-cell-key="${rowKeyValue}--${colKeyValue}"]`);
+        if (!cellEl) return;
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
             method: 'animation',
             ...defaultHighlightDimOption.value,
             ...option,
         };
-        if (!cellEl) return;
         if (method === 'animation') {
             cellEl.animate(keyframe, duration);
         } else {
@@ -175,11 +128,12 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param rowKeyValues 行唯一键的数组
      * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
      * @param option.className 自定义css动画的class。
-     * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+     * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats。
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
      */
     function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {}) {
         if (!Array.isArray(rowKeyValues)) rowKeyValues = [rowKeyValues];
+        if (!rowKeyValues.length) return;
         const { className, method, keyframe, duration } = {
             className: HIGHLIGHT_ROW_CLASS,
             method: 'animation',
@@ -187,13 +141,10 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             ...option,
         };
 
-        if (method === 'css') {
-            // -------- use css keyframe
-            highlightRowsInCssKeyframe(rowKeyValues, className, duration);
-        } else if (method === 'animation') {
+        if (method === 'animation') {
             if (props.virtual) {
                 // -------- 用animation 接口实现动画
-                const nowTs = Date.now();
+                const nowTs = performance.now();
                 for (let i = 0; i < rowKeyValues.length; i++) {
                     const rowKeyValue = rowKeyValues[i];
                     const store: HighlightDimRowStore = { ts: nowTs, visible: false, keyframe, duration };
@@ -209,17 +160,10 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     rowEl.animate(keyframe, duration);
                 }
             }
+        } else {
+            // -------- use css keyframe
+            highlightRowsInCssKeyframe(rowKeyValues, className, duration);
         }
-        //  else if (method === 'js') {
-        //     // -------- 用js计算颜色渐变的高亮方案
-        //     const nowTs = Date.now();
-        //     for (let i = 0; i < rowKeyValues.length; i++) {
-        //         const rowKeyValue = rowKeyValues[i];
-        //         highlightDimRowsJs.set(rowKeyValue, nowTs);
-        //         updateRowBgcJs(rowKeyValue, highlightFrom.value);
-        //     }
-        //     calcRowHighlightLoopJs();
-        // }
     }
 
     /**
@@ -304,13 +248,6 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
             });
         }
     }
-
-    /** 更新行状态 */
-    // function updateRowBgcJs(rowKeyValue: UniqKey, color: string) {
-    //     const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
-    //     if (!rowEl) return;
-    //     rowEl.style.backgroundColor = color;
-    // }
 
     return {
         highlightSteps,

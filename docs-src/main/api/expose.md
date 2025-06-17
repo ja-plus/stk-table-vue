@@ -75,7 +75,7 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param colKeyValue 列key
  * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
  * @param option.className 自定义css动画的class。
- * @param option.keyframe 同Keyframe https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats 
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
  */
 function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {})
@@ -90,7 +90,7 @@ function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: 
  * @param rowKeyValues 行唯一键的数组
  * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
  * @param option.className 自定义css动画的class。
- * @param option.keyframe 同Keyframe。 https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
  * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
  */
 function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {})
