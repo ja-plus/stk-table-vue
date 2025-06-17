@@ -331,7 +331,7 @@ const props = withDefaults(
         /** 当前行再次点击否可以取消 (rowActive=true)*/
         rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
-        headerRowHeight?: number | null;
+        headerRowHeight?: number | string | null;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动(必须设置列宽)*/
