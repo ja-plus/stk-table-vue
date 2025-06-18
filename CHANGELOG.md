@@ -1,6 +1,8 @@
 ## 0.7.2
 * Performance
   - highlight: `Date.now()` change to `performance.now()`
+* Bugfix
+  - fix: if set `props.sortRemote`, will not trigger sort when `props.dataSource` changed.
   
 ## 0.7.1
 * Feature

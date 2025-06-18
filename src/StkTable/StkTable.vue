@@ -287,7 +287,7 @@ import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
-import { howDeepTheHeader, tableSort, transformWidthToStr } from './utils/index';
+import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 import { useTree } from './useTree';
 
 /** Generic stands for DataType */
@@ -870,7 +870,7 @@ watch(
             nextTick(() => initVirtualScrollY());
         }
         const sortColValue = sortCol.value;
-        if (sortColValue) {
+        if (!isEmptyValue(sortColValue) && !props.sortRemote) {
             // sort
             const colKey = colKeyGen.value;
             const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
