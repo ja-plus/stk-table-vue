@@ -94,7 +94,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 当前行再次点击否可以取消 (rowActive=true)*/
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | null;
+    headerRowHeight?: number | string | null;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
@@ -194,8 +194,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean;
-    /** 按整数行纵向滚动 */
-    scrollRowByRow?: boolean;
+    /**
+     * 按整数行纵向滚动
+     * - scrollbar：仅拖动滚动条生效
+     */
+    scrollRowByRow?: boolean | "scrollbar";
 }>, {
     width: string;
     fixedMode: boolean;
@@ -372,7 +375,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     })) | (import('./types/index').UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
-        expand? /** 是否高亮选中的行 */: boolean;
+        expand?: boolean;
     }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
@@ -456,7 +459,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 当前行再次点击否可以取消 (rowActive=true)*/
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | null;
+    headerRowHeight?: number | string | null;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
@@ -556,8 +559,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
     smoothScroll?: boolean;
-    /** 按整数行纵向滚动 */
-    scrollRowByRow?: boolean;
+    /**
+     * 按整数行纵向滚动
+     * - scrollbar：仅拖动滚动条生效
+     */
+    scrollRowByRow?: boolean | "scrollbar";
 }>, {
     width: string;
     fixedMode: boolean;
@@ -670,7 +676,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
-    headerRowHeight: number | null;
+    headerRowHeight: number | string | null;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
@@ -708,7 +714,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     treeConfig: TreeConfig;
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
-    scrollRowByRow: boolean;
+    scrollRowByRow: boolean | "scrollbar";
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;
