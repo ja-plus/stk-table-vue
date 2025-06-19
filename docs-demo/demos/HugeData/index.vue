@@ -31,6 +31,7 @@ const stkTableRef = useTemplateRef('stkTableRef');
 
 const dataSize = ref(50000);
 const rowByRow = ref(false);
+const optimizeDragScroll = ref<'scrollbar'>();
 const translateZ = ref(false);
 const updateFreq = ref(100);
 
@@ -175,6 +176,15 @@ function handleDataSizeChange(e: Event) {
     dataSize.value = value;
     initDataSource();
 }
+
+function handleOptimizeScrollChange(v: boolean) {
+    if (v) {
+        optimizeDragScroll.value = 'scrollbar';
+        rowByRow.value = false;
+    } else {
+        optimizeDragScroll.value = void 0;
+    }
+}
 </script>
 <template>
     <div class="row">
@@ -214,6 +224,7 @@ function handleDataSizeChange(e: Event) {
     </label>
     <CheckItem v-model="rowByRow" text="整数行滚动" />
     <CheckItem v-model="translateZ" text="tr分层" />
+    <CheckItem :mode-value="false" text="拖动白屏优化" @change="handleOptimizeScrollChange" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
@@ -229,7 +240,7 @@ function handleDataSizeChange(e: Event) {
         stripe
         col-resizable
         sort-remote
-        :scroll-row-by-row="rowByRow"
+        :scroll-row-by-row="rowByRow || optimizeDragScroll"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"

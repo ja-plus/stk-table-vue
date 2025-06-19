@@ -1,4 +1,6 @@
 ## 0.7.2
+* Feature
+  - `props.scrollRowByRow` support param: `scrollbar`. Dealing the problem: if we drag scrollbar very fast ,and the table container show empty area shortly.
 * Performance
   - highlight: `Date.now()` change to `performance.now()`
 * Bugfix

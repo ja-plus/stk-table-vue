@@ -168,6 +168,11 @@ export type StkProps = {
    * - true: 不使用 wheel 事件滚动。滚轮滚动时更加平滑。滚动过快时会白屏。
    */
   smoothScroll?: boolean;
+  /**
+   * 按整数行纵向滚动
+   * - scrollbar：仅拖动滚动条生效,可用于处理拖动白屏问题(v0.7.2)
+   */
+  scrollRowByRow?: boolean | 'scrollbar';
 };
 ```
 ```

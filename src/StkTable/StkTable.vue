@@ -25,7 +25,7 @@
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
             'auto-row-height': props.autoRowHeight,
-            'scroll-row-by-row': props.scrollRowByRow,
+            'scroll-row-by-row': isSRBRActive,
         }"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
@@ -38,7 +38,7 @@
     >
         <!-- 这个元素用于整数行虚拟滚动时，撑开父容器的高度） -->
         <div
-            v-if="props.scrollRowByRow && virtual"
+            v-if="isSRBRActive && virtual"
             class="row-by-row-table-height"
             :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
         ></div>
@@ -114,7 +114,7 @@
             <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
             <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
             <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
-                <tr v-if="virtual_on && !props.scrollRowByRow" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
@@ -238,7 +238,7 @@
                         </td>
                     </template>
                 </tr>
-                <tr v-if="virtual_on && !props.scrollRowByRow" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
             </tbody>
         </table>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
@@ -283,12 +283,13 @@ import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useRowExpand } from './useRowExpand';
+import { useScrollRowByRow } from './useScrollRowByRow';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
+import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
-import { useTree } from './useTree';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -428,8 +429,11 @@ const props = withDefaults(
          * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
          */
         smoothScroll?: boolean;
-        /** 按整数行纵向滚动 */
-        scrollRowByRow?: boolean;
+        /**
+         * 按整数行纵向滚动
+         * - scrollbar：仅拖动滚动条生效
+         */
+        scrollRowByRow?: boolean | 'scrollbar';
     }>(),
     {
         width: '',
@@ -737,6 +741,8 @@ const getEmptyCellText = computed(() => {
 });
 
 const rowKeyGenCache = new WeakMap();
+
+const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
 

@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
-const rowByRow = ref(true);
+const rowByRow = ref<boolean | 'scrollbar'>(true);
 
 const columns: StkTableColumn<any>[] = [
     { type: 'seq', width: 50, dataIndex: '', title: '序号' },
@@ -13,7 +13,7 @@ const columns: StkTableColumn<any>[] = [
     { title: 'Gender', dataIndex: 'gender', sorter: true },
 ];
 
-const dataSource = new Array(100).fill(0).map((_, index) => {
+const dataSource = new Array(1000).fill(0).map((_, index) => {
     return {
         name: `Jack ${index}`,
         age: 18 + index,
@@ -21,10 +21,19 @@ const dataSource = new Array(100).fill(0).map((_, index) => {
         gender: index % 2 === 0 ? 'male' : 'female',
     };
 });
+
+function onlyScrollbarChange(checked: boolean) {
+    if (checked) {
+        rowByRow.value = 'scrollbar';
+    } else {
+        rowByRow.value = false;
+    }
+}
 </script>
 <template>
     <div>
-        <CheckItem v-model="rowByRow" text="scroll-row-by-row" />
+        <CheckItem :model-value="true" text="scroll-row-by-row" @change="v => (rowByRow = v)" />
+        <CheckItem text="仅拖动滚动条触发" @change="onlyScrollbarChange" />
         <StkTable
             style="height: 200px"
             :scroll-row-by-row="rowByRow"
