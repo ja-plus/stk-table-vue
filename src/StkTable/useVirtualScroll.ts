@@ -1,6 +1,6 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
-import { AutoRowHeightConfig, StkTableColumn, UniqKey } from './types';
+import { AutoRowHeightConfig, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Option<DT extends Record<string, any>> = {
@@ -8,9 +8,9 @@ type Option<DT extends Record<string, any>> = {
     tableContainerRef: Ref<HTMLElement | undefined>;
     trRef: Ref<HTMLTableRowElement[] | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
-    tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
-    tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
-    rowKeyGen: (row: any) => UniqKey;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
+    tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
+    rowKeyGen: RowKeyGen;
 };
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -133,8 +133,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
             // 虚拟横向滚动，固定列要一直保持存在
-            const leftCols: StkTableColumn<DT>[] = [];
-            const rightCols: StkTableColumn<DT>[] = [];
+            const leftCols: PrivateStkTableColumn<DT>[] = [];
+            const rightCols: PrivateStkTableColumn<DT>[] = [];
             /**
              * 存在问题：
              * table columns 从多到少时。比方原来的start=5,end=10，现在start=4,end=8。这时候endIndex就超出数组范围了。

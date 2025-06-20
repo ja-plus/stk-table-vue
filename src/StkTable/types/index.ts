@@ -1,4 +1,4 @@
-import { Component, ConcreteComponent } from 'vue';
+import { Component, ComputedRef, ConcreteComponent } from 'vue';
 
 /** 排序方式，asc-正序，desc-倒序，null-默认顺序 */
 export type Order = null | 'asc' | 'desc';
@@ -25,6 +25,15 @@ export type CustomHeaderCellProps<T extends Record<string, any>> = {
     rowIndex: number;
     colIndex: number;
 };
+
+export type CellSpanParam<T extends Record<string, any>> = {
+    row: T;
+    col: StkTableColumn<T>;
+    rowIndex: number;
+    colIndex: number;
+};
+
+export type CellSpanFn<T extends Record<string, any>> = (data: CellSpanParam<T>) => { rowspan?: number; colspan?: number };
 
 /**
  * 自定义渲染单元格
@@ -82,8 +91,6 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortConfig?: Pick<SortConfig<T>, 'emptyToBottom' | 'stringLocaleCompare'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
-    /** private */ rowSpan?: number;
-    /** private */ colSpan?: number;
     /**
      * 自定义 td 渲染内容。
      *
@@ -106,17 +113,23 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+    /** 单元格合并 */
+    cellSpan?: CellSpanFn<T>;
 };
 
 /** private StkTableColumn type. Add some private key */
 export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColumn<T> & {
+    /** header rowSpan */
+    __R_SP__?: number;
+    /** header colSpan */
+    __C_SP__?: number;
     /**
-     * 父节点引用
+     * parent not ref
      * @private
      */
     __PARENT__?: StkTableColumn<T> | null;
     /**
-     * 保存计算的宽度。横向虚拟滚动用。
+     * Save the calculated width. Used for horizontal virtual scrolling.
      * @private
      */
     __WIDTH__?: number;
@@ -258,3 +271,7 @@ export type AutoRowHeightConfig<DT> = {
 export type ColResizableConfig<DT extends Record<string, any>> = {
     disabled: (col: StkTableColumn<DT>) => boolean;
 };
+
+export type RowKeyGen = (row: any) => UniqKey;
+
+export type ColKeyGen = ComputedRef<(col: StkTableColumn<any>) => UniqKey>;

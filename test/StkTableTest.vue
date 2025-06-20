@@ -234,6 +234,12 @@ const columns = shallowRef<StkTableColumn<any>[]>([
         customHeaderCell: props => {
             return h('span', { style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, props.col.title + '(render) text-overflow,');
         },
+        cellSpan() {
+            return {
+                colspan: 2,
+                rowspan: 2,
+            };
+        },
         // customCell: props => {
         //     return props.cellValue;
         // },

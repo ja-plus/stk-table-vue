@@ -1,17 +1,17 @@
-import { computed, ComputedRef } from 'vue';
-import { StkTableColumn, UniqKey } from './types';
+import { computed } from 'vue';
+import { ColKeyGen, StkTableColumn } from './types';
 import { isEmptyValue } from './utils';
 
-type Params<T extends Record<string, any>> = {
+type Params = {
     props: any;
     emits: any;
-    colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
+    colKeyGen: ColKeyGen;
 };
 /**
  * 列顺序拖动
  * @returns
  */
-export function useThDrag<DT extends Record<string, any>>({ props, emits, colKeyGen }: Params<DT>) {
+export function useThDrag({ props, emits, colKeyGen }: Params) {
     const findParentTH = (e: DragEvent) => (e.target as HTMLElement).closest('th');
 
     const dragConfig = computed(() => {
@@ -97,6 +97,6 @@ export function useThDrag<DT extends Record<string, any>>({ props, emits, colKey
         onThDragOver,
         onThDrop,
         /** 是否可拖拽 */
-        isHeaderDraggable: (col: StkTableColumn<DT>) => dragConfig.value.draggable && !dragConfig.value.disabled(col),
+        isHeaderDraggable: (col: StkTableColumn<any>) => dragConfig.value.draggable && !dragConfig.value.disabled(col),
     };
 }

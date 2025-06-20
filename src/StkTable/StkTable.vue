@@ -67,8 +67,8 @@
                         :key="colKeyGen(col)"
                         :data-col-key="colKeyGen(col)"
                         :draggable="isHeaderDraggable(col) ? 'true' : 'false'"
-                        :rowspan="virtualX_on ? 1 : col.rowSpan"
-                        :colspan="col.colSpan"
+                        :rowspan="virtualX_on ? 1 : col.__R_SP__"
+                        :colspan="col.__C_SP__"
                         :style="cellStyleMap[TagType.TH].get(colKeyGen(col))"
                         :title="getHeaderTitle(col)"
                         :class="[
@@ -93,7 +93,7 @@
                             class="table-header-resizer left"
                             @mousedown="onThResizeMouseDown($event, col, true)"
                         ></div>
-                        <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.rowSpan }">
+                        <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.__R_SP__ }">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else>
                                 <slot name="tableHeader" :col="col">
@@ -155,87 +155,91 @@
                         </div>
                     </td>
                     <template v-else>
-                        <td
-                            v-for="(col, colIndex) in virtualX_columnPart"
-                            :key="colKeyGen(col)"
-                            :data-cell-key="cellKeyGen(row, col)"
-                            :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                            :class="[
-                                col.className,
-                                fixedColClassMap.get(colKeyGen(col)),
-                                {
-                                    'seq-column': col.type === 'seq',
-                                    active: currentSelectedCellKey === cellKeyGen(row, col),
-                                    expanded: col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
-                                    'tree-expanded': col.type === 'tree-node' && row.__T_EXPANDED__,
-                                    'drag-row-cell': col.type === 'dragRow',
-                                },
-                            ]"
-                            @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
-                            @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
-                            @mouseenter="onCellMouseEnter($event, row, col)"
-                            @mouseleave="onCellMouseLeave($event, row, col)"
-                            @mouseover="onCellMouseOver($event, row, col)"
-                        >
-                            <template v-if="col.type === 'expand' || col.type === 'tree-node'">
-                                <div
-                                    class="table-cell-wrapper"
-                                    :title="row?.[col.dataIndex]"
-                                    :style="{ paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' }"
-                                >
+                        <template v-for="(col, colIndex) in virtualX_columnPart">
+                            <td
+                                v-if="!hiddenCellMap[colKeyGen(row)]?.has(colKeyGen(col))"
+                                :key="colKeyGen(col)"
+                                :data-cell-key="cellKeyGen(row, col)"
+                                :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
+                                :class="[
+                                    col.className,
+                                    fixedColClassMap.get(colKeyGen(col)),
+                                    {
+                                        'seq-column': col.type === 'seq',
+                                        active: currentSelectedCellKey === cellKeyGen(row, col),
+                                        expanded:
+                                            col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
+                                        'tree-expanded': col.type === 'tree-node' && row.__T_EXPANDED__,
+                                        'drag-row-cell': col.type === 'dragRow',
+                                    },
+                                ]"
+                                v-bind="cellSpanWrapper(row, col, rowIndex, colIndex)"
+                                @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
+                                @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
+                                @mouseenter="onCellMouseEnter($event, row, col)"
+                                @mouseleave="onCellMouseLeave($event, row, col)"
+                                @mouseover="onCellMouseOver($event, row, col)"
+                            >
+                                <template v-if="col.type === 'expand' || col.type === 'tree-node'">
+                                    <div
+                                        class="table-cell-wrapper"
+                                        :title="row?.[col.dataIndex]"
+                                        :style="{ paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' }"
+                                    >
+                                        <component
+                                            :is="col.customCell"
+                                            v-if="col.customCell"
+                                            :col="col"
+                                            :row="row"
+                                            :rowIndex="getRowIndex(rowIndex)"
+                                            :colIndex="colIndex"
+                                            :cellValue="row && row[col.dataIndex]"
+                                            :expanded="(row && row.__EXPANDED__) || null"
+                                            :tree-expanded="(row && row.__T_EXPANDED__) || null"
+                                        >
+                                            <template #foldIcon>
+                                                <TriangleIcon></TriangleIcon>
+                                            </template>
+                                        </component>
+                                        <template v-else>
+                                            <TriangleIcon
+                                                v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
+                                                @click="triangleClick($event, row, col)"
+                                            />
+                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                                {{ row?.[col.dataIndex] ?? '' }}
+                                            </span>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template v-else>
                                     <component
                                         :is="col.customCell"
                                         v-if="col.customCell"
+                                        class="table-cell-wrapper"
                                         :col="col"
                                         :row="row"
                                         :rowIndex="getRowIndex(rowIndex)"
                                         :colIndex="colIndex"
                                         :cellValue="row && row[col.dataIndex]"
-                                        :expanded="(row && row.__EXPANDED__) || null"
-                                        :tree-expanded="(row && row.__T_EXPANDED__) || null"
-                                    >
-                                        <template #foldIcon>
-                                            <TriangleIcon></TriangleIcon>
+                                    />
+                                    <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
+                                        <template v-if="col.type === 'seq'">
+                                            {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
                                         </template>
-                                    </component>
-                                    <template v-else>
-                                        <TriangleIcon
-                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
-                                            @click="triangleClick($event, row, col)"
-                                        />
-                                        <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
-                                            {{ row?.[col.dataIndex] ?? '' }}
-                                        </span>
-                                    </template>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <component
-                                    :is="col.customCell"
-                                    v-if="col.customCell"
-                                    class="table-cell-wrapper"
-                                    :col="col"
-                                    :row="row"
-                                    :rowIndex="getRowIndex(rowIndex)"
-                                    :colIndex="colIndex"
-                                    :cellValue="row && row[col.dataIndex]"
-                                />
-                                <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
-                                    <template v-if="col.type === 'seq'">
-                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                    </template>
-                                    <template v-else-if="col.type === 'dragRow'">
-                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                        <span>
-                                            {{ row?.[col.dataIndex] ?? '' }}
-                                        </span>
-                                    </template>
-                                    <template v-else>
-                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                                    </template>
-                                </div>
-                            </template>
-                        </td>
+                                        <template v-else-if="col.type === 'dragRow'">
+                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                            <span>
+                                                {{ row?.[col.dataIndex] ?? '' }}
+                                            </span>
+                                        </template>
+                                        <template v-else>
+                                            {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                        </template>
+                                    </div>
+                                </template>
+                            </td>
+                        </template>
                     </template>
                 </tr>
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
@@ -290,6 +294,7 @@ import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { useCellSpan } from '@/useCellSpan';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -680,7 +685,7 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
  * ]
  * ```
  */
-const tableHeaders = shallowRef<StkTableColumn<DT>[][]>([]);
+const tableHeaders = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
 
 /**
  * 用于计算多级表头的tableHeaders。模拟rowSpan 位置的辅助数组。用于计算固定列。
@@ -741,6 +746,8 @@ const getEmptyCellText = computed(() => {
 });
 
 const rowKeyGenCache = new WeakMap();
+
+const { cellSpanWrapper, hiddenCellMap } = useCellSpan({ tableHeaderLast, colKeyGen });
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
@@ -993,10 +1000,10 @@ function dealColumns() {
             const rowSpan = col.children ? 1 : maxDeep - depth + 1;
             const colSpan = colChildrenLen;
             if (rowSpan > 1) {
-                col.rowSpan = rowSpan;
+                col.__R_SP__ = rowSpan;
             }
             if (colSpan > 1) {
-                col.colSpan = colSpan;
+                col.__C_SP__ = colSpan;
             }
 
             allChildrenLen += colChildrenLen;

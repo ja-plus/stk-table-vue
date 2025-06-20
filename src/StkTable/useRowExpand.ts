@@ -1,9 +1,9 @@
 import { ShallowRef } from 'vue';
-import { ExpandedRow, PrivateRowDT, StkTableColumn, UniqKey } from './types';
+import { ExpandedRow, PrivateRowDT, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { EXPANDED_ROW_KEY_PREFIX } from './const';
 type DT = PrivateRowDT;
 type Option<DT extends Record<string, any>> = {
-    rowKeyGen: (row: any) => UniqKey;
+    rowKeyGen: RowKeyGen;
     dataSourceCopy: ShallowRef<DT[]>;
     emits: any;
 };

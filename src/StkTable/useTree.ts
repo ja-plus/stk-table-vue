@@ -1,10 +1,10 @@
 import { ShallowRef } from 'vue';
-import { PrivateRowDT, TreeConfig, UniqKey } from './types';
+import { PrivateRowDT, RowKeyGen, TreeConfig, UniqKey } from './types';
 
 type DT = PrivateRowDT & { children?: DT[] };
 type Option<DT extends Record<string, any>> = {
     props: any;
-    rowKeyGen: (row: any) => UniqKey;
+    rowKeyGen: RowKeyGen;
     dataSourceCopy: ShallowRef<DT[]>;
     emits: any;
 };
