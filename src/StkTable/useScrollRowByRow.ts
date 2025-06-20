@@ -8,8 +8,10 @@ type Params = {
 export function useScrollRowByRow({ props, tableContainerRef }: Params) {
     let isMouseDown = false;
     let isAddListeners = false;
+    /** record the last scroll bar position */
+    let lastScrollTop = 0;
 
-    /**记录滚动条是否正在被拖动 */
+    /** record is the scroll bar is dragging */
     const isDragScroll = ref(false);
     const onlyDragScroll = computed(() => props.scrollRowByRow === 'scrollbar');
 
@@ -21,16 +23,13 @@ export function useScrollRowByRow({ props, tableContainerRef }: Params) {
         return props.scrollRowByRow;
     });
 
-    watch(
-        () => onlyDragScroll.value,
-        v => {
-            if (v) {
-                addEventListener();
-            } else {
-                removeEventListener();
-            }
-        },
-    );
+    watch(onlyDragScroll, v => {
+        if (v) {
+            addEventListener();
+        } else {
+            removeEventListener();
+        }
+    });
 
     onMounted(() => {
         addEventListener();
@@ -59,17 +58,21 @@ export function useScrollRowByRow({ props, tableContainerRef }: Params) {
         isAddListeners = false;
     }
 
-    function handleMouseDown() {
+    function handleMouseDown(e: Event) {
         isMouseDown = true;
+        lastScrollTop = (e.target as HTMLElement).scrollTop;
     }
 
     function handleMouseUp() {
         isMouseDown = false;
         isDragScroll.value = false;
+        lastScrollTop = 0;
     }
 
-    function handleScroll() {
-        if (!isMouseDown) return;
+    function handleScroll(e: Event) {
+        const scrollTop = (e.target as HTMLElement).scrollTop;
+        // if scrollTop === lastScrollTop means horizontal scroll
+        if (!isMouseDown || scrollTop === lastScrollTop) return;
         isDragScroll.value = true;
     }
     return { isSRBRActive, isDragScroll };
