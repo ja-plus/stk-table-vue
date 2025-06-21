@@ -157,7 +157,7 @@
                     <template v-else>
                         <template v-for="(col, colIndex) in virtualX_columnPart">
                             <td
-                                v-if="!hiddenCellMap[colKeyGen(row)]?.has(colKeyGen(col))"
+                                v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
                                 :data-cell-key="cellKeyGen(row, col)"
                                 :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
@@ -747,8 +747,6 @@ const getEmptyCellText = computed(() => {
 
 const rowKeyGenCache = new WeakMap();
 
-const { cellSpanWrapper, hiddenCellMap } = useCellSpan({ tableHeaderLast, colKeyGen });
-
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
@@ -824,6 +822,8 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
 const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
+
+const { cellSpanWrapper, hiddenCellMap } = useCellSpan({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
 
 watch(
     () => props.columns,
