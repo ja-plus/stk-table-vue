@@ -1,4 +1,4 @@
-import { ref, ShallowRef } from 'vue';
+import { ref, ShallowRef, watch } from 'vue';
 import { CellSpanParam, ColKeyGen, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 
 export function useCellSpan({
@@ -19,52 +19,54 @@ export function useCellSpan({
      */
     const hiddenCellMap = ref<Record<UniqKey, Set<UniqKey>>>({});
 
+    watch([virtual_dataSourcePart, tableHeaderLast], () => {
+        hiddenCellMap.value = {};
+    });
+
+    /** 抽象隐藏单元格的逻辑 */
+    function hideCells(rowKey: UniqKey, startIndex: number, count: number) {
+        for (let i = startIndex; i < startIndex + count; i++) {
+            const nextCol = tableHeaderLast.value[i];
+            if (!nextCol) break;
+            const nextColKey = colKeyGen.value(nextCol);
+            if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
+            hiddenCellMap.value[rowKey].add(nextColKey);
+        }
+    }
+
     function cellSpanWrapper(
         row: CellSpanParam<any>['row'],
         col: CellSpanParam<any>['col'],
         rowIndex: CellSpanParam<any>['rowIndex'],
         colIndex: CellSpanParam<any>['colIndex'],
-    ) {
+    ): { colspan?: number; rowspan?: number } | undefined {
         if (!col.cellSpan) return;
-        const { colspan, rowspan } = col.cellSpan({ row, col, rowIndex, colIndex });
+
+        let { colspan, rowspan } = col.cellSpan({ row, col, rowIndex, colIndex });
+        colspan = colspan || 1;
+        rowspan = rowspan || 1;
+
+        if (colspan === 1 && rowspan === 1) return;
+
         const rowKey = rowKeyGen(row);
-        let curColIndex = 0;
-        if (colspan) {
-            const colKey = colKeyGen.value(col);
-            curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
-            // curColIndex 后面的单元格都隐藏
-            for (let i = curColIndex + 1; i < curColIndex + colspan; i++) {
-                const nextCol = tableHeaderLast.value[i];
-                if (!nextCol) break;
-                const nextColKey = colKeyGen.value(nextCol);
-                if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
-                hiddenCellMap.value[rowKey].add(nextColKey);
+        const colKey = colKeyGen.value(col);
+        const dataSourceSlice = virtual_dataSourcePart.value.slice();
+        const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
+        const curRowIndex = dataSourceSlice.findIndex(item => rowKeyGen(item) === rowKey);
+
+        if (curRowIndex === -1) return;
+
+        for (let i = curRowIndex; i < curRowIndex + rowspan; i++) {
+            const row = dataSourceSlice[i];
+            if (!row) break;
+            const rKey = rowKeyGen(row);
+            let startIndex = curColIndex;
+            let count = colspan;
+            if (i === curRowIndex) {
+                startIndex += 1;
+                count -= 1;
             }
-        }
-        if (rowspan) {
-            const dataSourceSlice = virtual_dataSourcePart.value.slice();
-            const curRowIndex = dataSourceSlice.findIndex(item => item[colKeyGen.value(col)] === row[colKeyGen.value(col)]);
-            if (curRowIndex === -1)
-                return {
-                    colspan,
-                    rowspan,
-                };
-            for (let i = curRowIndex + 1; i < curRowIndex + rowspan; i++) {
-                const nextRow = dataSourceSlice[i];
-                if (!nextRow) break;
-                const nextRowKey = rowKeyGen(nextRow);
-                const nextColKey = colKeyGen.value(col);
-                if (!hiddenCellMap.value[nextRowKey]) hiddenCellMap.value[nextRowKey] = new Set();
-                hiddenCellMap.value[nextRowKey].add(nextColKey);
-                if (colspan) {
-                    for (let j = curColIndex + 1; j < curColIndex + colspan; j++) {
-                        const nextCol = tableHeaderLast.value[j];
-                        if (!nextCol) break;
-                        const nextColKey = colKeyGen.value(nextCol);
-                        hiddenCellMap.value[nextRowKey].add(nextColKey);
-                    }
-                }
-            }
+            hideCells(rKey, startIndex, count);
         }
         return {
             colspan,
