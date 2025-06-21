@@ -292,9 +292,9 @@ import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
+import { useCellSpan } from './useCellSpan';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
-import { useCellSpan } from '@/useCellSpan';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;

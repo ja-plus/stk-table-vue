@@ -1,5 +1,5 @@
 import { ref, ShallowRef } from 'vue';
-import { CellSpanParam, ColKeyGen, PrivateStkTableColumn, UniqKey } from './StkTable/types';
+import { CellSpanParam, ColKeyGen, PrivateStkTableColumn, UniqKey } from './types';
 
 export function useCellSpan({ tableHeaderLast, colKeyGen }: { tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>; colKeyGen: ColKeyGen }) {
     /** which cell need be hidden */
