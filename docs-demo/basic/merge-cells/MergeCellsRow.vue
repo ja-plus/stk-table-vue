@@ -7,7 +7,7 @@ const columns: StkTableColumn<any>[] = [
     {
         title: 'Continent',
         dataIndex: 'continent',
-        cellSpan() {
+        mergeCells() {
             return {
                 rowspan: 5,
             };
@@ -16,7 +16,7 @@ const columns: StkTableColumn<any>[] = [
     {
         title: 'Country',
         dataIndex: 'country',
-        cellSpan({ row }) {
+        mergeCells({ row }) {
             if (row.id === 1) {
                 return {
                     rowspan: 3,

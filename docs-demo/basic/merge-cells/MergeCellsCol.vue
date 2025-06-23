@@ -6,7 +6,7 @@ const columns: StkTableColumn<any>[] = [
     {
         title: 'Name',
         dataIndex: 'name',
-        cellSpan: ({ rowIndex }) => {
+        mergeCells: ({ rowIndex }) => {
             return {
                 colspan: rowIndex % 2 ? 2 : void 0,
             };
