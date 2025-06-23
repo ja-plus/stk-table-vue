@@ -1,7 +1,7 @@
 import { ref, ShallowRef, watch } from 'vue';
-import { CellSpanParam, ColKeyGen, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { MergeCellsParam, ColKeyGen, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 
-export function useCellSpan({
+export function useMergeCells({
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
@@ -34,15 +34,15 @@ export function useCellSpan({
         }
     }
 
-    function cellSpanWrapper(
-        row: CellSpanParam<any>['row'],
-        col: CellSpanParam<any>['col'],
-        rowIndex: CellSpanParam<any>['rowIndex'],
-        colIndex: CellSpanParam<any>['colIndex'],
+    function mergeCellsWrapper(
+        row: MergeCellsParam<any>['row'],
+        col: MergeCellsParam<any>['col'],
+        rowIndex: MergeCellsParam<any>['rowIndex'],
+        colIndex: MergeCellsParam<any>['colIndex'],
     ): { colspan?: number; rowspan?: number } | undefined {
-        if (!col.cellSpan) return;
+        if (!col.mergeCells) return;
 
-        let { colspan, rowspan } = col.cellSpan({ row, col, rowIndex, colIndex });
+        let { colspan, rowspan } = col.mergeCells({ row, col, rowIndex, colIndex }) || {};
         colspan = colspan || 1;
         rowspan = rowspan || 1;
 
@@ -74,5 +74,5 @@ export function useCellSpan({
         };
     }
 
-    return { hiddenCellMap, cellSpanWrapper };
+    return { hiddenCellMap, mergeCellsWrapper };
 }

@@ -175,4 +175,3 @@ export type StkProps = {
   scrollRowByRow?: boolean | 'scrollbar';
 };
 ```
-```

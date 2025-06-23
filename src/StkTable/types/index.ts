@@ -26,14 +26,14 @@ export type CustomHeaderCellProps<T extends Record<string, any>> = {
     colIndex: number;
 };
 
-export type CellSpanParam<T extends Record<string, any>> = {
+export type MergeCellsParam<T extends Record<string, any>> = {
     row: T;
     col: StkTableColumn<T>;
     rowIndex: number;
     colIndex: number;
 };
 
-export type CellSpanFn<T extends Record<string, any>> = (data: CellSpanParam<T>) => { rowspan?: number; colspan?: number };
+export type MergeCellsFn<T extends Record<string, any>> = (data: MergeCellsParam<T>) => { rowspan?: number; colspan?: number } | undefined;
 
 /**
  * 自定义渲染单元格
@@ -114,7 +114,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 二级表头 */
     children?: StkTableColumn<T>[];
     /** 单元格合并 */
-    cellSpan?: CellSpanFn<T>;
+    mergeCells?: MergeCellsFn<T>;
 };
 
 /** private StkTableColumn type. Add some private key */

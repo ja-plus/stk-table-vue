@@ -173,7 +173,7 @@
                                         'drag-row-cell': col.type === 'dragRow',
                                     },
                                 ]"
-                                v-bind="cellSpanWrapper(row, col, rowIndex, colIndex)"
+                                v-bind="mergeCellsWrapper(row, col, rowIndex, colIndex)"
                                 @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
                                 @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
                                 @mouseenter="onCellMouseEnter($event, row, col)"
@@ -292,7 +292,7 @@ import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
-import { useCellSpan } from './useCellSpan';
+import { useMergeCells } from './useMergeCells';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
@@ -459,6 +459,7 @@ const props = withDefaults(
         columns: () => [],
         dataSource: () => [],
         rowKey: '',
+        colKey: void 0,
         emptyCellText: '--',
         noDataFull: false,
         showNoData: true,
@@ -823,7 +824,7 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-const { cellSpanWrapper, hiddenCellMap } = useCellSpan({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
+const { mergeCellsWrapper, hiddenCellMap } = useMergeCells({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
 
 watch(
     () => props.columns,
