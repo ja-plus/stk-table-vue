@@ -275,3 +275,5 @@ export type ColResizableConfig<DT extends Record<string, any>> = {
 export type RowKeyGen = (row: any) => UniqKey;
 
 export type ColKeyGen = ComputedRef<(col: StkTableColumn<any>) => UniqKey>;
+
+export type CellKeyGen = (row: any, col: StkTableColumn<any>) => string;

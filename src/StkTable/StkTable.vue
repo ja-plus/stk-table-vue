@@ -165,6 +165,7 @@
                                     col.className,
                                     fixedColClassMap.get(colKeyGen(col)),
                                     {
+                                        'cell-hover': isCellHover(row, col),
                                         'seq-column': col.type === 'seq',
                                         active: currentSelectedCellKey === cellKeyGen(row, col),
                                         expanded:
@@ -824,7 +825,7 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-const { mergeCellsWrapper, hiddenCellMap } = useMergeCells({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
+const { mergeCellsWrapper, hiddenCellMap, isCellHover } = useMergeCells({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
 
 watch(
     () => props.columns,

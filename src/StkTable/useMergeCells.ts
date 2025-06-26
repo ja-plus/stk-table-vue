@@ -1,5 +1,6 @@
 import { ref, ShallowRef, watch } from 'vue';
-import { MergeCellsParam, ColKeyGen, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
+import { pureCellKeyGen } from './utils';
 
 export function useMergeCells({
     tableHeaderLast,
@@ -18,22 +19,41 @@ export function useMergeCells({
      * - value: colKey Set
      */
     const hiddenCellMap = ref<Record<UniqKey, Set<UniqKey>>>({});
+    /**
+     * hover other row and rowspan cell should be highlighted
+     * - key: rowKey
+     * - value: cellKey Set
+     */
+    const hoverRowMap = ref<Record<UniqKey, Set<string>>>({});
 
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
+        hoverRowMap.value = {};
     });
 
     /** 抽象隐藏单元格的逻辑 */
-    function hideCells(rowKey: UniqKey, startIndex: number, count: number) {
+    function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false) {
         for (let i = startIndex; i < startIndex + count; i++) {
             const nextCol = tableHeaderLast.value[i];
             if (!nextCol) break;
             const nextColKey = colKeyGen.value(nextCol);
             if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
             hiddenCellMap.value[rowKey].add(nextColKey);
+            if (isSelfRow) continue;
+            // if other row hovered, the rowspan cell need to be highlight
+            if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
+            hoverRowMap.value[rowKey].add(pureCellKeyGen(rowKey, nextColKey));
         }
     }
 
+    /**
+     * calculate colspan and rowspan
+     * @param row
+     * @param col
+     * @param rowIndex
+     * @param colIndex
+     * @returns
+     */
     function mergeCellsWrapper(
         row: MergeCellsParam<any>['row'],
         col: MergeCellsParam<any>['col'],
@@ -43,6 +63,8 @@ export function useMergeCells({
         if (!col.mergeCells) return;
 
         let { colspan, rowspan } = col.mergeCells({ row, col, rowIndex, colIndex }) || {};
+
+        // default colspan and rowspan is 1
         colspan = colspan || 1;
         rowspan = rowspan || 1;
 
@@ -62,17 +84,27 @@ export function useMergeCells({
             const rKey = rowKeyGen(row);
             let startIndex = curColIndex;
             let count = colspan;
-            if (i === curRowIndex) {
+            const isSelfRow = i === curRowIndex;
+            if (isSelfRow) {
                 startIndex += 1;
                 count -= 1;
             }
-            hideCells(rKey, startIndex, count);
+            hideCells(rKey, startIndex, count, isSelfRow);
         }
+
         return {
             colspan,
             rowspan,
         };
     }
 
-    return { hiddenCellMap, mergeCellsWrapper };
+    function isCellHover(row: any, col: StkTableColumn<any>) {
+        const rowKey = rowKeyGen(row);
+        const colKey = colKeyGen.value(col);
+        const cellKey = pureCellKeyGen(rowKey, colKey);
+        const set = hoverRowMap.value[rowKey];
+        return set ? set.has(cellKey) : false;
+    }
+
+    return { hiddenCellMap, mergeCellsWrapper, isCellHover };
 }

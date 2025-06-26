@@ -38,6 +38,7 @@ const dataSource = [
     <StkTable
         style="max-height: 300px"
         cell-hover
+        row-key="id"
         :columns="columns"
         :data-source="dataSource"
     ></StkTable>

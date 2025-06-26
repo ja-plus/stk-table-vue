@@ -1,4 +1,5 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
+import { CELL_KEY_SEPARATE } from '../const';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from '../types';
 
 /** 是否空值 */
 export function isEmptyValue(val: any, isNumber?: boolean) {
@@ -221,4 +222,8 @@ export function getBrowsersVersion(browserName: string) {
         console.error('Cannot get version', e);
     }
     return 100;
+}
+
+export function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey) {
+    return rowKey + CELL_KEY_SEPARATE + colKey;
 }
