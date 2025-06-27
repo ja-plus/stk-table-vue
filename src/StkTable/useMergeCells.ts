@@ -26,13 +26,16 @@ export function useMergeCells({
      */
     const hoverRowMap = ref<Record<UniqKey, Set<string>>>({});
 
+    /** hover current row , which rowspan cells should be highlight */
+    const hoverMergedCells = ref(new Set<string>());
+
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
         hoverRowMap.value = {};
     });
 
     /** 抽象隐藏单元格的逻辑 */
-    function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false) {
+    function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
         for (let i = startIndex; i < startIndex + count; i++) {
             const nextCol = tableHeaderLast.value[i];
             if (!nextCol) break;
@@ -42,7 +45,7 @@ export function useMergeCells({
             if (isSelfRow) continue;
             // if other row hovered, the rowspan cell need to be highlight
             if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
-            hoverRowMap.value[rowKey].add(pureCellKeyGen(rowKey, nextColKey));
+            hoverRowMap.value[rowKey].add(mergeCellKey);
         }
     }
 
@@ -75,6 +78,7 @@ export function useMergeCells({
         const dataSourceSlice = virtual_dataSourcePart.value.slice();
         const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
         const curRowIndex = dataSourceSlice.findIndex(item => rowKeyGen(item) === rowKey);
+        const mergedCellKey = pureCellKeyGen(rowKey, colKey);
 
         if (curRowIndex === -1) return;
 
@@ -89,22 +93,16 @@ export function useMergeCells({
                 startIndex += 1;
                 count -= 1;
             }
-            hideCells(rKey, startIndex, count, isSelfRow);
+            hideCells(rKey, startIndex, count, isSelfRow, mergedCellKey);
         }
 
-        return {
-            colspan,
-            rowspan,
-        };
+        return { colspan, rowspan };
     }
 
-    function isCellHover(row: any, col: StkTableColumn<any>) {
-        const rowKey = rowKeyGen(row);
-        const colKey = colKeyGen.value(col);
-        const cellKey = pureCellKeyGen(rowKey, colKey);
+    function updateHoverMergedCells(rowKey: UniqKey) {
         const set = hoverRowMap.value[rowKey];
-        return set ? set.has(cellKey) : false;
+        hoverMergedCells.value = set || new Set();
     }
 
-    return { hiddenCellMap, mergeCellsWrapper, isCellHover };
+    return { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells };
 }

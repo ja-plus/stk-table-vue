@@ -165,7 +165,7 @@
                                     col.className,
                                     fixedColClassMap.get(colKeyGen(col)),
                                     {
-                                        'cell-hover': isCellHover(row, col),
+                                        'cell-hover': hoverMergedCells.has(cellKeyGen(row, col)),
                                         'seq-column': col.type === 'seq',
                                         active: currentSelectedCellKey === cellKeyGen(row, col),
                                         expanded:
@@ -278,6 +278,7 @@ import {
     StkTableColumn,
     TagType,
     TreeConfig,
+    UniqKey,
     UniqKeyProp,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
@@ -659,9 +660,9 @@ const currentRow = shallowRef<DT>();
  * 保存当前选中行的key<br>
  * 原因：vue3 不用ref包dataSource时，row为原始对象，与currentItem（Ref）相比会不相等。
  */
-const currentRowKey = ref<any>(void 0);
+const currentRowKey = ref<UniqKey | undefined>();
 /** 当前选中的单元格key  */
-const currentSelectedCellKey = ref<any>(void 0);
+const currentSelectedCellKey = ref<string | undefined>();
 /** 当前hover行 */
 let currentHoverRow: DT | null = null;
 /** 当前hover的行的key */
@@ -825,7 +826,12 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-const { mergeCellsWrapper, hiddenCellMap, isCellHover } = useMergeCells({ tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
+const { mergeCellsWrapper, hiddenCellMap, hoverMergedCells, updateHoverMergedCells } = useMergeCells({
+    tableHeaderLast,
+    rowKeyGen,
+    colKeyGen,
+    virtual_dataSourcePart,
+});
 
 watch(
     () => props.columns,
@@ -1346,7 +1352,9 @@ function onTableScroll(e: Event) {
 function onTrMouseOver(_e: MouseEvent, row: DT) {
     if (currentHoverRow === row) return;
     currentHoverRow = row;
-    currentHoverRowKey.value = rowKeyGen(row);
+    const rowKey = rowKeyGen(row);
+    currentHoverRowKey.value = rowKey;
+    updateHoverMergedCells(rowKey);
 }
 
 /**
