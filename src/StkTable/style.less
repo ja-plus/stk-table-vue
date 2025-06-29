@@ -151,7 +151,6 @@
         }
     }
 
-    /* 斑马纹*/
     &.stripe {
         &:not(.vt-on) .stk-tbody-main tr:nth-child(even) {
             background-color: var(--stripe-bgc);
@@ -557,16 +556,17 @@
             transition: transform 0.2s ease;
         }
 
-        &:hover {
-            &::before {
-
-                border-left: 5px solid var(--fold-icon-hover-color);
-            }
+        &:hover::before {
+            border-left: 5px solid var(--fold-icon-hover-color);
         }
     }
 
-    .cell-hover {
+    td.cell-hover {
         background-color: var(--tr-hover-bgc);
+    }
+    
+    td.cell-active {
+        background-color: var(--tr-active-bgc);
     }
 
 }

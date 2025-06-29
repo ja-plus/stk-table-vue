@@ -142,6 +142,7 @@
                     @dblclick="onRowDblclick($event, row, getRowIndex(rowIndex))"
                     @contextmenu="onRowMenu($event, row, getRowIndex(rowIndex))"
                     @mouseover="onTrMouseOver($event, row)"
+                    @mouseleave="onTrMouseLeave($event)"
                     @drop="onTrDrop($event, getRowIndex(rowIndex))"
                 >
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
@@ -165,7 +166,8 @@
                                     col.className,
                                     fixedColClassMap.get(colKeyGen(col)),
                                     {
-                                        'cell-hover': hoverMergedCells.has(cellKeyGen(row, col)),
+                                        'cell-hover': col.mergeCells && hoverMergedCells.has(cellKeyGen(row, col)),
+                                        'cell-active': col.mergeCells && activeMergedCells.has(cellKeyGen(row, col)),
                                         'seq-column': col.type === 'seq',
                                         active: currentSelectedCellKey === cellKeyGen(row, col),
                                         expanded:
@@ -826,7 +828,8 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-const { mergeCellsWrapper, hiddenCellMap, hoverMergedCells, updateHoverMergedCells } = useMergeCells({
+const { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells } = useMergeCells({
+    props,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
@@ -1169,9 +1172,11 @@ function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
         // 点击同一行，取消当前选中行。
         currentRow.value = void 0;
         currentRowKey.value = void 0;
+        updateActiveMergedCells(true);
     } else {
         currentRow.value = row;
         currentRowKey.value = rowKeyGen(row);
+        updateActiveMergedCells();
     }
     emits('current-change', e, row, { select: !isCurrentRow });
 }
@@ -1353,8 +1358,23 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
     if (currentHoverRow === row) return;
     currentHoverRow = row;
     const rowKey = rowKeyGen(row);
-    currentHoverRowKey.value = rowKey;
-    updateHoverMergedCells(rowKey);
+    if (props.showTrHoverClass) {
+        currentHoverRowKey.value = rowKey;
+    }
+    if (props.rowHover) {
+        updateHoverMergedCells(rowKey);
+    }
+}
+
+function onTrMouseLeave(e: MouseEvent) {
+    if ((e.target as HTMLTableRowElement).tagName !== 'TR') return;
+    currentHoverRow = null;
+    if (props.showTrHoverClass) {
+        currentHoverRowKey.value = null;
+    }
+    if (props.rowHover) {
+        updateHoverMergedCells(void 0);
+    }
 }
 
 /**

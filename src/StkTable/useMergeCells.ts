@@ -1,13 +1,15 @@
 import { ref, ShallowRef, watch } from 'vue';
-import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
+import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 import { pureCellKeyGen } from './utils';
 
 export function useMergeCells({
+    props,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
 }: {
+    props: any;
     tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
     rowKeyGen: RowKeyGen;
     colKeyGen: ColKeyGen;
@@ -28,6 +30,8 @@ export function useMergeCells({
 
     /** hover current row , which rowspan cells should be highlight */
     const hoverMergedCells = ref(new Set<string>());
+    /** click current row , which rowspan cells should be highlight */
+    const activeMergedCells = ref(new Set<string>());
 
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
@@ -99,10 +103,26 @@ export function useMergeCells({
         return { colspan, rowspan };
     }
 
-    function updateHoverMergedCells(rowKey: UniqKey) {
-        const set = hoverRowMap.value[rowKey];
+    function updateHoverMergedCells(rowKey: UniqKey | undefined) {
+        const set = rowKey === void 0 ? null : hoverRowMap.value[rowKey];
         hoverMergedCells.value = set || new Set();
     }
 
-    return { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells };
+    function updateActiveMergedCells(clear?: boolean) {
+        if (!props.rowActive) return;
+        if (clear) {
+            activeMergedCells.value.clear();
+        } else {
+            activeMergedCells.value = new Set(hoverMergedCells.value);
+        }
+    }
+
+    return {
+        hiddenCellMap,
+        mergeCellsWrapper,
+        hoverMergedCells,
+        updateHoverMergedCells,
+        activeMergedCells,
+        updateActiveMergedCells,
+    };
 }

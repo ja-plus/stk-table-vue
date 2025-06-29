@@ -8,7 +8,7 @@ const columns: StkTableColumn<any>[] = [
         dataIndex: 'name',
         mergeCells: ({ rowIndex }) => {
             return {
-                colspan: rowIndex % 2 ? 2 : void 0,
+                colspan: rowIndex % 2 ? 2 : void 0, // 合并偶数行
             };
         },
     },
