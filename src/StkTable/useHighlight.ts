@@ -1,8 +1,8 @@
-// import { interpolateRgb } from 'd3-interpolate';
 import { Ref, computed } from 'vue';
 import { HIGHLIGHT_CELL_CLASS, HIGHLIGHT_COLOR, HIGHLIGHT_DURATION, HIGHLIGHT_ROW_CLASS } from './const';
 import { HighlightConfig, UniqKey } from './types';
 import { HighlightDimCellOption, HighlightDimRowOption } from './types/highlightDimOptions';
+import { pureCellKeyGen } from './utils';
 
 type Params = {
     props: any;
@@ -108,7 +108,7 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
      */
     function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {}) {
-        const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-cell-key="${rowKeyValue}--${colKeyValue}"]`);
+        const cellEl = tableContainerRef.value?.querySelector<HTMLElement>(`[data-cell-key="${pureCellKeyGen(rowKeyValue, colKeyValue)}"]`);
         if (!cellEl) return;
         const { className, method, duration, keyframe } = {
             className: HIGHLIGHT_CELL_CLASS,
