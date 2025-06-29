@@ -169,7 +169,7 @@
                                         'cell-hover': col.mergeCells && hoverMergedCells.has(cellKeyGen(row, col)),
                                         'cell-active': col.mergeCells && activeMergedCells.has(cellKeyGen(row, col)),
                                         'seq-column': col.type === 'seq',
-                                        active: currentSelectedCellKey === cellKeyGen(row, col),
+                                        active: props.cellActive && currentSelectedCellKey === cellKeyGen(row, col),
                                         expanded:
                                             col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
                                         'tree-expanded': col.type === 'tree-node' && row.__T_EXPANDED__,
