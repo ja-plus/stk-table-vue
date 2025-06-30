@@ -17,7 +17,7 @@ hero:
       text: 示例
       link: /demos/huge-data
     - theme: alt
-      text: GitHub
+      text: GitHub⭐
       link: https://github.com/ja-plus/stk-table-vue
 
 features:
@@ -32,7 +32,7 @@ features:
     details: 支持横向、纵向、不等高虚拟列表。
   - icon: 🔩
     title: 灵活
-    details: 配置式自定义单元格。基于DOM。
+    details: 基于DOM，配置式自定义单元格，告别膨胀的插槽。
   - icon: 🔑
     title: 完全类型化的API
     details: 灵活的 API 和完整的 TypeScript 类型。
