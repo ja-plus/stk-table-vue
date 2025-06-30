@@ -41,12 +41,15 @@ export function useMergeCells({
     /** 抽象隐藏单元格的逻辑 */
     function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
         for (let i = startIndex; i < startIndex + count; i++) {
-            const nextCol = tableHeaderLast.value[i];
-            if (!nextCol) break;
-            const nextColKey = colKeyGen.value(nextCol);
-            if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
-            hiddenCellMap.value[rowKey].add(nextColKey);
-            if (isSelfRow) continue;
+            if (!isSelfRow || i !== startIndex) {
+                // 自己不需要隐藏
+                const nextCol = tableHeaderLast.value[i];
+                if (!nextCol) break;
+                const nextColKey = colKeyGen.value(nextCol);
+                if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
+                hiddenCellMap.value[rowKey].add(nextColKey);
+            }
+
             // if other row hovered, the rowspan cell need to be highlight
             if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
             hoverRowMap.value[rowKey].add(mergeCellKey);
@@ -90,14 +93,8 @@ export function useMergeCells({
             const row = dataSourceSlice[i];
             if (!row) break;
             const rKey = rowKeyGen(row);
-            let startIndex = curColIndex;
-            let count = colspan;
             const isSelfRow = i === curRowIndex;
-            if (isSelfRow) {
-                startIndex += 1;
-                count -= 1;
-            }
-            hideCells(rKey, startIndex, count, isSelfRow, mergedCellKey);
+            hideCells(rKey, curColIndex, colspan, isSelfRow, mergedCellKey);
         }
 
         return { colspan, rowspan };
