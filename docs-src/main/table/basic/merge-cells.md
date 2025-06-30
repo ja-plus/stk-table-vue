@@ -26,3 +26,7 @@ function mergeCells(data: {
 
 ## 行合并
 <demo vue="basic/merge-cells/MergeCellsRow.vue"></demo>
+
+::: tip
+如果表格数据有变化，则会重新调用 `mergeCells` 函数计算。
+:::
