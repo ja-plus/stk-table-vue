@@ -1,3 +1,7 @@
+## 0.8.1
+* Bugfix
+  - `lib/stk-table-vue.css` revert name to `lib/style.css`
+  
 ## 0.8.0
 * Feature
   - add: `StkTableColumn['mergeCells']` support cell merge.

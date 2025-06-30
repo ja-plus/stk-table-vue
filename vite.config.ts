@@ -13,7 +13,19 @@ export default defineConfig({
         },
         rollupOptions: {
             external: ['vue'],
+            output: {
+                // 指定资产文件（包含 CSS）的命名规则
+                assetFileNames: assetInfo => {
+                    if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                        // 指定 CSS 文件的名称为 stk-table.css
+                        return 'style.css';
+                    }
+                    // 其他资产文件保持默认命名规则
+                    return '[name].[ext]';
+                },
+            },
         },
+        cssCodeSplit: true,
     },
     resolve: {
         alias: {
