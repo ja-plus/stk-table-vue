@@ -52,7 +52,6 @@
                 'fixed-mode': props.fixedMode,
             }"
         >
-            <!-- transform: virtualX_on ? `translateX(${virtualScrollX.offsetLeft}px)` : null, 用transform控制虚拟滚动左边距，sticky会有问题 -->
             <thead v-if="!headless" ref="theadRef">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
                     <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
@@ -110,9 +109,6 @@
                 </tr>
             </thead>
 
-            <!-- 用于虚拟滚动表格内容定位 @deprecated 有兼容问题-->
-            <!-- <tbody v-if="virtual_on" :style="{ height: `${virtualScroll.offsetTop}px` }"></tbody> -->
-            <!-- <tbody :style="{ transform: `translateY(${virtualScroll.offsetTop}px)` }"> -->
             <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <!--这个td用于配合虚拟滚动的th对应，防止列错位-->

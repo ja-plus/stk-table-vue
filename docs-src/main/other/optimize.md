@@ -14,7 +14,8 @@
 }
 ```
 ## 滚动白屏
- 尝试tr分层。
+1. 尝试按行滚动。[scroll-row-by-row](/main/table/basic/scroll-row-by-row.md)
+2. 尝试tr分层。
     
 ## 高亮
 * 配置 `props.highlightConfig.fps` 指定高亮帧率。降低帧率有利于减少资源占用。
@@ -28,4 +29,4 @@
 * 手动设置为 `props.autoResize=false`。可取消监听的性能消耗。适用于宽度高度不变的表格。
 
 ## props.smoothScroll
-* 一些版本浏览器滚动默认有惯性。滚动过快会导致白屏。因此 chrome 85~120 版本默认关闭，将使用 `onwheel` 代理滚动，防止滚动白屏。
+* 一些版本浏览器滚动默认有惯性。滚动过快会导致白屏。因此 chrome > 85 默认关闭，将使用 `onwheel` 代理滚动，防止滚动白屏。
