@@ -1,8 +1,6 @@
 ## 0.8.0
 * Feature
   - add: `StkTableColumn['mergeCells']` support cell merge.
-
-## 0.7.3
 * Bugfix
   - fix: `props.scrollRowByRow` support param: `scrollbar`. If scroll horizontal scrollbar should not trigger scrollRowByRow
 

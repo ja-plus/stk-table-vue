@@ -1,14 +1,14 @@
 import { Ref, ShallowRef } from 'vue';
-import { StkTableColumn, UniqKey } from './types';
+import { PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
     trRef: Ref<HTMLTableRowElement[] | undefined>;
     dataSourceCopy: ShallowRef<DT[]>;
-    tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>;
-    tableHeaders: ShallowRef<StkTableColumn<DT>[][]>;
-    rowKeyGen: (row: any) => UniqKey;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
+    tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
+    rowKeyGen: RowKeyGen;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -88,7 +88,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
     virtual_dataSourcePart: import('vue').ComputedRef<DT[]>;
     virtual_offsetBottom: import('vue').ComputedRef<number>;
     virtualX_on: import('vue').ComputedRef<any>;
-    virtualX_columnPart: import('vue').ComputedRef<StkTableColumn<DT>[]>;
+    virtualX_columnPart: import('vue').ComputedRef<PrivateStkTableColumn<DT>[]>;
     virtualX_offsetRight: import('vue').ComputedRef<number>;
     initVirtualScroll: (height?: number) => void;
     initVirtualScrollY: (height?: number) => void;

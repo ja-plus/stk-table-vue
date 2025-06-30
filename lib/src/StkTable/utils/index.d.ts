@@ -1,4 +1,4 @@
-import { Order, SortConfig, SortOption, SortState, StkTableColumn } from '../types';
+import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from '../types';
 
 /** 是否空值 */
 export declare function isEmptyValue(val: any, isNumber?: boolean): boolean;
@@ -50,3 +50,4 @@ export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: num
 /** number width +px */
 export declare function transformWidthToStr(width?: string | number): string | undefined;
 export declare function getBrowsersVersion(browserName: string): number;
+export declare function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey): string;

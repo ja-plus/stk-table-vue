@@ -1,20 +1,19 @@
-import { ComputedRef } from 'vue';
-import { StkTableColumn, UniqKey } from './types';
+import { ColKeyGen, StkTableColumn } from './types';
 
-type Params<T extends Record<string, any>> = {
+type Params = {
     props: any;
     emits: any;
-    colKeyGen: ComputedRef<(col: StkTableColumn<T>) => UniqKey>;
+    colKeyGen: ColKeyGen;
 };
 /**
  * 列顺序拖动
  * @returns
  */
-export declare function useThDrag<DT extends Record<string, any>>({ props, emits, colKeyGen }: Params<DT>): {
+export declare function useThDrag({ props, emits, colKeyGen }: Params): {
     onThDragStart: (e: DragEvent) => void;
     onThDragOver: (e: DragEvent) => void;
     onThDrop: (e: DragEvent) => void;
     /** 是否可拖拽 */
-    isHeaderDraggable: (col: StkTableColumn<DT>) => any;
+    isHeaderDraggable: (col: StkTableColumn<any>) => any;
 };
 export {};

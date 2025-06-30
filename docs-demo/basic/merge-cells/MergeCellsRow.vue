@@ -41,8 +41,8 @@ const dataSource = ref([
     { id: '2-2-1', continent: 'Europe', country: 'England', province: 'England' },
 ]);
 function deleteARow() {
-    const temp = JSON.parse(JSON.stringify(dataSource.value));
-    const i = temp.findIndex(it => it.id === '1-1-3');
+    const temp: any = JSON.parse(JSON.stringify(dataSource.value));
+    const i = temp.findIndex((it: any) => it.id === '1-1-3');
     if (i < 0) return;
     temp.splice(i, 1);
     rowSpanCount.asia = 4;

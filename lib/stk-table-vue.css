@@ -402,3 +402,9 @@
 .stk-table .stk-fold-icon:hover::before{
   border-left:5px solid var(--fold-icon-hover-color);
 }
+.stk-table td.cell-hover{
+  background-color:var(--tr-hover-bgc);
+}
+.stk-table td.cell-active{
+  background-color:var(--tr-active-bgc);
+}

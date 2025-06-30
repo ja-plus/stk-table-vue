@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -54,7 +54,7 @@ declare function getSortColumns(): {
 }[];
 declare function __VLS_template(): {
     tableHeader?(_: {
-        col: StkTableColumn<any>;
+        col: PrivateStkTableColumn<any>;
     }): any;
     expand?(_: {
         row: any;
@@ -218,6 +218,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     columns: () => never[];
     dataSource: () => never[];
     rowKey: string;
+    colKey: undefined;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -291,14 +292,14 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: Set highlight cell
      * @see {@link setHighlightDimCell}
      */
-    setHighlightDimCell: (rowKeyValue: import('./types/index').UniqKey, colKeyValue: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
+    setHighlightDimCell: (rowKeyValue: UniqKey, colKeyValue: string, option?: import('./types/highlightDimOptions').HighlightDimCellOption) => void;
     /**
      * 设置高亮行
      *
      * en: Set highlight row
      * @see {@link setHighlightDimRow}
      */
-    setHighlightDimRow: (rowKeyValues: import('./types/index').UniqKey[], option?: import('./types/highlightDimOptions').HighlightDimRowOption) => void;
+    setHighlightDimRow: (rowKeyValues: UniqKey[], option?: import('./types/highlightDimOptions').HighlightDimRowOption) => void;
     /**
      * 表格排序列colKey
      *
@@ -356,7 +357,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: When the row height is not fixed, call this method to update the row height if the row height changes.
      * @see {@link setAutoHeight}
      */
-    setAutoHeight: (rowKey: import('./types/index').UniqKey, height?: number | null) => void;
+    setAutoHeight: (rowKey: UniqKey, height?: number | null) => void;
     /**
      * 清除所有行高
      *
@@ -370,9 +371,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: Set tree node expand state
      * @see {@link setTreeExpand}
      */
-    setTreeExpand: (row: (import('./types/index').UniqKey | (PrivateRowDT & {
+    setTreeExpand: (row: (UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
-    })) | (import('./types/index').UniqKey | (PrivateRowDT & {
+    })) | (UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
         expand?: boolean;
@@ -583,6 +584,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     columns: () => never[];
     dataSource: () => never[];
     rowKey: string;
+    colKey: undefined;
     emptyCellText: string;
     noDataFull: boolean;
     showNoData: boolean;
@@ -677,6 +679,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | string | null;
+    colKey: UniqKeyProp;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
