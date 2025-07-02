@@ -196,7 +196,7 @@
                                             :expanded="(row && row.__EXPANDED__) || null"
                                             :tree-expanded="(row && row.__T_EXPANDED__) || null"
                                         >
-                                            <template #foldIcon>
+                                            <template #stkFoldIcon>
                                                 <TriangleIcon></TriangleIcon>
                                             </template>
                                         </component>
@@ -221,7 +221,14 @@
                                         :rowIndex="getRowIndex(rowIndex)"
                                         :colIndex="colIndex"
                                         :cellValue="row && row[col.dataIndex]"
-                                    />
+                                    >
+                                        <template #stkFoldIcon>
+                                            <TriangleIcon></TriangleIcon>
+                                        </template>
+                                        <template #stkDragIcon>
+                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                        </template>
+                                    </component>
                                     <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
                                         <template v-if="col.type === 'seq'">
                                             {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
