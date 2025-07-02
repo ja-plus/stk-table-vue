@@ -155,7 +155,7 @@ export default defineConfig({
       }
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/ja-plus/stk-table-vue' }
+      { icon: 'github', link: 'https://github.com/ja-plus/stk-table-vue' },
     ],
     footer: {
       message: '根据 MIT 许可证发布',

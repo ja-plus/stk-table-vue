@@ -42,3 +42,6 @@ features:
     details: vue SFC + TS 源码，支持在 vue2项目中引入。
 ---
 
+## hello
+![GitHub Stars](https://img.shields.io/github/stars/ja-plus/stk-table-vue.svg)
+

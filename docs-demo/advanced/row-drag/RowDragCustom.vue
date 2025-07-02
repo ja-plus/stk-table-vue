@@ -8,8 +8,6 @@ const p = ref({
     virtual: false,
 });
 
-let sourceIndex: number | null = null;
-
 const columns = ref<StkTableColumn<any>[]>([
     { dataIndex: 'id', title: 'id' },
     {
@@ -26,15 +24,13 @@ const columns = ref<StkTableColumn<any>[]>([
                     draggable: 'true',
                     class: 'custom-drag-handle',
                     onDragstart: e => handleDragStart(e, rowIndex),
-                    onDragover: e => handleDragOver(e, rowIndex),
+                    onDragover: e => handleDragOver(e),
                     onDragleave: e => handleDragLeave(e),
                     onDragend: e => handleDragEnd(e),
                     onDrop: e => handleDrop(e, rowIndex),
                 },
                 [
                     h('div', { class: 'point-wrapper' }, [
-                        h('div', { class: 'point' }),
-                        h('div', { class: 'point' }),
                         h('div', { class: 'point' }),
                         h('div', { class: 'point' }),
                         h('div', { class: 'point' }),
@@ -60,7 +56,6 @@ const data = shallowRef(
 );
 
 function handleDragStart(e: DragEvent, startIndex: number) {
-    sourceIndex = startIndex;
     const target = e.target as HTMLElement;
     const tr = target.closest('tr');
     if (tr) {
@@ -69,6 +64,7 @@ function handleDragStart(e: DragEvent, startIndex: number) {
     }
     if (e.dataTransfer) {
         e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('sourceIndex', String(startIndex)); // 保存拖动开始的位置
     }
 }
 
@@ -79,14 +75,10 @@ function handleDragEnd(e: DragEvent) {
         tr.style.opacity = '1';
     }
 }
-function handleDragOver(e: DragEvent, endIndex: number) {
+function handleDragOver(e: DragEvent) {
     e.preventDefault();
     const target = e.target as HTMLElement;
-    const tr = target.closest('tr');
-
-    if (tr) {
-        tr.style.boxShadow = 'inset 0 -2px 0 0 #1d63d9';
-    }
+    addHoverStyle(target);
     if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
     }
@@ -96,25 +88,33 @@ function handleDragLeave(e: DragEvent) {
     e.preventDefault();
     const target = e.target as HTMLElement;
     if (target.classList.contains('custom-drag-handle')) {
-        const tr = target.closest('tr');
-        if (tr) {
-            tr.style.removeProperty('box-shadow');
-        }
+        removeHoverStyle(target);
     }
 }
 
 function handleDrop(e: DragEvent, endIndex: number) {
     const target = e.target as HTMLElement;
-    const tr = target.closest('tr');
-    if (tr) {
-        tr.style.removeProperty('box-shadow');
-    }
-    if (sourceIndex === null) return;
+    removeHoverStyle(target);
+    const sourceIndex = Number(e.dataTransfer?.getData('startIndex')) || 0;
+    if (sourceIndex === void 0) return;
     const d = [...data.value];
     const sourceData = d[sourceIndex];
     d.splice(sourceIndex, 1);
     d.splice(endIndex, 0, sourceData);
     data.value = d;
+}
+
+function addHoverStyle(target: HTMLElement) {
+    const tr = target.closest('tr');
+    if (tr) {
+        tr.style.boxShadow = 'inset 0 -2px 0 0 #1d63d9';
+    }
+}
+function removeHoverStyle(target: HTMLElement) {
+    const tr = target.closest('tr');
+    if (tr) {
+        tr.style.removeProperty('box-shadow');
+    }
 }
 </script>
 <template>
@@ -124,7 +124,6 @@ function handleDrop(e: DragEvent, endIndex: number) {
             v-model:columns="columns"
             style="height: 300px"
             row-key="id"
-            :col-key="col => col.key || col.dataIndex"
             :virtual="p.virtual"
             :data-source="data"
         >
@@ -141,11 +140,11 @@ function handleDrop(e: DragEvent, endIndex: number) {
         justify-content: center;
 
         &:hover {
-            background-color: #ccc;
+            background-color: var(--vp-c-border);
         }
 
         .point-wrapper {
-            height: 20px;
+            height: 14px;
             width: 16px;
             position: relative;
             pointer-events: none;
@@ -169,15 +168,6 @@ function handleDrop(e: DragEvent, endIndex: number) {
             &:nth-child(4) {
                 left: 8px;
                 top: 8px;
-            }
-
-            &:nth-child(5) {
-                top: 14px;
-            }
-
-            &:nth-child(6) {
-                top: 14px;
-                left: 8px;
             }
         }
     }
