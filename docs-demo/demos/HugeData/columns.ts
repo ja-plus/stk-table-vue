@@ -8,32 +8,28 @@ export const columns: StkTableColumn<DataType>[] = [
     { type: 'seq', dataIndex: '' as any, title: '序号', fixed: 'left', width: 70 },
     {
         dataIndex: 'source',
-        title: '经纪商',
+        title: '来源',
         width: 80,
         sortField: 'source',
         align: 'center',
         fixed: 'left',
         customCell: props => {
             if (props.row._isChildren) {
-                return h(SourceCell, {
-                    ...props,
-                });
+                return h(SourceCell, props);
             }
-            return h(ExpandCell, {
-                ...props,
-            });
+            return h(ExpandCell, props);
         },
     },
     {
         dataIndex: 'code',
-        title: '债券代码',
+        title: '代码',
         sortField: 'thsCode',
         fixed: 'left',
         headerAlign: 'left',
     },
     {
         dataIndex: 'bondAbbreviation',
-        title: '债券简称',
+        title: '名称',
         fixed: 'left',
         width: 150,
         headerAlign: 'left',
