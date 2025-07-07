@@ -8,7 +8,7 @@
         "sourceMap": true,
         "checkJs": false,
         "baseUrl": ".",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "jsxImportSource": "vue",
         "allowSyntheticDefaultImports": true,
         "lib": [

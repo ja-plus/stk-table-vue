@@ -124,7 +124,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
     function expandNode(row: DT, level: number) {
         let result: DT[] = [];
         row.children &&
-            row.children.forEach(child => {
+            row.children.forEach((child: DT) => {
                 result.push(child);
                 const childLv = level + 1;
                 if (child.__T_EXPANDED__ && child.children) {

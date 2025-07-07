@@ -7,6 +7,7 @@ export default defineConfig({
     build: {
         minify: false,
         outDir: path.join('./lib'),
+        target: ['chrome84'],
         lib: {
             entry: path.join('./src/StkTable/index.ts'),
             formats: ['es'],
