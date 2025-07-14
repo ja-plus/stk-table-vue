@@ -82,6 +82,7 @@ export default defineConfig({
                 collapsed: false,
                 items: [
                   { text: '基础', link: '/table/basic/basic' },
+                  { text: '主题(亮/暗)', link: '/table/basic/theme' },
                   { text: '宽高', link: '/table/basic/size' },
                   { text: '边框', link: '/table/basic/bordered' },
                   { text: '对齐方式', link: '/table/basic/align' },
