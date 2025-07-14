@@ -78,7 +78,7 @@ const stkTableRef = useTemplateRef('stkTableRef');
 
 // highlight row
 stkTableRef.value.setHighlightDimRow([rowKey]，{
-  method: 'css'|'js'|'animation',// 默认 animation。
+  method: 'css'|'animation',// 默认 animation。
   className: 'custom-class-name', // method css 时生效。
   keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
   duration: 2000,// 动画时长。

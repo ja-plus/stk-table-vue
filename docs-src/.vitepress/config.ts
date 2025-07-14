@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress';
 import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
 // import { enConfig } from './src/config/en';
-import llmstxt from 'vitepress-plugin-llms'
+import llmstxt from 'vitepress-plugin-llms';
 import path from 'path';
 
 
@@ -69,6 +69,7 @@ export default defineConfig({
           {
             text: '开发指南',
             items: [
+              { text: '介绍', link: '/start/introduce' },
               { text: '开始', link: '/start/start' },
               { text: '在vue2中使用', link: '/start/vue2-usage' },
               // { text: 'Runtime API Examples', link: '/api-examples' },
