@@ -3,3 +3,4 @@
 [] proxy th event listener
 [X] customHeaderCell wrapper
 [] `onRowClick` should return rowIndex use cellClick instead
+[] ![GitHub Stars](https://img.shields.io/github/stars/ja-plus/stk-table-vue.svg)
