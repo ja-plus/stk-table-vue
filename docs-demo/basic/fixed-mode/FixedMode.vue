@@ -11,7 +11,7 @@ const columns: StkTableColumn<any>[] = [
     { dataIndex: 'address', title: 'address' },
 ];
 const data = new Array(200).fill(0).map((it, index) => {
-    return { id: index, name: 'hah', address: 'sss' };
+    return { id: index, name: 'Jack', address: 'Beijing' };
 });
 </script>
 
@@ -21,8 +21,9 @@ const data = new Array(200).fill(0).map((it, index) => {
         <StkTable
             style="height: 150px"
             row-key="id"
-            :width="width + '%'"
+            virtual
             fixed-mode
+            :width="width + '%'"
             :columns="columns"
             :data-source="data"
         ></StkTable>
