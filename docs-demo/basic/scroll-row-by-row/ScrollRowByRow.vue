@@ -7,10 +7,10 @@ const rowByRow = ref<boolean | 'scrollbar'>(true);
 
 const columns: StkTableColumn<any>[] = [
     { type: 'seq', width: 50, dataIndex: '', title: '序号' },
-    { title: 'Name', dataIndex: 'name', sorter: true },
-    { title: 'Age', dataIndex: 'age', sorter: true },
+    { title: 'Name', dataIndex: 'name', width: 100, sorter: true },
+    { title: 'Age', dataIndex: 'age', width: 100, sorter: true },
+    { title: 'Gender', dataIndex: 'gender', width: 100, sorter: true },
     { title: 'Address', dataIndex: 'address', sorter: true },
-    { title: 'Gender', dataIndex: 'gender', sorter: true },
 ];
 
 const dataSource = new Array(1000).fill(0).map((_, index) => {
