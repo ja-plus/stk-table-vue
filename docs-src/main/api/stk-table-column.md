@@ -15,7 +15,6 @@ columns.value = columns.value.slice(); // 更新数组引用
 
 ### StkTableColumn 列配置
 ``` ts
-type Sorter<T> = boolean | ((data: T[], option: { order: Order; column: any }) => T[]);
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
      * 列唯一键，(可选)，不传则默认取dataIndex 字段作为列唯一键。
@@ -78,7 +77,19 @@ export type StkTableColumn<T extends Record<string, any>> = {
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
+     /** 单元格合并 */
+    mergeCells?: MergeCellsFn<T>;
 };
+```
+
+## StkTableColumn.Sorter 
+```ts
+type Sorter<T> = boolean 
+    | ((
+        data: T[],
+        option: { order: Order; column: any }
+    ) => T[]);
+
 ```
 
 ## StkTableColumn.SortConfig
@@ -103,4 +114,22 @@ export type SortConfig<T extends Record<string, any>> = {
      */
     stringLocaleCompare?: boolean;
 };
+```
+
+## StkTableColumn.MergeCellsFn
+
+```ts
+export type MergeCellsParam<T extends Record<string, any>> = {
+    row: T;
+    col: StkTableColumn<T>;
+    rowIndex: number;
+    colIndex: number;
+};
+
+export type MergeCellsFn<T extends Record<string, any>> =
+    (data: MergeCellsParam<T>) => 
+        { 
+            rowspan?: number; 
+            colspan?: number 
+        } | undefined;
 ```

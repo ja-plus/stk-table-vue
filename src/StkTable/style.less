@@ -378,13 +378,12 @@
 
     .fixed-cell {
         background-color: inherit;
-        /* 防止横向滚动后透明*/
     }
 
     .highlight-cell {
         animation: stk-table-dim var(--highlight-duration);
         animation-timing-function: var(--highlight-timing-function);
-        /* 必须分开些，否则var(step(x))不兼容旧浏览器*/
+        /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
     }
 
     .seq-column {

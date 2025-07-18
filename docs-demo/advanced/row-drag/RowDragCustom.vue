@@ -12,10 +12,9 @@ const columns = ref<StkTableColumn<any>[]>([
     { dataIndex: 'id', title: 'id' },
     {
         dataIndex: '',
-        width: 100,
+        width: 200,
         title: '自定义',
         align: 'center',
-        fixed: 'left',
         customCell: props => {
             const { rowIndex } = props;
             return h(
@@ -26,6 +25,7 @@ const columns = ref<StkTableColumn<any>[]>([
                     onDragstart: e => handleDragStart(e, rowIndex),
                     onDragover: e => handleDragOver(e),
                     onDragleave: e => handleDragLeave(e),
+                    onDragenter: e => handleDragEnter(e),
                     onDragend: e => handleDragEnd(e),
                     onDrop: e => handleDrop(e, rowIndex),
                 },
@@ -41,7 +41,7 @@ const columns = ref<StkTableColumn<any>[]>([
         },
     },
     { dataIndex: 'email', title: 'email' },
-    { dataIndex: 'phone', title: 'phone', width: 150 },
+    { dataIndex: 'phone', title: 'phone' },
 ]);
 
 const data = shallowRef(
@@ -77,11 +77,12 @@ function handleDragEnd(e: DragEvent) {
 }
 function handleDragOver(e: DragEvent) {
     e.preventDefault();
-    const target = e.target as HTMLElement;
-    addHoverStyle(target);
     if (e.dataTransfer) {
         e.dataTransfer.dropEffect = 'move';
     }
+}
+function handleDragEnter(e: DragEvent) {
+    addHoverStyle(e.target as HTMLElement);
 }
 
 function handleDragLeave(e: DragEvent) {
