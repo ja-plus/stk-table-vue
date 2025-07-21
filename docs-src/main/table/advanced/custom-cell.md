@@ -5,15 +5,16 @@
 
 `customCell` 和 `customHeaderCell` 使用方式基本相同，下面以 `customCell` 为例子进行说明。
 
-::: warning
-`customCell` 的根元素请**谨慎**设置 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在虚拟列表中可能会撑开行高。
+::: warning 建议
+* `customCell` 建议套上一层元素(div,span等)，否则 &lt;td&gt; 子节点为 `TextNode` 可能导致布局问题。
+* `customCell` 的根元素请**谨慎**设置 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在**虚拟列表**中可能会撑开行高。
 :::
 
 ### 通过vue SFC 使用
 支持传入vue SFC 组件，vue 组件的 props 需要用 `CustomCellProps` 类型特殊定义。
 
-::: tip
-最佳实践如下，columns单独定义一个文件。
+::: tip 最佳实践
+ columns 单独写在一个文件中导出使用。
 :::
 
 ::: code-group
@@ -21,7 +22,7 @@
 import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 import type { DataType } from './types';
 import YieldCell from './YieldCell.vue';
-const columns: StkTableColumn<DataType> = [{
+export const columns: StkTableColumn<DataType> = [{
     title: '收益率',
     dataIndex: 'yield',
     customCell: YieldCell
@@ -115,6 +116,7 @@ const columns:StkTableColumn<any>[] = [
 | customHeaderCell | (props: CustomHeaderCellProps) => VNode | - | 自定义表头渲染函数 |
 
 ### types
+customCell props 类型
 ```ts
 export type CustomCellProps<T extends Record<string, any>> = {
     row: T;
