@@ -91,7 +91,7 @@
     }
 
     &.headless {
-        &.border {
+        &.bordered {
             border-top: 1px solid var(--border-color);
             background-image: var(--bg-border-right), var(--bg-border-bottom);
         }
@@ -112,7 +112,7 @@
         }
     }
 
-    &.border {
+    &.bordered {
         /** 
         * border-left: 此方案用于减少cell 中border-left 的css选择。同时利于多级表头border-left问题。利于横向滚动border-left
         * - box-shadow inset 方案不生效，且占用属性。
@@ -134,18 +134,18 @@
         }
     }
 
-    &.border-h {
+    &.bordered-h {
         border-left: none;
         --bg-border-right: linear-gradient(transparent, transparent);
         --bg-border-left: linear-gradient(transparent, transparent);
     }
 
-    &.border-v {
+    &.bordered-v {
         --bg-border-bottom: linear-gradient(transparent, transparent);
         --bg-border-top: linear-gradient(transparent, transparent);
     }
 
-    &.border-body-v {
+    &.bordered-body-v {
         tbody {
             --bg-border-bottom: linear-gradient(transparent, transparent);
         }

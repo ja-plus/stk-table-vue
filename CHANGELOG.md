@@ -1,3 +1,7 @@
+## 0.8.2
+* Change
+  - stk-table class `.border` to `.bordered`. To prevent conflict with `.border` class defined by `tailwindcss`.
+
 ## 0.8.1
 * Bugfix
   - `lib/stk-table-vue.css` revert name to `lib/style.css`
