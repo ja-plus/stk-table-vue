@@ -126,7 +126,7 @@
                     :class="{
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
-                        [rowClassName(row, getRowIndex(rowIndex))]: true,
+                        [rowClassName(row, getRowIndex(rowIndex)) || '']: true,
                         expanded: row?.__EXPANDED__,
                         'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
@@ -383,7 +383,7 @@ const props = withDefaults(
          * 给行附加className<br>
          * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
          */
-        rowClassName?: (row: DT, i: number) => string;
+        rowClassName?: (row: DT, i: number) => string | undefined;
         /**
          * 列宽是否可拖动(需要设置v-model:columns)<br>
          * **不要设置**列minWidth，**必须**设置width<br>

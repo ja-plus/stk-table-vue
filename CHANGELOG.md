@@ -1,6 +1,7 @@
 ## 0.8.2
 * Change
   - stk-table class `.border` to `.bordered`. To prevent conflict with `.border` class defined by `tailwindcss`.
+  - `props.rowClassName` support return undefined.
 
 ## 0.8.1
 * Bugfix
