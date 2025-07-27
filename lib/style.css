@@ -66,7 +66,7 @@
   --drag-handle-hover-color:#5d6064;
   color:#d1d1e0;
 }
-.stk-table.headless.border{
+.stk-table.headless.bordered{
   border-top:1px solid var(--border-color);
   background-image:var(--bg-border-right), var(--bg-border-bottom);
 }
@@ -79,27 +79,27 @@
 .stk-table.is-col-resizing th{
   pointer-events:none;
 }
-.stk-table.border{
+.stk-table.bordered{
   border-left:1px solid var(--border-color);
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
-.stk-table.border th,
-.stk-table.border td{
+.stk-table.bordered th,
+.stk-table.bordered td{
   background-image:var(--bg-border-right), var(--bg-border-bottom);
 }
-.stk-table.border thead tr:first-child th{
+.stk-table.bordered thead tr:first-child th{
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
-.stk-table.border-h{
+.stk-table.bordered-h{
   border-left:none;
   --bg-border-right:linear-gradient(transparent, transparent);
   --bg-border-left:linear-gradient(transparent, transparent);
 }
-.stk-table.border-v{
+.stk-table.bordered-v{
   --bg-border-bottom:linear-gradient(transparent, transparent);
   --bg-border-top:linear-gradient(transparent, transparent);
 }
-.stk-table.border-body-v tbody{
+.stk-table.bordered-body-v tbody{
   --bg-border-bottom:linear-gradient(transparent, transparent);
 }
 .stk-table.stripe:not(.vt-on) .stk-tbody-main tr:nth-child(even){
