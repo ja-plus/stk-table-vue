@@ -2,7 +2,7 @@
 <demo vue="demos/Matrix/index.vue"  github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/demos/Matrix/index.vue"></demo>
 
 ::: tip
-取消首列悬浮事件使用css `pointer-evnet:none`控制。
+取消首列悬浮事件使用css `pointer-event:none`控制。
 :::
 
 ## 注意点
