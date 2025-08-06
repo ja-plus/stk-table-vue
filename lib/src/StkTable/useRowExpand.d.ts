@@ -9,7 +9,7 @@ type Option<DT extends Record<string, any>> = {
 };
 export declare function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>): {
     toggleExpandRow: (row: DT, col: StkTableColumn<DT>) => void;
-    setRowExpand: (rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: {
+    setRowExpand: (rowKeyOrRow: string | undefined | DT, expand?: boolean | null, data?: {
         col?: StkTableColumn<DT>;
         silent?: boolean;
     }) => void;

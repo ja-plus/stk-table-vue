@@ -347,7 +347,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: Set expanded rows
      * @see {@link setRowExpand}
      */
-    setRowExpand: (rowKeyOrRow: string | undefined | PrivateRowDT, expand?: boolean, data?: {
+    setRowExpand: (rowKeyOrRow: string | undefined | PrivateRowDT, expand?: boolean | null, data?: {
         col?: StkTableColumn<PrivateRowDT>;
         silent?: boolean;
     }) => void;
