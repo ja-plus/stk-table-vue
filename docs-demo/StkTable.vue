@@ -17,6 +17,8 @@ defineExpose({
         baseStkTableRef.value?.setHighlightDimRow(...p),
     setSorter: (...p: Parameters<BaseStkTableType['setSorter']>) =>
         baseStkTableRef.value?.setSorter(...p),
+    setRowExpand: (...p: Parameters<BaseStkTableType['setRowExpand']>) =>
+        baseStkTableRef.value?.setRowExpand(...p),
 });
 </script>
 <template>

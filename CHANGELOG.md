@@ -1,3 +1,7 @@
+## 0.8.3
+* Change
+  - expose `setRowExpanded` function: the second param `expand` if set null, will toggle expand row.
+
 ## 0.8.2
 * Change
   - stk-table class `.border` to `.bordered`. To prevent conflict with `.border` class defined by `tailwindcss`.
@@ -244,8 +248,8 @@
 
 ## ~~0.4.4~~ 0.4.5
 
-* fix: `StkTableColumns["customCell"]/StkTableColumns["customHeaderCell"]` prop可选。
-* fix: 未设置 `props.fixedColShadow` 时固定列滚动异常。
+* fix: `StkTableColumns["customCell"]/StkTableColumns["customHeaderCell"]` prop optional。
+* fix: not set `props.fixedColShadow` fixed column scroll error.
 
 ## 0.4.3
 

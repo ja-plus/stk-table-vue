@@ -9,26 +9,32 @@ type Option<DT extends Record<string, any>> = {
 };
 
 export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
+    const expandedKey = '__EXPANDED__';
+
+    function isExpanded(row: DT, col?: StkTableColumn<DT> | null) {
+        return row?.[expandedKey] === col ? !row?.[expandedKey] : true;
+    }
     /** click expended icon to toggle expand row */
     function toggleExpandRow(row: DT, col: StkTableColumn<DT>) {
-        const isExpand = row?.__EXPANDED__ === col ? !row?.__EXPANDED__ : true;
+        const isExpand = isExpanded(row, col);
         setRowExpand(row, isExpand, { col });
     }
 
     /**
      *
      * @param rowKeyOrRow rowKey or row
-     * @param expand expand or collapse
+     * @param expand expand or collapse, if set null, toggle expand
      * @param data { col?: StkTableColumn<DT> }
      * @param data.silent if set true, not emit `toggle-row-expand`, default:false
      */
-    function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
+    function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean | null, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
         let rowKey: UniqKey;
         if (typeof rowKeyOrRow === 'string') {
             rowKey = rowKeyOrRow;
         } else {
             rowKey = rowKeyGen(rowKeyOrRow);
         }
+
         const tempData = dataSourceCopy.value.slice();
         const index = tempData.findIndex(it => rowKeyGen(it) === rowKey);
         if (index === -1) {
@@ -50,6 +56,10 @@ export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
 
         const row = tempData[index];
         const col = data?.col || null;
+
+        if (expand == null) {
+            expand = isExpanded(row, col);
+        }
 
         if (expand) {
             // insert new expanded row

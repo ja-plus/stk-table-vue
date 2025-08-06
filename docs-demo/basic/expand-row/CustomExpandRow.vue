@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import { h, ref } from 'vue';
+import { h, ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
 
 const virtual = ref(false);
+
+const stkTableRef = useTemplateRef('stkTableRef');
 
 const columns = ref<StkTableColumn<any>[]>([
     { type: 'expand', dataIndex: '', width: 50, align: 'center', fixed: 'left' },
@@ -18,10 +20,14 @@ const columns = ref<StkTableColumn<any>[]>([
             if (props.expanded && props.expanded.dataIndex === 'name') {
                 className += ' custom-expand-icon-active';
             }
-            return h('div', { style: 'display: flex; align-items: center; ' }, [
-                h('span', { class: className }),
-                h('span', props.cellValue),
-            ]);
+            return h(
+                'div',
+                {
+                    style: 'display: flex; align-items: center; ',
+                    onClick: () => handleCustomCellClick(props.row, props.col),
+                },
+                [h('span', { class: className }), h('span', props.cellValue)],
+            );
         },
     },
     { dataIndex: 'id', title: 'id(100px)', width: '100px' },
@@ -47,6 +53,9 @@ const data = new Array(100).fill(0).map((it, index) => {
         bs: 'BS' + index,
     };
 });
+function handleCustomCellClick(row: any, col: StkTableColumn<any>) {
+    stkTableRef.value?.setRowExpand(row, null, { col, silent: true });
+}
 function handleToggleRowExpand(data: any) {
     console.log('handleToggleRowExpand', data);
 }
@@ -55,6 +64,7 @@ function handleToggleRowExpand(data: any) {
     <div>
         <CheckItem v-model="virtual" text="virtual"></CheckItem>
         <StkTable
+            ref="stkTableRef"
             row-key="id"
             style="height: 400px"
             :virtual="virtual"
