@@ -14,12 +14,11 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup generic="T extends { _isEditing?: boolean }">
 import { CustomCellProps } from '@/StkTable/types';
 import { computed, ref, watch, useTemplateRef } from 'vue';
-import { RowDataType } from './type';
 
-const props = defineProps<CustomCellProps<RowDataType>>();
+const props = defineProps<CustomCellProps<T>>();
 
 const editValue = ref(props.cellValue);
 const inputRef = useTemplateRef('inputRef');

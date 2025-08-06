@@ -28,9 +28,9 @@ import { RowDataType } from './type';
 // 定义表格列
 const columns: StkTableColumn<RowDataType>[] = [
     { title: 'ID', dataIndex: 'id', width: 60 },
-    { title: '姓名', dataIndex: 'name', width: 100, customCell: EditCell },
-    { title: '年龄', dataIndex: 'age', width: 80, customCell: EditCell },
-    { title: '地址', dataIndex: 'address', customCell: EditCell },
+    { title: '姓名', dataIndex: 'name', width: 100, customCell: EditCell<RowDataType> },
+    { title: '年龄', dataIndex: 'age', width: 80, customCell: EditCell<RowDataType> },
+    { title: '地址', dataIndex: 'address', customCell: EditCell<RowDataType> },
     { title: '编辑行', dataIndex: '_isEditing', width: 80, customCell: EditRowSwitch },
 ];
 
