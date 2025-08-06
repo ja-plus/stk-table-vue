@@ -3,7 +3,8 @@
 
 以下是简易实现：
 
-双击单元格编辑， 按 `Enter` 或 input失去焦点 保存，按 `Esc` 取消。
+* 双击单元格编辑： 按 `Enter` 保存，按 `Esc` 或 blur 取消。
+* 行编辑模式：勾选编辑行，进入行编辑模式。此模式无需 `Enter` 保存。
 
 <demo vue="demos/CellEdit/index.vue"  github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/demos/CellEdit/index.vue"></demo>
 

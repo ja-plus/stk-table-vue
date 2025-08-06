@@ -3,7 +3,7 @@ export type RowDataType = {
     name: string;
     age: number;
     address: string;
-    /** 一行都进入编辑模式 */
+    /** 一行进入编辑模式 */
     _isEditing?: boolean;
 };
 

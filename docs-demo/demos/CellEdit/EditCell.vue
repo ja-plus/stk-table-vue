@@ -7,7 +7,7 @@
             class="edit-input"
             :value="editValue"
             @blur="cancelEditing"
-            @change="finishEditing"
+            @change="handleChange"
             @keyup.enter="finishEditing"
             @keyup.esc="cancelEditing"
         />
@@ -16,13 +16,13 @@
 
 <script lang="ts" setup>
 import { CustomCellProps } from '@/StkTable/types';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, useTemplateRef } from 'vue';
 import { RowDataType } from './type';
 
 const props = defineProps<CustomCellProps<RowDataType>>();
 
 const editValue = ref(props.cellValue);
-const inputRef = ref<HTMLInputElement | null>(null);
+const inputRef = useTemplateRef('inputRef');
 
 watch(
     () => props.cellValue,
@@ -31,8 +31,10 @@ watch(
     },
 );
 const isEditing = ref(false);
+/**是否在行编辑模式 */
+const isEditMode = computed(() => props.row._isEditing);
 
-const editing = computed(() => props.row._isEditing || isEditing.value);
+const editing = computed(() => isEditMode.value || isEditing.value);
 
 function startEditing() {
     isEditing.value = true;
@@ -44,13 +46,25 @@ function startEditing() {
 
 function finishEditing(e: Event) {
     isEditing.value = false;
-    setCellValue((e.target as HTMLInputElement).value);
+    const newValue = (e.target as HTMLInputElement).value;
+    setCellValue(newValue);
 }
 
 function cancelEditing() {
+    // 行编辑模式不用取消
+    if (isEditMode.value) return;
     if (!isEditing.value) return;
     isEditing.value = false;
-    setCellValue(editValue.value);
+    if (inputRef.value) {
+        inputRef.value.value = editValue.value;
+    }
+}
+
+/** 如果在编辑模式，则实时更新 */
+function handleChange(e: Event) {
+    if (isEditMode.value) {
+        finishEditing(e);
+    }
 }
 
 function setCellValue(v: string) {

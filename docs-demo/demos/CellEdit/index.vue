@@ -37,7 +37,7 @@ const columns: StkTableColumn<RowDataType>[] = [
 // 初始化表格数据
 const tableData = ref<RowDataType[]>([
     { id: 1, name: '张三', age: 28, address: '北京市海淀区' },
-    { id: 2, name: '李四', age: 32, address: '上海市浦东新区' },
+    { id: 2, name: '李四', age: 32, address: '上海市浦东新区', _isEditing: true },
     { id: 3, name: '王五', age: 45, address: '广州市天河区' },
     { id: 4, name: '赵六', age: 22, address: '深圳市南山区' },
 ]);
