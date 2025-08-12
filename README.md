@@ -12,57 +12,27 @@
     </p>
 </p>
 
-> StK Table (Sticky Table) 是一个基于Vue 的高性能虚拟列表组件。
-> 用于实时数据展示，数据高亮动效。
+> Stk Table Vue(Sticky Table) is a high-performance virtual list component based on Vue.
+>
+> Used for real-time data display, with data highlighting and dynamic effects
+>
+> Support Vue3 and Vue2.7
 
-> Vue2.7支持引入源码(**ts**)使用。
 
-## Doc
-文档： [Stk Table Vue 高性能虚拟表格](https://ja-plus.github.io/stk-table-vue/)
+## Documentation
+### [Stk Table Vue Official CN](https://ja-plus.github.io/stk-table-vue/)
+
 
 ## Repo: 
 - [Github](https://github.com/ja-plus/stk-table-vue)
 - [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
 
 ## Demo
+[<span style="font-size: 16px;font-weight: bold;">Online Demo in stackblitz</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
 
-[<span style="font-size: 16px;font-weight: bold;">Online Demo</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
+## Compare
+Compare performance with other vue table [vue-table-compare](https://github.com/ja-plus/vue-table-compare)
 
-## Feature TODO:
-* [x] 高亮行，单元格。
-  - [x] 使用 `Web Animations API` 实现高亮。(`v0.3.4` 变更为默认值)
-  - [x] 支持配置高亮参数（持续时间，颜色，频率）。(`v0.2.9`)
-  - [x] `setHighlightDimRow`/`setHighlightCellRow`支持自定义高亮css类名。(`v0.2.9`)
-* [x] 虚拟列表。
-  - [x] 纵向。
-  - [x] 横向（必须设置列宽）。
-  - [x] 支持不定行高。（`v0.6.0`）
-* [x] 列固定。
-  - [x] 固定列阴影。
-    - [x] 多级表头固定列阴影。
-    - [x] sticky column 动态计算阴影位置。(`v0.4.0`)
-* [x] 行展开。(`v0.5.0`)
-* [x] 行拖动。(`v0.5.0`)
-* [x] 树形。(`v0.7.0`)
-* [x] 单元格合并。(`v0.8.0`)
-* [] 列筛选。
-* [x] 斑马纹。
-* [x] 拖动更改列顺序。
-* [x] 拖动调整列宽。
-* [x] 排序
-  - [x] 支持配置 `null` | `undefined` 永远排最后。
-  - [x] 支持配置 string 使用 `String.prototype.localCompare` 排序。
-* [x] 多级表头。
-  - [] 横向虚拟滚动。
-* [x] 支持table-layout: fixed 配置。
-* [x] 鼠标悬浮在表格上，键盘滚动虚拟表格。
-  - [x] 键盘 `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight`/`PageUp`/ `PageDown` 按键支持。
-* [] 非虚拟滚动时，大数据分批加载。
-* [x] vue2.7支持（引入源码使用）。
-  - [x] `props.optimizeVue2Scroll` 优化vue2虚拟滚动流畅度。(`v0.2.0`)
-* [x] 支持配置序号列。`StkTableColumn['type']`。(`v0.3.0`)
-* [x] `props.cellHover`单元格悬浮样式。(`v0.3.2`)
-* [] 惯性滚动优化。
 
 
 ## Usage
@@ -78,17 +48,17 @@ const stkTableRef = useTemplateRef('stkTableRef');
 
 // highlight row
 stkTableRef.value.setHighlightDimRow([rowKey]，{
-  method: 'css'|'animation',// 默认 animation。
-  className: 'custom-class-name', // method css 时生效。
+  method: 'css'|'animation',// default animation。
+  className: 'custom-class-name', // method css。
   keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}],//same as https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
-  duration: 2000,// 动画时长。
+  duration: 2000,。
 });
  // highlight cell
 stkTableRef.value.setHighlightDimCell(rowKey, colDataIndex, {
   method: 'css'|'animation',
-  className:'custom-class-name', // method css 时生效。
-  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}], // method animation 时生效。
-  duration: 2000,// 动画时长。
+  className:'custom-class-name', // method css。
+  keyframe: [{backgroundColor:'#aaa'}, {backgroundColor: '#222'}], // method animation。
+  duration: 2000,。
 });
 
 const columns = [
@@ -114,10 +84,7 @@ const dataSource = [
 ```
 
 ### Vue2.7 Usage
-[在vue2中使用](https://ja-plus.github.io/stk-table-vue/main/start/vue2-usage.html)
-
-## Notice
-注意，组件会改动 `props.columns` 中的对象。如果多个组件 `columns` 数组元素存在引用同一个 `StkTableColumn` 对象。则考虑赋值 `columns` 前进行深拷贝。
+[Vue2.7 Usage](https://ja-plus.github.io/stk-table-vue/main/start/vue2-usage.html)
 
 ## API
 ### Props
@@ -136,7 +103,7 @@ const dataSource = [
 [StkTableColumn 列配置](https://ja-plus.github.io/stk-table-vue/main/api/stk-table-column.html)
 
 ### setHighlightDimCell & setHighlightDimRow
-[高亮使用文档](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
+[Highlight 高亮](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
 
 
 ### Example
@@ -209,4 +176,4 @@ const dataSource = [
 
 
 ## Other
-* `$*$` 兼容注释
+* `$*$`
