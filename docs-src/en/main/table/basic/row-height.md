@@ -1,4 +1,4 @@
-# 行高
+# Row Height
 
 * `props.rowHeight` sets the body row height, default is `28px`.
 * `props.headerRowHeight` sets the header row height, default is `28px`.

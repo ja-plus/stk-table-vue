@@ -1,9 +1,9 @@
-# 斑马纹
-配置 `props.stripe` 属性可以开启斑马纹效果。
+# Stripe
+Configure `props.stripe` property to enable stripe effect.
 
-## 示例
+## Example
 
 <demo vue="basic/stripe/Stripe.vue"></demo>
 
-## 虚拟列表
+## Virtual List
 <demo vue="basic/stripe/StripeVt.vue"></demo>

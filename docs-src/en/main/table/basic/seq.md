@@ -1,14 +1,14 @@
-# 序号列
+# Sequence Column
 
-通过 `StkTableColumn['type']`设为`seq` 即可使用组件内置的序号列。
+Set `StkTableColumn['type']` to `seq` to use the built-in sequence column of the component.
 
 ::: tip
-序号列不会被排序影响，依赖 `props.data-source` 数组下标展示。
+The sequence column is not affected by sorting and is displayed based on the array index of `props.data-source`.
 :::
 
 ```ts
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', width: 50, dataIndex: '', title: '序号' }, // [!code ++]
+    { type: 'seq', width: 50, dataIndex: '', title: 'No.' }, // [!code ++]
     { title: 'Name', dataIndex: 'name', sorter: true },
     { title: 'Age', dataIndex: 'age', sorter: true },
     { title: 'Address', dataIndex: 'address', sorter: true },
@@ -16,15 +16,15 @@ const columns: StkTableColumn<any>[] = [
 ];
 ```
 
-这里可以看到`seq`列的 `dataIndex` 为空，因为 `dataIndex` 除了作为取值字段之外，也用作v-for 渲染依赖的key，而序号列不需要key, 所以为空，**注意不要重复了**。
+Here you can see that the `dataIndex` of the `seq` column is empty. This is because `dataIndex` is not only used as a value field but also as a key for v-for rendering. Since the sequence column does not need a key, it is left empty. **Be careful not to duplicate it**.
 
 <demo vue="basic/seq/Seq.vue"></demo>
 
 
-## 自定义序号
-可以配置`props.seqConfig.startIndex`，指定序号开始的值
+## Custom Sequence
+You can configure `props.seqConfig.startIndex` to specify the starting value of the sequence.
 
-在分页下比较有用。
+This is particularly useful for pagination.
 
 <demo vue="basic/seq/SeqStartIndex.vue"></demo>
 

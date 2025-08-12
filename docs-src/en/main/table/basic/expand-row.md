@@ -1,22 +1,22 @@
-# 行展开
+# Row Expansion
 
-列配置添加 `type: 'expand'` 即可将列设置为内置的可展开单元格。
-再配置 slot `#expand="{row, col}` 设置展开内容。
+Add `type: 'expand'` to column configuration to set the column as a built-in expandable cell.
+Then configure slot `#expand="{row, col}"` to set the expanded content.
 
 ::: warning
-目前如果配置了展开行，虚拟列表的计算顶部距离的方式，是通过从第一条数据开始，累加行高实现，在数据量过多时可能有性能问题。
+Currently, if expandable rows are configured, the virtual list calculates the top distance by accumulating row heights starting from the first data item, which may cause performance issues when there is a large amount of data.
 :::
-## 示例
+## Example
 
-### 基本展开
+### Basic Expansion
 <demo vue="basic/expand-row/ExpandRow.vue"></demo>
 
-### 自定义展开单元格
+### Custom Expansion Cell
 <demo vue="basic/expand-row/CustomExpandRow.vue"></demo>
 
 ## API
-### StkTableColumn配置
-`StkTableColumn['type'] = 'expand'` 即可将这列设置为可展开。
+### StkTableColumn Configuration
+`StkTableColumn['type'] = 'expand'` to set the column as expandable.
 
 ```ts
 const columns = [
@@ -26,7 +26,7 @@ const columns = [
 ```
 
 ### slot 
-`#expand="{row, col}"` 设置展开行中的内容。
+`#expand="{row, col}"` Set the content of the expanded row.
 
 ```html
 <StkTable>
@@ -36,27 +36,27 @@ const columns = [
 </StkTable>
 ```
 
-| slot-prop | 说明 |
+| slot-prop | Description |
 | ---- | ---- |
-| row | 展开行的数据 |
-| col | 点击展开行的列 |
+| row | Data of the expanded row |
+| col | Column that triggers row expansion |
 
 
 ### props
 `props.expandConfig`
-| 属性 | 类型 | 默认值 | 说明 |
+| Property | Type | Default | Description |
 | ---- | ---- | ---- | ---- |
-| height | number | 表格行高 | 展开行的行高 |
+| height | number | Table row height | Height of the expanded row |
 
 ### expose
-可以通过示例方法调用触发展开收起行
+You can call the example method to expand or collapse a row.
 ```ts
 /**
- * 展开或收起某一行
- * @param rowKeyOrRow 行唯一键或行对象
- * @param expand 是否展开
- * @param data.col 列配置
- * @param data.silent 设为true则不触发 `@toggle-row-expand`, 默认:false
+ * Expand or collapse a row.
+ * @param rowKeyOrRow Row unique key or row object
+ * @param expand Whether to expand
+ * @param data.col Column configuration
+ * @param data.silent Set to true to prevent `@toggle-row-expand` event, default: false
  */
 setRowExpand(
     rowKeyOrRow: string | undefined | DT,

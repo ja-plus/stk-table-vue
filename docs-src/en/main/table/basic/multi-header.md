@@ -1,4 +1,4 @@
-# 多级表头
+# Multi-Level Headers
 ## Configuration
 `StkTableColumn['children']` configures multi-level headers
 ::: warning

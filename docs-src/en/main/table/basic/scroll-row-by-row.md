@@ -1,4 +1,4 @@
-# 按行滚动
+# Scroll Row by Row
 When scrolling the table vertically, only **whole rows** are scrolled, not pixels. This ensures that the table rows are always aligned, improving readability.
 
 Configure `props.scrollRowByRow` to enable this feature.

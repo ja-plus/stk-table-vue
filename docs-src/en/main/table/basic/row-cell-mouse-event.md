@@ -1,16 +1,16 @@
-# 行、单元格选中/悬浮
+# Row, Cell Hover and Select
 
 ## demo
 <demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
 
 ## API
-相关 Props:
-| key | 类型 | 默认值 | 描述 |
+Related Props:
+| key | Type | Default | Description |
 | --- | --- | --- | --- |
-| rowHover | boolean | true | 是否高亮鼠标悬浮的行 |
-| rowActive | boolean | true | 是否高亮选中的行 |
-| rowCurrentRevokable | boolean | true | 当前行再次点击否可以取消 (rowActive=true) |
-| cellHover | boolean | false | 是否高亮鼠标悬浮的单元格 |
-| cellActive | boolean | false | 是否高亮选中的单元格 |
-| selectedCellRevokable | boolean | true | 单元格再次点击否可以取消选中 (cellActive=true) |
+| rowHover | boolean | true | Whether to highlight hovered rows |
+| rowActive | boolean | true | Whether to highlight selected rows |
+| rowCurrentRevokable | boolean | true | Whether clicking on the current row again can deselect it (when rowActive=true) |
+| cellHover | boolean | false | Whether to highlight hovered cells |
+| cellActive | boolean | false | Whether to highlight selected cells |
+| selectedCellRevokable | boolean | true | Whether clicking on the cell again can deselect it (when cellActive=true) |

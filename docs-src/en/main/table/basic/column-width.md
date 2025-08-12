@@ -1,4 +1,4 @@
-# 列宽
+# Column Width
 
 ## Basics
 Set column width behavior through:

@@ -1,4 +1,4 @@
-# 固定列
+# Fixed Columns
 
 Configure `StkTableColumn['fixed'] = 'left'` or `'right'` to achieve fixed left or right columns.
 

@@ -1,4 +1,4 @@
-# 滚动条
+# Scrollbar
 
 ## Style
 The component **does not provide** built-in scrollbar styles and relies entirely on browser scrollbar styles.

@@ -1,4 +1,4 @@
-# 单元格合并 <Badge type="tip" text="^0.8.0" /> 
+# Cell Merging <Badge type="tip" text="^0.8.0" /> 
 ::: warning Note
 This feature is not available in **virtual list** mode.
 :::

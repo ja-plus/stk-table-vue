@@ -1,58 +1,57 @@
-# 排序
+# Sort
 
+## Basic Sorting
+Set `StkTableColumn['sorter']` to `true` in column configuration to enable sorting.
 
-## 基础排序
-列配置中`StkTableColumn['sorter']` 设置为 `true` 即可开启排序。
-
-点击表头即可触发排序。
+Click the table header to trigger sorting.
 <demo vue="basic/sort/Sort.vue"></demo>
 
-## 自定义排序
-列配置中`StkTableColumn['sorter']` 可以设置为一个函数。
+## Custom Sorting
+`StkTableColumn['sorter']` can be set to a function in column configuration.
 
-通过 `sorter(data, { column, order })` 自定义排序规则。
+Customize sorting rules through `sorter(data, { column, order })`.
 
-该函数会在排序时触发，表格将使用函数的**返回值**展示。
+This function will be triggered during sorting, and the table will display using the **return value** of the function.
 
-| 参数 | 类型 | 说明 |
+| Parameter | Type | Description |
 | ---- | ---- | ---- |
-| data| DataType[] | 表格的数据。 |
-| column | StkTableColumn | 当前排序的列。
-| order | `'desc'` \| `'asc'` \| `null` | 当前排序的顺序。
+| data| DataType[] | Table data. |
+| column | StkTableColumn | Currently sorted column.
+| order | `'desc'` \| `'asc'` \| `null` | Current sorting order.
 
-下述表格中自定义了 `Rate` 列字段的大小排序规则。
+The following table customizes the size sorting rules for the `Rate` column field.
 <demo vue="basic/sort/CustomSort.vue"></demo>
 
-更多排序用法请移步 [自定义排序](/main/table/advanced/custom-sort)
+For more sorting methods, please refer to [Custom Sorting](/main/table/advanced/custom-sort)
 
-## sortField 排序字段
-有些字段可能会使用独立的字段来排序，比如年、月、日字段，此时可提供的一个排序专用字段，年、月都转换为最小单位日，便于排序，此时通过 `sortField` 指定该排序字段。
+## sortField Sorting Field
+Some fields may use independent fields for sorting, such as year, month, and day fields. In this case, you can provide a special sorting field where year and month are converted to the smallest unit (day) for easy sorting. Specify this sorting field through `sortField`.
 
-下面表格 `period` 列指定了 `periodNumber` 作为排序字段。
+The `period` column in the following table specifies `periodNumber` as the sorting field.
 <demo vue="basic/sort/SortField.vue"></demo>
 
-## 空字段不参与排序
-配置 `props.sortConfig.emptyToBottom` 空字段将始终置于列表底部
+## Empty Fields Excluded from Sorting
+Configure `props.sortConfig.emptyToBottom` to always place empty fields at the bottom of the list
 ```vue
 <StkTable :sort-config="{emptyToBottom: true}"></StkTable>
 ```
 <demo vue="basic/sort/SortEmptyValue.vue"></demo>
 
-## 指定默认排序列
-配置 `props.sortConfig.defaultSort` 控制默认排序。
+## Specify Default Sort Column
+Configure `props.sortConfig.defaultSort` to control the default sorting.
 ::: warning
-设置了默认排序时，如果**没有排序**则会排序**默认排序**字段。
+When default sorting is set, if there is **no sorting**, the **default sorting** field will be sorted.
 
-点击下方表格 `Name` 列排序观察其行为。
+Click the `Name` column in the table below to sort and observe its behavior.
 :::
 <demo vue="basic/sort/DefaultSort.vue"></demo>
 
 
-## 服务端排序
+## Server-side Sorting
 
-配置 `props.sort-remote` 为 `true`，这样就不会触发组件内部的排序逻辑。
+Set `props.sort-remote` to `true`, which will not trigger the component's internal sorting logic.
 
-点击表头后，会触发 `@sort-change` 事件，您可以在事件中发起 ajax 请求，然后重新对 `props.dataSource` 赋值，完成排序。
+After clicking the table header, the `@sort-change` event will be triggered. You can initiate an ajax request in the event, then reassign `props.dataSource` to complete the sorting.
 
 ```vue
 <StkTable sort-remote></StkTable>
@@ -60,9 +59,9 @@
 <demo vue="basic/sort/SortRemote.vue"></demo>
 
 ## API
-### StkTableColumn列配置
+### StkTableColumn Configuration
 
-`StkTableColumn` 列配置参数。
+`StkTableColumn` configuration parameters.
 ``` ts
 const columns: StkTableColumn[] = [{
     sorter: true,
@@ -70,27 +69,27 @@ const columns: StkTableColumn[] = [{
     sortType: 'number',
 }]
 ``` 
-| 参数 | 类型 | 默认值| 说明 |
+| Parameter | Type | Default | Description |
 | ---- | ---- | ---- | ---- |
-| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | 指定是否开启排序。 |
-| sortField | `string` | 同 StkTableColumn['dataIndex']  | 指定排序的字段。 |
-| sortType | `'string'` \| `'number'` | 默认检测该列第一行的数据类型，判断 `'string'` 或 `'number'` 排序。| 指定排序的类型。 |
+| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | Specify whether to enable sorting. |
+| sortField | `string` | Same as StkTableColumn['dataIndex']  | Specify the sorting field. |
+| sortType | `'string'` \| `'number'` | Automatically detects the data type of the first row of the column to determine `'string'` or `'number'` sorting. | Specify the sorting type. |
 
 ### props.sortConfig
-SortConfig 类型：
+SortConfig type:
 ```ts
 type SortConfig<T extends Record<string, any>> = {
-    /** 空值始终排在列表末尾 */
+    /** Empty values are always placed at the end of the list */
     emptyToBottom?: boolean;
     /**
-     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
-     * 类似onMounted时，调用setSorter点了下表头。
+     * Default sorting (1. Triggered during initialization 2. Triggered when sorting direction is null)
+     * Similar to calling setSorter and clicking the table header during onMounted.
      */
     defaultSort?: {
         /**
-         * 列唯一键，
+         * Column unique key,
          *
-         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
+         * If you have configured `props.colKey`, this represents the value of the column unique key
          */
         key?: StkTableColumn<T>['key'];
         dataIndex: StkTableColumn<T>['dataIndex'];
@@ -98,7 +97,7 @@ type SortConfig<T extends Record<string, any>> = {
         sortField?: StkTableColumn<T>['sortField'];
         sortType?: StkTableColumn<T>['sortType'];
         sorter?: StkTableColumn<T>['sorter'];
-        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        /** Whether to prevent triggering the sort-change event. Default is false, meaning the event is triggered. */
         silent?: boolean;
     };
     /**
@@ -110,20 +109,20 @@ type SortConfig<T extends Record<string, any>> = {
 ```
 
 ### @sort-change
-defineEmits 类型：
+defineEmits type:
 ```ts
 /**
- * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
+ * Triggered when sorting changes. If defaultSort.dataIndex is not found, col will return null.
  *
  * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>)```
  */
 (
     e: 'sort-change',
-    /** 排序的列 */
+    /** Sorted column */
     col: StkTableColumn<DT> | null, 
-    /** 正序/倒序 */
+    /** Ascending/descending order */
     order: Order,
-    /** 排序后的值 */
+    /** Sorted values */
     data: DT[], 
     sortConfig: SortConfig<DT>
 ): void;
@@ -134,18 +133,18 @@ defineEmits 类型：
 ```ts
 defineExpose({
     /**
-     * 设置表头排序状态
+     * Set table header sorting state
      */
     setSorter,
     /**
-     * 重置sorter状态
+     * Reset sorter state
      */
     resetSorter,
     /**
-     * 表格排序列顺序
+     * Table sorted column order
      */
     getSortColumns,
 })
 ```
-详情参考 [Expose 实例方法](/main/api/expose)
+For details, refer to [Expose Instance Methods](/main/api/expose)
 

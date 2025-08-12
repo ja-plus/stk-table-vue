@@ -1,21 +1,21 @@
-# 宽高
+# Table Size
 
-表格的宽高由根容器的宽高决定。
+The width and height of the table are determined by the width and height of the root container.
 
-因此，您可以将表格放置在`flex`容器中，由`flex`管理高度，而不用手动设置宽高。
+Therefore, you can place the table in a `flex` container and let `flex` manage the height instead of manually setting the width and height.
 
-## 固定宽高
+## Fixed Width and Height
 
 ::: tip
-通过 `style` 控制表格宽度高度。
+Control the table width and height through `style`.
 :::     
 
 <demo vue="basic/size/Default.vue"></demo>
 
-## Flex 布局
+## Flex Layout
 
 ::: tip
-控制外层 `flex` 弹性盒的高度，表格高度自适应。
+Control the height of the outer `flex` container, and the table height will adapt.
 :::
 
 <demo vue="basic/size/Flex.vue"></demo>

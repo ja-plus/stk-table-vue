@@ -1,9 +1,8 @@
-# 主题
-内置 `亮色`，`暗色`两种主题。
+# Theme
+Built-in `light` and `dark` themes.
 
-通过 `props.theme` = `light`|`dark` 切换。对应到样式选择器，`.stk-table.light` `.stk-table.dark` 
+Switch theme by `props.theme` = `light`|`dark`. Corresponding to style selectors, `.stk-table.light` `.stk-table.dark` 
 
-
-您可以点击页面右上角的主题切换按钮看看效果。
+You can click the theme switch button in the top right corner of the page to see the effect.
 
 <demo vue="basic/stripe/Stripe.vue"></demo>

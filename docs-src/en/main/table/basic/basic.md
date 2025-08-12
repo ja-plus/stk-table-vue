@@ -1,9 +1,9 @@
-# 基础
+# Basic
 
-* `props.columns` 配置列.
-* `props.dataSource` 配置数据源。
-* `props.rowKey` 配置行唯一标识。
-* css style 配置表格高度。
+* `props.columns` Configure columns.
+* `props.dataSource` Configure data source.
+* `props.rowKey` Configure unique row identifier.
+* css style Configure table height.
 
 ```vue
 <script lang="ts" setup>
