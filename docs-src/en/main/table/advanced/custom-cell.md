@@ -1,20 +1,20 @@
-# 自定义单元格
+# Custom Cell
 
-* 通过 `StkTableColumn['customCell']` 自定义**表体**单元格内容。
-* 通过 `StkTableColumn['customHeaderCell']` 自定义**表头**单元格内容。
+* Customize **body** cell content via `StkTableColumn['customCell']`.
+* Customize **header** cell content via `StkTableColumn['customHeaderCell']`.
 
-`customCell` 和 `customHeaderCell` 使用方式基本相同，下面以 `customCell` 为例子进行说明。
+`customCell` and `customHeaderCell` are used similarly. Here we'll use `customCell` as an example.
 
-::: warning 建议
-* `customCell` 建议套上一层元素(div,span等)，否则 &lt;td&gt; 子节点为 `TextNode` 可能导致布局问题。
-* `customCell` 的根元素请**谨慎**设置 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在**虚拟列表**中可能会撑开行高。
+::: warning Recommendations
+* It's recommended to wrap `customCell` with an element (div, span, etc.), otherwise having `TextNode` as the child of &lt;td&gt; may cause layout issues.
+* Be **cautious** when setting root elements of `customCell` as inline elements (inline, inline-block, inline-flex, etc.), as this layout may stretch row heights in **virtual lists**.
 :::
 
-### 通过vue SFC 使用
-支持传入vue SFC 组件，vue 组件的 props 需要用 `CustomCellProps` 类型特殊定义。
+### Using with Vue SFC
+Supports passing Vue SFC components. The props of the Vue component need to be specially defined with the `CustomCellProps` type.
 
-::: tip 最佳实践
- columns 单独写在一个文件中导出使用。
+::: tip Best Practice
+Define columns in a separate file and export them.
 :::
 
 ::: code-group
@@ -23,7 +23,7 @@ import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 import type { DataType } from './types';
 import YieldCell from './YieldCell.vue';
 export const columns: StkTableColumn<DataType> = [{
-    title: '收益率',
+    title: 'Yield Rate',
     dataIndex: 'yield',
     customCell: YieldCell
 }]
@@ -68,25 +68,25 @@ export type DataType = {
 
 <demo vue="advanced/custom-cell/CustomCell/index.vue"></demo>
 
-### 通过渲染函数h使用
-简单的修改，直接使用渲染函数会比较方便。
+### Using with Render Function h
+For simple modifications, using the render function directly is more convenient.
 
-比如我们对数值**乘以100**再加**单位**。
+For example, we can **multiply the value by 100** and add a **unit**.
 ```ts
 import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 const columns: StkTableColumn<any>[] = [
     {
-        title: '收益率',
+        title: 'Yield Rate',
         dataIndex: 'yield',
         customCell: ({ cellValue }) => h('span', cellValue * 100 + '%'),
     },
 ]
 ```
 
-### 通过jsx 使用
-使用jsx 需要安装jsx 的环境。
+### Using with JSX
+To use JSX, you need to install the JSX environment.
 
-| 构建工具 | 插件 |
+| Build Tool | Plugin |
 |---|---|
 | vite | @vitejs/plugin-vue-jsx |
 | webpack + babel | @vue/babel-plugin-jsx |
@@ -98,7 +98,7 @@ import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 
 const columns:StkTableColumn<any>[] = [
     {
-        title: '姓名',
+        title: 'Name',
         dataIndex: 'name',
         customCell: ({ row, col, cellValue }) => {
             return <span style="color: red">{cellValue}</span>;
@@ -110,25 +110,25 @@ const columns:StkTableColumn<any>[] = [
 
 
 ## API
-| 属性 | props | 默认值 | 说明 |
+| Property | props | Default | Description |
 |---|---|---|---|
-| customCell | (props: CustomCellProps) => VNode | - | 自定义单元格渲染函数 |
-| customHeaderCell | (props: CustomHeaderCellProps) => VNode | - | 自定义表头渲染函数 |
+| customCell | (props: CustomCellProps) => VNode | - | Custom cell rendering function |
+| customHeaderCell | (props: CustomHeaderCellProps) => VNode | - | Custom header cell rendering function |
 
 ### types
-customCell props 类型
+customCell props type
 ```ts
 export type CustomCellProps<T extends Record<string, any>> = {
     row: T;
     col: StkTableColumn<T>;
-    /** row[col.dataIndex] 的值 */
+    /** Value of row[col.dataIndex] */
     cellValue: any;
     rowIndex: number;
     colIndex: number;
     /**
-     * 当前行是否展开
-     * - 不展开: null
-     * - 展开: 返回column配置
+     * Whether the current row is expanded
+     * - Not expanded: null
+     * - Expanded: returns column configuration
      */
     expanded?: PrivateRowDT['__EXPANDED__'];
 };

@@ -1,37 +1,37 @@
-# 不定高虚拟列表
+# Auto Height Virtual List
 
-## 配置
-| 属性  | 类型  | 默认值 | 说明  |
+## Configuration
+| Property  | Type  | Default | Description  |
 | ----- | ----- | ----- | ----- |
-| props.autoRowHeight | `boolean` \| `AutoRowHeightConfig<DT>` | false | 是否开启自动行高 |
-| props.rowHeight | `number` | -- | `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。 |
+| props.autoRowHeight | `boolean` \| `AutoRowHeightConfig<DT>` | false | Whether to enable auto row height |
+| props.rowHeight | `number` | -- | When `props.autoRowHeight` is `true`, this represents the expected row height for calculation purposes. It no longer affects the actual row height. |
 
 ### AutoRowHeightConfig&lt;DT&gt;
 ```ts
 type AutoRowHeightConfig<DT> = {
-    /** 期望行高 */
+    /** Expected row height */
     expectedHeight?: number | ((row: DT) => number);
 };
 ```
 
-::: tip 期望行高
-预计一行的高度为多少，用于计算当前表格高度下，能放下几行。
+::: tip Expected Row Height
+Estimated height of a row, used to calculate how many rows can fit within the current table height.
 :::
-::: tip 优先级
+::: tip Priority
 `props.autoRowHeight.expectedHeight` > `props.rowHeight`
 :::
 
 
-## 示例
+## Example
 
 <demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
-如果你你想控制单元格上下的padding，可以通过覆盖css变量实现：
+If you want to control the top and bottom padding of cells, you can do so by overriding CSS variables:
 ```css
 .stk-table {
     --cell-padding-y: 8px;
 }
 ```
 
-## 单列表
-请移步至[虚拟单列表-不等高](/demos/virtual-list.html#不等高)
+## Single Column List
+Please refer to [Virtual Single Column List - Variable Height](/demos/virtual-list.html#不等高)

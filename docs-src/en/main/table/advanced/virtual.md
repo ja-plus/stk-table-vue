@@ -1,28 +1,28 @@
-# 虚拟列表
-用于大量数据渲染时，提升性能。
+# Virtual List
+Used to improve performance when rendering large amounts of data.
 
-## 配置
+## Configuration
 props:
 
-| 属性 | 类型 | 默认值 | 描述 |
+| Property | Type | Default | Description |
 | --- | --- | --- | --- |
-| virtual | `boolean` | `false` | 是否启用虚拟列表 |
-| virtualX | `boolean` | `false` | 是否启用横向虚拟列表 |
-| autoResize | `boolean`\| `() => void` | `true` | 是否自动重新计算可视区域。如果传递回调函数，则此函数会在resize后被调用 |
+| virtual | `boolean` | `false` | Whether to enable virtual list |
+| virtualX | `boolean` | `false` | Whether to enable horizontal virtual list |
+| autoResize | `boolean`\| `() => void` | `true` | Whether to automatically recalculate the visible area. If a callback function is passed, it will be called after resizing |
 
 
-## 纵向虚拟列表
+## Vertical Virtual List
 ::: warning
-行高将不再被内容影响。 具体移至[行高](/main/table/basic/row-height)章节。
+Row height will no longer be affected by content. For details, refer to the [Row Height](/main/table/basic/row-height) section.
 :::
 ```vue
 <StkTable virtual></StkTable>
 ```
 <demo vue="advanced/virtual/VirtualY.vue"></demo>
 
-## 横向虚拟列表
+## Horizontal Virtual List
 ::: warning
-`StkTableColumn['width']` 将有默认值 `100px`。
+`StkTableColumn['width']` will have a default value of `100px`.
 :::
 
 ```vue
@@ -30,40 +30,40 @@ props:
 ```
 <demo vue="advanced/virtual/VirtualX.vue"></demo>
 
-## 重新计算可视区域 autoResize
-很多情况下，虚拟列表区域的宽高会因为各种原因发生变化，这时需要重新计算可视区域。
+## Recalculate Visible Area autoResize
+In many cases, the width and height of the virtual list area will change for various reasons, and the visible area needs to be recalculated.
 
-组件内部已基于 `ResizeObserver` 监听 `StkTable` 的尺寸变化，当尺寸变化时，会自动重新计算可视区域，该功能默认打开。
+The component internally uses `ResizeObserver` to monitor the size changes of `StkTable`. When the size changes, it will automatically recalculate the visible area. This function is enabled by default.
 
 
 ::: warning
-不支持 `ResizeObserver` 的浏览器会使用 `onresize`兜底。
+Browsers that do not support `ResizeObserver` will use `onresize` as a fallback.
 :::
 
-某些情况下，仍需要手动重新计算虚拟列表的可视区域，此时可以调用组件expose的方法。
+In some cases, you still need to manually recalculate the visible area of the virtual list. In this case, you can call the method exposed by the component.
 
 ```ts
 /**
- * 初始化纵向虚拟列表的可视区域
- * @param {number} [height] 虚拟滚动的高度
+ * Initialize the visible area of the vertical virtual list
+ * @param {number} [height] The height of the virtual scroll
  */
 initVirtualScrollY(height?: number)
 /**
- * 初始化横向虚拟列表的可视区域
+ * Initialize the visible area of the horizontal virtual list
  */
 initVirtualScrollX()
 /**
- * 初始化纵向和横向虚拟列表的可视区域
+ * Initialize the visible area of both vertical and horizontal virtual lists
  */
 initVirtualScroll(height?: number)
 ```
-`initVirtualScroll` 等价于 `initVirtualScrollY` + `initVirtualScrollX`
+`initVirtualScroll` is equivalent to `initVirtualScrollY` + `initVirtualScrollX`
 
-### 关闭自动计算
+### Disable Auto Calculation
 ```vue
 <StkTable :autoResize="false"></StkTable>
 ```
 
-## 单列表
-请移步至[虚拟单列表](/demos/virtual-list.html)
+## Single Column List
+Please refer to [Virtual Single List](/demos/virtual-list.html)
 

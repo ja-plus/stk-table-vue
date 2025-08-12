@@ -1,29 +1,29 @@
-# 自定义排序
+# Custom Sorting
 
-`StkTableColumn['sorter']` 可传入自定义排序规则。已经在 [排序章节](/main/table/basic/sort#自定义排序) 中提到过。
+`StkTableColumn['sorter']` allows custom sorting rules. This was already mentioned in the [Sorting section](/main/table/basic/sort#Custom Sorting).
 
-本章介绍组件提供的内置排序函数。
+This chapter introduces the built-in sorting functions provided by the component.
 
-## setSorter 方法
-实例提供了`setSorter`方法，供用户自行触发排序。比如点击外部按钮，触发表格排序。
+## setSorter Method
+The component instance provides a `setSorter` method for users to manually trigger sorting. For example, clicking an external button to trigger table sorting.
 
 ```ts
 stkTableRef.value?.setSorter('rate', 'desc');
 ```
 <demo vue="advanced/custom-sort/CustomSort/index.vue"></demo>
 
-### 参数说明
+### Parameter Description
 
 ```ts
 /**
- * 设置表头排序状态。
- * @param colKey 列唯一键字段。如果你想要取消排序状态，请使用`resetSorter`
- * @param order 正序倒序 'asc'|'desc'|null
- * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
- * @param option.sort 是否触发排序-默认true
- * @param option.silent 是否禁止触发回调-默认true
- * @param option.force 是否触发排序-默认true
- * @returns 返回当前表格数据
+ * Set the header sorting state.
+ * @param colKey Unique column key. To reset sorting state, use `resetSorter`
+ * @param order Sort order 'asc'|'desc'|null
+ * @param option.sortOption Specify sorting parameters. Same as sorting-related fields in StkTableColumn. Recommended to find from columns.
+ * @param option.sort Whether to trigger sorting - default true
+ * @param option.silent Whether to prevent triggering callbacks - default true
+ * @param option.force Whether to force sorting - default true
+ * @returns Returns current table data
  */
 function setSorter(
     colKey: string, 
@@ -37,42 +37,42 @@ function setSorter(
 ): DT[];
 ```
 
-* `option.force` 为 true 时，即使 `props.sortRemote` 为true，也会触发排序。
-* `option.silent` 为 true 时，不会触发 `@sort-change` 回调。
-* `option.sortOption` 的作用的是，如果 传入的 `colKey` 不在 `columns` 中，可以指定排序参数。在隐藏某一列时，但仍然要按照那一列的字段排序的情况下有用。
-    - 优先级最高，如果配置了这个，则不会用 `colKey` 去找对应的列排序。
+* When `option.force` is true, sorting will be triggered even if `props.sortRemote` is true.
+* When `option.silent` is true, the `@sort-change` callback will not be triggered.
+* The purpose of `option.sortOption` is to specify sorting parameters if the passed `colKey` is not in `columns`. Useful when hiding a column but still wanting to sort by that column's field.
+    - Highest priority: if configured, it won't use `colKey` to find the corresponding column for sorting.
 
-## 内置排序函数
-可以引入源码导出的排序函数，对齐表格内置的排序行为。
+## Built-in Sorting Functions
+You can import sorting functions exported from the source code to align with the table's built-in sorting behavior.
 ```ts
 import { tableSort, insertToOrderedArray } from 'stk-table-vue';
 ```
-### tableSort 表格排序
-#### 使用场景
-为了获取更好的数据更新性能，可设置`props.sortRemote`来取消表格内置排序。在数据更新时，通过下面提供的 `insertToOrderedArray` 函数插入新数据。
+### tableSort
+#### Usage Scenario
+For better data update performance, you can set `props.sortRemote` to disable the table's built-in sorting. When updating data, use the `insertToOrderedArray` function provided below to insert new data.
 
-而点击表头触发排序时，我们依然想用内置的排序，则可以在 `@sort-change` 回调中，使用此函数进行排序。
+When clicking the header to trigger sorting, if you still want to use the built-in sorting, you can use this function in the `@sort-change` callback.
 
-#### 代码示例
+#### Code Example
 ```ts
 // @sort-change="handleSortChange"
 function handleSortChange(col: StkTableColumn<any>, order: Order, data: any[], sortConfig: SortConfig<any>) {
-    // 可以做其他操作
+    // Additional operations can be performed here
     dataSource.value = tableSort(col, order, data, sortConfig);
 }
 ```
 
-#### 参数说明
+#### Parameter Description
 ```ts
 /**
- * 表格排序抽离
- * 可以在组件外部自己实现表格排序，组件配置remote，使表格不排序。
- * 使用者在@sort-change事件中自行更改table props 'dataSource'完成排序。
+ * Table sorting abstraction
+ * You can implement table sorting outside the component by configuring remote sorting.
+ * Users can update the table props 'dataSource' in the @sort-change event to complete sorting.
  *
- * sortConfig.defaultSort 会在order为null时生效
- * @param sortOption 列配置
- * @param order 排序方式
- * @param dataSource 排序的数组
+ * sortConfig.defaultSort takes effect when order is null
+ * @param sortOption Column configuration
+ * @param order Sorting order
+ * @param dataSource Array to be sorted
  */
 export function tableSort<T extends Record<string, any>>(
     sortOption: SortOption<T>,
@@ -82,27 +82,27 @@ export function tableSort<T extends Record<string, any>>(
 ): T[] 
 ```
 
-### insertToOrderedArray 二分插入
-在实时数据不断更新的场景下，二分插入能够有效减少排序时间，提升性能。
-#### 代码示例
+### insertToOrderedArray
+In scenarios where real-time data is constantly updated, binary insertion can effectively reduce sorting time and improve performance.
+#### Code Example
 ```ts
 dataSource.value = insertToOrderedArray(tableSortStore, item, dataSource.value);
 ```
-#### 参数说明
+#### Parameter Description
 ```ts
 /**
- * 对有序数组插入新数据
+ * Insert new data into an ordered array
  *
- * 注意：不会改变原数组，返回新数组
- * @param sortState 排序状态
- * @param sortState.dataIndex 排序的字段
- * @param sortState.order 排序顺序
- * @param sortState.sortType 排序方式
- * @param newItem 要插入的数据
- * @param targetArray 表格数据
- * @param sortConfig SortConfig参考 https://github.com/ja-plus/stk-table-vue/blob/master/src/StkTable/types/index.ts
- * @param sortConfig.customCompare 自定义比较规则
- * @return targetArray 的浅拷贝
+ * Note: Does not modify the original array, returns a new array
+ * @param sortState Sorting state
+ * @param sortState.dataIndex Field to sort by
+ * @param sortState.order Sorting order
+ * @param sortState.sortType Sorting method
+ * @param newItem Data to be inserted
+ * @param targetArray Table data
+ * @param sortConfig SortConfig reference https://github.com/ja-plus/stk-table-vue/blob/master/src/StkTable/types/index.ts
+ * @param sortConfig.customCompare Custom comparison rule
+ * @return Shallow copy of targetArray
  */
 export function insertToOrderedArray<T extends object>(
     sortState: SortState<T>,
@@ -113,8 +113,8 @@ export function insertToOrderedArray<T extends object>(
 
 ```
 
-### 示例
-以下示例包含了 `tableSort` 和 `insertToOrderedArray` 的使用。点击插入一行观察插入排序效果。
+### Example
+The following example demonstrates the use of `tableSort` and `insertToOrderedArray`. Click to insert a row and observe the insertion sort effect.
 
 <demo vue="advanced/custom-sort/InsertSort.vue"></demo>
 

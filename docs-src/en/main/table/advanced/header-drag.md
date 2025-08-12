@@ -1,7 +1,7 @@
-# 列拖动更换顺序
+# Header Drag
 
-* 配置 `headerDrag` 属性，可以启用列拖动更换顺序的功能。
-* `columns` 配置为 `v-model`修饰。
+* Configure the `headerDrag` property to enable column dragging for reordering.
+* `columns` needs to be configured with `v-model` modifier.
 
 ```js
 <StkTable
@@ -11,20 +11,20 @@
 ></StkTable>
 ```
 
-尝试拖动表头
+Try dragging the headers
 
 <demo vue="advanced/header-drag/HeaderDrag.vue"></demo>
 
-## 通过事件更改顺序
+## Change Order via Event
 ```ts
 /**
- * 表头列拖动事件
+ * Header column drag event
  * ```(dragStartKey: string, targetColKey: string)```
  */
 (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
 ```
 
-这样，您可以不用在 `columns` 前添加 `v-model` 修饰符，手动更新 `columns` 数组的顺序即可。
+This way, you don't need to add the `v-model` modifier before `columns`; you can manually update the order of the `columns` array.
 
 ## API
 
@@ -36,13 +36,13 @@ export type HeaderDragConfig<DT extends Record<string, any> = any> =
     | boolean
     | {
           /**
-           * 列交换模式
-           * - none - 不做任何事
-           * - insert - 插入(默认值)
-           * - swap - 交换
+           * Column exchange mode
+           * - none - Do nothing
+           * - insert - Insert (default)
+           * - swap - Swap
            */
           mode?: 'none' | 'insert' | 'swap';
-          /** 禁用拖动的列 */
+          /** Columns to disable dragging */
           disabled?: (col: StkTableColumn<DT>) => boolean;
       };
 ```
@@ -50,17 +50,17 @@ export type HeaderDragConfig<DT extends Record<string, any> = any> =
 ### emit
 ```ts
 /**
- * 表头列拖动事件
+ * Header column drag event
  * ```(dragStartKey: string, targetColKey: string)```
  */
 (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
 /**
- * 表头列拖动开始
+ * Header column drag start
  * ```(dragStartKey: string)```
  */
 (e: 'th-drag-start', dragStartKey: string): void;
 /**
- * 表头列拖动drop
+ * Header column drag drop
  * ```(targetColKey: string)```
  */
 (e: 'th-drop', targetColKey: string): void;

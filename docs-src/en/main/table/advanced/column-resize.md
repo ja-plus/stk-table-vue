@@ -1,9 +1,9 @@
-# 列宽调整
+# Column Resizable
 
-## 配置
-* `props.colResizable` 即可打开列宽调整。
-* `props.columns` 需要修改为 `v-model` 修饰符，列宽修改后会直接变更 `StkTableColumn['width']` 的值。
-* `columns` 需要用 `ref` 包裹，以支持响应式。
+## Configuration
+* `props.colResizable` to enable column width adjustment.
+* `props.columns` needs to be modified to `v-model` modifier. After adjusting column width, the value of `StkTableColumn['width']` will change directly.
+* `columns` needs to be wrapped with `ref` to support responsiveness.
 
 ```js
 <StkTable
@@ -14,45 +14,45 @@
 ```
 
 ::: warning
-打开列宽调整后，列宽不会默认铺满容器。表格的 `width` 将被设置为 `fit-content`。如果有异常，请检查是否传入了 `props.width` 。
+After enabling column width adjustment, columns will not fill the container by default. The table's `width` will be set to `fit-content`. If there are any issues, please check if `props.width` is passed in.
 :::
 
 <demo vue="advanced/column-resize/ColResizable.vue"></demo>
 
 
-## 通过事件更改列宽
+## Change Column Width via Event
 ```ts
 /**
- * 列宽变动时触发
+ * Triggered when column width changes
  *
  *  ```(col: StkTableColumn<DT>)```
  */
 (e: 'col-resize', col: StkTableColumn<DT>): void;
 ```
 
-这样，您可以不用在 `columns` 前添加 `v-model` 修饰符，手动更新 `StkTableColumn['width']` 的值即可。
+This way, you don't need to add the `v-model` modifier before `columns`; you can manually update the value of `StkTableColumn['width']`.
 
-## 列宽铺满容器hack方式
-如果您希望列宽铺满容器，可以手动设置 `props.width` 为 `unset`，这样表格将铺满容器。
+## Hack to Make Columns Fill Container
+If you want columns to fill the container, you can manually set `props.width` to `unset`, so the table will fill the container.
 
-然后把某一列 `width` 替换为 `minWidth`，这样这一列就会自动占满剩余宽度，其他列依然是设置的宽度 。
+Then replace `width` with `minWidth` for a column, and this column will automatically occupy the remaining width, while other columns remain at their set widths.
 
-通过 `props.colResizable.disabled`禁用最后一列的拖动列宽调整。
+Disable width adjustment for the last column via `props.colResizable.disabled`.
 
-下面的 demo 设置了最后一列的 minWidth。
+The demo below sets minWidth for the last column.
 <demo vue="advanced/column-resize/ColResizableFullHack.vue"></demo>
 
 
 ## API
 ### props.colResizable:
-| type | 说明 |
+| type | Description |
 | --- | --- | 
-| boolean | 是否开启列宽调整  |
-| ColResizableConfig | 配置 |
+| boolean | Whether to enable column width adjustment |
+| ColResizableConfig | Configuration |
 
 ### ColResizableConfig
-| 属性 | 类型 | 默认值| 说明 |
+| Property | Type | Default | Description |
 | --- | --- | ---- | --- |
-| disabled | `(col:StkTableColumn) => boolean` | -- | 是否开启列宽调整 |
+| disabled | `(col:StkTableColumn) => boolean` | -- | Whether to enable column width adjustment for specific columns |
 
 

@@ -1,4 +1,4 @@
-# 边框
+# Bordered
 
 ::: tip
 Configure `bordered` to implement table borders, with values `true` | `false` | `h` | `v` | `body-v`.

@@ -1,17 +1,17 @@
-# 行拖动更换顺序
+# Row Drag to Change Order
 
-拖动行，改变行在表格中的顺序。
+Drag rows to change their order in the table.
 
-## 示例
-使用内置的拖动 `StkTableColumn['type']="dragRow"`
+## Example
+Use built-in drag with `StkTableColumn['type']="dragRow"`
 
 ::: warning
- `dragRow` 的列配置里没有写 `dataIndex`, 因为通过 `props.colKey` 重写了唯一键，优先取 `StkTableColumn['key']` 字段。
+`dataIndex` is not specified in the column configuration for `dragRow` because the unique key is overridden by `props.colKey`, and the `StkTableColumn['key']` field is prioritized.
 :::
 
 <demo vue="advanced/row-drag/RowDrag.vue"></demo>
 
-也可以自己通过原生 draggable API 来实现，下面是参考：
+You can also implement it yourself using the native draggable API, here's a reference:
 
 <demo vue="advanced/row-drag/RowDragCustom.vue"></demo>
 
@@ -20,7 +20,7 @@
 ### emits
 ```ts
 /**
- * 行拖动事件
+ * Row drag event
  *
  * ```(dragStartKey: string, targetRowKey: string)```
  */

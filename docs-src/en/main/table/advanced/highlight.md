@@ -1,50 +1,50 @@
-# 高亮行、单元格
+# Highlight Row, Cell
 
-这个是表格的特色功能，用与实时数据更新后设置高亮，以提醒用户。
+This is a distinctive feature of the table, used to set highlights after real-time data updates to alert users.
 
-通过调用实例方法`setHighlightDimRow` & `setHighlightDimCell`，可以设置高亮行或高亮单元格。
+You can highlight rows or cells by calling the instance methods `setHighlightDimRow` & `setHighlightDimCell`.
 
 ::: tip 
-* 高亮行、单元格，默认使用`animation`(el.animate() 方法触发动画)方式。如要自定义动画，可以传入`option`参数。`Animation API` 详见 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API), [兼容性 MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/animate#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7)
-* 高亮颜色不随主题实时变化。
-* 高亮不生效？确认是否指定了`props.rowKey`。
+* Highlighted rows and cells use `animation` (el.animate() method to trigger animation) by default. To customize the animation, you can pass the `option` parameter. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) for `Animation API` details, and [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/animate#browser_compatibility) for compatibility.
+* Highlight colors do not change in real-time with the theme.
+* Highlight not working? Check if `props.rowKey` is specified.
 :::
 
 
-## 内置的高亮动画
+## Built-in Highlight Animation
 
 ```ts
-// 高亮行，可传入key数组，一次性高亮多行，利于性能
+// Highlight rows, can pass an array of keys to highlight multiple rows at once for better performance
 stkTableRef.value?.setHighlightDimRow(['id0']); 
-// 高亮单元格
+// Highlight cell
 stkTableRef.value?.setHighlightDimCell('id1', 'age');
 ```
 <demo vue="advanced/highlight/Highlight.vue"></demo>
 
-## 全局配置高亮
+## Global Highlight Configuration
 `props.highlightConfig`
 
 ```ts
 type HighlightConfig = {
-    /** 持续时间 */
+    /** Duration */
     duration?: number;
-    /** 高亮动画帧率 */
+    /** Highlight animation frame rate */
     fps?: number;
 }
 
 ```
 ::: tip
-- 降低高亮帧率有利于提升性能。
-- 如果您想指定动画的帧率，参考 Animation API 的 `easing: 'step(xx)'` 实现。（同css animation-timing-function: step）
+- Reducing the highlight frame rate is beneficial for performance.
+- If you want to specify the animation frame rate, refer to the `easing: 'step(xx)'` implementation of the Animation API. (Same as CSS animation-timing-function: step)
 :::
 
 ::: warning
-如果自定义 keyframe，则 `HighlightConfig.fps` **将会失效**!
+If you customize the keyframe, `HighlightConfig.fps` **will be invalid**!
 :::
 
 
 
-## 通过 animation api 自定义高亮动画
+## Custom Highlight Animation via Animation API
 ```ts
 stkTableRef.value?.setHighlightDimRow([id], {
     keyframe: [
@@ -66,8 +66,8 @@ stkTableRef.value?.setHighlightDimCell('id1', 'age', {
 
 <demo vue="advanced/highlight/HighlightAnimation.vue"></demo>
 
-## 通过css自定义高亮动画
-此api为旧版动画实现方式。出于`css`动画的**便捷**、**兼容性**好、**易于理解**等优点，依然保留此api。
+## Custom Highlight Animation via CSS
+This API is an older animation implementation method. It is still retained due to the advantages of `css` animations such as **convenience**, **good compatibility**, and **ease of understanding**.
 
 ```ts
 stkTableRef.value?.setHighlightDimRow(['id1'], { 
@@ -77,7 +77,7 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
 });
 ```
 :::warning
-这里 `duration` 设置为 `2000` 是用于在动画结束后清除元素上的 `class`，需要与css动画时间**一致**。
+Here `duration` is set to `2000` to clear the `class` from the element after the animation ends, which needs to be **consistent** with the CSS animation duration.
 :::
 ```css
 @keyframes my-highlight-row {
@@ -90,10 +90,10 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
 ```
 <demo vue="advanced/highlight/HighlightCss.vue"></demo>
 
-## ~~通过js自定义高亮动画~~ (`v0.7.0`已废弃)
+## ~~Custom Highlight Animation via JS~~ (deprecated in `v0.7.0`)
 <details>
 <summary>
-    点击查看
+    Click to view
 </summary>
 <pre>
 stkTableRef.value?.setHighlightDimRow(['id1'], { 
@@ -101,39 +101,39 @@ stkTableRef.value?.setHighlightDimRow(['id1'], {
     duration: 2000
 });
 </pre>
-不推荐使用，因为需要手动计算颜色，且性能较差。依赖 `d3-interpolate`。
+Not recommended as it requires manual color calculation and has poor performance. Depends on `d3-interpolate`.
 </details>
 
 
 ## API
 
-### 高亮行  setHighlightDimRow
+### Highlight Row  setHighlightDimRow
 ```ts
 /**
- * 高亮一行
- * @param rowKeyValues 行唯一键的数组
- * @param option.method css-使用css渲染，animation-使用animation api。默认animation
- * @param option.className 自定义css动画的class。
- * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。
- * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
+ * Highlight a row
+ * @param rowKeyValues Array of unique row keys
+ * @param option.method css-use css rendering, animation-use animation api. Default animation
+ * @param option.className Custom css animation class.
+ * @param option.keyframe If custom keyframe is provided, highlightConfig.fps will be invalid.
+ * @param option.duration Animation duration. In 'css' method, used to remove class, needs to be consistent with custom animation duration if className is provided.
  */
 setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {}): void;
 ```
 
-### 高亮单元格 setHighlightDimCell
+### Highlight Cell setHighlightDimCell
 ```ts
 /**
- * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
- * @param rowKeyValue 一行的key
- * @param colKeyValue 列key
- * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
- * @param option.className 自定义css动画的class。
- * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。
- * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
+ * Highlight a cell. Virtual scroll highlight state memory is not supported yet.
+ * @param rowKeyValue Row key
+ * @param colKeyValue Column key
+ * @param options.method css-use css rendering, animation-use animation api. Default animation;
+ * @param option.className Custom css animation class.
+ * @param option.keyframe If custom keyframe is provided, highlightConfig.fps will be invalid.
+ * @param option.duration Animation duration. In 'css' method, used to remove class, needs to be consistent with custom animation duration if className is provided.
  */
 setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {}): void;
 ```
-### 参数类型
+### Parameter Types
 
 ```ts
 type HighlightDimBaseOption = {
