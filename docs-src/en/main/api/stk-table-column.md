@@ -1,0 +1,135 @@
+# StkTableColumn
+
+传入的columns配置项
+
+```vue
+<StkTable :columns="columns"></StkTable>
+```
+::: warning 浅层监听
+组件内部**没有**深度监听(deep watch) `columns` 属性，因此如果您发现 push 列不生效，则考虑更新引用，参考如下
+:::
+
+```ts
+columns.value = columns.value.slice(); // 更新数组引用
+```
+
+### StkTableColumn 列配置
+``` ts
+export type StkTableColumn<T extends Record<string, any>> = {
+    /**
+     * 列唯一键，(可选)，不传则默认取dataIndex 字段作为列唯一键。
+     */
+    key?: any;
+    /**
+     * 列类型
+     * - seq 序号列
+     * - expand 展开列
+     * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
+     */
+    type?: 'seq' | 'expand' | 'dragRow';
+    /** 取值id */
+    dataIndex: keyof T & string;
+    /** 表头文字 */
+    title?: string;
+    /** 列内容对齐方式 */
+    align?: 'right' | 'left' | 'center';
+    /** 表头内容对齐方式 */
+    headerAlign?: 'right' | 'left' | 'center';
+    /** 筛选 */
+    sorter?: Sorter<T>;
+    /** 列宽。横向虚拟滚动时必须设置。 */
+    width?: string | number;
+    /** 最小列宽。非x虚拟滚动生效。 */
+    minWidth?: string | number;
+    /** 最大列宽。非x虚拟滚动生效。 */
+    maxWidth?: string | number;
+    /**th class */
+    headerClassName?: string;
+    /** td class */
+    className?: string;
+    /** 排序字段。default: dataIndex */
+    sortField?: keyof T;
+    /** 排序方式。按数字/字符串 */
+    sortType?: 'number' | 'string';
+    /** 固定列 */
+    fixed?: 'left' | 'right' | null;
+    /** private */ rowSpan?: number;
+    /** private */ colSpan?: number;
+    /**
+     * 自定义 td 渲染内容。
+     *
+     * 组件prop入参:
+     * @param props.row 一行的记录。
+     * @param props.col 列配置
+     * @param props.cellValue row[col.dataIndex] 的值
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
+     */
+    customCell?: Component<CustomCellProps<T>> | string;
+    /**
+     * 自定义 th 渲染内容
+     *
+     * 组件prop入参:
+     * @param props.col 列配置
+     * @param props.rowIndex 行索引
+     * @param props.colIndex 列索引
+     */
+    customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
+    /** 二级表头 */
+    children?: StkTableColumn<T>[];
+     /** 单元格合并 */
+    mergeCells?: MergeCellsFn<T>;
+};
+```
+
+## StkTableColumn.Sorter 
+```ts
+type Sorter<T> = boolean 
+    | ((
+        data: T[],
+        option: { order: Order; column: any }
+    ) => T[]);
+
+```
+
+## StkTableColumn.SortConfig
+```ts
+/** 排序配置 */
+export type SortConfig<T extends Record<string, any>> = {
+    /** 空值始终排在列表末尾 */
+    emptyToBottom?: boolean;
+    /**
+     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
+     * 类似onMounted时，调用setSorter点了下表头。
+     */
+    defaultSort?: {
+        dataIndex: keyof T;
+        order: Order;
+        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        silent?: boolean;
+    };
+    /**
+     * string排序是否使用 String.prototype.localCompare
+     * 默认true ($*$应该false)
+     */
+    stringLocaleCompare?: boolean;
+};
+```
+
+## StkTableColumn.MergeCellsFn
+
+```ts
+export type MergeCellsParam<T extends Record<string, any>> = {
+    row: T;
+    col: StkTableColumn<T>;
+    rowIndex: number;
+    colIndex: number;
+};
+
+export type MergeCellsFn<T extends Record<string, any>> =
+    (data: MergeCellsParam<T>) => 
+        { 
+            rowspan?: number; 
+            colspan?: number 
+        } | undefined;
+```

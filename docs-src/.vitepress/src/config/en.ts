@@ -43,15 +43,15 @@ export const enConfig = defineConfig({
             { text: 'Demos', link: '/en/demos/huge-data' }
         ],
         sidebar: {
-            '/main': {
-                base: '/main',
+            '/en/main': {
+                base: '/en/main',
                 items: [
                     {
                         text: 'Development Guide',
                         items: [
-                            { text: 'Introduction', link: '/en/start/introduce' },
-                            { text: 'Getting Started', link: '/en/start/start' },
-                            { text: 'Usage in Vue 2', link: '/en/start/vue2-usage' },
+                            { text: 'Introduction', link: '/start/introduce' },
+                            { text: 'Getting Started', link: '/start/start' },
+                            { text: 'Usage in Vue 2', link: '/start/vue2-usage' },
                         ]
                     }, {
                         text: 'Features',
@@ -60,77 +60,77 @@ export const enConfig = defineConfig({
                                 text: 'Basic Features',
                                 collapsed: false,
                                 items: [
-                                    { text: 'Basic', link: '/en/table/basic/basic' },
-                                    { text: 'Theme (Light/Dark)', link: '/en/table/basic/theme' },
-                                    { text: 'Size', link: '/en/table/basic/size' },
-                                    { text: 'Bordered', link: '/en/table/basic/bordered' },
-                                    { text: 'Alignment', link: '/en/table/basic/align' },
-                                    { text: 'Column Width', link: '/en/table/basic/column-width' },
-                                    { text: 'Row Height', link: '/en/table/basic/row-height' },
-                                    { text: 'Stripe', link: '/en/table/basic/stripe' },
-                                    { text: 'Fixed Columns', link: '/en/table/basic/fixed' },
-                                    { text: 'Content Overflow', link: '/en/table/basic/overflow' },
-                                    { text: 'Sorting', link: '/en/table/basic/sort' },
-                                    { text: 'Row & Cell Selection/Hover', link: '/en/table/basic/row-cell-mouse-event' },
-                                    { text: 'Cell Merging (✨NEW)', link: '/en/table/basic/merge-cells' },
-                                    { text: 'Headless', link: '/en/table/basic/headless' },
-                                    { text: 'Row Expansion', link: '/en/table/basic/expand-row' },
-                                    { text: 'Tree', link: '/en/table/basic/tree' },
-                                    { text: 'Multi-level Header', link: '/en/table/basic/multi-header' },
-                                    { text: 'Sequence Column', link: '/en/table/basic/seq' },
-                                    { text: 'Empty Data', link: '/en/table/basic/empty' },
-                                    { text: 'Row & Column Unique Keys', link: '/en/table/basic/key' },
-                                    { text: 'Scrollbar', link: '/en/table/basic/scrollbar' },
-                                    { text: 'Table-layout: fixed', link: '/en/table/basic/fixed-mode' },
-                                    { text: 'Row-by-Row Scrolling', link: '/en/table/basic/scroll-row-by-row' },
+                                    { text: 'Basic', link: '/table/basic/basic' },
+                                    { text: 'Theme (Light/Dark)', link: '/table/basic/theme' },
+                                    { text: 'Size', link: '/table/basic/size' },
+                                    { text: 'Bordered', link: '/table/basic/bordered' },
+                                    { text: 'Alignment', link: '/table/basic/align' },
+                                    { text: 'Column Width', link: '/table/basic/column-width' },
+                                    { text: 'Row Height', link: '/table/basic/row-height' },
+                                    { text: 'Stripe', link: '/table/basic/stripe' },
+                                    { text: 'Fixed Columns', link: '/table/basic/fixed' },
+                                    { text: 'Content Overflow', link: '/table/basic/overflow' },
+                                    { text: 'Sorting', link: '/table/basic/sort' },
+                                    { text: 'Row & Cell Selection/Hover', link: '/table/basic/row-cell-mouse-event' },
+                                    { text: 'Cell Merging (✨NEW)', link: '/table/basic/merge-cells' },
+                                    { text: 'Headless', link: '/table/basic/headless' },
+                                    { text: 'Row Expansion', link: '/table/basic/expand-row' },
+                                    { text: 'Tree', link: '/table/basic/tree' },
+                                    { text: 'Multi-level Header', link: '/table/basic/multi-header' },
+                                    { text: 'Sequence Column', link: '/table/basic/seq' },
+                                    { text: 'Empty Data', link: '/table/basic/empty' },
+                                    { text: 'Row & Column Unique Keys', link: '/table/basic/key' },
+                                    { text: 'Scrollbar', link: '/table/basic/scrollbar' },
+                                    { text: 'Table-layout: fixed', link: '/table/basic/fixed-mode' },
+                                    { text: 'Row-by-Row Scrolling', link: '/table/basic/scroll-row-by-row' },
                                 ]
                             },
                             {
                                 text: 'Advanced Features',
                                 collapsed: false,
                                 items: [
-                                    { text: 'Highlight Rows & Cells', link: '/en/table/advanced/highlight' },
-                                    { text: 'Virtual List (Large Data)', link: '/en/table/advanced/virtual' },
-                                    { text: 'Variable Row Height Virtual List', link: '/en/table/advanced/auto-height-virtual' },
-                                    { text: 'Column Resize', link: '/en/table/advanced/column-resize' },
-                                    { text: 'Column Drag Reorder', link: '/en/table/advanced/header-drag' },
-                                    { text: 'Row Drag Reorder', link: '/en/table/advanced/row-drag' },
-                                    { text: 'Custom Cell', link: '/en/table/advanced/custom-cell' },
-                                    { text: 'Custom Sorting', link: '/en/table/advanced/custom-sort' },
-                                    { text: 'Vue 2 Scroll Optimization', link: '/en/table/advanced/vue2-scroll-optimize' },
+                                    { text: 'Highlight Rows & Cells', link: '/table/advanced/highlight' },
+                                    { text: 'Virtual List (Large Data)', link: '/table/advanced/virtual' },
+                                    { text: 'Variable Row Height Virtual List', link: '/table/advanced/auto-height-virtual' },
+                                    { text: 'Column Resize', link: '/table/advanced/column-resize' },
+                                    { text: 'Column Drag Reorder', link: '/table/advanced/header-drag' },
+                                    { text: 'Row Drag Reorder', link: '/table/advanced/row-drag' },
+                                    { text: 'Custom Cell', link: '/table/advanced/custom-cell' },
+                                    { text: 'Custom Sorting', link: '/table/advanced/custom-sort' },
+                                    { text: 'Vue 2 Scroll Optimization', link: '/table/advanced/vue2-scroll-optimize' },
                                 ]
                             },
                             {
                                 text: 'API',
                                 collapsed: false,
                                 items: [
-                                    { text: 'Table Props', link: '/en/api/table-props' },
-                                    { text: 'StkTableColumn', link: '/en/api/stk-table-column' },
-                                    { text: 'Emits', link: '/en/api/emits' },
-                                    { text: 'Expose', link: '/en/api/expose' },
-                                    { text: 'Slots', link: '/en/api/slots' },
+                                    { text: 'Table Props', link: '/api/table-props' },
+                                    { text: 'StkTableColumn', link: '/api/stk-table-column' },
+                                    { text: 'Emits', link: '/api/emits' },
+                                    { text: 'Expose', link: '/api/expose' },
+                                    { text: 'Slots', link: '/api/slots' },
                                 ]
                             },
                             {
                                 text: 'Other',
                                 collapsed: false,
                                 items: [
-                                    { text: 'More Performance Optimization', link: '/en/other/optimize' },
-                                    { text: 'Tips', link: '/en/other/tips' },
-                                    { text: 'Q&A', link: '/en/other/qa' },
+                                    { text: 'More Performance Optimization', link: '/other/optimize' },
+                                    { text: 'Tips', link: '/other/tips' },
+                                    { text: 'Q&A', link: '/other/qa' },
                                 ]
                             }
                         ]
                     }
                 ]
             },
-            '/demos': {
-                base: '/demos',
+            '/en/demos': {
+                base: '/en/demos',
                 items: [
-                    { text: 'Huge Data', link: '/en/huge-data' },
-                    { text: 'Virtual List', link: '/en/virtual-list' },
-                    { text: 'Matrix', link: '/en/matrix' },
-                    { text: 'Cell Edit', link: '/en/cell-edit' },
+                    { text: 'Huge Data', link: '/huge-data' },
+                    { text: 'Virtual List', link: '/virtual-list' },
+                    { text: 'Matrix', link: '/matrix' },
+                    { text: 'Cell Edit', link: '/cell-edit' },
                 ]
             }
         },
