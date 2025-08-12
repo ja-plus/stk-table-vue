@@ -27,7 +27,6 @@ export const getDataSource = () => [
 
 ## Simple Tree
 
-
 <demo vue="basic/tree/Tree.vue"></demo>
 
 ## Default Expanded Nodes
@@ -58,5 +57,5 @@ The component will inject the `__T_EXPANDED__` field into each row of the dataSo
 
 ::: warning Performance Note
 Even with virtual lists, every change in `props.dataSource` will cause the component to internally traverse `dataSource` to flatten the data. Therefore, for frequently changing data, it will occupy more computing resources of the computer.
-If you have certain performance requirements, you can refer to [Example - Large Data](/demos/huge-data) to implement the tree expansion logic yourself.
+If you have certain performance requirements, you can refer to [Example - Large Data](/en/demos/huge-data) to implement the tree expansion logic yourself.
 :::

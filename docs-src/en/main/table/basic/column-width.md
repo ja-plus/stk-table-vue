@@ -36,5 +36,5 @@ Not setting column widths will set each column's width to `100`
 :::
 
 ## Fixed Column Related Issues
-If you find that the position of fixed columns is incorrect, please check if column widths are set. For details, see [Fixed Columns](/main/table/basic/fixed)
+If you find that the position of fixed columns is incorrect, please check if column widths are set. For details, see [Fixed Columns](/en/main/table/basic/fixed)
 

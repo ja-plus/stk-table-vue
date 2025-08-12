@@ -1,118 +1,119 @@
-# Expose 实例方法
+# Expose 
+
 ## API
 ### initVirtualScroll
-初始化虚拟列表可视区的行数和列数。相当于同时调用 `initVirtualScrollX` 和 `initVirtualScrollY`。
+Initializes the number of rows and columns in the visible area of the virtual list. Equivalent to calling both `initVirtualScrollX` and `initVirtualScrollY`.
 
-表格的 `props.autoResize` 默认为 `true`，因此在宽高变化时会自动调用该函数。
+The table's `props.autoResize` is `true` by default, so this function is automatically called when the width or height changes.
 
-您也可以通过调用此函数，重新计算虚拟列表可视区。比如在用户手动拖动调整宽高的时候，鼠标抬起事件后调用。
+You can also call this function to recalculate the visible area of the virtual list manually. For example, call it after the mouse up event when the user manually drags to adjust the width or height.
 
-参数height, 不传则默认使用表格容器的高度。如果您想多渲染几行，则可在获取容器高度后，再加上几行的高度。
+If the height parameter is not provided, it defaults to the height of the table container. If you want to render more rows, you can add the height of several rows after obtaining the container height.
 
 
 ```ts
 /**
- * 初始化虚拟滚动参数
- * @param {number} [height] 虚拟滚动的高度
+ * Initialize virtual scroll parameters
+ * @param {number} [height] Virtual scroll height
  */
 initVirtualScroll(height?: number)
 ```
 
 ### initVirtualScrollX
-初始化横向虚拟滚动列数。
+Initializes the number of columns for horizontal virtual scrolling.
 
 ```ts
 /**
- * 初始化横向虚拟滚动参数
+ * Initialize horizontal virtual scroll parameters
  */
 initVirtualScrollX()
 ```
 
 ### initVirtualScrollY
-初始化纵向虚拟滚动行数。
+Initializes the number of rows for vertical virtual scrolling.
 
 ```ts
 /**
- * 初始化纵向虚拟滚动参数
- * @param {number} [height] 虚拟滚动的高度
+ * Initialize vertical virtual scroll parameters
+ * @param {number} [height] Virtual scroll height
  */
 initVirtualScrollY(height?: number)
 ```
 
 ### setCurrentRow
-设置当前选中行。
+Sets the currently selected row.
 
 ```ts
 /**
- * 选中一行
- * @param {string} rowKeyOrRow selected rowKey, undefined 为取消选中
- * @param {boolean} option.silent 设置 true 则不会触发 `@current-change`. 默认:false
+ * Select a row
+ * @param {string} rowKeyOrRow Selected rowKey, undefined to deselect
+ * @param {boolean} option.silent Set to true to not trigger `@current-change`. Default: false
  */
 function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false })
 ```
 
 ### setSelectedCell
-设置当前选中单元格 (props.cellActive=true 时生效)。
+Sets the currently selected cell (effective when props.cellActive=true).
 
 ```ts
 /**
- * 设置当前选中单元格 (props.cellActive=true)
- * @param row  设置高亮单元格, undefined  则为清除选中
- * @param col 列对象
- * @param option.silent 设置 true 则不会触发 `@current-change`. 默认:false
+ * Set the currently selected cell (props.cellActive=true)
+ * @param row Set highlighted cell, undefined to clear selection
+ * @param col Column object
+ * @param option.silent Set to true to not trigger `@current-change`. Default: false
  */
 function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: false })
 ```
 
 ### setHighlightDimCell
 
-设置高亮渐暗单元格。
+Sets a highlighted and dimmed cell.
 
 ```ts
 /**
- * 高亮一个单元格。暂不支持虚拟滚动高亮状态记忆。
- * @param rowKeyValue 一行的key
- * @param colKeyValue 列key
- * @param options.method css-使用css渲染，animation-使用animation api。默认animation;
- * @param option.className 自定义css动画的class。
- * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats 
- * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。
+ * Highlight a cell. Virtual scroll highlight state memory is not supported yet.
+ * @param rowKeyValue Key of a row
+ * @param colKeyValue Column key
+ * @param options.method css-use CSS rendering, animation-use animation api. Default: animation;
+ * @param option.className Custom CSS animation class.
+ * @param option.keyframe If custom keyframe is provided, highlightConfig.fps will be invalid. Keyframe: https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.duration Animation duration. In 'css' method state, it's used to remove the class. If className is provided, it should match the custom animation time.
  */
 function setHighlightDimCell(rowKeyValue: UniqKey, colKeyValue: string, option: HighlightDimCellOption = {})
 ```
 
 ### setHighlightDimRow
-设置高亮渐暗行。
+Sets highlighted and dimmed rows.
 
 ```ts
 /**
- * 高亮一行
- * @param rowKeyValues 行唯一键的数组
- * @param option.method css-使用css渲染，animation-使用animation api，js-使用js计算颜色。默认animation
- * @param option.className 自定义css动画的class。
- * @param option.keyframe 如果自定义keyframe，则 highlightConfig.fps 将会失效。Keyframe：https://developer.mozilla.org/zh-CN/docs/Web/API/Web_Animations_API/Keyframe_Formats
- * @param option.duration 动画时长。method='css'状态下，用于移除class，如果传入了className则需要与自定义的动画时间一致。。
+ * Highlight rows
+ * @param rowKeyValues Array of unique row keys
+ * @param option.method css-use CSS rendering, animation-use animation api. Default: animation
+ * @param option.className Custom CSS animation class.
+ * @param option.keyframe If custom keyframe is provided, highlightConfig.fps will be invalid. Keyframe: https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
+ * @param option.duration Animation duration. In 'css' method state, it's used to remove the class. If className is provided, it should match the custom animation time.
  */
 function setHighlightDimRow(rowKeyValues: UniqKey[], option: HighlightDimRowOption = {})
 ```
 
 ### sortCol
-表格排序列dataIndex
+Table sort column dataIndex
 
 ### getSortColumns
-获取排序列的信息 `{key:string,order:Order}[]`
+Get sort column information `{key:string,order:Order}[]`
 
 ### setSorter
 ```ts
 /**
- * 设置表头排序状态。
- * @param colKey 列唯一键字段。如果你想要取消排序状态，请使用`resetSorter`
- * @param order 正序倒序 'asc'|'desc'|null
- * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
- * @param option.sort 是否触发排序-默认true
- * @param option.silent 是否禁止触发回调-默认true
- * @param option.force 是否触发排序-默认true
- * @returns 返回当前表格数据
+ * Set table header sort state.
+ * @param colKey Column unique key field. If you want to cancel the sort state, please use `resetSorter`
+ * @param order Sort order 'asc'|'desc'|null
+ * @param option.sortOption Specify sort parameters. Same as sort-related fields in StkTableColumn. It is recommended to find it from columns.
+ * @param option.sort Whether to trigger sorting - default: true
+ * @param option.silent Whether to suppress triggering callbacks - default: true
+ * @param option.force Whether to force triggering sorting - default: true
+ * @returns Returns current table data
  */
 function setSorter(
     colKey: string, 
@@ -126,58 +127,58 @@ function setSorter(
 ): DT[];
 ```
 
-* `option.force` 为 true 时，即使 `props.sortRemote` 为true，也会触发排序。
-* `option.silent` 为 true 时，不会触发 `@sort-change` 回调。
-* `option.sortOption` 的作用的是，如果 传入的 `colKey` 不在 `columns` 中，可以指定排序参数。在隐藏某一列时，但仍然要按照那一列的字段排序的情况下有用。
-    - 优先级最高，如果配置了这个，则不会用 `colKey` 去找对应的列排序。
+* When `option.force` is true, sorting will be triggered even if `props.sortRemote` is true.
+* When `option.silent` is true, the `@sort-change` callback will not be triggered.
+* The role of `option.sortOption` is that if the passed `colKey` is not in `columns`, you can specify sorting parameters. This is useful when hiding a column but still wanting to sort by that column's field.
+    - Highest priority; if this is configured, it will not use `colKey` to find the corresponding column for sorting.
 
 ### resetSorter
-重置排序状态
+Reset sort state
 
 ### scrollTo
-滚动到指定位置
+Scroll to specified position
 
 ```ts
 /**
- * 设置滚动条位置
- * @param top 设置null则不改变位置 
- * @param left 设置null则不改变位置
+ * Set scrollbar position
+ * @param top Set to null to not change position
+ * @param left Set to null to not change position
  */
 function scrollTo(top: number | null = 0, left: number | null = 0) 
 ```
 
 ### getTableData
-获取表格数据，返回当前表格的排序顺序的数组
+Get table data, returns array in current table sort order
 
 ### setRowExpand
-设置展开行
+Set expanded row
 
 ```ts
 /**
  *
  * @param rowKeyOrRow rowKey or row
- * @param expand 是否展开
+ * @param expand Whether to expand
  * @param data { col?: StkTableColumn<DT> }
- * @param data.silent 设置 true 则不会触发 `@toggle-row-expand`. 默认:false
+ * @param data.silent Set to true to not trigger `@toggle-row-expand`. Default: false
  */
 function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, data?: { col?: StkTableColumn<DT>; silent?: boolean })
 ```
 
 ### setAutoHeight
-可变行高虚拟列表下，设置指定行的 auto-row-height 保存的高度，如果行高度有变化，则可以调用此方法清除或变更行高
+In variable row height virtual list, sets the height saved by auto-row-height for specified rows. If row height changes, you can call this method to clear or change the row height
 ```ts
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
 ### clearAllAutoHeight
-清除所有 auto-row-height 保存的高度
+Clear all heights saved by auto-row-height
 
 ### setTreeExpand
-设置树状结构展开行
+Set tree structure expanded row
 ```ts
 /**
  * @param row rowKey or row or row
- * @param option.expand 不传则根据当前状态取反
+ * @param option.expand If not provided, it will toggle based on current state
  */
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```

@@ -1,176 +1,176 @@
-# Table Props 表格配置
+# Table Props
 
 ```ts
 export type StkProps = {
   width?: string;
-  /** 最小表格宽度 */
+  /** Minimum table width */
   minWidth?: string;
-  /** 表格最大宽度*/
+  /** Maximum table width */
   maxWidth?: string;
-  /** 斑马线条纹 */
+  /** Zebra stripes */
   stripe?: boolean;
-  /** 是否使用 table-layout:fixed */
+  /** Whether to use table-layout:fixed */
   fixedMode?: boolean;
-  /** 是否隐藏表头 */
+  /** Whether to hide table header */
   headless?: boolean;
-  /** 主题，亮、暗 */
+  /** Theme, light or dark */
   theme?: 'light' | 'dark';
   /**
-   * 行高
-   * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+   * Row height
+   * - When `props.autoRowHeight` is `true`, this represents the expected row height for calculation. It no longer affects the actual row height.
    */
   rowHeight?: number;
   /**
-   * 是否可变行高
-   * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
+   * Whether to use variable row height
+   * - When set to `true`, `props.rowHeight` represents the expected row height for calculation. It no longer affects the actual row height.
    */
   autoRowHeight?: boolean | {
-    /** 预估行高(优先级高于rowHeight) */
+    /** Estimated row height (higher priority than rowHeight) */
     expectedHeight?: number | ((row: DT) => number);
   };
-  /** 是否高亮鼠标悬浮的行 */
+  /** Whether to highlight the row on mouse hover */
   rowHover?: boolean;
-  /** 是否高亮选中的行 */
+  /** Whether to highlight the selected row */
   rowActive?: boolean;
-  /** 当前行再次点击否可以取消 (rowActive=true)*/
+  /** Whether clicking the current row again can deselect it (rowActive=true) */
   rowCurrentRevokable?: boolean;
-  /** 表头行高。default = rowHeight */
+  /** Header row height. default = rowHeight */
   headerRowHeight?: number | null;
-  /** 虚拟滚动 */
+  /** Virtual scrolling */
   virtual?: boolean;
-  /** x轴虚拟滚动(必须设置列宽)*/
+  /** Horizontal virtual scrolling (must set column width) */
   virtualX?: boolean;
-  /** 表格列配置 */
+  /** Table column configuration */
   columns?: StkTableColumn<any>[];
-  /** 表格数据源 */
+  /** Table data source */
   dataSource?: any[];
-  /** 行唯一键 (行唯一值不能为undefined）*/
+  /** Row unique key (row unique value cannot be undefined) */
   rowKey?: UniqKeyProp;
-  /** 列唯一键。默认`dataIndex`*/
+  /** Column unique key. Default is `dataIndex` */
   colKey?: UniqKeyProp;
-  /** 空值展示文字 */
+  /** Empty cell display text */
   emptyCellText?: string | ((option: { row: DT; col: StkTableColumn<DT> }) => string);
-  /** 暂无数据兜底高度是否撑满 */
+  /** Whether the fallback height for no data fills the container */
   noDataFull?: boolean;
-  /** 是否展示暂无数据 */
+  /** Whether to show no data message */
   showNoData?: boolean;
-  /** 是否服务端排序，true则不排序数据 */
+  /** Whether to use server-side sorting, true means not sorting data */
   sortRemote?: boolean;
-  /** 表头是否溢出展示... */
+  /** Whether header content overflows with ellipsis */
   showHeaderOverflow?: boolean;
-  /** 表体溢出是否展示... */
+  /** Whether body content overflows with ellipsis */
   showOverflow?: boolean;
-  /** 是否增加行hover class */
+  /** Whether to add row hover class */
   showTrHoverClass?: boolean;
-  /** 是否高亮鼠标悬浮的单元格 */
+  /** Whether to highlight the cell on mouse hover */
   cellHover?: boolean;
-  /** 是否高亮选中的单元格 */
+  /** Whether to highlight the selected cell */
   cellActive?: boolean;
-  /** 单元格再次点击否可以取消选中 (cellActive=true)*/
+  /** Whether clicking the cell again can deselect it (cellActive=true) */
   selectedCellRevokable?: boolean;
-  /** 表头是否可拖动。支持回调函数。 */
+  /** Whether header can be dragged. Supports callback function. */
   headerDrag?:
     | boolean
     | {
         /**
-         * 列交换模式
-         * - none - 不做任何事
-         * - insert - 插入(默认值)
-         * - swap - 交换
+         * Column swap mode
+         * - none - Do nothing
+         * - insert - Insert (default)
+         * - swap - Swap
          */
         mode?: 'none' | 'insert' | 'swap';
-        /** 禁用拖动的列 */
+        /** Columns that are disabled from dragging */
         disabled?: (col: StkTableColumn<DT>) => boolean;
       };
   /**
-   * 给行附加className<br>
-   * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
+   * Add className to rows<br>
+   * FIXME: Need optimization because not passing this prop will cause table rows to always execute an empty function. Does it have any impact?
    */
   rowClassName?: (row: any, i: number) => string;
   /**
-   * 列宽是否可拖动(需要设置v-model:columns)<br>
-   * **不要设置**列minWidth，**必须**设置width<br>
-   * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
-   * - 会自动更新props.columns中的with属性
+   * Whether column width is resizable (requires setting v-model:columns)<br>
+   * **Do not set** column minWidth, **must** set width<br>
+   * When resizing column width, each column must have a width, and minWidth/maxWidth will not take effect. Table width will become "fit-content".
+   * - Will automatically update the width property in props.columns
    */
   colResizable?: boolean;
-  /** 可拖动至最小的列宽 */
+  /** Minimum column width when resizing */
   colMinWidth?: number;
   /**
-   * 单元格分割线。
-   * 默认横竖都有
-   * "h" - 仅展示横线
-   * "v" - 仅展示竖线
-   * "body-v" - 仅表体展示竖线
+   * Cell border.
+   * Default has both horizontal and vertical borders
+   * "h" - Only show horizontal lines
+   * "v" - Only show vertical lines
+   * "body-v" - Only show vertical lines in body
    */
   bordered?: boolean | 'h' | 'v' | 'body-v';
   /**
-   * 自动重新计算虚拟滚动高度宽度。默认true
-   * [非响应式]
-   * 传入方法表示resize后的回调
+   * Automatically recalculate virtual scroll height and width. Default true
+   * [Non-reactive]
+   * Passing a method represents a callback after resize
    */
   autoResize?: boolean | (() => void);
-  /** 是否展示固定列阴影。为节省性能，默认false。 */
+  /** Whether to show fixed column shadow. For performance, default false. */
   fixedColShadow?: boolean;
-  /** 优化vue2 滚动 */
+  /** Optimize vue2 scrolling */
   optimizeVue2Scroll?: boolean;
-  /** 排序配置 */
+  /** Sort configuration */
   sortConfig?: {
-    /** 空值是否排最下面 */
+    /** Whether empty values are sorted at the bottom */
     emptyToBottom: boolean,
-    /** 默认排序（1.初始化时触发 2.排序方向为null时触发) */
+    /** Default sort (1. Triggered on initialization 2. Triggered when sort direction is null) */
     defaultSort?: {
         dataIndex: keyof T;
         order: Order;
     };
     /**
-     * string排序是否使用 String.prototype.localCompare
-     * 默认true (历史设计问题，为了兼容，默认true)
+     * Whether to use String.prototype.localCompare for string sorting
+     * Default true (due to historical design issues, default is true for compatibility)
      */
     stringLocaleCompare?: boolean;
   },
-  /** 隐藏头部鼠标悬浮title。可传入dataIndex数组 */
+  /** Hide header mouse hover title. Can pass dataIndex array */
   hideHeaderTitle?: boolean | string[];
-  /** 高亮配置 */
+  /** Highlight configuration */
   highlightConfig?: {
-    /** 高亮持续时间(s) */
+    /** Highlight duration (s) */
     duration?: number;
-    /** 高亮帧率*/
+    /** Highlight frame rate */
     fps?: number;
   };
-  /** 序号列配置 */
+  /** Sequence column configuration */
   seqConfig?: {
-    /** 序号列起始下标 用于适配分页 */
+    /** Sequence column start index for pagination adaptation */
     startIndex?: number;
   };
-  /** 展开行配置 */
+  /** Expand row configuration */
   expandConfig?: {
     height?: number;
   };
-  /** 行拖动配置 */
+  /** Row drag configuration */
   dragRowConfig?: {
     mode?: 'none' | 'insert' | 'swap';
   };
   /**
-   * 固定头，固定列实现方式。
-   * [非响应式]
-   * relative：固定列只能放在props.columns的两侧。
-   * - 如果列宽会变动则谨慎使用。
-   * - 多级表头固定列慎用
+   * Fixed header and column implementation method.
+   * [Non-reactive]
+   * relative: Fixed columns can only be placed on both sides of props.columns.
+   * - Use with caution if column width may change.
+   * - Use with caution for fixed columns in multi-level headers
    * 
-   * 低版本浏览器只能为'relative', 
+   * Older browsers can only use 'relative', 
    */
   cellFixedMode?: 'sticky' | 'relative';
   /**
-   * 是否平滑滚动
+   * Whether to enable smooth scrolling
    * - default: chrome < 85 || chrome > 120 ? true : false
-   * - false: 使用 wheel 事件滚动。为了防止滚动过快导致白屏。
-   * - true: 不使用 wheel 事件滚动。滚轮滚动时更加平滑。滚动过快时会白屏。
+   * - false: Use wheel event for scrolling. To prevent white screen caused by scrolling too fast.
+   * - true: Do not use wheel event for scrolling. Smoother scrolling with mouse wheel. May cause white screen when scrolling too fast.
    */
   smoothScroll?: boolean;
   /**
-   * 按整数行纵向滚动
-   * - scrollbar：仅拖动滚动条生效,可用于处理拖动白屏问题(v0.7.2)
+   * Scroll vertically by integer rows
+   * - scrollbar: Only effective when dragging the scrollbar, can be used to solve the white screen problem when dragging (v0.7.2)
    */
   scrollRowByRow?: boolean | 'scrollbar';
 };

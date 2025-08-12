@@ -1,46 +1,46 @@
-# 介绍
-`stk-table-vue`（stk: sticky） 是一个基于 `sticky` 、`vue`、`DOM` 的**高性能**虚拟列表。适用于动态数据展示场景。
+# Introduce
+`stk-table-vue` (stk: sticky) is a **high-performance** virtual list based on `sticky`, `vue`, and `DOM`. It is suitable for dynamic data display scenarios.
 
 
-## 为什么要做stk-table-vue
-做这个的原因，是在2022年左右，我接到了在web端展示动态数据的需求，而在当时，简单调研了一些热门的表格组件，并没有十分契合此业务场景的组件，因此决定自行实现。
-起初只是实现了一个基本的虚拟列表。到后来修修改改差不多三年，我发现已经慢慢具备了表格的基础功能，因此决定开源。
+## Why stk-table-vue was Created
+The reason for creating this component dates back to around 2022 when I received a requirement to display dynamic data on the web. At that time, after briefly researching some popular table components, I found none that perfectly matched this business scenario, so I decided to implement my own.
+Initially, I only implemented a basic virtual list. After nearly three years of revisions, I realized it had gradually acquired the basic functionality of a table, so I decided to open-source it.
 
-在初期对热门表格调研之后，我就确认了大体的方向：
-1. **保证性能优先。** 性能是首要目标，组件的一些使用方式和api的设计多少会向性能妥协，因为动态数据的展示需要尽可能的高性能。
+After the initial research on popular tables, I confirmed the general direction:
+1. **Performance First.** Performance is the primary goal. Some usage methods and API designs of the component may compromise to performance because dynamic data display requires as high performance as possible.
 
-2. **包体积控制。** 用尽可能少且简单的方式实现表格的功能。
+2. **Package Size Control.** Implement table functionality in as few and simple ways as possible.
 
-3. **基于DOM。** 基于 DOM 有利于 vue 组件库的无缝接入。而且，我十分相信dom的性能。综合各种成本考虑，舍弃了canvas的实现。
+3. **DOM-based.** Being DOM-based facilitates seamless integration with Vue component libraries. Moreover, I have great confidence in DOM performance. After considering various costs, I abandoned the canvas implementation.
 
-4. **使用 css sticky 实现表格的固定列与固定头。** 这个方案，使固定头与固定列的代码实现相较于覆盖另一个表格的方式，代码量*大大减少*。
-同时恰好也实现了固定列的sticky，一种全新的交互。[试一试](/main/table/basic/fixed.html#虚拟列表列固定)。
+4. **Using CSS sticky for Fixed Columns and Headers.** This solution significantly reduces the code volume compared to covering another table for fixed headers and columns.
+It also happens to implement sticky for fixed columns, a brand new interaction. [Try it out](/en/main/table/basic/fixed.html#Virtual%20List%20Column%20Fixing).
 
-5. **声明式自定义插槽。** 借鉴了 `ant-design-vue` 表格的自定义单元格的方式，相比在 `<template>` 中通过 `#slot` 使用自定义单元格要优雅许多。
+5. **Declarative Custom Slots.** Borrowed from `ant-design-vue` table's custom cell approach, which is much more elegant than using custom cells via `#slot` in `<template>`.
 
-6. **内置高亮。** 使用 animation api 实现高亮动画，没有第三方库的依赖。
+6. **Built-in Highlighting.** Uses animation API to implement highlighting animations without third-party library dependencies.
 
-7. **使用table标签。** 一些组件使用了 `div` 来渲染表格，为获取更好的性能。但需要实现原生 `<table>` 的默认功能，如`布局`,`复制`，`打印`等行为，或需要额外很多代码，对于包体积控制不利。
-而性能方面，在主观感受上，div|table 的区别并不大。
+7. **Using table Tag.** Some components use `div` to render tables for better performance. However, implementing default `<table>` functionalities like layout, copying, and printing would require a lot of additional code, which is not conducive to package size control.
+In terms of performance, subjectively, there's not much difference between div and table implementations.
 
 
 
-## 可定制的 stk-table-vue
-表格的许多基础功能或许都不全面，但对**二次开发**预留了较多的定制空间，一些功能可以自行实现。
-* 比如表头点击 `筛选` 功能。
+## Customizable stk-table-vue
+Many basic table functionalities may not be comprehensive, but there's ample room for **secondary development**, and some features can be implemented by yourself.
+* For example, the header click `filter` function.
 
-    对于`筛选`功能，考虑到实际开发中，不同的项目使用的组件库，样式都不相同，如果提供内置的筛选功能，1.可能对整体风格会造成影响。2.对包体积控制有负面效果。因此暂未实现。
+    Regarding the `filter` function, considering that in actual development, different projects use different component libraries and styles, providing a built-in filter function might: 1. affect the overall style; 2. have a negative impact on package size control. Therefore, it hasn't been implemented yet.
 
-* 排序不能点击单个箭头。
+* Sorting cannot click individual arrows.
     
-    也可以通过自定义表头单元格实现。
+    This can also be achieved by customizing header cells.
 
-* 样式可以通过`.stk-table`选择器下的css变量进行更改。
+* Styles can be changed via CSS variables under the `.stk-table` selector.
 
 
 
-## 站在巨人的肩上
-组件的一些设计和api参考了 `vxe-table` `ant-design-vue` `navie-ui` 等NB的项目，在此表示感谢。
+## Standing on the Shoulders of Giants
+Some designs and APIs of the component refer to excellent projects like `vxe-table`, `ant-design-vue`, and `navie-ui`. I would like to express my gratitude here.
 
 
 

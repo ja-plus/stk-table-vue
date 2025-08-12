@@ -1,6 +1,6 @@
 # Custom Sorting
 
-`StkTableColumn['sorter']` allows custom sorting rules. This was already mentioned in the [Sorting section](/main/table/basic/sort#Custom Sorting).
+`StkTableColumn['sorter']` allows custom sorting rules. This was already mentioned in the [Sorting section](/en/main/table/basic/sort#Custom Sorting).
 
 This chapter introduces the built-in sorting functions provided by the component.
 

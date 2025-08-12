@@ -1,83 +1,83 @@
 # StkTableColumn
 
-传入的columns配置项
+Columns Configuration
 
 ```vue
 <StkTable :columns="columns"></StkTable>
 ```
-::: warning 浅层监听
-组件内部**没有**深度监听(deep watch) `columns` 属性，因此如果您发现 push 列不生效，则考虑更新引用，参考如下
+::: warning Shallow Watch
+The component **does not** deep watch the `columns` property. Therefore, if you find that pushing columns does not take effect, consider updating the reference as follows:
 :::
 
 ```ts
-columns.value = columns.value.slice(); // 更新数组引用
+columns.value = columns.value.slice(); // Update array reference
 ```
 
-### StkTableColumn 列配置
+### StkTableColumn Configuration
 ``` ts
 export type StkTableColumn<T extends Record<string, any>> = {
     /**
-     * 列唯一键，(可选)，不传则默认取dataIndex 字段作为列唯一键。
+     * Column unique key (optional). If not provided, the dataIndex field will be used as the column unique key by default.
      */
     key?: any;
     /**
-     * 列类型
-     * - seq 序号列
-     * - expand 展开列
-     * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
+     * Column type
+     * - seq: Sequence column
+     * - expand: Expandable column
+     * - dragRow: Draggable row column (use sktTableRef.getTableData to get the changed order)
      */
     type?: 'seq' | 'expand' | 'dragRow';
-    /** 取值id */
+    /** Data index */
     dataIndex: keyof T & string;
-    /** 表头文字 */
+    /** Header text */
     title?: string;
-    /** 列内容对齐方式 */
+    /** Column content alignment */
     align?: 'right' | 'left' | 'center';
-    /** 表头内容对齐方式 */
+    /** Header content alignment */
     headerAlign?: 'right' | 'left' | 'center';
-    /** 筛选 */
+    /** Sorting */
     sorter?: Sorter<T>;
-    /** 列宽。横向虚拟滚动时必须设置。 */
+    /** Column width. Must be set for horizontal virtual scrolling. */
     width?: string | number;
-    /** 最小列宽。非x虚拟滚动生效。 */
+    /** Minimum column width. Effective when not using horizontal virtual scrolling. */
     minWidth?: string | number;
-    /** 最大列宽。非x虚拟滚动生效。 */
+    /** Maximum column width. Effective when not using horizontal virtual scrolling. */
     maxWidth?: string | number;
-    /**th class */
+    /** th class */
     headerClassName?: string;
     /** td class */
     className?: string;
-    /** 排序字段。default: dataIndex */
+    /** Sort field. Default: dataIndex */
     sortField?: keyof T;
-    /** 排序方式。按数字/字符串 */
+    /** Sort type. By number/string */
     sortType?: 'number' | 'string';
-    /** 固定列 */
+    /** Fixed column */
     fixed?: 'left' | 'right' | null;
     /** private */ rowSpan?: number;
     /** private */ colSpan?: number;
     /**
-     * 自定义 td 渲染内容。
+     * Custom td rendering content.
      *
-     * 组件prop入参:
-     * @param props.row 一行的记录。
-     * @param props.col 列配置
-     * @param props.cellValue row[col.dataIndex] 的值
-     * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * Component props:
+     * @param props.row The record of a row.
+     * @param props.col Column configuration
+     * @param props.cellValue The value of row[col.dataIndex]
+     * @param props.rowIndex Row index
+     * @param props.colIndex Column index
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
-     * 自定义 th 渲染内容
+     * Custom th rendering content
      *
-     * 组件prop入参:
-     * @param props.col 列配置
-     * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * Component props:
+     * @param props.col Column configuration
+     * @param props.rowIndex Row index
+     * @param props.colIndex Column index
      */
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
-    /** 二级表头 */
+    /** Nested header */
     children?: StkTableColumn<T>[];
-     /** 单元格合并 */
+     /** Cell merging */
     mergeCells?: MergeCellsFn<T>;
 };
 ```
@@ -94,23 +94,23 @@ type Sorter<T> = boolean
 
 ## StkTableColumn.SortConfig
 ```ts
-/** 排序配置 */
+/** Sort configuration */
 export type SortConfig<T extends Record<string, any>> = {
-    /** 空值始终排在列表末尾 */
+    /** Empty values always come last in the list */
     emptyToBottom?: boolean;
     /**
-     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
-     * 类似onMounted时，调用setSorter点了下表头。
+     * Default sort (1. Triggered on initialization 2. Triggered when sort direction is null)
+     * Similar to calling setSorter and clicking the header when onMounted.
      */
     defaultSort?: {
         dataIndex: keyof T;
         order: Order;
-        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        /** Whether to disable triggering the sort-change event. Default false, meaning the event is triggered. */
         silent?: boolean;
     };
     /**
-     * string排序是否使用 String.prototype.localCompare
-     * 默认true ($*$应该false)
+     * Whether to use String.prototype.localCompare for string sorting
+     * Default true ($*$ should be false)
      */
     stringLocaleCompare?: boolean;
 };

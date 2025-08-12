@@ -17,7 +17,7 @@ Remember to specify `rowKey` in virtual list mode
 ## Column Unique Key colKey
 By default, it takes `StkTableColumn['key']` || `StkTableColumn['dataIndex']`.
 
-If you want to configure multiple columns with the same `dataIndex`, you need to use the `key` field to specify the unique key of the column. *key is an optional field*. Refer to [StkTableColumn Type Definition](/main/api/stk-table-column.html)
+If you want to configure multiple columns with the same `dataIndex`, you need to use the `key` field to specify the unique key of the column. *key is an optional field*. Refer to [StkTableColumn Type Definition](/en/main/api/stk-table-column.html)
 ```ts
 const columns:StkTableColumn[] = [
     { key: '1', dataIndex: 'a'，title: 'A1' },

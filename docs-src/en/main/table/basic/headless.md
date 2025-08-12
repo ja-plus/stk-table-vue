@@ -10,7 +10,7 @@
 <demo vue="basic/headless/Headless.vue"></demo>
 
 ### Virtual Single Column List
-Configure headless to implement a single column list. See [Virtual Single Column List Example](/demos/virtual-list)
+Configure headless to implement a single column list. See [Virtual Single Column List Example](/en/demos/virtual-list)
 
 
 

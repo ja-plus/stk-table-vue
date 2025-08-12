@@ -13,7 +13,7 @@ props:
 
 ## Vertical Virtual List
 ::: warning
-Row height will no longer be affected by content. For details, refer to the [Row Height](/main/table/basic/row-height) section.
+Row height will no longer be affected by content. For details, refer to the [Row Height](/en/main/table/basic/row-height) section.
 :::
 ```vue
 <StkTable virtual></StkTable>
@@ -65,5 +65,5 @@ initVirtualScroll(height?: number)
 ```
 
 ## Single Column List
-Please refer to [Virtual Single List](/demos/virtual-list.html)
+Please refer to [Virtual Single List](/en/demos/virtual-list.html)
 

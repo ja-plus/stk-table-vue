@@ -1,23 +1,23 @@
-# 开始
+# Start
 
-## 在线编辑器尝试
+## Try Online Editor
 
-[<span style="font-size: 16px;font-weight: bold;">在线编辑示例</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
+[<span style="font-size: 16px;font-weight: bold;">Online Editing Example</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
 
-## npm 安装
+## npm Installation
 
 ```sh
 $ npm install stk-table-vue
 ```
 
-## 引入
+## Import
 
 main
 ```ts
 import 'stk-table-vue/lib/style.css';
 ```
 
-vue SFC 使用的时候引入，利于ts识别。
+Import when using vue SFC, beneficial for ts recognition.
 ```vue
 <script lang="ts" setup>
 import { StkTable } from 'stk-table-vue';
@@ -27,7 +27,7 @@ import { StkTable } from 'stk-table-vue';
 </template>
 ```
 
-## 简单demo
+## Simple Demo
 ```vue
 <script lang="ts" setup>
 import { ref, useTemplateRef, onMounted, onBeforeUnmount } from 'vue';
@@ -43,17 +43,17 @@ type DataType = {
     age: number;
 };
 const columns: StkTableColumn<DataType>[] = [
-    { title: '姓名', dataIndex: 'name', key: 'name' },
-    { title: '年龄', dataIndex: 'age', key: 'age' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Age', dataIndex: 'age', key: 'age' },
 ];
 const dataSource: DataType[] = [
-    { id: 'k1', name: '张三', age: 18 },
-    { id: 'k2', name: '李四', age: 19 },
-    { id: 'k3', name: '王五', age: 20 },
+    { id: 'k1', name: 'Zhang San', age: 18 },
+    { id: 'k2', name: 'Li Si', age: 19 },
+    { id: 'k3', name: 'Wang Wu', age: 20 },
 ];
 let interval = 0;
 onMounted(() => {
-    // 高亮指定的id行
+    // Highlight specified id row
     interval = window.setInterval(() => {
         stkTableRef.value?.setHighlightDimRow(['k1']);
     }, 2000);
@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
 </template>
 ```
 
-运行结果
+Running Result
 <demo vue="start/Start.vue"></demo>
 
 

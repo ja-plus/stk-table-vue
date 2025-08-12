@@ -14,7 +14,7 @@ Please try adding the following CSS to see if there's a noticeable reduction in 
 }
 ```
 ## Scrolling White Screen
-1. Try row-by-row scrolling. [scroll-row-by-row](/main/table/basic/scroll-row-by-row.md)
+1. Try row-by-row scrolling. [scroll-row-by-row](/en/main/table/basic/scroll-row-by-row.md)
 2. Try tr layering.
     
 ## Highlighting

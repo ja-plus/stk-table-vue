@@ -1,15 +1,15 @@
-# 在vue2.7 中使用
+# Using in vue2.7
 
-由于vue2.7 兼容很多vue3 的组合式api，因此，可在vue2.7项目中通过引入 源码(`.vue`)的方式使用。
+Due to vue2.7's compatibility with many vue3 composition APIs, it can be used in vue2.7 projects by importing the source code (`.vue` files).
 
-## 安装
+## Installation
 ``` sh
 $ npm install stk-table-vue;
 ```
-## 环境准备
-由于源码使用是 `vueSFC` + `ts` 写的。因此需要您的开发环境支持`TypeScript`。
-### TypeScript 环境
-这里提供webpack的配置参考。
+## Environment Preparation
+Since the source code is written in `vueSFC` + `ts`, your development environment needs to support `TypeScript`.
+### TypeScript Environment
+Here's a webpack configuration reference.
 #### webpack.config.js
 ```js
 module.exports = {
@@ -29,11 +29,11 @@ module.exports = {
     ]
 }
 ```
-### 解析vue SFC文件
-vue的项目都支持，不过多赘述。
+### Parsing vue SFC Files
+All vue projects support this, so no further elaboration.
 
-## 引入
-和 vue3 的使用方式一样，只是引入的文件不同。
+## Import
+The usage is the same as in vue3, but the imported files are different.
 
 main
 ```js

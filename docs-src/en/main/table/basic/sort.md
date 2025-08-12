@@ -22,7 +22,7 @@ This function will be triggered during sorting, and the table will display using
 The following table customizes the size sorting rules for the `Rate` column field.
 <demo vue="basic/sort/CustomSort.vue"></demo>
 
-For more sorting methods, please refer to [Custom Sorting](/main/table/advanced/custom-sort)
+For more sorting methods, please refer to [Custom Sorting](/en/main/table/advanced/custom-sort)
 
 ## sortField Sorting Field
 Some fields may use independent fields for sorting, such as year, month, and day fields. In this case, you can provide a special sorting field where year and month are converted to the smallest unit (day) for easy sorting. Specify this sorting field through `sortField`.
@@ -146,5 +146,5 @@ defineExpose({
     getSortColumns,
 })
 ```
-For details, refer to [Expose Instance Methods](/main/api/expose)
+For details, refer to [Expose Instance Methods](/en/main/api/expose)
 
