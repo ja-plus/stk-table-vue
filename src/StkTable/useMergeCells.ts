@@ -33,6 +33,8 @@ export function useMergeCells({
     /** click current row , which rowspan cells should be highlight */
     const activeMergedCells = ref(new Set<string>());
 
+    const maxRowSpan = ref(new Map<UniqKey, number>());
+
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
         hoverRowMap.value = {};
@@ -83,6 +85,11 @@ export function useMergeCells({
         if (colspan === 1 && rowspan === 1) return;
 
         const rowKey = rowKeyGen(row);
+        
+        if (rowspan > 1) {
+            maxRowSpan.value.set(rowKey, Math.max(maxRowSpan.value.get(rowKey) || 0, rowspan));
+        }
+
         const colKey = colKeyGen.value(col);
         const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
         const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
@@ -120,5 +127,6 @@ export function useMergeCells({
         updateHoverMergedCells,
         activeMergedCells,
         updateActiveMergedCells,
+        maxRowSpan,
     };
 }
