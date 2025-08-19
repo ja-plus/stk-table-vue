@@ -52,7 +52,7 @@ export type VirtualScrollXStore = {
 const VUE2_SCROLL_TIMEOUT_MS = 200;
 
 /**
- * 虚拟滚动
+ * virtual scroll
  * @param param0
  * @returns
  */
@@ -65,7 +65,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     tableHeaders,
     rowKeyGen,
 }: Option<DT>) {
-    /** 表头高度 */
     const tableHeaderHeight = ref(props.headerRowHeight);
 
     const virtualScroll = ref<VirtualScrollStore>({
