@@ -761,6 +761,9 @@ const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({
 
 const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter } = useTrDrag({ props, emits, dataSourceCopy });
 
+/** 一行的所有rowspan中最大的 */
+const maxRowSpan = new Map<UniqKey,number>();
+
 const {
     virtualScroll,
     virtualScrollX,
@@ -777,7 +780,16 @@ const {
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
-} = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen });
+} = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
+
+const { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells } = useMergeCells({
+    props,
+    tableHeaderLast,
+    rowKeyGen,
+    colKeyGen,
+    virtual_dataSourcePart,
+    maxRowSpan,
+});
 
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeadersForCalc });
 
@@ -831,13 +843,6 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-const { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells } = useMergeCells({
-    props,
-    tableHeaderLast,
-    rowKeyGen,
-    colKeyGen,
-    virtual_dataSourcePart,
-});
 
 watch(
     () => props.columns,

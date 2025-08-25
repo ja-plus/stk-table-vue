@@ -11,6 +11,7 @@ type Option<DT extends Record<string, any>> = {
     tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
     rowKeyGen: RowKeyGen;
+    maxRowSpan: Map<UniqKey, number>;
 };
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -64,6 +65,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     tableHeaderLast,
     tableHeaders,
     rowKeyGen,
+    maxRowSpan,
 }: Option<DT>) {
     const tableHeaderHeight = ref(props.headerRowHeight);
 
@@ -323,6 +325,43 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             startIndex = Math.floor(sTop / rowHeight);
             endIndex = startIndex + pageSize;
         }
+
+        if (maxRowSpan.size) {
+            // 修正startIndex：查找是否有合并行跨越当前startIndex
+            let correctedStartIndex = startIndex;
+            let correctedEndIndex = endIndex;
+
+            for (let i = 0; i < startIndex; i++) {
+                const row = dataSourceCopyTemp[i];
+                if (!row) continue;
+                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1)
+                if (spanEndIndex > startIndex) {
+                    // 找到跨越startIndex的合并行，将startIndex修正为合并行的起始索引
+                    correctedStartIndex = i;
+                    if (spanEndIndex > endIndex) {
+                        // 合并行跨越了整个可视区
+                        correctedEndIndex = spanEndIndex;
+                    }
+                    break;
+                }
+            }
+
+            // 修正endIndex：查找是否有合并行跨越当前endIndex
+            for (let i = correctedStartIndex; i < endIndex; i++) {
+                const row = dataSourceCopyTemp[i];
+                if (!row) continue;
+                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1)
+                if (spanEndIndex > correctedEndIndex) {
+                    // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引
+                    correctedEndIndex = Math.min(Math.max(spanEndIndex, correctedEndIndex), dataLength);
+                }
+            }
+
+            startIndex = correctedStartIndex;
+            endIndex = correctedEndIndex;
+        }
+
+
 
         if (stripe && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。

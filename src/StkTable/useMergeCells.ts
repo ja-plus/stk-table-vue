@@ -1,20 +1,22 @@
 import { ref, ShallowRef, watch } from 'vue';
 import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 import { pureCellKeyGen } from './utils';
-
+type Options = {
+    props: any;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
+    rowKeyGen: RowKeyGen;
+    colKeyGen: ColKeyGen;
+    virtual_dataSourcePart: ShallowRef<any[]>;
+    maxRowSpan: Map<UniqKey, number>;
+}
 export function useMergeCells({
     props,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
-}: {
-    props: any;
-    tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
-    rowKeyGen: RowKeyGen;
-    colKeyGen: ColKeyGen;
-    virtual_dataSourcePart: ShallowRef<any[]>;
-}) {
+    maxRowSpan,
+}:Options ) {
     /**
      * which cell need be hidden
      * - key: rowKey
@@ -33,7 +35,6 @@ export function useMergeCells({
     /** click current row , which rowspan cells should be highlight */
     const activeMergedCells = ref(new Set<string>());
 
-    const maxRowSpan = ref(new Map<UniqKey, number>());
 
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
@@ -87,7 +88,7 @@ export function useMergeCells({
         const rowKey = rowKeyGen(row);
         
         if (rowspan > 1) {
-            maxRowSpan.value.set(rowKey, Math.max(maxRowSpan.value.get(rowKey) || 0, rowspan));
+            maxRowSpan.set(rowKey, Math.max(maxRowSpan.get(rowKey) || 0, rowspan));
         }
 
         const colKey = colKeyGen.value(col);

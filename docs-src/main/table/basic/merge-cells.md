@@ -29,3 +29,7 @@ function mergeCells(data: {
 ::: tip
 如果表格数据有变化，则会重新调用 `mergeCells` 函数计算。
 :::
+
+### 行合并虚拟列表
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+
