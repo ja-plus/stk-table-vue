@@ -37,18 +37,17 @@ const updateFreq = ref(1000);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>([]);
-
-const createCode = (i: number) => 'c' + String(i).padStart(6, '0');
+const CODE_BASE = 10_000_000;
 const createData = (i: number) => {
     return {
-        code: createCode(i),
+        code: CODE_BASE + i,
         bestBuyVol: Random.integer(1, 6) * 1000,
         bestSellVol: Random.integer(1, 6) * 1000,
         source: Random.integer(1, 6),
-        lastPrice: Random.float(1, 20, 4, 4),
-        cbOfrBp: Random.float(0, 10, 4, 4),
-        bestBuyPrice: Random.float(0, 10, 4, 4),
-        bestSellPrice: Random.float(0, 10, 4, 4),
+        lastPrice:(Math.random() * 15 + 5).toFixed(4),
+        cbOfrBp: (Math.random() * 10).toFixed(4),
+        bestBuyPrice: (Math.random() * 10).toFixed(4),
+        bestSellPrice: (Math.random() * 10).toFixed(4),
     };
 };
 
@@ -61,19 +60,17 @@ function initDataSource() {
     const curDate = new Date();
     const curHour = curDate.getHours();
     const curMinute = curDate.getMinutes();
-    const dataSourceTemp = new Array(dataSize.value).fill(null).map((_, index) => {
-        return {
-            ...mockData,
-            ...createData(index),
-            bestTime:
-                String(Random.integer(7, Math.max(7, curHour))).padStart(2, '0') +
+    const dataSourceTemp = Array.from({length:dataSize.value}).map((_, index) => {
+        const data = Object.assign({}, mockData, createData(index)) as any;
+        data.bestTime = 
+                String(Random.integer(0,  curHour)).padStart(2, '0') +
                 ':' +
                 String(Random.integer(0, curMinute - 1)).padStart(2, '0') +
                 ':' +
                 String(Random.integer(0, 59)).padStart(2, '0') +
                 '.' +
-                String(Random.integer(0, 999)).padStart(3, '0'),
-        } as any;
+                String(Random.integer(0, 999)).padStart(3, '0');
+        return data;
     });
 
     dataSource.value = tableSort(

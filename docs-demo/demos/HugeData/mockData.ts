@@ -44,7 +44,7 @@ export const mockData = {
     bestCsiOfrBp: '3.15',
     bestCsiOfrBpABS: 3.15,
     bestOfrNetPrice: '111.1111',
-    bestTime: '17:30:00',
+    // bestTime: '17:30:00',
     bestBidClearingSpeed: '远期',
     bestOfrClearingSpeed: '远期',
 };
