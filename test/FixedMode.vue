@@ -4,19 +4,9 @@ import StkTable from '../src/StkTable/StkTable.vue';
 import { StkTableColumn } from '../src/StkTable/types';
 const width = ref(50);
 const columns: StkTableColumn<any>[] = [
-    {
-        dataIndex: 'id',
-        title: 'id(100px)',
-        width: '100px',
-    },
-    {
-        dataIndex: 'name',
-        title: 'name',
-    },
-    {
-        dataIndex: 'address',
-        title: 'address',
-    },
+    { dataIndex: 'id', title: 'ID(100px)', width: '100px' },
+    { title: 'Name', dataIndex: 'name' },
+    { title: 'Address', dataIndex: 'address' },
 ];
 const data = new Array(200).fill(0).map((it, index) => {
     return { id: index, name: 'hah', address: 'sss' };

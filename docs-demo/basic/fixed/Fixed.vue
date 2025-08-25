@@ -61,7 +61,7 @@ const dataSource = ref([
 </script>
 
 <template>
-    <CheckItem v-model="fixedColShadow" text="show fixed shadow"></CheckItem>
+    <CheckItem v-model="fixedColShadow" text="Show fixed shadow"></CheckItem>
     <StkTable
         :fixed-col-shadow="fixedColShadow"
         :columns="columns"

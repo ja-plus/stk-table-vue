@@ -16,12 +16,12 @@ const columns: StkTableColumn<any>[] = [
     { title: 'Gender', dataIndex: 'gender' },
 ];
 const dataSource = [
-    { id: 1, name: '张三', age: 18, gender: 'male' },
-    { id: 2, name: '李四', age: 19, gender: 'female' },
-    { id: 3, name: '王五', age: 20, gender: 'male' },
-    { id: 4, name: '赵六', age: 21, gender: 'female' },
-    { id: 5, name: '周七', age: 22, gender: 'male' },
-    { id: 6, name: '吴八', age: 23, gender: 'female' },
+    { id: 1, name: 'Tom', age: 18, gender: 'male' },
+    { id: 2, name: 'Jerry', age: 19, gender: 'female' },
+    { id: 3, name: 'Jack', age: 20, gender: 'male' },
+    { id: 4, name: 'Rose', age: 21, gender: 'female' },
+    { id: 5, name: 'Zhou', age: 22, gender: 'male' },
+    { id: 6, name: 'Wu', age: 23, gender: 'female' },
 ];
 </script>
 <template>

@@ -33,7 +33,7 @@ const dataSource = ref([
 ]);
 </script>
 <template>
-    <CheckItem v-model="virtual" text="开启虚拟列表virtual"></CheckItem>
+    <CheckItem v-model="virtual" text="virtual"></CheckItem>
     <StkTable
         style="height: 200px"
         min-width="unset"

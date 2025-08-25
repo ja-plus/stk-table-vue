@@ -58,7 +58,7 @@ function addRowAnimation(id: string) {
 }
 </script>
 <template>
-    <button class="btn" @click="addData">添加数据</button>
+    <button class="btn" @click="addData">Add data</button>
     <StkTable
         ref="stkTableRef"
         style="height: 200px"

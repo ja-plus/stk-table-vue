@@ -1,27 +1,23 @@
 <script setup lang="ts">
-import mockjs from 'mockjs';
 import { StkTableColumn } from '@/StkTable/index';
+import mockjs from 'mockjs';
+import { getIsZH } from '../../hooks/getIsZH';
 import StkTable from '../../StkTable.vue';
 import Panel from './Panel.vue';
 import type { DataType } from './types';
 
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
 
-const data = [
-    {
-        id: 'a',
-        title: '特朗普：赞成TikTok继续在美国运营一段时间',
-        content:
-            '当地时间12月22日，美国当选总统特朗普在亚利桑那州首府菲尼克斯发表讲话时表示，他赞成TikTok在美国继续运营一段时间。这是特朗普迄今为止反对TikTok退出美国市场最强烈的信号之一。特朗普表示，在参加总统竞选期间，他在TikTok上发布的视频获得了数十亿的浏览量。',
-        date: '2024年12月23日 07:51',
-    },
-    ...new Array(20).fill(0).map((_, i) => ({
+    const isZH = getIsZH();
+
+
+const data = new Array(20).fill(0).map((_, i) => ({
         id: i,
-        title: mockjs.Random.ctitle(5, 15),
-        content: mockjs.Random.cparagraph(1, 10),
-        date: mockjs.Random.datetime('yyyy-MM-dd HH:mm'),
-    })),
-];
+        title:isZH ? mockjs.Random.ctitle(5, 15) : mockjs.Random.sentence(1, 5),
+        content: isZH ? mockjs.Random.cparagraph(1, 10) : mockjs.Random.paragraph(1, 5),
+        date: isZH ? mockjs.Random.datetime('yyyy-MM-dd HH:mm') : mockjs.Random.datetime('MM/dd/yyyy HH:mm'),
+
+    }))
 </script>
 
 <template>

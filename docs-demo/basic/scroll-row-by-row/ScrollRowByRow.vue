@@ -6,7 +6,7 @@ import CheckItem from '../../components/CheckItem.vue';
 const rowByRow = ref<boolean | 'scrollbar'>(true);
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', width: 50, dataIndex: '', title: '序号' },
+    { type: 'seq', width: 50, dataIndex: '', title: 'No.' },
     { title: 'Name', dataIndex: 'name', width: 100, sorter: true },
     { title: 'Age', dataIndex: 'age', width: 100, sorter: true },
     { title: 'Gender', dataIndex: 'gender', width: 100, sorter: true },
@@ -33,7 +33,7 @@ function onlyScrollbarChange(checked: boolean) {
 <template>
     <div>
         <CheckItem :model-value="true" text="scroll-row-by-row" @change="v => (rowByRow = v)" />
-        <CheckItem text="仅拖动滚动条触发" @change="onlyScrollbarChange" />
+        <CheckItem text="仅拖动滚动条触发|Only drag scrollbar" @change="onlyScrollbarChange" />
         <StkTable
             style="height: 200px"
             :scroll-row-by-row="rowByRow"

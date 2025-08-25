@@ -30,7 +30,7 @@ import { StkTable } from 'stk-table-vue';
 ## 简单demo
 ```vue
 <script lang="ts" setup>
-import { ref, useTemplateRef, onMounted, onBeforeUnmount } from 'vue';
+import { useTemplateRef, onMounted, onBeforeUnmount } from 'vue';
 import StkTable from '../StkTable.vue';
 import { StkTableColumn } from '../../src/StkTable/index';
 
@@ -41,19 +41,21 @@ type DataType = {
     id: string;
     name: string;
     age: number;
+    address: string;
 };
 const columns: StkTableColumn<DataType>[] = [
-    { title: '姓名', dataIndex: 'name', key: 'name' },
-    { title: '年龄', dataIndex: 'age', key: 'age' },
+    { title: 'Name', dataIndex: 'name', key: 'name' },
+    { title: 'Age', dataIndex: 'age', key: 'age', align: 'right' },
+    { title: 'Address', dataIndex: 'address', key: 'address' },
 ];
 const dataSource: DataType[] = [
-    { id: 'k1', name: '张三', age: 18 },
-    { id: 'k2', name: '李四', age: 19 },
-    { id: 'k3', name: '王五', age: 20 },
+    { id: 'k1', name: 'Tom', age: 18, address: 'Beijing' },
+    { id: 'k2', name: 'Jerry', age: 19, address: 'Shanghai' },
+    { id: 'k3', name: 'Jack', age: 20, address: 'London' },
+    { id: 'k4', name: 'Rose', age: 22, address: 'New York' },
 ];
 let interval = 0;
 onMounted(() => {
-    // 高亮指定的id行
     interval = window.setInterval(() => {
         stkTableRef.value?.setHighlightDimRow(['k1']);
     }, 2000);

@@ -48,20 +48,20 @@ function addData() {
 }
 </script>
 <template>
-    <button class="btn" style="margin-right: 20px" @click="addData">添加数据</button>
+    <button class="btn" style="margin-right: 20px" @click="addData">Add data</button>
     <RangeInput
         v-model="highlightConfig.duration"
         min="0.1"
         max="5"
         step="0.1"
-        label="高亮持续时间"
+        label="Duration"
         suffix="s"
     ></RangeInput>
     <RangeInput
         v-model="highlightConfig.fps"
         min="0"
         max="30"
-        label="帧率"
+        label="FPS"
         suffix="fps"
     ></RangeInput>
     <StkTable

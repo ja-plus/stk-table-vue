@@ -18,7 +18,7 @@ const dataSource = ref([]);
         <template #empty>
             <div style="padding: 20px; display: flex; flex-direction: column; align-items: center">
                 <NoData />
-                <p>暂无数据，请通过 <a href="#" style="color: #1890ff">权限管理</a> 申请。</p>
+                <p>No Data <a href="#" style="color: #1890ff">Click here</a></p>
             </div>
         </template>
     </StkTable>

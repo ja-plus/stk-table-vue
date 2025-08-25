@@ -3,18 +3,21 @@ import mockjs from 'mockjs';
 import { StkTableColumn } from '@/StkTable/index';
 import StkTable from '../../../StkTable.vue';
 import type { DataType } from './types';
+import { getIsZH } from '../../../hooks/getIsZH';
+
+const isZH = getIsZH();
 
 const columns: StkTableColumn<DataType>[] = [
     { dataIndex: 'id', title: 'ID', width: 26, align: 'center' },
-    { dataIndex: 'title', title: '标题', width: 100 },
-    { dataIndex: 'content', title: '内容', width: 200 },
-    { dataIndex: 'date', title: '日期', width: 70, align: 'center' },
+    { dataIndex: 'title', title: 'Title', width: 100 },
+    { dataIndex: 'content', title: 'Content', width: 200 },
+    { dataIndex: 'date', title: 'Date', width: 70, align: 'center' },
 ];
 const data = new Array(50).fill(0).map((_, i) => ({
     id: i,
-    title: mockjs.Random.csentence(2, 15),
-    content: mockjs.Random.cparagraph(1, 5),
-    date: mockjs.Random.datetime('yyyy-MM-dd HH:mm'),
+    title: isZH ? mockjs.Random.csentence(1, 5) : mockjs.Random.sentence(1, 5),
+    content:  isZH ? mockjs.Random.cparagraph(2, 15) : mockjs.Random.paragraph(1, 5),
+    date:  isZH ? mockjs.Random.datetime('yyyy-MM-dd HH:mm') : mockjs.Random.datetime('MM/dd/yyyy HH:mm'),
 }));
 </script>
 

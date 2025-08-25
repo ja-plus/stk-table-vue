@@ -13,7 +13,7 @@ const columns = ref<StkTableColumn<any>[]>([
     {
         dataIndex: '',
         width: 200,
-        title: '自定义',
+        title: 'Custom',
         align: 'center',
         customCell: props => {
             const { rowIndex } = props;

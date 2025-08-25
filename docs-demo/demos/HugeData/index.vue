@@ -33,7 +33,7 @@ const dataSize = ref(50000);
 const rowByRow = ref(false);
 const optimizeDragScroll = ref<'scrollbar'>();
 const translateZ = ref(false);
-const updateFreq = ref(100);
+const updateFreq = ref(1000);
 
 const columns = ref(columnsRaw);
 const dataSource = shallowRef<DataType[]>([]);
@@ -54,6 +54,7 @@ const createData = (i: number) => {
 
 onMounted(() => {
     initDataSource();
+    simulateUpdateData();
 });
 
 function initDataSource() {
@@ -211,14 +212,14 @@ function handleOptimizeScrollChange(v: boolean) {
         />
     </div>
     <button class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
-        模拟更新数据({{ timeout ? '停止' : '开始' }})
+        模拟更新数据({{ timeout ? 'stop' : 'start' }})
     </button>
     <label style="margin-left: 16px">
         <RangeInput
             v-model="updateFreq"
             min="16"
-            max="500"
-            label="更新频率"
+            max="1000"
+            label="Freq"
             suffix="ms"
         ></RangeInput>
     </label>

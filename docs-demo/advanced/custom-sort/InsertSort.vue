@@ -1,6 +1,6 @@
 <template>
-    <button class="btn" @click="addRow">插入一行</button>
-    <button class="btn" @click="clear">清除数据</button>
+    <button class="btn" @click="addRow">Insert</button>
+    <button class="btn" @click="clear">Clear</button>
     <StkTable
         ref="stkTableRef"
         row-key="id"
@@ -33,16 +33,16 @@ type DataType = {
 };
 
 const columns: StkTableColumn<DataType>[] = [
-    { title: 'id', dataIndex: 'id', width: '50px', sorter: true },
-    { title: 'name', dataIndex: 'name', width: '200px', sorter: true },
+    { title: 'ID', dataIndex: 'id', width: '50px', sorter: true },
+    { title: 'Name', dataIndex: 'name', width: '200px', sorter: true },
     {
-        title: 'age(default desc)',
+        title: 'Age(default desc)',
         dataIndex: 'age',
         width: '200px',
         sorter: true,
         sortType: 'number',
     },
-    { title: 'gender', dataIndex: 'gender' },
+    { title: 'Gender', dataIndex: 'gender' },
 ];
 const dataSource = ref<DataType[]>(
     new Array(5).fill(null).map((it, i) => {

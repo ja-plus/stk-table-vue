@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import mockjs from 'mockjs';
 import { StkTableColumn } from '@/StkTable/index';
+import mockjs from 'mockjs';
+import { getIsZH } from '../../../hooks/getIsZH';
 import StkTable from '../../../StkTable.vue';
 import Panel from './Panel.vue';
 import type { DataType } from './types';
-
+const isZH = getIsZH();
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
 const data = new Array(10).fill(0).map((_, i) => ({
     id: i,
-    title: mockjs.Random.csentence(3, 15),
-    content: mockjs.Random.cparagraph(0.5, 20),
-    date: mockjs.Random.datetime('yyyy-MM-dd HH:mm'),
+    title: isZH ? mockjs.Random.csentence(3, 15) : mockjs.Random.sentence(1, 5),
+    content: isZH ? mockjs.Random.cparagraph(0.5, 20) : mockjs.Random.paragraph(1, 20),
+    date: isZH ? mockjs.Random.datetime('yyyy-MM-dd HH:mm'): mockjs.Random.datetime('MM/dd/yyyy HH:mm'),
 }));
 </script>
 

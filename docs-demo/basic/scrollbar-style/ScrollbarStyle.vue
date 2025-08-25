@@ -3,7 +3,7 @@ import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', dataIndex: '', title: '序号', width: 50 },
+    { type: 'seq', dataIndex: '', title: 'No.', width: 50 },
     { title: 'Name', dataIndex: 'name', sorter: true, width: 100 },
     { title: 'Age', dataIndex: 'age', sorter: true, width: 100 },
     { title: 'Address', dataIndex: 'address', sorter: true, width: 300 },

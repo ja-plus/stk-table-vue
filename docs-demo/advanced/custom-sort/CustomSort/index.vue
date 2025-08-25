@@ -46,8 +46,8 @@ function handleSortAsc() {
 }
 </script>
 <template>
-    <button class="btn" @click="handleSortDesc">点击排序倒序</button>
-    <button class="btn" @click="handleSortAsc">点击排序正序</button>
+    <button class="btn" @click="handleSortDesc">Desc</button>
+    <button class="btn" @click="handleSortAsc">Asc</button>
     <StkTable ref="stkTableRef" style="height: 200px" row-key="key" :columns="columns" :data-source="dataSource"></StkTable>
 </template>
 <style scoped></style>

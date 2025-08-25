@@ -8,5 +8,5 @@ export const dataSource = new Array(5).fill(0).map((it, i) => ({
     id: 'id' + i,
     name: 'name' + i,
     age: Math.ceil(Math.random() * 100),
-    gender: Number(Math.random() * 100 - 50).toFixed(2),
+    gender: i % 2 === 0 ? 'male' : 'female',
 }));

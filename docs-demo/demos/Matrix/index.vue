@@ -1,8 +1,8 @@
 <template>
     <div>
-        <button class="btn" @click="updateCell">更新第一个单元格</button>
+        <button class="btn" @click="updateCell">Try update</button>
         <button class="btn" @click="updateLastColPercent">
-            {{ updateLastColInterval ? '停止' : '开始' }}更新最后一列
+            {{ updateLastColInterval ? 'Stop' : 'Start' }} update last column
         </button>
         <StkTable
             ref="stkTableRef"
@@ -38,7 +38,7 @@ const columns: StkTableColumn<RowDataType>[] = [
     { title: '1Y', dataIndex: 'y1', className: 'no-padding', customCell: MatrixCell },
 ];
 
-const colTitle = ['AAA+', 'AAA', 'AA+', 'AA', 'AA-及以下'];
+const colTitle = ['AAA+', 'AAA', 'AA+', 'AA', '<=AA-'];
 
 const tableData = ref<RowDataType[]>([]);
 initTableData();
@@ -88,7 +88,7 @@ function updateLastColPercent() {
 
     updateLastColInterval.value = self.setInterval(() => {
         tableData.value.forEach(row => {
-            row.y1.percent += Math.random() * 3 + 3;
+            row.y1.percent += 1;
             if (row.y1.percent > 100) {
                 row.y1.percent = 0;
             }
