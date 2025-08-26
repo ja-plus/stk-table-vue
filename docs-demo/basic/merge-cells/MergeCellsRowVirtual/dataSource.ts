@@ -55,7 +55,7 @@ export const dataSource = shallowRef([
     {
         id: '5-1-1', continent: 'Oceania', country: 'Australia', province: 'Sydney',
         rowspan: {
-            'continent': 5,
+            'continent': 4,
         }
     },
     { id: '5-2-1', continent: 'Oceania', country: 'New Zealand', province: 'Wellington' },

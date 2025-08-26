@@ -293,13 +293,14 @@ import { useFixedStyle } from './useFixedStyle';
 import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
+import { useMaxRowSpan } from './useMaxRowSpan';
+import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
 import { useScrollRowByRow } from './useScrollRowByRow';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
-import { useMergeCells } from './useMergeCells';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
@@ -687,7 +688,7 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
  * @eg
  * ```js
  * [
- *      [{dataInex:'id',...}], // 第0行列配置
+ *      [{dataIndex:'id',...}], // 第0行列配置
  *      [], // 第一行列配置
  *      //...
  * ]
@@ -761,8 +762,7 @@ const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({
 
 const { onTrDragStart, onTrDrop, onTrDragOver, onTrDragEnd, onTrDragEnter } = useTrDrag({ props, emits, dataSourceCopy });
 
-/** 一行的所有rowspan中最大的 */
-const maxRowSpan = new Map<UniqKey,number>();
+const { maxRowSpan, updateMaxRowSpan } = useMaxRowSpan({ props, tableHeaderLast, rowKeyGen, dataSourceCopy });
 
 const {
     virtualScroll,
@@ -782,14 +782,14 @@ const {
     clearAllAutoHeight,
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
 
-const { hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells } = useMergeCells({
-    props,
-    tableHeaderLast,
-    rowKeyGen,
-    colKeyGen,
-    virtual_dataSourcePart,
-    maxRowSpan,
-});
+const {
+    hiddenCellMap, //
+    mergeCellsWrapper,
+    hoverMergedCells,
+    updateHoverMergedCells,
+    activeMergedCells,
+    updateActiveMergedCells,
+} = useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
 
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeadersForCalc });
 
@@ -843,12 +843,12 @@ const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyG
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
 
-
 watch(
     () => props.columns,
     () => {
         dealColumns();
-        // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
+        updateMaxRowSpan();
+        // nextTick: initVirtualScrollX need get container width。
         nextTick(() => {
             initVirtualScrollX();
             updateFixedShadow();
@@ -890,12 +890,13 @@ watch(
             console.warn('invalid dataSource');
             return;
         }
-        /** 是否需要更新ScrollY，这里由于watch newValue与oldValue 的长度一样，因此需要这样使用 */
+      
         let needInitVirtualScrollY = false;
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
         }
         initDataSource(val);
+        updateMaxRowSpan();
         // if data length is not change, not init virtual scroll
         if (needInitVirtualScrollY) {
             // wait for table render,initVirtualScrollY has get `dom` operation.
@@ -918,6 +919,7 @@ watch(
 
 dealColumns();
 initDataSource();
+updateMaxRowSpan();
 
 onMounted(() => {
     initVirtualScroll();

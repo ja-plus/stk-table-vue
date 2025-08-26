@@ -7,7 +7,6 @@ type Options = {
     rowKeyGen: RowKeyGen;
     colKeyGen: ColKeyGen;
     virtual_dataSourcePart: ShallowRef<any[]>;
-    maxRowSpan: Map<UniqKey, number>;
 }
 export function useMergeCells({
     props,
@@ -15,7 +14,6 @@ export function useMergeCells({
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
-    maxRowSpan,
 }:Options ) {
     /**
      * which cell need be hidden
@@ -87,10 +85,6 @@ export function useMergeCells({
 
         const rowKey = rowKeyGen(row);
         
-        if (rowspan > 1) {
-            maxRowSpan.set(rowKey, Math.max(maxRowSpan.get(rowKey) || 0, rowspan));
-        }
-
         const colKey = colKeyGen.value(col);
         const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
         const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
@@ -128,6 +122,5 @@ export function useMergeCells({
         updateHoverMergedCells,
         activeMergedCells,
         updateActiveMergedCells,
-        maxRowSpan,
     };
 }

@@ -280,7 +280,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
         virtualScroll.value.scrollTop = sTop;
 
-        // 非虚拟滚动不往下执行
         if (!virtual_on.value) {
             return;
         }
@@ -327,14 +326,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         }
 
         if (maxRowSpan.size) {
-            // 修正startIndex：查找是否有合并行跨越当前startIndex
+            // fix startIndex：查找是否有合并行跨越当前startIndex
             let correctedStartIndex = startIndex;
             let correctedEndIndex = endIndex;
 
             for (let i = 0; i < startIndex; i++) {
                 const row = dataSourceCopyTemp[i];
                 if (!row) continue;
-                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1)
+                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
                 if (spanEndIndex > startIndex) {
                     // 找到跨越startIndex的合并行，将startIndex修正为合并行的起始索引
                     correctedStartIndex = i;
@@ -346,22 +345,20 @@ export function useVirtualScroll<DT extends Record<string, any>>({
                 }
             }
 
-            // 修正endIndex：查找是否有合并行跨越当前endIndex
+            // fix endIndex：查找是否有合并行跨越当前endIndex
             for (let i = correctedStartIndex; i < endIndex; i++) {
                 const row = dataSourceCopyTemp[i];
                 if (!row) continue;
-                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1)
+                const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
                 if (spanEndIndex > correctedEndIndex) {
                     // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引
-                    correctedEndIndex = Math.min(Math.max(spanEndIndex, correctedEndIndex), dataLength);
+                    correctedEndIndex = Math.max(spanEndIndex, correctedEndIndex);
                 }
             }
 
             startIndex = correctedStartIndex;
             endIndex = correctedEndIndex;
         }
-
-
 
         if (stripe && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
@@ -376,7 +373,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         endIndex = Math.min(endIndex, dataLength);
 
         if (startIndex >= endIndex) {
-            // 兜底，不一定会执行到这里
+            // fallback
             startIndex = endIndex - pageSize;
         }
 
@@ -389,20 +386,20 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             offsetTop = autoRowHeightTop;
         } else {
             if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
-                // 没有变化，不需要更新
+                // Not change: not update
                 return;
             }
             offsetTop = startIndex * rowHeight;
         }
 
         /**
-         * 一次滚动大于一页时表示滚动过快，回退优化
+         * en:  If scroll faster than one page, roll back
          */
         if (!optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
-            // 向上滚动
+            // scroll up
             Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop });
         } else {
-            // vue2向下滚动优化
+            // vue2 scroll down optimize
             virtualScroll.value.endIndex = endIndex;
             vue2ScrollYTimeout = window.setTimeout(() => {
                 Object.assign(virtualScroll.value, { startIndex, offsetTop });
@@ -412,7 +409,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     let vue2ScrollXTimeout: null | number = null;
 
-    /** 通过横向滚动条位置，计算横向虚拟滚动的参数 */
+    /** 
+     * Calculate virtual scroll parameters based on horizontal scroll bar position
+     */
     function updateVirtualScrollX(sLeft = 0) {
         if (!props.virtualX) return;
         const tableHeaderLastValue = tableHeaderLast.value;
@@ -422,7 +421,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const { scrollLeft, containerWidth } = virtualScrollX.value;
         let startIndex = 0;
         let offsetLeft = 0;
-        /** 列宽累加 */
         let colWidthSum = 0;
         /** 固定左侧列宽 */
         let leftColWidthSum = 0;
