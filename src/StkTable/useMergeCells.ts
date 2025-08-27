@@ -41,7 +41,7 @@ export function useMergeCells({
 
     /** 
      * abstract the logic of hiding cells
-    */
+     */
     function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
         for (let i = startIndex; i < startIndex + count; i++) {
             if (!isSelfRow || i !== startIndex) {

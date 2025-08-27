@@ -3,8 +3,6 @@ import { StkTableColumn } from '@/StkTable';
 import StkTable from '../../../StkTable.vue';
 import { dataSource } from './dataSource';
 
-
-
 const columns: StkTableColumn<any>[] = [
     { title: 'ID', dataIndex: 'id', width: 100, },
     { title: 'Continent', dataIndex: 'continent', width: 100, mergeCells, },
