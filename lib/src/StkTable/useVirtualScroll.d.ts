@@ -9,6 +9,7 @@ type Option<DT extends Record<string, any>> = {
     tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
     tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
     rowKeyGen: RowKeyGen;
+    maxRowSpan: Map<UniqKey, number>;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -45,11 +46,11 @@ export type VirtualScrollXStore = {
     scrollLeft: number;
 };
 /**
- * 虚拟滚动
+ * virtual scroll
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;

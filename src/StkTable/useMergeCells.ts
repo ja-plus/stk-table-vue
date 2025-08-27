@@ -1,20 +1,20 @@
 import { ref, ShallowRef, watch } from 'vue';
 import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 import { pureCellKeyGen } from './utils';
-
+type Options = {
+    props: any;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
+    rowKeyGen: RowKeyGen;
+    colKeyGen: ColKeyGen;
+    virtual_dataSourcePart: ShallowRef<any[]>;
+}
 export function useMergeCells({
     props,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
-}: {
-    props: any;
-    tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
-    rowKeyGen: RowKeyGen;
-    colKeyGen: ColKeyGen;
-    virtual_dataSourcePart: ShallowRef<any[]>;
-}) {
+}:Options ) {
     /**
      * which cell need be hidden
      * - key: rowKey
@@ -33,16 +33,19 @@ export function useMergeCells({
     /** click current row , which rowspan cells should be highlight */
     const activeMergedCells = ref(new Set<string>());
 
+
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
         hoverRowMap.value = {};
     });
 
-    /** 抽象隐藏单元格的逻辑 */
+    /** 
+     * abstract the logic of hiding cells
+     */
     function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
         for (let i = startIndex; i < startIndex + count; i++) {
             if (!isSelfRow || i !== startIndex) {
-                // 自己不需要隐藏
+                // self row does not need to be hidden
                 const nextCol = tableHeaderLast.value[i];
                 if (!nextCol) break;
                 const nextColKey = colKeyGen.value(nextCol);
@@ -81,20 +84,18 @@ export function useMergeCells({
         if (colspan === 1 && rowspan === 1) return;
 
         const rowKey = rowKeyGen(row);
+        
         const colKey = colKeyGen.value(col);
-        const dataSourceSlice = virtual_dataSourcePart.value.slice();
         const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
-        const curRowIndex = dataSourceSlice.findIndex(item => rowKeyGen(item) === rowKey);
+        const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
         const mergedCellKey = pureCellKeyGen(rowKey, colKey);
 
         if (curRowIndex === -1) return;
-
+ 
         for (let i = curRowIndex; i < curRowIndex + rowspan; i++) {
-            const row = dataSourceSlice[i];
+            const row = virtual_dataSourcePart.value[i];
             if (!row) break;
-            const rKey = rowKeyGen(row);
-            const isSelfRow = i === curRowIndex;
-            hideCells(rKey, curColIndex, colspan, isSelfRow, mergedCellKey);
+            hideCells(rowKeyGen(row), curColIndex, colspan, i === curRowIndex, mergedCellKey);
         }
 
         return { colspan, rowspan };

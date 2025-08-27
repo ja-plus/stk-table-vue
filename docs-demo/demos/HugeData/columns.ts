@@ -9,7 +9,7 @@ export const columns: StkTableColumn<DataType>[] = [
     {
         dataIndex: 'source',
         title: '来源',
-        width: 80,
+        width: 70,
         sortField: 'source',
         align: 'center',
         fixed: 'left',
@@ -25,14 +25,12 @@ export const columns: StkTableColumn<DataType>[] = [
         title: '代码',
         sortField: 'thsCode',
         fixed: 'left',
-        headerAlign: 'left',
     },
     {
         dataIndex: 'bondAbbreviation',
         title: '名称',
         fixed: 'left',
         width: 150,
-        headerAlign: 'left',
     },
     { dataIndex: 'remainingPeriod', title: '剩余期限' },
     {

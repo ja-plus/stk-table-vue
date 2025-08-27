@@ -1,3 +1,7 @@
+## 0.8.4
+* Feature
+  - virtual mode support merge-cells.
+
 ## 0.8.3
 * Change
   - expose `setRowExpanded` function: the second param `expand` if set null, will toggle expand row.

@@ -1,5 +1,5 @@
-import { test, expect, it, describe } from 'vitest';
 import { insertToOrderedArray } from '@/StkTable/utils';
+import { describe, it } from 'vitest';
 
 /** 并发测试 */
 describe.concurrent('insertToOrderedArray', () => {
