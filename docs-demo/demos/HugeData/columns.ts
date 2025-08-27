@@ -9,7 +9,7 @@ export const columns: StkTableColumn<DataType>[] = [
     {
         dataIndex: 'source',
         title: '来源',
-        width: 80,
+        width: 70,
         sortField: 'source',
         align: 'center',
         fixed: 'left',
