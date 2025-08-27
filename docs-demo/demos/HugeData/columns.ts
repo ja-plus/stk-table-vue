@@ -25,14 +25,12 @@ export const columns: StkTableColumn<DataType>[] = [
         title: '代码',
         sortField: 'thsCode',
         fixed: 'left',
-        headerAlign: 'left',
     },
     {
         dataIndex: 'bondAbbreviation',
         title: '名称',
         fixed: 'left',
         width: 150,
-        headerAlign: 'left',
     },
     { dataIndex: 'remainingPeriod', title: '剩余期限' },
     {
