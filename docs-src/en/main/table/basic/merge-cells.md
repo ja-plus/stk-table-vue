@@ -1,7 +1,4 @@
 # Cell Merging <Badge type="tip" text="^0.8.0" /> 
-::: warning Note
-This feature is not available in **virtual list** mode.
-:::
 
 Specify cells to be merged through the `StkTableColumns['mergeCells']` function.
 
@@ -28,4 +25,13 @@ Return `{ colspan: number, rowspan: number }` to indicate the number of cells to
 
 ::: tip
 If the table data changes, the `mergeCells` function will be called again to recalculate.
+:::
+
+### Row Merging in Virtual List <Badge type="tip" text="^0.8.4" /> 
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+::: tip Performance
+In virtual list mode, all merged cells (mergeCells function) will be traversed, which may have a certain impact on performance.
+:::
+::: warning Note
+This feature does not support **horizontal virtual list** yet.
 :::

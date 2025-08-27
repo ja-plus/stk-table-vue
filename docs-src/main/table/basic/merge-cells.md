@@ -1,7 +1,4 @@
 # 单元格合并 <Badge type="tip" text="^0.8.0" /> 
-::: warning 注意
-此功能在 **虚拟列表** 模式下不可用。
-:::
 
 通过 `StkTableColumns['mergeCells']` 函数指定需要合并的单元格。
 
@@ -30,6 +27,12 @@ function mergeCells(data: {
 如果表格数据有变化，则会重新调用 `mergeCells` 函数计算。
 :::
 
-### 行合并虚拟列表
+### 行合并虚拟列表 <Badge type="tip" text="^0.8.4" /> 
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/index.vue"></demo>
+::: tip 性能
+虚拟列表模式下，会遍历**所有**的合并单元格(mergeCells函数)，对性能有一定影响。
+:::
+::: warning 注意
+此功能暂不支持 **横向虚拟列表**。
+:::
 
