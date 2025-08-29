@@ -36,15 +36,14 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <!-- 这个元素用于整数行虚拟滚动时，撑开父容器的高度） -->
+        
         <div
             v-if="isSRBRActive && virtual"
             class="row-by-row-table-height"
             :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
-        ></div>
+        ><!-- 这个元素用于整数行虚拟滚动时，撑开父容器的高度） --></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
-        <!-- 表格主体 -->
         <table
             class="stk-table-main"
             :style="{ width, minWidth, maxWidth }"
@@ -52,15 +51,13 @@
                 'fixed-mode': props.fixedMode,
             }"
         >
-            <thead v-if="!headless" ref="theadRef">
+            <thead v-if="!headless">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
-                    <!-- 这个th用于横向虚拟滚动表格左边距,width、maxWidth 用于兼容低版本浏览器 -->
                     <th
                         v-if="virtualX_on"
                         class="vt-x-left"
                         :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
                     ></th>
-                    <!-- v for中最后一行才用 切割。-->
                     <th
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="colKeyGen(col)"
@@ -101,17 +98,14 @@
                             </template>
                             <SortIcon v-if="col.sorter" class="table-header-sorter" />
                         </div>
-                        <!-- 列宽拖动handler -->
                         <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
                     </th>
-                    <!-- 这个th用于横向虚拟滚动表格右边距 width, min-width 用于兼容低版本浏览器-->
                     <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                 </tr>
             </thead>
 
             <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
-                    <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
                         <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
@@ -141,10 +135,8 @@
                     @mouseleave="onTrMouseLeave($event)"
                     @drop="onTrDrop($event, getRowIndex(rowIndex))"
                 >
-                    <!--这个td用于配合虚拟滚动的th对应，防止列错位-->
                     <td v-if="virtualX_on" class="vt-x-left"></td>
                     <td v-if="row && row.__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
-                        <!-- TODO: support wheel -->
                         <div class="table-cell-wrapper">
                             <slot name="expand" :row="row.__EXPANDED_ROW__" :col="row.__EXPANDED_COL__">
                                 {{ row.__EXPANDED_ROW__?.[row.__EXPANDED_COL__.dataIndex] ?? '' }}
@@ -650,7 +642,6 @@ const emits = defineEmits<{
 // }>();
 
 const tableContainerRef = ref<HTMLDivElement>();
-const theadRef = ref<HTMLElement>();
 const colResizeIndicatorRef = ref<HTMLDivElement>();
 const trRef = ref<HTMLTableRowElement[]>();
 

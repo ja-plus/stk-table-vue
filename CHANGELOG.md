@@ -1,3 +1,7 @@
+## 0.8.5
+* Optimize
+  - StkTable remove template comments
+
 ## 0.8.4
 * Feature
   - virtual mode support merge-cells.
