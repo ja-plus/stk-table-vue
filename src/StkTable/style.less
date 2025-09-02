@@ -381,7 +381,8 @@
     }
 
     .highlight-cell {
-        animation: stk-table-dim var(--highlight-duration);
+        animation-name: stk-table-dim;
+        animation-duration:  var(--highlight-duration);
         animation-timing-function: var(--highlight-timing-function);
         /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
     }
@@ -504,9 +505,10 @@
 
     /* td inherit tr bgc*/
     .highlight-row {
-        animation: stk-table-dim var(--highlight-duration);
+        animation-name: stk-table-dim;
+        animation-duration: var(--highlight-duration);
         /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
-        animation-timing-function: var(--highlight-timing-function);
+        animation-timing-function: linear;
     }
 
     .stk-table-no-data {
