@@ -73,6 +73,7 @@ For simple modifications, using the render function directly is more convenient.
 
 For example, we can **multiply the value by 100** and add a **unit**.
 ```ts
+import { h } from 'vue';
 import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 const columns: StkTableColumn<any>[] = [
     {

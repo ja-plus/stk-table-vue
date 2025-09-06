@@ -73,6 +73,7 @@ export type DataType = {
 
 比如我们对数值**乘以100**再加**单位**。
 ```ts
+import { h } from 'vue';
 import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 const columns: StkTableColumn<any>[] = [
     {
