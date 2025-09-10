@@ -40,9 +40,17 @@ export type StkProps = {
   virtual?: boolean;
   /** x轴虚拟滚动(必须设置列宽)*/
   virtualX?: boolean;
-  /** 表格列配置 */
+  /** 
+   * 表格列配置 
+   * 
+   * 浅层监听，变更时请修改其引用
+   */
   columns?: StkTableColumn<any>[];
-  /** 表格数据源 */
+  /** 
+   * 数据源 
+   * 
+   * 浅层监听，变更时请修改其引用
+   */
   dataSource?: any[];
   /** 行唯一键 (行唯一值不能为undefined）*/
   rowKey?: UniqKeyProp;

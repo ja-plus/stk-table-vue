@@ -40,9 +40,17 @@ export type StkProps = {
   virtual?: boolean;
   /** Horizontal virtual scrolling (must set column width) */
   virtualX?: boolean;
-  /** Table column configuration */
+  /** 
+   * Table column configuration 
+   * 
+   * Shallow listen, please modify the reference when changed
+   */
   columns?: StkTableColumn<any>[];
-  /** Table data source */
+  /** 
+   * Table data source 
+   * 
+   * Shallow listen, please modify the reference when changed
+   */
   dataSource?: any[];
   /** Row unique key (row unique value cannot be undefined) */
   rowKey?: UniqKeyProp;
