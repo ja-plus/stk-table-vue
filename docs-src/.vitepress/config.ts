@@ -22,6 +22,9 @@ export default defineConfig({
   ],
   themeConfig: {
     logo: '/assets/logo.svg',
+    search: {
+      provider: 'local',
+    },
   },
   locales: {
     root: {

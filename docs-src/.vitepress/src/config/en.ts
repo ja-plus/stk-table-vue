@@ -5,29 +5,6 @@ export const enConfig = defineConfig({
     description: "A high-performance virtual table for Vue",
     lang: "en",
     themeConfig: {
-        search: {
-            provider: 'local',
-            options: {
-                locales: {
-                    en: {
-                        translations: {
-                            button: {
-                                buttonText: 'Search Documentation',
-                                buttonAriaLabel: 'Search Documentation'
-                            },
-                            modal: {
-                                noResultsText: 'No results found',
-                                resetButtonTitle: 'Clear search',
-                                footer: {
-                                    selectText: 'Select',
-                                    navigateText: 'Navigate'
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         darkModeSwitchLabel: "Theme",
         docFooter: { prev: "Previous", next: "Next" },
         lastUpdatedText: "Last Updated",

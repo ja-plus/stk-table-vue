@@ -63,9 +63,9 @@
     "typescript": "^5.8.3",
     "vite": "^7.0.2",
     "vite-plugin-dts": "3.9.1",
-    "vitepress": "^1.6.3",
+    "vitepress": "^1.6.4",
     "vitepress-demo-plugin": "^1.4.5",
-    "vitepress-plugin-llms": "^1.7.0",
+    "vitepress-plugin-llms": "^1.7.5",
     "vitest": "^3.2.4",
     "vue": "^3.5.17",
     "vue-eslint-parser": "^9.4.2"
