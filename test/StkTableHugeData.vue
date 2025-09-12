@@ -29,7 +29,7 @@ function handleScroll(e, { startIndex, endIndex }) {
             Object.assign(dataSource.value[i], { id: i, col0: i, col1: i, col2: i });
         }
         console.time('触发shallowRef更新耗时');
-        dataSource.value = [...dataSource.value];
+        dataSource.value = dataSource.value.slice();
         // triggerRef(dataSource);
         console.timeEnd('触发shallowRef更新耗时');
         debounceTimeout = 0;
