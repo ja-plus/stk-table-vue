@@ -109,7 +109,7 @@ function handleToggleExpand(row: DataType) {
     }
     dataSource.value[rowIndex]._isExpand = expand;
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
-    dataSource.value = [...dataSource.value]; // trigger table update
+    dataSource.value = dataSource.value.slice(); // trigger table update
 }
 
 const timeout = ref(0);
