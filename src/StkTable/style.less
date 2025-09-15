@@ -508,7 +508,7 @@
         animation-name: stk-table-dim;
         animation-duration: var(--highlight-duration);
         /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
-        animation-timing-function: linear;
+        animation-timing-function: var(--highlight-timing-function);
     }
 
     .stk-table-no-data {
