@@ -1325,7 +1325,7 @@ function onTableScroll(e: Event) {
     if (!e?.target) return;
 
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
-    const { scrollTop: vScrollTop, startIndex, endIndex } = virtualScroll.value;
+    const { scrollTop: vScrollTop } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
     const isYScroll = scrollTop !== vScrollTop;
     const isXScroll = scrollLeft !== vScrollLeft;
@@ -1347,6 +1347,7 @@ function onTableScroll(e: Event) {
     }
 
     if (isYScroll) {
+        const {  startIndex, endIndex } = virtualScroll.value;
         emits('scroll', e, { startIndex, endIndex });
     }
     if (isXScroll) {

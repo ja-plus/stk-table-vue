@@ -265,7 +265,8 @@
   background-color:inherit;
 }
 .stk-table .highlight-cell{
-  animation:stk-table-dim var(--highlight-duration);
+  animation-name:stk-table-dim;
+  animation-duration:var(--highlight-duration);
   animation-timing-function:var(--highlight-timing-function);
 }
 .stk-table .seq-column{
@@ -357,7 +358,8 @@
   right:0;
 }
 .stk-table .highlight-row{
-  animation:stk-table-dim var(--highlight-duration);
+  animation-name:stk-table-dim;
+  animation-duration:var(--highlight-duration);
   animation-timing-function:var(--highlight-timing-function);
 }
 .stk-table .stk-table-no-data{

@@ -183,6 +183,10 @@ function handleOptimizeScrollChange(v: boolean) {
         optimizeDragScroll.value = void 0;
     }
 }
+
+function handleScroll(e:Event, { startIndex, endIndex }:any) {
+    console.log('scroll', startIndex, endIndex);
+}
 </script>
 <template>
     <div class="row">
@@ -244,6 +248,7 @@ function handleOptimizeScrollChange(v: boolean) {
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"
         :data-source="dataSource"
         @sort-change="handleSortChange"
+        @scroll="handleScroll"
     ></StkTable>
 </template>
 <style scoped lang="less">

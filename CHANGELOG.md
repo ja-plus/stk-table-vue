@@ -1,4 +1,6 @@
 ## 0.8.5
+* Bugfix
+  - fix: `@scroll` startIndex and endIndex not correct.
 * Optimize
   - StkTable remove template comments
 
