@@ -41,7 +41,7 @@
             v-if="isSRBRActive && virtual"
             class="row-by-row-table-height"
             :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
-        ><!-- 这个元素用于整数行虚拟滚动时，撑开父容器的高度） --></div>
+        ></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <table
@@ -83,7 +83,6 @@
                         @drop="onThDrop"
                         @dragover="onThDragOver"
                     >
-                        <!-- 列宽拖动handler -->
                         <div
                             v-if="colResizeOn(col) && colIndex > 0"
                             class="table-header-resizer left"
@@ -1083,7 +1082,7 @@ const cellStyleMap = computed(() => {
 });
 
 function getRowIndex(rowIndex: number) {
-    return rowIndex + (virtual_on ? virtualScroll.value.startIndex : 0);
+    return rowIndex + (virtual_on.value ? virtualScroll.value.startIndex : 0);
 }
 
 /** th title */
@@ -1302,13 +1301,13 @@ function onTableWheel(e: WheelEvent) {
      * 只有虚拟滚动时，才要用 wheel 代理scroll，防止滚动过快导致的白屏。
      * 滚动条在边界情况时，not preventDefault 。因为会阻塞父级滚动条滚动。
      */
-    if (virtual_on && deltaY) {
+    if (virtual_on.value && deltaY) {
         if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
             e.preventDefault();
         }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on && deltaX) {
+    if (virtualX_on.value && deltaX) {
         if ((deltaX > 0 && !isScrollRight) || (deltaX < 0 && scrollLeft > 0)) {
             e.preventDefault();
         }
