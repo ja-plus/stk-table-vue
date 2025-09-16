@@ -1,3 +1,7 @@
+## 0.8.6
+* Bugfix:
+  - fix: wheel scroll not work when table data source is empty.
+
 ## 0.8.5
 * Bugfix
   - fix: `@scroll` startIndex and endIndex not correct.
