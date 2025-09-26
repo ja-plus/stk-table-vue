@@ -91,6 +91,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
     virtualX_on: import('vue').ComputedRef<any>;
     virtualX_columnPart: import('vue').ComputedRef<PrivateStkTableColumn<DT>[]>;
     virtualX_offsetRight: import('vue').ComputedRef<number>;
+    tableHeaderHeight: import('vue').ComputedRef<number>;
     initVirtualScroll: (height?: number) => void;
     initVirtualScrollY: (height?: number) => void;
     initVirtualScrollX: () => void;
