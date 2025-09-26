@@ -67,7 +67,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     rowKeyGen,
     maxRowSpan,
 }: Option<DT>) {
-    const tableHeaderHeight = ref(props.headerRowHeight);
+    const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
+
 
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
@@ -188,10 +189,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         return rowHeightFn;
     });
 
-    function getTableHeaderHeight() {
-        return props.headerRowHeight * tableHeaders.value.length;
-    }
-
     /**
      * 初始化虚拟滚动参数
      * @param {number} [height] 虚拟滚动的高度
@@ -217,11 +214,9 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
         const { headless } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
-        const headerHeight = getTableHeaderHeight();
-        tableHeaderHeight.value = headerHeight;
         if (!headless) {
             /** 表头高度占几行表体高度数 */
-            const headerToBodyRowHeightCount = Math.floor(headerHeight / rowHeight);
+            const headerToBodyRowHeightCount = Math.floor(tableHeaderHeight.value / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
         const maxScrollTop = dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight;
@@ -487,6 +482,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         virtualX_on,
         virtualX_columnPart,
         virtualX_offsetRight,
+        tableHeaderHeight,
         initVirtualScroll,
         initVirtualScrollY,
         initVirtualScrollX,

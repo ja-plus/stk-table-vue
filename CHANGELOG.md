@@ -1,3 +1,9 @@
+## 0.8.7
+* Bugfix
+  - fix: Missing some data from dataSource tail. when `props.scrollRowByRow` is true. And `props.headerRowHeight` be set.
+* Optimize
+  - `scroll-row-by-row`: If (tableHeight / rowHeight) is not integer, will append blank area to table's tail when scroll to the bottom. To enhance user experience.
+
 ## 0.8.6
 * Bugfix:
   - fix: wheel scroll not work when table data source is empty.

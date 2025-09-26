@@ -36,12 +36,7 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        
-        <div
-            v-if="isSRBRActive && virtual"
-            class="row-by-row-table-height"
-            :style="{ height: dataSourceCopy.length * virtualScroll.rowHeight + 'px' }"
-        ></div>
+        <div v-if="isSRBRActive && virtual" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <table
@@ -744,6 +739,16 @@ const getEmptyCellText = computed(() => {
     }
 });
 
+/** scroll-row-by-row total-height */
+const SRBRTotalHeight = computed(() => {
+    if (!isSRBRActive || !props.virtual) return 0;
+    return (
+        dataSourceCopy.value.length * virtualScroll.value.rowHeight +
+        tableHeaderHeight.value +
+        ((virtualScroll.value.containerHeight - tableHeaderHeight.value) % virtualScroll.value.rowHeight)
+    );
+});
+
 const rowKeyGenCache = new WeakMap();
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
@@ -763,6 +768,7 @@ const {
     virtualX_on,
     virtualX_columnPart,
     virtualX_offsetRight,
+    tableHeaderHeight,
     initVirtualScroll,
     initVirtualScrollY,
     initVirtualScrollX,
@@ -880,7 +886,7 @@ watch(
             console.warn('invalid dataSource');
             return;
         }
-      
+
         let needInitVirtualScrollY = false;
         if (dataSourceCopy.value.length !== val.length) {
             needInitVirtualScrollY = true;
@@ -1346,7 +1352,7 @@ function onTableScroll(e: Event) {
     }
 
     if (isYScroll) {
-        const {  startIndex, endIndex } = virtualScroll.value;
+        const { startIndex, endIndex } = virtualScroll.value;
         emits('scroll', e, { startIndex, endIndex });
     }
     if (isXScroll) {

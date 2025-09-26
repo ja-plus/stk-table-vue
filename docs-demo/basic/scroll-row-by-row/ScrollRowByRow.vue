@@ -38,6 +38,8 @@ function onlyScrollbarChange(checked: boolean) {
             style="height: 200px"
             :scroll-row-by-row="rowByRow"
             virtual
+            :row-height="30"
+            :header-row-height="68"
             :columns="columns"
             :data-source="dataSource"
         ></StkTable>
