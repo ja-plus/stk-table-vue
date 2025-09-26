@@ -36,7 +36,7 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <div v-if="isSRBRActive && virtual" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
+        <div v-if="SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
         <table
@@ -235,6 +235,7 @@
                     </template>
                 </tr>
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
             </tbody>
         </table>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
@@ -741,12 +742,14 @@ const getEmptyCellText = computed(() => {
 
 /** scroll-row-by-row total-height */
 const SRBRTotalHeight = computed(() => {
-    if (!isSRBRActive || !props.virtual) return 0;
+    if (!isSRBRActive.value || !props.virtual) return 0;
     return (
-        dataSourceCopy.value.length * virtualScroll.value.rowHeight +
-        tableHeaderHeight.value +
-        ((virtualScroll.value.containerHeight - tableHeaderHeight.value) % virtualScroll.value.rowHeight)
+        dataSourceCopy.value.length * virtualScroll.value.rowHeight + tableHeaderHeight.value //+
     );
+});
+const SRBRBottomHeight = computed(() => {
+    if (!isSRBRActive.value || !props.virtual) return 0;
+    return (virtualScroll.value.containerHeight - tableHeaderHeight.value) % virtualScroll.value.rowHeight;
 });
 
 const rowKeyGenCache = new WeakMap();

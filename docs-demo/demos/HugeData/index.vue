@@ -44,7 +44,7 @@ const createData = (i: number) => {
         bestBuyVol: Random.integer(1, 6) * 1000,
         bestSellVol: Random.integer(1, 6) * 1000,
         source: Random.integer(1, 6),
-        lastPrice:(Math.random() * 15 + 5).toFixed(4),
+        lastPrice: (Math.random() * 15 + 5).toFixed(4),
         cbOfrBp: (Math.random() * 10).toFixed(4),
         bestBuyPrice: (Math.random() * 10).toFixed(4),
         bestSellPrice: (Math.random() * 10).toFixed(4),
@@ -60,16 +60,16 @@ function initDataSource() {
     const curDate = new Date();
     const curHour = curDate.getHours();
     const curMinute = curDate.getMinutes();
-    const dataSourceTemp = Array.from({length:dataSize.value}).map((_, index) => {
+    const dataSourceTemp = Array.from({ length: dataSize.value }).map((_, index) => {
         const data = Object.assign({}, mockData, createData(index)) as any;
-        data.bestTime = 
-                String(Random.integer(0,  curHour)).padStart(2, '0') +
-                ':' +
-                String(Random.integer(0, curMinute - 1)).padStart(2, '0') +
-                ':' +
-                String(Random.integer(0, 59)).padStart(2, '0') +
-                '.' +
-                String(Random.integer(0, 999)).padStart(3, '0');
+        data.bestTime =
+            String(Random.integer(0, curHour)).padStart(2, '0') +
+            ':' +
+            String(Random.integer(0, curMinute - 1)).padStart(2, '0') +
+            ':' +
+            String(Random.integer(0, 59)).padStart(2, '0') +
+            '.' +
+            String(Random.integer(0, 999)).padStart(3, '0');
         return data;
     });
 
@@ -184,7 +184,7 @@ function handleOptimizeScrollChange(v: boolean) {
     }
 }
 
-function handleScroll(e:Event, { startIndex, endIndex }:any) {
+function handleScroll(e: Event, { startIndex, endIndex }: any) {
     console.log('scroll', startIndex, endIndex);
 }
 </script>
@@ -216,13 +216,7 @@ function handleScroll(e:Event, { startIndex, endIndex }:any) {
         模拟更新数据({{ timeout ? 'stop' : 'start' }})
     </button>
     <label style="margin-left: 16px">
-        <RangeInput
-            v-model="updateFreq"
-            min="16"
-            max="1000"
-            label="Freq"
-            suffix="ms"
-        ></RangeInput>
+        <RangeInput v-model="updateFreq" min="16" max="1000" label="Freq" suffix="ms"></RangeInput>
     </label>
     <CheckItem v-model="rowByRow" text="整数行滚动" />
     <CheckItem v-model="translateZ" text="tr分层" />
@@ -231,7 +225,7 @@ function handleScroll(e:Event, { startIndex, endIndex }:any) {
         ref="stkTableRef"
         v-model:columns="columns"
         :class="{ stack: translateZ }"
-        style="height: 700px"
+        style="height: 600px"
         row-key="code"
         no-data-full
         fixed-col-shadow

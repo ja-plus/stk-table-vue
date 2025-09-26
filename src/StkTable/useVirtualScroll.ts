@@ -207,11 +207,11 @@ export function useVirtualScroll<DT extends Record<string, any>>({
             console.warn('initVirtualScrollY: height must be a number');
             height = 0;
         }
-        const { offsetHeight, scrollHeight } = tableContainerRef.value || {};
+        const { clientHeight, scrollHeight } = tableContainerRef.value || {};
         let scrollTop = tableContainerRef.value?.scrollTop || 0;
 
         const rowHeight = getRowHeightFn.value();
-        const containerHeight = height || offsetHeight || DEFAULT_TABLE_HEIGHT;
+        const containerHeight = height || clientHeight || DEFAULT_TABLE_HEIGHT;
         const { headless } = props;
         let pageSize = Math.ceil(containerHeight / rowHeight);
         if (!headless) {
