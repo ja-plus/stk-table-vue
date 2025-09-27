@@ -225,7 +225,7 @@ function handleScroll(e: Event, { startIndex, endIndex }: any) {
         ref="stkTableRef"
         v-model:columns="columns"
         :class="{ stack: translateZ }"
-        style="height: 600px"
+        style="height: 700px"
         row-key="code"
         no-data-full
         fixed-col-shadow
