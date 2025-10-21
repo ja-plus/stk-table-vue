@@ -64,7 +64,8 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     /** 键盘按下事件 */
     function handleKeydown(e: KeyboardEvent) {
         if (!virtual_on.value) return; // 非虚拟滚动使用浏览器默认滚动
-        if (!ScrollCodesValues.includes(e.code as any)) return;
+        const keyCode = e.code;
+        if (!ScrollCodesValues.includes(keyCode as any)) return;
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
@@ -76,22 +77,21 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         const headerHeight = headless ? 0 : tableHeaders.value.length * (headerRowHeight || rowHeight);
         /** 表体的page */
         const bodyPageSize = Math.floor((containerHeight - headerHeight) / rowHeight);
-
-        if (e.code === ScrollCodes.ArrowUp) {
+        if (keyCode=== ScrollCodes.ArrowUp) {
             scrollTo(scrollTop - rowHeight, null);
-        } else if (e.code === ScrollCodes.ArrowRight) {
+        } else if (keyCode=== ScrollCodes.ArrowRight) {
             scrollTo(null, scrollLeft + 50);
-        } else if (e.code === ScrollCodes.ArrowDown) {
+        } else if (keyCode=== ScrollCodes.ArrowDown) {
             scrollTo(scrollTop + rowHeight, null);
-        } else if (e.code === ScrollCodes.ArrowLeft) {
+        } else if (keyCode=== ScrollCodes.ArrowLeft) {
             scrollTo(null, scrollLeft - 50);
-        } else if (e.code === ScrollCodes.PageUp) {
+        } else if (keyCode=== ScrollCodes.PageUp) {
             scrollTo(scrollTop - rowHeight * bodyPageSize + headerHeight, null);
-        } else if (e.code === ScrollCodes.PageDown) {
+        } else if (keyCode=== ScrollCodes.PageDown) {
             scrollTo(scrollTop + rowHeight * bodyPageSize - headerHeight, null);
-        } else if (e.code === ScrollCodes.Home) {
+        } else if (keyCode=== ScrollCodes.Home) {
             scrollTo(0, null);
-        } else if (e.code === ScrollCodes.End) {
+        } else if (keyCode=== ScrollCodes.End) {
             scrollTo(scrollHeight, null);
         }
     }
