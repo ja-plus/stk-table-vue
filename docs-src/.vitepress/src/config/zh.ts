@@ -136,6 +136,7 @@ export const zhConfig = defineConfig({
                     { text: '虚拟单列表', link: '/virtual-list' },
                     { text: '矩阵', link: '/matrix' },
                     { text: '单元格编辑', link: '/cell-edit' },
+                    { text: 'Panel Tree', link: '/panel-tree' },
                 ]
             }
         },
