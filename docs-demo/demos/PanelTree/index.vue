@@ -52,7 +52,7 @@ const columns: StkTableColumn<RowDataType>[] = [
 // 初始化表格数据
 const tableData = ref<RowDataType[]>([
     {
-        id: 'China',
+        id: 'People\'s Republic of China',
         key: '1',
         children: [
             { key: '1-1', id: '1', name: 'Beijing', age: 28, address: 'Beijing', email: 'beijing@example.com', phone: '13800000000', website: 'www.beijing.com', company: 'Beijing Company', }, 
@@ -62,7 +62,7 @@ const tableData = ref<RowDataType[]>([
         ],
     },
     {
-        id: 'Russia',
+        id: 'The Russian Federation',
         key: '2',
         children: [
             { key: '2-1', id: '1', name: 'Moscow', age: 35, address: 'Moscow', email: 'moscow@example.com', phone: '13700000000', website: 'www.moscow.com', company: 'Moscow Company', },
@@ -72,7 +72,7 @@ const tableData = ref<RowDataType[]>([
         ]
     },
     {
-        id: 'America',
+        id: 'United States of America',
         key: '3',
         children: [
             { key: '3-1', id: '1', name: 'New York', age: 35, address: 'New York', email: 'newyork@example.com', phone: '13700000000', website: 'www.newyork.com', company: 'New York Company', },
@@ -82,7 +82,7 @@ const tableData = ref<RowDataType[]>([
         ],
     },
     {
-        id: 'England',
+        id: 'United Kingdom of Great Britain and Northern Ireland',
         key: '4',
         children: [
             { key: '4-1', id: '1', name: 'London', age: 45, address: 'London', email: 'london@example.com', phone: '13900000000', website: 'www.london.com', company: 'London Company', },
@@ -92,7 +92,7 @@ const tableData = ref<RowDataType[]>([
         ],
     },
     {
-        id: 'France',
+        id: 'French Republic',
         key: '5',
         children: [
             { key: '5-1', id: '1', name: 'Paris', age: 48, address: 'Paris', email: 'paris@example.com', phone: '13700000000', website: 'www.paris.com', company: 'Paris Company', },
