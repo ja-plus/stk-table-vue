@@ -176,17 +176,19 @@ export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
 
 export type SortConfig<T extends Record<string, any>> = {
-    /** 空值始终排在列表末尾 */
+    /** empty value always sort to bottom */
     emptyToBottom?: boolean;
     /**
-     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
-     * 类似onMounted时，调用setSorter点了下表头。
+     * 1. trigger when init
+     * 2. trigger when sort direction is null
      */
     defaultSort?: {
         /**
-         * 列唯一键，
+         * colKey
          *
-         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
+         * if set `props.colKey`
+         *
+         * default: StkTableColumn<T>['dataIndex']
          */
         key?: StkTableColumn<T>['key'];
         dataIndex: StkTableColumn<T>['dataIndex'];
@@ -194,7 +196,9 @@ export type SortConfig<T extends Record<string, any>> = {
         sortField?: StkTableColumn<T>['sortField'];
         sortType?: StkTableColumn<T>['sortType'];
         sorter?: StkTableColumn<T>['sorter'];
-        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        /**
+         * whether to disable trigger`sort-change` event. default: false
+         */
         silent?: boolean;
     };
     /**
@@ -202,6 +206,10 @@ export type SortConfig<T extends Record<string, any>> = {
      * default: false
      */
     stringLocaleCompare?: boolean;
+    /**
+     * whether to sort children when sort current column. default: false
+     */
+    sortChildren?: boolean;
 };
 
 /** th td type */
@@ -242,7 +250,6 @@ export type DragRowConfig = {
     // disabled?: (row: T, rowIndex: number) => boolean;
 };
 
-/** 树形配置 */
 export type TreeConfig = {
     // childrenField?: string;
     defaultExpandAll?: boolean;
@@ -253,13 +260,13 @@ export type TreeConfig = {
 /** header drag config */
 export type HeaderDragConfig<DT extends Record<string, any> = any> = {
     /**
-     * 列交换模式
-     * - none - 不做任何事
-     * - insert - 插入(默认值)
-     * - swap - 交换
+     * col switch mode
+     * - none
+     * - insert - (default)
+     * - swap
      */
     mode?: 'none' | 'insert' | 'swap';
-    /** 禁用拖动的列 */
+    /** disabled drag col */
     disabled?: (col: StkTableColumn<DT>) => boolean;
 };
 

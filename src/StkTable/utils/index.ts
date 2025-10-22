@@ -1,4 +1,4 @@
-import { CELL_KEY_SEPARATE } from '../const';
+import { CELL_KEY_SEPARATE, DEFAULT_SORT_CONFIG } from '../const';
 import { Order, SortConfig, SortOption, SortState, StkTableColumn, UniqKey } from '../types';
 
 /** 是否空值 */
@@ -158,7 +158,7 @@ export function tableSort<T extends Record<string, any>>(
 ): T[] {
     if (!dataSource?.length || !sortOption) return dataSource || [];
 
-    sortConfig = { emptyToBottom: false, ...sortConfig };
+    sortConfig = { ...DEFAULT_SORT_CONFIG, ...sortConfig };
     let targetDataSource = dataSource.slice();
     let sortField = sortOption.sortField || sortOption.dataIndex;
 
@@ -177,11 +177,11 @@ export function tableSort<T extends Record<string, any>>(
 
         const isNumber = sortType === 'number';
         const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, isNumber);
-
+        const localCompare = sortConfig.stringLocaleCompare;
         if (order === 'asc') {
-            valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, sortConfig.stringLocaleCompare));
+            valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, localCompare));
         } else {
-            valueArr.sort((a, b) => strCompare(b[sortField], a[sortField], isNumber, sortConfig.stringLocaleCompare));
+            valueArr.sort((a, b) => strCompare(b[sortField], a[sortField], isNumber, localCompare));
         }
 
         if (order === 'desc' || sortConfig.emptyToBottom) {

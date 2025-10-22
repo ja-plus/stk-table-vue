@@ -7,9 +7,9 @@ const stkTableRef = useTemplateRef('stkTableRef');
 
 const columns: StkTableColumn<any>[] = [
     { type: 'tree-node', title: 'Area', dataIndex: 'area', width: 200 },
-    { title: 'GDP', dataIndex: 'gdp', align: 'right', width: 100 },
-    { title: 'Population', dataIndex: 'population', align: 'right', width: 100 },
-    { title: 'GDP per capita', dataIndex: 'gdpPerCapita', align: 'right', width: 200 },
+    { title: 'GDP', dataIndex: 'gdp', align: 'right', width: 100, sorter: true, sortType: 'number' },
+    { title: 'Population', dataIndex: 'population', align: 'right', width: 100, sorter: true, sortType: 'number' },
+    { title: 'GDP per capita', dataIndex: 'gdpPerCapita', align: 'right', width: 200, sorter: true, sortType: 'number' },
 ];
 const dataSource = shallowRef(getDataSource2());
 
@@ -48,9 +48,9 @@ function updateArea0_1Cell() {
 }
 </script>
 <template>
-    <button class="btn" @click="updateArea0">更新Area0</button>
-    <button class="btn" @click="updateArea0_0">更新Area0-0</button>
-    <button class="btn" @click="updateArea0_1Cell">更新Area0-1 gdp</button>
+    <button class="btn" @click="updateArea0">update Area0</button>
+    <button class="btn" @click="updateArea0_0">update Area0-0</button>
+    <button class="btn" @click="updateArea0_1Cell">update Area0-1 gdp</button>
     <StkTable
         ref="stkTableRef"
         style="height: 200px"

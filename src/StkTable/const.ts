@@ -1,3 +1,4 @@
+import { SortConfig } from './types';
 import { getBrowsersVersion } from './utils';
 
 export const DEFAULT_COL_WIDTH = '100';
@@ -33,5 +34,11 @@ export const STK_ID_PREFIX = 'stk';
 /** expanded row key prefix */
 export const EXPANDED_ROW_KEY_PREFIX = 'expanded-';
 
-/** cell key 的分隔符 */
+/** cell key split str */
 export const CELL_KEY_SEPARATE = '--';
+
+export const DEFAULT_SORT_CONFIG = {
+    emptyToBottom: false,
+    stringLocaleCompare: false,
+    sortChildren: false,
+} satisfies SortConfig<any>;

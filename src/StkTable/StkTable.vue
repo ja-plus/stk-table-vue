@@ -253,7 +253,7 @@ import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, w
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
-import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, IS_LEGACY_MODE } from './const';
+import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, DEFAULT_SORT_CONFIG, IS_LEGACY_MODE } from './const';
 import {
     AutoRowHeightConfig,
     ColResizableConfig,
@@ -473,10 +473,7 @@ const props = withDefaults(
         autoResize: true,
         fixedColShadow: false,
         optimizeVue2Scroll: false,
-        sortConfig: () => ({
-            emptyToBottom: false,
-            stringLocaleCompare: false,
-        }),
+        sortConfig: () => DEFAULT_SORT_CONFIG,
         hideHeaderTitle: false,
         highlightConfig: () => ({}),
         seqConfig: () => ({}),
@@ -1131,8 +1128,8 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
     let order = sortSwitchOrder[sortOrderIndex.value];
-    const sortConfig = { ...props.sortConfig, ...col.sortConfig };
-    const defaultSort = sortConfig.defaultSort;
+    const sortConfig: SortConfig<any> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
+    const { defaultSort } = sortConfig;
     const colKeyGenValue = colKeyGen.value;
 
     if (!order && defaultSort) {
@@ -1158,15 +1155,17 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
             }
         }
     }
+    let dataSourceTemp = props.dataSource;
     if (!props.sortRemote || options.force) {
         const sortOption = col || defaultSort;
         if (sortOption) {
-            dataSourceCopy.value = tableSort(sortOption, order, props.dataSource, sortConfig);
+            dataSourceTemp = tableSort(sortOption, order, dataSourceTemp, sortConfig);
+            dataSourceCopy.value = isTreeData.value ? flatTreeData(dataSourceTemp) : dataSourceTemp;
         }
     }
-    // 只有点击才触发事件
+    // 只有点击才触发事件 en: only emit sort-change event when click
     if (click || options.emit) {
-        emits('sort-change', col, order, toRaw(dataSourceCopy.value), sortConfig);
+        emits('sort-change', col, order, toRaw(dataSourceTemp), sortConfig);
     }
 }
 
