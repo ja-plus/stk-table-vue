@@ -16,6 +16,7 @@ Please try adding the following CSS to see if there's a noticeable reduction in 
 ## Scrolling White Screen
 1. Try row-by-row scrolling. [scroll-row-by-row](/en/main/table/basic/scroll-row-by-row.md)
 2. Try tr layering.
+3. Do not add background color to the `.stk-table` element.
     
 ## Highlighting
 * Configure `props.highlightConfig.fps` to specify the highlight frame rate. Lowering the frame rate helps reduce resource usage.

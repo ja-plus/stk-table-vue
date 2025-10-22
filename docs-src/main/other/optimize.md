@@ -16,6 +16,7 @@
 ## 滚动白屏
 1. 尝试按行滚动。[scroll-row-by-row](/main/table/basic/scroll-row-by-row.md)
 2. 尝试tr分层。
+3. 不要在 `.stk-table` 元素上，添加背景颜色。
     
 ## 高亮
 * 配置 `props.highlightConfig.fps` 指定高亮帧率。降低帧率有利于减少资源占用。
