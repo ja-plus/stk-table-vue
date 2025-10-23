@@ -1155,13 +1155,15 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
             }
         }
     }
-    let dataSourceTemp = props.dataSource;
+    let dataSourceTemp: any[] = [];
     if (!props.sortRemote || options.force) {
         const sortOption = col || defaultSort;
         if (sortOption) {
             dataSourceTemp = tableSort(sortOption, order, dataSourceTemp, sortConfig);
             dataSourceCopy.value = isTreeData.value ? flatTreeData(dataSourceTemp) : dataSourceTemp;
         }
+    } else {
+        dataSourceTemp = dataSourceCopy.value;
     }
     // 只有点击才触发事件 en: only emit sort-change event when click
     if (click || options.emit) {
