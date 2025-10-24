@@ -60,3 +60,8 @@ export const getDataSource = () => [
 即使用了虚拟列表，由于 `props.dataSource` 的每一次变化，都会导致组件内部遍历 `dataSource` 来展平数据。因此对于频繁变化的数据，将占用电脑更多的计算资源。
 如果对性能有一定要求，可参考[示例-大量数据](/demos/huge-data)，自行实现树形展开逻辑。
 :::
+
+## 排序
+默认情况下，点击表头排序时，会对当前层级的数据进行排序。如果需要对子节点也进行排序，需要配置 `sortConfig.sortChildren = true`。 `v0.8.8`
+
+详情见[排序](/main/table/basic/sort)

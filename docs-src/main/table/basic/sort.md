@@ -47,6 +47,10 @@
 :::
 <demo vue="basic/sort/DefaultSort.vue"></demo>
 
+## 使用localCompare 排序String
+配置 `props.sortConfig.stringLocaleCompare = true` 后，会使用 [`String.prototype.localeCompare`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare) 对字符串排序。
+
+作用: 中文会按照拼音首字母排序。
 
 ## 服务端排序
 
@@ -58,6 +62,12 @@
 <StkTable sort-remote></StkTable>
 ```
 <demo vue="basic/sort/SortRemote.vue"></demo>
+
+## 树节点深度排序
+配置 `props.sortConfig.sortChildren = true` 后，点击表头排序时，会对`children`子节点也进行排序。
+
+<demo vue="basic/sort/SortChildren.vue"></demo>
+
 
 ## API
 ### StkTableColumn列配置
@@ -80,8 +90,6 @@ const columns: StkTableColumn[] = [{
 SortConfig 类型：
 ```ts
 type SortConfig<T extends Record<string, any>> = {
-    /** 空值始终排在列表末尾 */
-    emptyToBottom?: boolean;
     /**
      * 默认排序（1.初始化时触发 2.排序方向为null时触发)
      * 类似onMounted时，调用setSorter点了下表头。
@@ -101,11 +109,15 @@ type SortConfig<T extends Record<string, any>> = {
         /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
         silent?: boolean;
     };
+        /** 空值始终排在列表末尾 */
+    emptyToBottom?: boolean;
     /**
-     * string sort if use `String.prototype.localCompare`
+     * 使用`String.prototype.localCompare`对字符串排序
      * default: false
      */
     stringLocaleCompare?: boolean;
+    /** 是否对子节点也进行排序 */
+    sortChildren?: boolean;
 };
 ```
 

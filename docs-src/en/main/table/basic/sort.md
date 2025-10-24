@@ -1,4 +1,4 @@
-# Sort
+# Sorting
 
 ## Basic Sorting
 Set `StkTableColumn['sorter']` to `true` in column configuration to enable sorting.
@@ -40,12 +40,16 @@ Configure `props.sortConfig.emptyToBottom` to always place empty fields at the b
 ## Specify Default Sort Column
 Configure `props.sortConfig.defaultSort` to control the default sorting.
 ::: warning
-When default sorting is set, if there is **no sorting**, the **default sorting** field will be sorted.
+When default sorting is set, if **no sorting is applied**, it will sort by the **default sort** field.
 
-Click the `Name` column in the table below to sort and observe its behavior.
+Click on the `Name` column in the table below to observe its behavior.
 :::
 <demo vue="basic/sort/DefaultSort.vue"></demo>
 
+## Using localCompare for String Sorting
+After configuring `props.sortConfig.stringLocaleCompare = true`, strings will be sorted using [`String.prototype.localeCompare`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare).
+
+Effect: Chinese characters will be sorted according to the first letter of their pinyin.
 
 ## Server-side Sorting
 
@@ -57,6 +61,11 @@ After clicking the table header, the `@sort-change` event will be triggered. You
 <StkTable sort-remote></StkTable>
 ```
 <demo vue="basic/sort/SortRemote.vue"></demo>
+
+## Tree Node Deep Sorting
+After configuring `props.sortConfig.sortChildren = true`, when clicking on the table header to sort, the `children` sub-nodes will also be sorted.
+
+<demo vue="basic/sort/SortChildren.vue"></demo>
 
 ## API
 ### StkTableColumn Configuration
@@ -79,11 +88,9 @@ const columns: StkTableColumn[] = [{
 SortConfig type:
 ```ts
 type SortConfig<T extends Record<string, any>> = {
-    /** Empty values are always placed at the end of the list */
-    emptyToBottom?: boolean;
     /**
      * Default sorting (1. Triggered during initialization 2. Triggered when sorting direction is null)
-     * Similar to calling setSorter and clicking the table header during onMounted.
+     * Similar to clicking the table header via setSorter during onMounted.
      */
     defaultSort?: {
         /**
@@ -97,14 +104,18 @@ type SortConfig<T extends Record<string, any>> = {
         sortField?: StkTableColumn<T>['sortField'];
         sortType?: StkTableColumn<T>['sortType'];
         sorter?: StkTableColumn<T>['sorter'];
-        /** Whether to prevent triggering the sort-change event. Default is false, meaning the event is triggered. */
+        /** Whether to prohibit triggering the sort-change event. Default false, meaning the event is triggered. */
         silent?: boolean;
     };
+    /** Empty values are always placed at the end of the list */
+    emptyToBottom?: boolean;
     /**
-     * string sort if use `String.prototype.localCompare`
+     * Use `String.prototype.localCompare` to sort strings
      * default: false
      */
     stringLocaleCompare?: boolean;
+    /** Whether to also sort child nodes */
+    sortChildren?: boolean;
 };
 ```
 
@@ -112,13 +123,13 @@ type SortConfig<T extends Record<string, any>> = {
 defineEmits type:
 ```ts
 /**
- * Triggered when sorting changes. If defaultSort.dataIndex is not found, col will return null.
+ * Triggered when sorting changes. When defaultSort.dataIndex is not found, col will return null.
  *
  * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>)```
  */
 (
     e: 'sort-change',
-    /** Sorted column */
+    /** Sorting column */
     col: StkTableColumn<DT> | null, 
     /** Ascending/descending order */
     order: Order,
@@ -141,10 +152,10 @@ defineExpose({
      */
     resetSorter,
     /**
-     * Table sorted column order
+     * Table sort column order
      */
     getSortColumns,
 })
 ```
-For details, refer to [Expose Instance Methods](/en/main/api/expose)
+For details, see [Expose Instance Methods](/en/main/api/expose)
 
