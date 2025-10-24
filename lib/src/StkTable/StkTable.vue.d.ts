@@ -6,9 +6,11 @@ type DT = any & PrivateRowDT;
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if set true not emit `current-change`. default:false
+ * @param {boolean} option.deep if set true, deep search in children. default:false
  */
 declare function setCurrentRow(rowKeyOrRow: string | undefined | DT, option?: {
     silent: boolean;
+    deep: boolean;
 }): void;
 /**
  * set highlight active cell (props.cellActive=true)
@@ -238,8 +240,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
     sortConfig: () => {
-        emptyToBottom: boolean;
-        stringLocaleCompare: boolean;
+        emptyToBottom: false;
+        stringLocaleCompare: false;
+        sortChildren: false;
     };
     hideHeaderTitle: boolean;
     highlightConfig: () => {};
@@ -604,8 +607,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     fixedColShadow: boolean;
     optimizeVue2Scroll: boolean;
     sortConfig: () => {
-        emptyToBottom: boolean;
-        stringLocaleCompare: boolean;
+        emptyToBottom: false;
+        stringLocaleCompare: false;
+        sortChildren: false;
     };
     hideHeaderTitle: boolean;
     highlightConfig: () => {};

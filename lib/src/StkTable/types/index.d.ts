@@ -84,7 +84,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 排序方式。按数字/字符串 */
     sortType?: 'number' | 'string';
     /** 配置当前列的排序规则 */
-    sortConfig?: Pick<SortConfig<T>, 'emptyToBottom' | 'stringLocaleCompare'>;
+    sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
     /**
@@ -167,17 +167,17 @@ export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
 export type SortConfig<T extends Record<string, any>> = {
-    /** 空值始终排在列表末尾 */
-    emptyToBottom?: boolean;
     /**
-     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
-     * 类似onMounted时，调用setSorter点了下表头。
+     * 1. trigger when init
+     * 2. trigger when sort direction is null
      */
     defaultSort?: {
         /**
-         * 列唯一键，
+         * colKey
          *
-         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
+         * if set `props.colKey`
+         *
+         * default: StkTableColumn<T>['dataIndex']
          */
         key?: StkTableColumn<T>['key'];
         dataIndex: StkTableColumn<T>['dataIndex'];
@@ -185,14 +185,22 @@ export type SortConfig<T extends Record<string, any>> = {
         sortField?: StkTableColumn<T>['sortField'];
         sortType?: StkTableColumn<T>['sortType'];
         sorter?: StkTableColumn<T>['sorter'];
-        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        /**
+         * whether to disable trigger`sort-change` event. default: false
+         */
         silent?: boolean;
     };
+    /** empty value always sort to bottom */
+    emptyToBottom?: boolean;
     /**
      * string sort if use `String.prototype.localCompare`
      * default: false
      */
     stringLocaleCompare?: boolean;
+    /**
+     * whether to sort children when sort current column. default: false
+     */
+    sortChildren?: boolean;
 };
 /** th td type */
 export declare const enum TagType {
@@ -225,7 +233,6 @@ export type ExpandedRow = PrivateRowDT & {
 export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
 };
-/** 树形配置 */
 export type TreeConfig = {
     defaultExpandAll?: boolean;
     defaultExpandKeys?: UniqKey[];
@@ -234,13 +241,13 @@ export type TreeConfig = {
 /** header drag config */
 export type HeaderDragConfig<DT extends Record<string, any> = any> = {
     /**
-     * 列交换模式
-     * - none - 不做任何事
-     * - insert - 插入(默认值)
-     * - swap - 交换
+     * col switch mode
+     * - none
+     * - insert - (default)
+     * - swap
      */
     mode?: 'none' | 'insert' | 'swap';
-    /** 禁用拖动的列 */
+    /** disabled drag col */
     disabled?: (col: StkTableColumn<DT>) => boolean;
 };
 export type AutoRowHeightConfig<DT> = {
