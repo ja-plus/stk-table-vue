@@ -1,6 +1,7 @@
 ## 0.8.8
 * Feature
   - `SortConfig`  add `sortChildren` property. If set `true`, will sort children when sort. Default value is `false`.
+  - `setCurrentRow` support `option.deep` search in children. Default value is `false`.
 * Bugfix
   - fix: sort will cause the expanded tree's children collapse.
 

@@ -47,8 +47,9 @@ initVirtualScrollY(height?: number)
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined 为取消选中
  * @param {boolean} option.silent 设置 true 则不会触发 `@current-change`. 默认:false
+ * @param {boolean} option.deep 设置 true 则会递归选中子行。默认:false
  */
-function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false })
+function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false, deep: false })
 ```
 
 ### setSelectedCell

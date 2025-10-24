@@ -20,7 +20,8 @@
 
 
 ## Documentation
-### [Stk Table Vue Official CN](https://ja-plus.github.io/stk-table-vue/)
+### [Stk Table Vue Official en](https://ja-plus.github.io/stk-table-vue/en/)
+### [Stk Table Vue Official zh-CN](https://ja-plus.github.io/stk-table-vue/)
 
 
 ## Repo: 

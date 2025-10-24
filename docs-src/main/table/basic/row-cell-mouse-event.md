@@ -3,6 +3,12 @@
 ## demo
 <demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
+## 设置当前行
+可通过调用组件方法[expose setCurrentRow](/main/api/expose.html#setcurrentrow)选中当前行
+
+## 设置选中的单元格 
+可通过调用组件方法[expose setSelectedCell](/main/api/expose.html#setselectedcell)选中当前单元格
+
 
 ## API
 相关 Props:

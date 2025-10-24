@@ -1391,16 +1391,32 @@ function onTrMouseLeave(e: MouseEvent) {
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if set true not emit `current-change`. default:false
+ * @param {boolean} option.deep if set true, deep search in children. default:false
  */
-function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false }) {
+function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false, deep: false }) {
     if (!dataSourceCopy.value.length) return;
     const select = rowKeyOrRow !== void 0;
     if (!select) {
         currentRow.value = void 0;
         currentRowKey.value = void 0;
     } else if (typeof rowKeyOrRow === 'string') {
-        // TODO: select tree collapse children row
-        const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKeyOrRow);
+        const findRowByKey = (data: DT[], key: string): DT | null => {
+            for (let i = 0; i < data.length; i++) {
+                const item = data[i];
+                if (rowKeyGen(item) === key) {
+                    return item;
+                }
+                if (option.deep && item.children?.length) {
+                    const found = findRowByKey(item.children, key);
+                    if (found) {
+                        return found;
+                    }
+                }
+            }
+            return null;
+        };
+
+        const row = findRowByKey(dataSourceCopy.value, rowKeyOrRow);
         if (!row) {
             console.warn('setCurrentRow failed.rowKey:', rowKeyOrRow);
             return;

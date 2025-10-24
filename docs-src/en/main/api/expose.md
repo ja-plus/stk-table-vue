@@ -48,8 +48,9 @@ Sets the currently selected row.
  * Select a row
  * @param {string} rowKeyOrRow Selected rowKey, undefined to deselect
  * @param {boolean} option.silent Set to true to not trigger `@current-change`. Default: false
+ * @param {boolean} option.deep Set to true to recursively select child rows. Default: false
  */
-function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false })
+function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false, deep: false })
 ```
 
 ### setSelectedCell

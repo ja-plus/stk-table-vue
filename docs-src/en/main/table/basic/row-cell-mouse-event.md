@@ -3,6 +3,12 @@
 ## demo
 <demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
+## Setting Current Row
+You can select the current row by calling the component method [expose setCurrentRow](/en/main/api/expose.html#setcurrentrow)
+
+## Setting Selected Cell
+You can select the current cell by calling the component method [expose setSelectedCell](/en/main/api/expose.html#setselectedcell)
+
 
 ## API
 Related Props:
