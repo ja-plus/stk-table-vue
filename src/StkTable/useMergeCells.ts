@@ -7,14 +7,8 @@ type Options = {
     rowKeyGen: RowKeyGen;
     colKeyGen: ColKeyGen;
     virtual_dataSourcePart: ShallowRef<any[]>;
-}
-export function useMergeCells({
-    props,
-    tableHeaderLast,
-    rowKeyGen,
-    colKeyGen,
-    virtual_dataSourcePart,
-}:Options ) {
+};
+export function useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart }: Options) {
     /**
      * which cell need be hidden
      * - key: rowKey
@@ -33,13 +27,12 @@ export function useMergeCells({
     /** click current row , which rowspan cells should be highlight */
     const activeMergedCells = ref(new Set<string>());
 
-
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = {};
         hoverRowMap.value = {};
     });
 
-    /** 
+    /**
      * abstract the logic of hiding cells
      */
     function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
@@ -84,14 +77,14 @@ export function useMergeCells({
         if (colspan === 1 && rowspan === 1) return;
 
         const rowKey = rowKeyGen(row);
-        
+
         const colKey = colKeyGen.value(col);
         const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
         const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
         const mergedCellKey = pureCellKeyGen(rowKey, colKey);
 
         if (curRowIndex === -1) return;
- 
+
         for (let i = curRowIndex; i < curRowIndex + rowspan; i++) {
             const row = virtual_dataSourcePart.value[i];
             if (!row) break;
@@ -106,13 +99,13 @@ export function useMergeCells({
         hoverMergedCells.value = set || new Set();
     }
 
-    function updateActiveMergedCells(clear?: boolean) {
+    function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
         if (!props.rowActive) return;
         if (clear) {
             activeMergedCells.value.clear();
-        } else {
-            activeMergedCells.value = new Set(hoverMergedCells.value);
+            return;
         }
+        activeMergedCells.value = rowKey !== void 0 ? hoverRowMap.value[rowKey] : new Set(hoverMergedCells.value);
     }
 
     return {

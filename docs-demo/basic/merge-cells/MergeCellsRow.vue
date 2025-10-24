@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { StkTableColumn } from '@/StkTable';
+import { ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
+
+const stkTableRef = useTemplateRef('stkTableRef');
 
 const rowSpanCount = {
     asia: 5,
@@ -49,10 +51,16 @@ function deleteARow() {
     rowSpanCount.china = 2;
     dataSource.value = temp;
 }
+
+function setCurrentRow() {
+    stkTableRef.value?.setCurrentRow('1-1-3');
+}
 </script>
 <template>
     <button class="btn" @click="deleteARow">Delete 'Guangzhou' row</button>
+    <button class="btn" @click="setCurrentRow">setCurrentRow(Guangzhou)</button>
     <StkTable
+        ref="stkTableRef"
         style="max-height: 300px"
         cell-hover
         row-key="id"

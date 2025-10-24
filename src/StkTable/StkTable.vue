@@ -1399,6 +1399,7 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
     if (!select) {
         currentRow.value = void 0;
         currentRowKey.value = void 0;
+        updateActiveMergedCells(true);
     } else if (typeof rowKeyOrRow === 'string') {
         const findRowByKey = (data: DT[], key: string): DT | null => {
             for (let i = 0; i < data.length; i++) {
@@ -1423,9 +1424,11 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
         }
         currentRow.value = row;
         currentRowKey.value = rowKeyOrRow;
+        updateActiveMergedCells(false, currentRowKey.value);
     } else {
         currentRow.value = rowKeyOrRow;
         currentRowKey.value = rowKeyGen(rowKeyOrRow);
+        updateActiveMergedCells(false, currentRowKey.value);
     }
     if (!option.silent) {
         emits('current-change', /** no Event */ null, currentRow.value, { select });

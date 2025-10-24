@@ -1,3 +1,7 @@
+## 0.8.9
+* Bugfix
+  - fix: `setCurrentRow` not work correct in `rowspan` table.
+
 ## 0.8.8
 * Feature
   - `SortConfig`  add `sortChildren` property. If set `true`, will sort children when sort. Default value is `false`.
