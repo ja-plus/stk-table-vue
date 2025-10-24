@@ -161,33 +161,46 @@ export function tableSort<T extends Record<string, any>>(
     sortConfig = { ...DEFAULT_SORT_CONFIG, ...sortConfig };
     let targetDataSource = dataSource.slice();
     let sortField = sortOption.sortField || sortOption.dataIndex;
+    const { defaultSort, stringLocaleCompare, emptyToBottom, sortChildren } = sortConfig;
 
-    if (!order && sortConfig.defaultSort) {
+    if (!order && defaultSort) {
         // 默认排序
-        order = sortConfig.defaultSort.order;
-        sortField = sortConfig.defaultSort.dataIndex;
+        order = defaultSort.order;
+        sortField = defaultSort.dataIndex;
     }
 
     if (typeof sortOption.sorter === 'function') {
         const customSorterData = sortOption.sorter(targetDataSource, { order, column: sortOption });
         if (customSorterData) targetDataSource = customSorterData;
+
+        // 如果开启了子节点排序且使用了自定义排序器，递归排序children
+        if (sortChildren) {
+            targetDataSource.forEach(item => {
+                if (!item.children?.length) return;
+                (item as any).children = tableSort(sortOption, order, item.children, sortConfig);
+            });
+        }
     } else if (order) {
         let { sortType } = sortOption;
         if (!sortType) sortType = typeof dataSource[0][sortField] as 'number' | 'string';
 
         const isNumber = sortType === 'number';
         const [valueArr, emptyArr] = separatedData(sortOption, targetDataSource, isNumber);
-        const localCompare = sortConfig.stringLocaleCompare;
+
         if (order === 'asc') {
-            valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, localCompare));
+            valueArr.sort((a, b) => strCompare(a[sortField], b[sortField], isNumber, stringLocaleCompare));
         } else {
-            valueArr.sort((a, b) => strCompare(b[sortField], a[sortField], isNumber, localCompare));
+            valueArr.sort((a, b) => strCompare(b[sortField], a[sortField], isNumber, stringLocaleCompare));
         }
 
-        if (order === 'desc' || sortConfig.emptyToBottom) {
-            targetDataSource = valueArr.concat(emptyArr);
-        } else {
-            targetDataSource = emptyArr.concat(valueArr);
+        targetDataSource = order === 'desc' || emptyToBottom ? valueArr.concat(emptyArr) : emptyArr.concat(valueArr);
+
+        // 递归排序子节点
+        if (sortChildren) {
+            targetDataSource.forEach(item => {
+                if (!item.children?.length) return;
+                (item as any).children = tableSort(sortOption, order, item.children, sortConfig);
+            });
         }
     }
     return targetDataSource;

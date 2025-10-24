@@ -88,7 +88,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
     /** 排序方式。按数字/字符串 */
     sortType?: 'number' | 'string';
     /** 配置当前列的排序规则 */
-    sortConfig?: Pick<SortConfig<T>, 'emptyToBottom' | 'stringLocaleCompare'>;
+    sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
     /**
@@ -176,8 +176,6 @@ export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
 
 export type SortConfig<T extends Record<string, any>> = {
-    /** empty value always sort to bottom */
-    emptyToBottom?: boolean;
     /**
      * 1. trigger when init
      * 2. trigger when sort direction is null
@@ -201,6 +199,8 @@ export type SortConfig<T extends Record<string, any>> = {
          */
         silent?: boolean;
     };
+    /** empty value always sort to bottom */
+    emptyToBottom?: boolean;
     /**
      * string sort if use `String.prototype.localCompare`
      * default: false

@@ -113,6 +113,8 @@ export type SortConfig<T extends Record<string, any>> = {
      * Default true ($*$ should be false)
      */
     stringLocaleCompare?: boolean;
+    /** Whether to sort child items. Default false (v0.8.8)*/
+    sortChildren?: boolean;
 };
 ```
 

@@ -1,3 +1,9 @@
+## 0.8.8
+* Feature
+  - `SortConfig`  add `sortChildren` property. If set `true`, will sort children when sort. Default value is `false`.
+* Bugfix
+  - fix: sort will cause the expanded tree's children collapse.
+
 ## 0.8.7
 * Bugfix
   - fix: Missing some data from dataSource tail. when `props.scrollRowByRow` is true. And `props.headerRowHeight` be set.

@@ -746,7 +746,8 @@ const SRBRTotalHeight = computed(() => {
 });
 const SRBRBottomHeight = computed(() => {
     if (!isSRBRActive.value || !props.virtual) return 0;
-    return (virtualScroll.value.containerHeight - tableHeaderHeight.value) % virtualScroll.value.rowHeight;
+    const { containerHeight, rowHeight } = virtualScroll.value;
+    return (containerHeight - tableHeaderHeight.value) % rowHeight;
 });
 
 const rowKeyGenCache = new WeakMap();
@@ -1155,15 +1156,13 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
             }
         }
     }
-    let dataSourceTemp: any[] = [];
+    let dataSourceTemp: any[] = props.dataSource.slice();
     if (!props.sortRemote || options.force) {
         const sortOption = col || defaultSort;
         if (sortOption) {
             dataSourceTemp = tableSort(sortOption, order, dataSourceTemp, sortConfig);
             dataSourceCopy.value = isTreeData.value ? flatTreeData(dataSourceTemp) : dataSourceTemp;
         }
-    } else {
-        dataSourceTemp = dataSourceCopy.value;
     }
     // 只有点击才触发事件 en: only emit sort-change event when click
     if (click || options.emit) {
@@ -1400,6 +1399,7 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
         currentRow.value = void 0;
         currentRowKey.value = void 0;
     } else if (typeof rowKeyOrRow === 'string') {
+        // TODO: select tree collapse children row
         const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKeyOrRow);
         if (!row) {
             console.warn('setCurrentRow failed.rowKey:', rowKeyOrRow);
@@ -1448,7 +1448,6 @@ function setSorter(colKey: string, order: Order, option: { sortOption?: SortOpti
     const colKeyGenValue = colKeyGen.value;
 
     if (newOption.sort && dataSourceCopy.value?.length) {
-        // 如果表格有数据，则进行排序
         const column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGenValue(it) === sortCol.value);
         if (column) onColumnSort(column, false, { force: option.force ?? true, emit: !newOption.silent });
         else console.warn('Can not find column by key:', sortCol.value);
