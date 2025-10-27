@@ -1175,17 +1175,11 @@ function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
     const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
     if (isCurrentRow) {
         if (!props.rowCurrentRevokable) {
-            // 不可取消
             return;
         }
-        // 点击同一行，取消当前选中行。
-        currentRow.value = void 0;
-        currentRowKey.value = void 0;
-        updateActiveMergedCells(true);
+        setCurrentRow(void 0, { silent: true });
     } else {
-        currentRow.value = row;
-        currentRowKey.value = rowKeyGen(row);
-        updateActiveMergedCells();
+        setCurrentRow(row, { silent: true });
     }
     emits('current-change', e, row, { select: !isCurrentRow });
 }
@@ -1393,9 +1387,9 @@ function onTrMouseLeave(e: MouseEvent) {
  * @param {boolean} option.silent if set true not emit `current-change`. default:false
  * @param {boolean} option.deep if set true, deep search in children. default:false
  */
-function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: false, deep: false }) {
-    if (!dataSourceCopy.value.length) return;
+function setCurrentRow(rowKeyOrRow: string | undefined | DT, option: { silent?: boolean; deep?: boolean } = { silent: false, deep: false }) {
     const select = rowKeyOrRow !== void 0;
+    const currentRowTemp = currentRow.value;
     if (!select) {
         currentRow.value = void 0;
         currentRowKey.value = void 0;
@@ -1417,21 +1411,21 @@ function setCurrentRow(rowKeyOrRow: string | undefined | DT, option = { silent: 
             return null;
         };
 
-        const row = findRowByKey(dataSourceCopy.value, rowKeyOrRow);
+        currentRowKey.value = rowKeyOrRow;
+        updateActiveMergedCells(false, currentRowKey.value);
+        const row = findRowByKey(dataSourceCopy.value || [], rowKeyOrRow);
         if (!row) {
             console.warn('setCurrentRow failed.rowKey:', rowKeyOrRow);
             return;
         }
         currentRow.value = row;
-        currentRowKey.value = rowKeyOrRow;
-        updateActiveMergedCells(false, currentRowKey.value);
     } else {
         currentRow.value = rowKeyOrRow;
         currentRowKey.value = rowKeyGen(rowKeyOrRow);
         updateActiveMergedCells(false, currentRowKey.value);
     }
     if (!option.silent) {
-        emits('current-change', /** no Event */ null, currentRow.value, { select });
+        emits('current-change', /** no Event */ null, select ? currentRow.value : currentRowTemp, { select });
     }
 }
 

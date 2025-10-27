@@ -105,7 +105,7 @@ export function useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, vi
             activeMergedCells.value.clear();
             return;
         }
-        activeMergedCells.value = rowKey !== void 0 ? hoverRowMap.value[rowKey] : new Set(hoverMergedCells.value);
+        activeMergedCells.value = (rowKey !== void 0 && hoverRowMap.value[rowKey]) || new Set(hoverMergedCells.value);
     }
 
     return {

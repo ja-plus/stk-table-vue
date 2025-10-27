@@ -1,6 +1,8 @@
 ## 0.8.9
 * Bugfix
-  - fix: `setCurrentRow` not work correct in `rowspan` table.
+  - fix: `setCurrentRow` 
+    - not work correct in `rowspan` table.
+    - cancel current row will return `undefined`, now it will return the last selected row.
 
 ## 0.8.8
 * Feature
