@@ -15,7 +15,7 @@
 | key | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
 | rowHover | boolean | true | 是否高亮鼠标悬浮的行 |
-| rowActive | boolean | true | 是否高亮选中的行 |
+| rowActive | boolean | true | 是否高亮选中的行(如设为false，仅隐藏组件内部的样式，在tr上依然会添加 `active` 类，方便自定义样式) |
 | rowCurrentRevokable | boolean | true | 当前行再次点击否可以取消 (rowActive=true) |
 | cellHover | boolean | false | 是否高亮鼠标悬浮的单元格 |
 | cellActive | boolean | false | 是否高亮选中的单元格 |
