@@ -1,3 +1,5 @@
+import { RowActiveOption } from './types';
+
 export declare const DEFAULT_COL_WIDTH = "100";
 export declare const DEFAULT_TABLE_HEIGHT = 100;
 export declare const DEFAULT_TABLE_WIDTH = 200;
@@ -31,3 +33,4 @@ export declare const DEFAULT_SORT_CONFIG: {
     stringLocaleCompare: false;
     sortChildren: false;
 };
+export declare const DEFAULT_ROW_ACTIVE_CONFIG: Required<RowActiveOption<any>>;

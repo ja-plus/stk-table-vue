@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -9,8 +9,8 @@ type DT = any & PrivateRowDT;
  * @param {boolean} option.deep if set true, deep search in children. default:false
  */
 declare function setCurrentRow(rowKeyOrRow: string | undefined | DT, option?: {
-    silent: boolean;
-    deep: boolean;
+    silent?: boolean;
+    deep?: boolean;
 }): void;
 /**
  * set highlight active cell (props.cellActive=true)
@@ -92,8 +92,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean;
-    /** 当前行再次点击否可以取消 (rowActive=true)*/
+    rowActive?: boolean | RowActiveOption<DT>;
+    /**
+     * @deprecated
+     */
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | string | null;
@@ -459,8 +461,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean;
-    /** 当前行再次点击否可以取消 (rowActive=true)*/
+    rowActive?: boolean | RowActiveOption<DT>;
+    /**
+     * @deprecated
+     */
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | string | null;
@@ -687,7 +691,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
-    rowActive: boolean;
+    rowActive: boolean | RowActiveOption<DT>;
     rowCurrentRevokable: boolean;
     virtual: boolean;
     virtualX: boolean;
