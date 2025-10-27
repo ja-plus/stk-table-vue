@@ -284,3 +284,11 @@ export type RowKeyGen = (row: any) => UniqKey;
 export type ColKeyGen = ComputedRef<(col: StkTableColumn<any>) => UniqKey>;
 
 export type CellKeyGen = (row: any, col: StkTableColumn<any>) => string;
+
+export type RowActiveOption<DT> = {
+    enabled?: boolean;
+    /** disabled row active */
+    disabled?: (row: DT) => boolean;
+    /** current row again click can revoke active */
+    revokable?: boolean;
+};

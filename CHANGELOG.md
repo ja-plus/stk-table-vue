@@ -1,8 +1,16 @@
 ## 0.8.9
+* Feature
+  - `props.rowActive` support `disabled`.
+    - `rowActive.enabled` default value is `true`.
+    - `rowActive.disabled` default value is `() => false`.
+    - `rowActive.revokable` default value is `true`.
+* Change
+  - `props.rowCurrentRevokable` is deprecated. Please use `rowActive.revokable`.
 * Bugfix
   - fix: `setCurrentRow` 
     - not work correct in `rowspan` table.
     - cancel current row will return `undefined`, now it will return the last selected row.
+
 
 ## 0.8.8
 * Feature

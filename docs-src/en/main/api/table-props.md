@@ -30,10 +30,15 @@ export type StkProps = {
   };
   /** Whether to highlight the row on mouse hover */
   rowHover?: boolean;
-  /** Whether to highlight the selected row */
-  rowActive?: boolean;
-  /** Whether clicking the current row again can deselect it (rowActive=true) */
-  rowCurrentRevokable?: boolean;
+  /** Whether to highlight the selected row boolean | RowActiveOption */
+  rowActive?: boolean | {
+    /** Whether to enable row selection function default: true */
+    enabled?: boolean;
+    /** Whether to disable row selection default: () => false */
+    disabled?: (row: DT) => boolean;
+    /** Whether selection can be revoked default: true */
+    revokable?: boolean;
+  };
   /** Header row height. default = rowHeight */
   headerRowHeight?: number | null;
   /** Virtual scrolling */

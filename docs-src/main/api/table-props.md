@@ -30,10 +30,15 @@ export type StkProps = {
   };
   /** 是否高亮鼠标悬浮的行 */
   rowHover?: boolean;
-  /** 是否高亮选中的行 */
-  rowActive?: boolean;
-  /** 当前行再次点击否可以取消 (rowActive=true)*/
-  rowCurrentRevokable?: boolean;
+  /** 是否高亮选中的行 boolean | RowActiveOption */
+  rowActive?: boolean | {
+    /** 是否启用行选中功能 default: true */
+    enabled?: boolean;
+    /** 是否禁用行选中 default: () => false */
+    disabled?: (row: DT) => boolean;
+    /** 是否可以取消选中 default: true */
+    revokable?: boolean;
+  };
   /** 表头行高。default = rowHeight */
   headerRowHeight?: number | null;
   /** 虚拟滚动 */

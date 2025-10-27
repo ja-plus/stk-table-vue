@@ -1,14 +1,14 @@
-import { ref, ShallowRef, watch } from 'vue';
-import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { Ref, ref, ShallowRef, watch } from 'vue';
+import { ColKeyGen, MergeCellsParam, PrivateStkTableColumn, RowActiveOption, RowKeyGen, UniqKey } from './types';
 import { pureCellKeyGen } from './utils';
 type Options = {
-    props: any;
+    rowActiveProp: Ref<RowActiveOption<any>>;
     tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>;
     rowKeyGen: RowKeyGen;
     colKeyGen: ColKeyGen;
     virtual_dataSourcePart: ShallowRef<any[]>;
 };
-export function useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart }: Options) {
+export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart }: Options) {
     /**
      * which cell need be hidden
      * - key: rowKey
@@ -100,7 +100,7 @@ export function useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, vi
     }
 
     function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
-        if (!props.rowActive) return;
+        if (!rowActiveProp.value.enabled) return;
         if (clear) {
             activeMergedCells.value.clear();
             return;

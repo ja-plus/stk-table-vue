@@ -20,7 +20,7 @@
             'cell-hover': props.cellHover,
             'cell-active': props.cellActive,
             'row-hover': props.rowHover,
-            'row-active': props.rowActive,
+            'row-active': rowActiveProp.enabled,
             'text-overflow': props.showOverflow,
             'header-text-overflow': props.showHeaderOverflow,
             'fixed-relative-mode': isRelativeMode,
@@ -253,7 +253,14 @@ import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, w
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
-import { CELL_KEY_SEPARATE, DEFAULT_ROW_HEIGHT, DEFAULT_SMOOTH_SCROLL, DEFAULT_SORT_CONFIG, IS_LEGACY_MODE } from './const';
+import {
+    CELL_KEY_SEPARATE,
+    DEFAULT_ROW_ACTIVE_CONFIG,
+    DEFAULT_ROW_HEIGHT,
+    DEFAULT_SMOOTH_SCROLL,
+    DEFAULT_SORT_CONFIG,
+    IS_LEGACY_MODE,
+} from './const';
 import {
     AutoRowHeightConfig,
     ColResizableConfig,
@@ -264,6 +271,7 @@ import {
     Order,
     PrivateRowDT,
     PrivateStkTableColumn,
+    RowActiveOption,
     SeqConfig,
     SortConfig,
     SortOption,
@@ -328,8 +336,10 @@ const props = withDefaults(
         /** 是否高亮鼠标悬浮的行 */
         rowHover?: boolean;
         /** 是否高亮选中的行 */
-        rowActive?: boolean;
-        /** 当前行再次点击否可以取消 (rowActive=true)*/
+        rowActive?: boolean | RowActiveOption<DT>;
+        /**
+         * @deprecated
+         */
         rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
         headerRowHeight?: number | string | null;
@@ -706,6 +716,19 @@ const isTreeData = computed(() => {
     return props.columns.some(col => col.type === 'tree-node');
 });
 
+const rowActiveProp = computed<Required<RowActiveOption<DT>>>(() => {
+    const { rowActive } = props;
+    if (typeof rowActive === 'boolean') {
+        return {
+            ...DEFAULT_ROW_ACTIVE_CONFIG,
+            enabled: rowActive,
+            revokable: Boolean(props.rowCurrentRevokable),
+        };
+    } else {
+        return { ...DEFAULT_ROW_ACTIVE_CONFIG, ...rowActive };
+    }
+});
+
 const dataSourceCopy = shallowRef<DT[]>([]);
 
 const rowKeyGenComputed = computed(() => {
@@ -786,7 +809,7 @@ const {
     updateHoverMergedCells,
     activeMergedCells,
     updateActiveMergedCells,
-} = useMergeCells({ props, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
+} = useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart });
 
 const getFixedColPosition = useGetFixedColPosition({ colKeyGen, tableHeadersForCalc });
 
@@ -1164,7 +1187,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
             dataSourceCopy.value = isTreeData.value ? flatTreeData(dataSourceTemp) : dataSourceTemp;
         }
     }
-    // 只有点击才触发事件 en: only emit sort-change event when click
+    // only emit sort-change event when click
     if (click || options.emit) {
         emits('sort-change', col, order, toRaw(dataSourceTemp), sortConfig);
     }
@@ -1172,9 +1195,10 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
 
 function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
     emits('row-click', e, row, { rowIndex });
+    if (rowActiveProp.value.disabled?.(row)) return;
     const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
     if (isCurrentRow) {
-        if (!props.rowCurrentRevokable) {
+        if (!rowActiveProp.value.revokable) {
             return;
         }
         setCurrentRow(void 0, { silent: true });

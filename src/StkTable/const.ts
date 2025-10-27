@@ -1,4 +1,4 @@
-import { SortConfig } from './types';
+import { RowActiveOption, SortConfig } from './types';
 import { getBrowsersVersion } from './utils';
 
 export const DEFAULT_COL_WIDTH = '100';
@@ -42,3 +42,9 @@ export const DEFAULT_SORT_CONFIG = {
     stringLocaleCompare: false,
     sortChildren: false,
 } satisfies SortConfig<any>;
+
+export const DEFAULT_ROW_ACTIVE_CONFIG: Required<RowActiveOption<any>> = {
+    enabled: false,
+    disabled: () => false,
+    revokable: false,
+};
