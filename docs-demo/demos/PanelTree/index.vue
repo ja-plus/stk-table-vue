@@ -14,7 +14,7 @@
             }"
             :row-class-name="(row: any) => (row.children ? 'panel-header-row' : '')"
             :empty-cell-text="({ row }: any) => (row.children ? '' : '--')"
-            :tree-config="{ defaultExpandAll: true }"
+            :tree-config="{ defaultExpandKeys: ['1'] }"
             :selected-cell-revokable="false"
             :columns="columns"
             :data-source="tableData"
@@ -46,7 +46,7 @@ const columns: StkTableColumn<RowDataType>[] = [
         },
     },
     { title: 'Name', dataIndex: 'name', width: 100, fixed: 'left' },
-    { title: 'Age', dataIndex: 'age', width: 80 },
+    { title: 'Age', dataIndex: 'age', width: 80, sorter: true, sortConfig: { sortChildren: true } },
     { title: 'Address', dataIndex: 'address', width: 200 },
     { title: 'Email', dataIndex: 'email', width: 200 },
     { title: 'Phone', dataIndex: 'phone', width: 150 },
@@ -326,6 +326,7 @@ async function updateRow() {
 }
 
 :deep(.panel-header-row) {
+    --tr-hover-bgc: var(--th-bgc);
     background-color: var(--th-bgc);
 }
 </style>
