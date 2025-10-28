@@ -456,7 +456,7 @@ const props = withDefaults(
         rowHeight: DEFAULT_ROW_HEIGHT,
         autoRowHeight: false,
         rowHover: true,
-        rowActive: true,
+        rowActive: () => DEFAULT_ROW_ACTIVE_CONFIG,
         rowCurrentRevokable: true,
         headerRowHeight: DEFAULT_ROW_HEIGHT,
         virtual: false,
@@ -721,7 +721,7 @@ const rowActiveProp = computed<Required<RowActiveOption<DT>>>(() => {
     if (typeof rowActive === 'boolean') {
         return {
             ...DEFAULT_ROW_ACTIVE_CONFIG,
-            enabled: rowActive,
+            enabled: rowActive ?? true,
             revokable: Boolean(props.rowCurrentRevokable),
         };
     } else {
@@ -1301,50 +1301,47 @@ function onCellMouseDown(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowInd
 }
 
 /**
- * 鼠标滚轮事件监听。代理滚轮事件，防止滚动过快出现白屏。
+ * proxy scroll, prevent white screen
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
     if (props.smoothScroll) {
         return;
     }
+    // if is resizing, not allow scroll
     if (isColResizing.value) {
-        // 正在调整列宽时，不允许用户滚动
         e.stopPropagation();
         return;
     }
-    // #region ---- 控制滚动，防止出现白屏--
     const dom = tableContainerRef.value;
     if (!dom) return;
+    if (!virtual_on.value && !virtualX_on.value) return;
+
     const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
     const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
-    /** 是否滚动在下面 */
     const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
-    /** 是否滚动在右侧 */
     const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
-    const { deltaY, deltaX } = e;
+    const { deltaY, deltaX, shiftKey } = e;
 
-    /**
-     * 只有虚拟滚动时，才要用 wheel 代理scroll，防止滚动过快导致的白屏。
-     * 滚动条在边界情况时，not preventDefault 。因为会阻塞父级滚动条滚动。
-     */
-    if (virtual_on.value && deltaY) {
+    if (virtual_on.value && deltaY && !shiftKey) {
         if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
-            e.preventDefault();
+            e.preventDefault(); // parent element scroll
         }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on.value && deltaX) {
-        if ((deltaX > 0 && !isScrollRight) || (deltaX < 0 && scrollLeft > 0)) {
+    if (virtualX_on.value) {
+        let distance = deltaX;
+        if (shiftKey && deltaY) {
+            distance = deltaY;
+        }
+        if ((distance > 0 && !isScrollRight) || (distance < 0 && scrollLeft > 0)) {
             e.preventDefault();
         }
-        dom.scrollLeft += deltaX;
+        dom.scrollLeft += distance;
     }
-    //#endregion
 }
 
 /**
- * 滚动条监听
  * @param e scrollEvent
  */
 function onTableScroll(e: Event) {

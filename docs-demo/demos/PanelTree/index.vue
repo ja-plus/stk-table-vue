@@ -8,9 +8,7 @@
             bordered="h"
             show-overflow
             :row-active="{
-                enabled: true,
                 disabled: (row: any) => Boolean(row.children),
-                revokable: true,
             }"
             :row-class-name="(row: any) => (row.children ? 'panel-header-row' : '')"
             :empty-cell-text="({ row }: any) => (row.children ? '' : '--')"

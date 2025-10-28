@@ -1,3 +1,9 @@
+## 0.8.10
+* Feature
+  - In virtual scroll mode: Scroll with `shift` key pressed ,will scroll column.
+* Bugfix
+  - fix: `props.rowActive` default value change to `{ enabled: true, revokable: true }`.
+
 ## 0.8.9
 * Feature
   - `props.rowActive` support `disabled`.
