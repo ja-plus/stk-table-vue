@@ -75,6 +75,7 @@ export const zhConfig = defineConfig({
                                     { text: '内容溢出省略', link: '/table/basic/overflow', },
                                     { text: '排序', link: '/table/basic/sort', },
                                     { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
+                                    { text: '复选框', link: '/table/basic/checkbox', },
                                     { text: '单元格合并(✨NEW)', link: '/table/basic/merge-cells', },
                                     { text: '无头', link: '/table/basic/headless', },
                                     { text: '行展开', link: '/table/basic/expand-row', },
