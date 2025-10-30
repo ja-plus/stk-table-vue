@@ -100,15 +100,11 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
                     if (defaultExpandAll) {
                         setNodeExpanded(item, true);
                     } else {
-                        if (defaultExpandLevel) {
-                            if (level < defaultExpandLevel) {
-                                setNodeExpanded(item, true);
-                            }
+                        if (defaultExpandLevel && level < defaultExpandLevel) {
+                            setNodeExpanded(item, true);
                         }
-                        if (defaultExpandKeys) {
-                            if (defaultExpandKeys.includes(rowKeyGen(item))) {
-                                setNodeExpanded(item, true);
-                            }
+                        if (defaultExpandKeys?.includes(rowKeyGen(item))) {
+                            setNodeExpanded(item, true);
                         }
                         if (!item.__T_EXP__) {
                             continue;

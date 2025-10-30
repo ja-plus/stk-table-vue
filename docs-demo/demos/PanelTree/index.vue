@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import type { StkTableColumn } from '@/StkTable/index';
-import { ref, useTemplateRef, nextTick } from 'vue';
+import { nextTick, shallowRef, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { RowDataType } from './type';
 
@@ -53,7 +53,7 @@ const columns: StkTableColumn<RowDataType>[] = [
 ];
 
 // 初始化表格数据
-const tableData = ref<RowDataType[]>([
+const tableData = shallowRef<RowDataType[]>([
     {
         id: "People's Republic of China",
         key: '1',
@@ -312,7 +312,6 @@ async function updateRow() {
         return;
     }
     row.age = Math.round(Math.random() * 100);
-    tableData.value = tableData.value.slice();
     await nextTick();
     stkTableRef.value?.setHighlightDimRow([row.key]);
 }
