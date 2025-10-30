@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import type { StkTableColumn } from '@/StkTable/index';
-import { nextTick, shallowRef, useTemplateRef } from 'vue';
+import { nextTick, ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { RowDataType } from './type';
 
@@ -53,7 +53,7 @@ const columns: StkTableColumn<RowDataType>[] = [
 ];
 
 // 初始化表格数据
-const tableData = shallowRef<RowDataType[]>([
+const tableData = ref<RowDataType[]>([
     {
         id: "People's Republic of China",
         key: '1',
