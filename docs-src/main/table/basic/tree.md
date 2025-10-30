@@ -53,7 +53,7 @@ export const getDataSource = () => [
 <demo vue="basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning 注意
-组件会在dataSource的每一行中注入`__T_EXPANDED__` 字段，用于控制是否展开。在更新一行的数据时，不要修改这个字段。因此样例中使用 `Object.assign` 来更新数据。
+组件会在dataSource的每一行中注入`__T_EXP__` 字段，用于控制是否展开。在更新一行的数据时，不要修改这个字段。因此样例中使用 `Object.assign` 来更新数据。
 :::
 
 ::: warning 性能提醒

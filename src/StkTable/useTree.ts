@@ -14,7 +14,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
 
     /** click expended icon to toggle expand row */
     function toggleTreeNode(row: DT, col: any) {
-        const expand = row ? !row.__T_EXPANDED__ : false;
+        const expand = row ? !row.__T_EXP__ : false;
         privateSetTreeExpand(row, { expand, col, isClick: true });
     }
 
@@ -47,7 +47,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
             const level = row.__T_LV__ || 0;
             let expanded = option?.expand;
             if (expanded === void 0) {
-                expanded = !row.__T_EXPANDED__;
+                expanded = !row.__T_EXP__;
             }
             if (expanded) {
                 const children = expandNode(row, level);
@@ -73,13 +73,13 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
     }
 
     function setNodeExpanded(row: DT, expanded: boolean, level?: number, parent?: DT) {
-        row.__T_EXPANDED__ = expanded;
+        row.__T_EXP__ = expanded;
         if (level !== void 0) {
             row.__T_LV__ = level;
         }
-        if (parent) {
-            row.__T_PARENT_K__ = rowKeyGen(parent);
-        }
+        // if (parent) {
+        //     row.__T_P_K__ = rowKeyGen(parent);
+        // }
     }
 
     /**
@@ -94,7 +94,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
             for (let i = 0; i < data.length; i++) {
                 const item = data[i];
                 result.push(item);
-                const isExpanded = Boolean(item.__T_EXPANDED__);
+                const isExpanded = Boolean(item.__T_EXP__);
                 setNodeExpanded(item, isExpanded, level, parent);
                 if (!isExpanded) {
                     if (defaultExpandAll) {
@@ -110,7 +110,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
                                 setNodeExpanded(item, true);
                             }
                         }
-                        if (!item.__T_EXPANDED__) {
+                        if (!item.__T_EXP__) {
                             continue;
                         }
                     }
@@ -127,7 +127,7 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
             row.children.forEach((child: DT) => {
                 result.push(child);
                 const childLv = level + 1;
-                if (child.__T_EXPANDED__ && child.children) {
+                if (child.__T_EXP__ && child.children) {
                     const res = expandNode(child, childLv);
                     result = result.concat(res);
                 } else {

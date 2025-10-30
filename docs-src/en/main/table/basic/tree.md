@@ -52,7 +52,7 @@ export const getDataSource = () => [
 <demo vue="basic/tree/TreeVirtualList.vue"></demo>
 
 ::: warning Note
-The component will inject the `__T_EXPANDED__` field into each row of the dataSource to control whether it is expanded. Do not modify this field when updating the data of a row. Therefore, `Object.assign` is used in the example to update data.
+The component will inject the `__T_EXP__` field into each row of the dataSource to control whether it is expanded. Do not modify this field when updating the data of a row. Therefore, `Object.assign` is used in the example to update data.
 :::
 
 ::: warning Performance Note

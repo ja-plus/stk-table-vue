@@ -131,7 +131,7 @@ export type CustomCellProps<T extends Record<string, any>> = {
      * - 不展开: null
      * - 展开: 返回column配置
      */
-    expanded?: PrivateRowDT['__EXPANDED__'];
+    expanded?: PrivateRowDT['__EXP__'];
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

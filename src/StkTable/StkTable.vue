@@ -115,7 +115,7 @@
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, getRowIndex(rowIndex)) || '']: true,
-                        expanded: row?.__EXPANDED__,
+                        expanded: row?.__EXP__,
                         'expanded-row': row && row.__EXPANDED_ROW__,
                     }"
                     :style="{
@@ -152,9 +152,8 @@
                                         'cell-active': col.mergeCells && activeMergedCells.has(cellKeyGen(row, col)),
                                         'seq-column': col.type === 'seq',
                                         active: props.cellActive && currentSelectedCellKey === cellKeyGen(row, col),
-                                        expanded:
-                                            col.type === 'expand' && (row.__EXPANDED__ ? colKeyGen(row.__EXPANDED__) === colKeyGen(col) : false),
-                                        'tree-expanded': col.type === 'tree-node' && row.__T_EXPANDED__,
+                                        expanded: col.type === 'expand' && (row.__EXP__ ? colKeyGen(row.__EXP__) === colKeyGen(col) : false),
+                                        'tree-expanded': col.type === 'tree-node' && row.__T_EXP__,
                                         'drag-row-cell': col.type === 'dragRow',
                                     },
                                 ]"
@@ -179,8 +178,8 @@
                                             :rowIndex="getRowIndex(rowIndex)"
                                             :colIndex="colIndex"
                                             :cellValue="row && row[col.dataIndex]"
-                                            :expanded="(row && row.__EXPANDED__) || null"
-                                            :tree-expanded="(row && row.__T_EXPANDED__) || null"
+                                            :expanded="(row && row.__EXP__) || null"
+                                            :tree-expanded="(row && row.__T_EXP__) || null"
                                         >
                                             <template #stkFoldIcon>
                                                 <TriangleIcon></TriangleIcon>
@@ -1063,7 +1062,7 @@ function dealColumns() {
  */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
-    let key = rowKeyGenCache.get(row) || (row as PrivateRowDT).__ROW_KEY__;
+    let key = rowKeyGenCache.get(row) || (row as PrivateRowDT).__ROW_K__;
     if (!key) {
         key = rowKeyGenComputed.value(row);
 
