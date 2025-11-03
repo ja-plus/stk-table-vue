@@ -12,33 +12,33 @@ StkTable 组件本身**没有内置的多选框功能**，但可以通过 `custo
 
 ```javascript
 {
-  customHeaderCell: () => {
-    return h('span', [
-        h('input', {
-            type: 'checkbox',
-            style: 'vertical-align:middle',
-            checked: isCheckAll.value,
-            indeterminate: isCheckPartial.value,
-            onChange: (e: Event) => {
-                const checked = (e.target as HTMLInputElement).checked;
-                dataSource.value.forEach(item => {
-                    item.isChecked = checked;
-                });
-            },
-        }),
-    ]);
-  },
-  customCell: ({ row }) => {
-    return h('div', { style: 'display:flex;align-items:center;justify-content:center' }, [
-        h('input', {
-            type: 'checkbox',
-            checked: row.isChecked,
-            onChange: (e: Event) => {
-                row.isChecked = (e.target as HTMLInputElement).checked;
-            },
-        }),
-    ]);
-  },
+    customHeaderCell: () => {
+        return h('span', [
+            h('input', {
+                type: 'checkbox',
+                style: 'vertical-align:middle',
+                checked: isCheckAll.value,
+                indeterminate: isCheckPartial.value,
+                onChange: (e: Event) => {
+                    const checked = (e.target as HTMLInputElement).checked;
+                    dataSource.value.forEach(item => {
+                        item._isChecked = checked;
+                    });
+                },
+            }),
+        ]);
+    },
+    customCell: ({ row }) => {
+        return h('div', { style: 'display:flex;align-items:center;justify-content:center' }, [
+            h('input', {
+                type: 'checkbox',
+                checked: row._isChecked,
+                onChange: (e: Event) => {
+                    row._isChecked = (e.target as HTMLInputElement).checked;
+                },
+            }),
+        ]);
+    },
 }
 ```
 input元素外面加一层父元素，为了垂直居中。
