@@ -214,7 +214,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowHeight: number;
     autoRowHeight: boolean;
     rowHover: boolean;
-    rowActive: boolean;
+    rowActive: () => Required<RowActiveOption<any>>;
     rowCurrentRevokable: boolean;
     headerRowHeight: number;
     virtual: boolean;
@@ -583,7 +583,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowHeight: number;
     autoRowHeight: boolean;
     rowHover: boolean;
-    rowActive: boolean;
+    rowActive: () => Required<RowActiveOption<any>>;
     rowCurrentRevokable: boolean;
     headerRowHeight: number;
     virtual: boolean;

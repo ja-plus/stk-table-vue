@@ -18,7 +18,7 @@ export type CustomCellProps<T extends Record<string, any>> = {
      * - 不展开: null
      * - 展开: 返回column配置
      */
-    expanded?: PrivateRowDT['__EXPANDED__'];
+    expanded?: PrivateRowDT['__EXP__'];
 };
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
@@ -134,25 +134,25 @@ export type PrivateRowDT = {
     /**
      * Only expanded row will add this key
      *
-     * If user define the `__ROW_KEY__` in table data, this value will be used as the row key
+     * If user define the `__ROW_K__` in table data, this value will be used as the row key
      * @private
      */
-    __ROW_KEY__?: string;
+    __ROW_K__?: string;
     /**
      * if row expanded
      * @private
      */
-    __EXPANDED__?: StkTableColumn<any> | null;
+    __EXP__?: StkTableColumn<any> | null;
     /**
      * if tree node row expanded
      * @private
      */
-    __T_EXPANDED__?: boolean;
+    __T_EXP__?: boolean;
     /**
      * tree parent key
      * @private
      */
-    __T_PARENT_K__?: UniqKey;
+    __T_P_K__?: UniqKey;
     /**
      * tree level
      * @private
