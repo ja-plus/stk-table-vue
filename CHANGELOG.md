@@ -1,3 +1,7 @@
+## 0.8.11
+* Change
+ - customCell slot `stkFoldIcon` implements default event; 
+
 ## 0.8.10
 * Feature
   - In virtual scroll mode: Scroll with `shift` key pressed ,will scroll column.

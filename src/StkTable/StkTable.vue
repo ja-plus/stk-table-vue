@@ -182,7 +182,7 @@
                                             :tree-expanded="(row && row.__T_EXP__) || null"
                                         >
                                             <template #stkFoldIcon>
-                                                <TriangleIcon></TriangleIcon>
+                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
                                             </template>
                                         </component>
                                         <template v-else>
