@@ -164,71 +164,53 @@
                                 @mouseleave="onCellMouseLeave($event, row, col)"
                                 @mouseover="onCellMouseOver($event, row, col)"
                             >
-                                <template v-if="col.type === 'expand' || col.type === 'tree-node'">
-                                    <div
-                                        class="table-cell-wrapper"
-                                        :title="row?.[col.dataIndex]"
-                                        :style="{ paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' }"
-                                    >
-                                        <component
-                                            :is="col.customCell"
-                                            v-if="col.customCell"
-                                            :col="col"
-                                            :row="row"
-                                            :rowIndex="getRowIndex(rowIndex)"
-                                            :colIndex="colIndex"
-                                            :cellValue="row && row[col.dataIndex]"
-                                            :expanded="(row && row.__EXP__) || null"
-                                            :tree-expanded="(row && row.__T_EXP__) || null"
-                                        >
-                                            <template #stkFoldIcon>
-                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                            </template>
-                                        </component>
-                                        <template v-else>
-                                            <TriangleIcon
-                                                v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
-                                                @click="triangleClick($event, row, col)"
-                                            />
-                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
-                                                {{ row?.[col.dataIndex] ?? '' }}
-                                            </span>
-                                        </template>
-                                    </div>
-                                </template>
-                                <template v-else>
-                                    <component
-                                        :is="col.customCell"
-                                        v-if="col.customCell"
-                                        class="table-cell-wrapper"
-                                        :col="col"
-                                        :row="row"
-                                        :rowIndex="getRowIndex(rowIndex)"
-                                        :colIndex="colIndex"
-                                        :cellValue="row && row[col.dataIndex]"
-                                    >
-                                        <template #stkFoldIcon>
-                                            <TriangleIcon></TriangleIcon>
-                                        </template>
-                                        <template #stkDragIcon>
-                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                        </template>
-                                    </component>
-                                    <div v-else class="table-cell-wrapper" :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''">
-                                        <template v-if="col.type === 'seq'">
-                                            {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                        </template>
-                                        <template v-else-if="col.type === 'dragRow'">
-                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                            <span>
-                                                {{ row?.[col.dataIndex] ?? '' }}
-                                            </span>
-                                        </template>
-                                        <template v-else>
-                                            {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                                        </template>
-                                    </div>
-                                </template>
+                                <component
+                                    :is="col.customCell"
+                                    v-if="col.customCell"
+                                    class="table-cell-wrapper"
+                                    :col="col"
+                                    :row="row"
+                                    :rowIndex="getRowIndex(rowIndex)"
+                                    :colIndex="colIndex"
+                                    :cellValue="row && row[col.dataIndex]"
+                                    :expanded="row ? row.__EXP_ : null"
+                                    :tree-expanded="row ? row.__T_EXP__ : null"
+                                >
+                                    <template #stkFoldIcon>
+                                        <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
+                                    </template>
+                                    <template #stkDragIcon>
+                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                    </template>
+                                </component>
+                                <div
+                                    v-else
+                                    class="table-cell-wrapper"
+                                    :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
+                                    :style="col.type === 'tree-node' ? { paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' } : {}"
+                                >
+                                    <template v-if="col.type === 'seq'">
+                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                    </template>
+                                    <template v-else-if="col.type === 'dragRow'">
+                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                        <span>
+                                            {{ row?.[col.dataIndex] ?? '' }}
+                                        </span>
+                                    </template>
+                                    <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
+                                        <TriangleIcon
+                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
+                                            @click="triangleClick($event, row, col)"
+                                        />
+                                        <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                            {{ row?.[col.dataIndex] ?? '' }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                    </template>
+                                </div>
                             </td>
                         </template>
                     </template>

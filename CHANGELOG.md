@@ -1,6 +1,10 @@
 ## 0.8.11
 * Change
- - customCell slot `stkFoldIcon` implements default event; 
+ - customCell 
+  - slot `stkFoldIcon` implements default event; 
+  - always provide `expanded` and `treeExpanded` props.
+* Optimize 
+  - optimize col.type === 'expand' || col.type === 'tree-node' template DOM level.
 
 ## 0.8.10
 * Feature
