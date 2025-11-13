@@ -886,31 +886,7 @@ watch(
 
 watch(
     () => props.dataSource,
-    val => {
-        if (!Array.isArray(val)) {
-            console.warn('invalid dataSource');
-            return;
-        }
-
-        let needInitVirtualScrollY = false;
-        if (dataSourceCopy.value.length !== val.length) {
-            needInitVirtualScrollY = true;
-        }
-        initDataSource(val);
-        updateMaxRowSpan();
-        // if data length is not change, not init virtual scroll
-        if (needInitVirtualScrollY) {
-            // wait for table render,initVirtualScrollY has get `dom` operation.
-            nextTick(() => initVirtualScrollY());
-        }
-        const sortColValue = sortCol.value;
-        if (!isEmptyValue(sortColValue) && !props.sortRemote) {
-            // sort
-            const colKey = colKeyGen.value;
-            const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
-            onColumnSort(column, false);
-        }
-    },
+    val => updateDataSource(val),
 );
 
 watch(
@@ -1039,6 +1015,33 @@ function dealColumns() {
     tableHeadersForCalc.value = tableHeadersForCalcTemp;
 }
 
+function updateDataSource(val:DT[]) {
+    if (!Array.isArray(val)) {
+        console.warn('invalid dataSource');
+        return;
+    }
+
+    let needInitVirtualScrollY = false;
+    if (dataSourceCopy.value.length !== val.length) {
+        needInitVirtualScrollY = true;
+    }
+    initDataSource(val);
+    updateMaxRowSpan();
+    // if data length is not change, not init virtual scroll
+    if (needInitVirtualScrollY) {
+        // wait for table render,initVirtualScrollY has get `dom` operation.
+        nextTick(() => initVirtualScrollY());
+    }
+    const sortColValue = sortCol.value;
+    if (!isEmptyValue(sortColValue) && !props.sortRemote) {
+        // sort
+        const colKey = colKeyGen.value;
+        const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
+        onColumnSort(column, false);
+    }
+}
+
+
 /**
  * 行唯一值生成
  */
@@ -1050,7 +1053,7 @@ function rowKeyGen(row: DT | null | undefined) {
 
         if (key === void 0) {
             // key为undefined时，不应该高亮行。因此重新生成key
-            key = Math.random().toString();
+            key = Math.random().toString(36).slice(2);
         }
         rowKeyGenCache.set(row, key);
     }

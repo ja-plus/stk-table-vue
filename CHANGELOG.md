@@ -1,3 +1,7 @@
+## 0.8.12
+* Change
+  - `props.rowKeyGen` default value change to `Math.random().toString(36).slice(2)`.
+
 ## 0.8.11
 * Change
  - customCell 
