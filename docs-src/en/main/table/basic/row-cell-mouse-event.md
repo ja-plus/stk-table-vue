@@ -3,6 +3,7 @@
 ## demo
 <demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
+## Disabling Row Selection
 You can use `rowActive.disabled` to disable the selection function for specific rows.
 ::: warning Note
 `rowActive.disabled`: The row cannot be selected by clicking. However, this row can still be selected through the `setCurrentRow` method.
@@ -16,7 +17,7 @@ You can select the current cell by calling the component method [expose setSelec
 
 
 ## API
-Related Props:
+### Related Props:
 | key | Type | Default | Description |
 | --- | --- | --- | --- |
 | rowHover | boolean | true | Whether to highlight hovered rows |

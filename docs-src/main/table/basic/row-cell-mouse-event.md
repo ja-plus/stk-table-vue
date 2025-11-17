@@ -3,6 +3,7 @@
 ## demo
 <demo vue="basic/row-cell-mouse-event/RowCellHoverSelect.vue"></demo>
 
+## 禁用行选中
 使用 `rowActive.disabled` 可以禁用特定行的选中功能。
 ::: warning 注意
 `rowActive.disabled` : 行将不能被点击选中。但通过 `setCurrentRow` 方法依然可选中该行。
@@ -16,7 +17,7 @@
 
 
 ## API
-相关 Props:
+### 相关 Props:
 | key | 类型 | 默认值 | 描述 |
 | --- | --- | --- | --- |
 | rowHover | boolean | true | 是否高亮鼠标悬浮的行 |
