@@ -1,8 +1,5 @@
 // Filter组件相关类型定义
 
-import type { Ref } from 'vue';
-import type { StkTableColumn } from '../../types/index';
-
 // 筛选选项接口
 export interface FilterOption {
     label: string;
