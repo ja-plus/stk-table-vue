@@ -1,13 +1,13 @@
 import { Ref, ShallowRef } from 'vue';
-import { PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { PrivateRowDT, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
     trRef: Ref<HTMLTableRowElement[] | undefined>;
-    dataSourceCopy: ShallowRef<DT[]>;
-    tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
-    tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
+    dataSourceCopy: ShallowRef<PrivateRowDT[]>;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>;
+    tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>;
     rowKeyGen: RowKeyGen;
     maxRowSpan: Map<UniqKey, number>;
 };
@@ -86,10 +86,10 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         scrollLeft: number;
     }>;
     virtual_on: import('vue').ComputedRef<any>;
-    virtual_dataSourcePart: import('vue').ComputedRef<DT[]>;
+    virtual_dataSourcePart: import('vue').ComputedRef<PrivateRowDT[]>;
     virtual_offsetBottom: import('vue').ComputedRef<number>;
     virtualX_on: import('vue').ComputedRef<any>;
-    virtualX_columnPart: import('vue').ComputedRef<PrivateStkTableColumn<DT>[]>;
+    virtualX_columnPart: import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[]>;
     virtualX_offsetRight: import('vue').ComputedRef<number>;
     tableHeaderHeight: import('vue').ComputedRef<number>;
     initVirtualScroll: (height?: number) => void;

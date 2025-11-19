@@ -144,7 +144,7 @@ export type PrivateRowDT = {
      * if row expanded
      * @private
      */
-    __EXP__?: StkTableColumn<any> | null;
+    __EXP__?: StkTableColumn<any>;
     /**
      * if tree node row expanded
      * @private
@@ -160,6 +160,11 @@ export type PrivateRowDT = {
      * @private
      */
     __T_LV__?: number;
+    /** expanded row */
+    __EXP_R__?: any;
+    /** expanded col */
+    __EXP_C__?: StkTableColumn<any>;
+    children?: any[];
 };
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 export type SortState<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'dataIndex' | 'sortField' | 'sortType'> & {
@@ -226,10 +231,6 @@ export type SeqConfig = {
 export type ExpandConfig = {
     /** worked in virtual mode */
     height?: number;
-};
-export type ExpandedRow = PrivateRowDT & {
-    __EXPANDED_ROW__: any;
-    __EXPANDED_COL__: any;
 };
 /** drag row config */
 export type DragRowConfig = {

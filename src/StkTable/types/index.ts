@@ -165,6 +165,11 @@ export type PrivateRowDT = {
      * @private
      */
     __T_LV__?: number;
+      /** expanded row */
+    __EXP_R__?: any;
+    /** expanded col */
+    __EXP_C__?: StkTableColumn<any>;
+    children?: any[]
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
@@ -241,12 +246,6 @@ export type ExpandConfig = {
     height?: number;
 };
 
-export type ExpandedRow = PrivateRowDT & {
-    /** expanded row */
-    __EXP_R__: any;
-    /** expanded col */
-    __EXP_C__: any;
-};
 
 /** drag row config */
 export type DragRowConfig = {

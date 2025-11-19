@@ -1,15 +1,15 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
-import { AutoRowHeightConfig, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
+import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
     tableContainerRef: Ref<HTMLElement | undefined>;
     trRef: Ref<HTMLTableRowElement[] | undefined>;
-    dataSourceCopy: ShallowRef<DT[]>;
-    tableHeaderLast: ShallowRef<PrivateStkTableColumn<DT>[]>;
-    tableHeaders: ShallowRef<PrivateStkTableColumn<DT>[][]>;
+    dataSourceCopy: ShallowRef<PrivateRowDT[]>;
+    tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>;
+    tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>;
     rowKeyGen: RowKeyGen;
     maxRowSpan: Map<UniqKey, number>;
 };
@@ -135,8 +135,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
             // 虚拟横向滚动，固定列要一直保持存在
-            const leftCols: PrivateStkTableColumn<DT>[] = [];
-            const rightCols: PrivateStkTableColumn<DT>[] = [];
+            const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
+            const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
             /**
              * 存在问题：
              * table columns 从多到少时。比方原来的start=5,end=10，现在start=4,end=8。这时候endIndex就超出数组范围了。
@@ -176,15 +176,15 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     });
 
     const getRowHeightFn = computed(() => {
-        let rowHeightFn: (row?: DT) => number = () => props.rowHeight || DEFAULT_ROW_HEIGHT;
+        let rowHeightFn: (row?: PrivateRowDT) => number = () => props.rowHeight || DEFAULT_ROW_HEIGHT;
         if (props.autoRowHeight) {
             const tempRowHeightFn = rowHeightFn;
-            rowHeightFn = (row?: DT) => getAutoRowHeight(row) || tempRowHeightFn(row);
+            rowHeightFn = (row?: PrivateRowDT) => getAutoRowHeight(row) || tempRowHeightFn(row);
         }
         if (hasExpandCol.value) {
             const expandedRowHeight = props.expandConfig?.height;
             const tempRowHeightFn = rowHeightFn;
-            rowHeightFn = (row?: DT) => (row && row.__EXP_R__ && expandedRowHeight) || tempRowHeightFn(row);
+            rowHeightFn = (row?: PrivateRowDT) => (row && row.__EXP_R__ && expandedRowHeight) || tempRowHeightFn(row);
         }
         return rowHeightFn;
     });
@@ -252,14 +252,14 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         autoRowHeightMap.clear();
     }
 
-    function getAutoRowHeight(row?: DT) {
+    function getAutoRowHeight(row?: PrivateRowDT) {
         if (!row) return;
         const rowKey = rowKeyGen(row);
         const storedHeight = autoRowHeightMap.get(String(rowKey));
         if (storedHeight) {
             return storedHeight;
         }
-        const expectedHeight: AutoRowHeightConfig<DT>['expectedHeight'] = props.autoRowHeight?.expectedHeight;
+        const expectedHeight: AutoRowHeightConfig<PrivateRowDT>['expectedHeight'] = props.autoRowHeight?.expectedHeight;
         if (expectedHeight) {
             if (typeof expectedHeight === 'function') {
                 return expectedHeight(row);

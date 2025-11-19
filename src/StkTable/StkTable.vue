@@ -132,7 +132,7 @@
                     <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
                         <div class="table-cell-wrapper">
                             <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                {{ row.__EXP_R__?.[row.__EXP_C__.dataIndex] ?? '' }}
+                                {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
                             </slot>
                         </div>
                     </td>
@@ -280,7 +280,7 @@ import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/co
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
-type DT = any & PrivateRowDT;
+type DT = Record<string | number, any> & PrivateRowDT;
 
 /** generate table instance id */
 const stkTableId = createStkTableId();
@@ -667,7 +667,7 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
  * ]
  * ```
  */
-const tableHeaders = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
+const tableHeaders = shallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>([]);
 
 /**
  * 用于计算多级表头的tableHeaders。模拟rowSpan 位置的辅助数组。用于计算固定列。
@@ -687,7 +687,7 @@ const tableHeaders = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
  * ]
  * ```
  */
-const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<DT>[][]>([]);
+const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>([]);
 
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
@@ -923,14 +923,14 @@ function dealDefaultSorter() {
  */
 function dealColumns() {
     // reset
-    const tableHeadersTemp: StkTableColumn<DT>[][] = [];
-    const tableHeadersForCalcTemp: StkTableColumn<DT>[][] = [];
-    let copyColumn = props.columns; // do not deep clone
+    const tableHeadersTemp: StkTableColumn<PrivateRowDT>[][] = [];
+    const tableHeadersForCalcTemp: StkTableColumn<PrivateRowDT>[][] = [];
+    let copyColumn: StkTableColumn<PrivateRowDT>[] = props.columns; // do not deep clone
     // relative 模式下不支持sticky列。因此就放在左右两侧。
     if (isRelativeMode.value) {
-        let leftCol: StkTableColumn<DT>[] = [];
-        let centerCol: StkTableColumn<DT>[] = [];
-        let rightCol: StkTableColumn<DT>[] = [];
+        let leftCol: StkTableColumn<PrivateRowDT>[] = [];
+        let centerCol: StkTableColumn<PrivateRowDT>[] = [];
+        let rightCol: StkTableColumn<PrivateRowDT>[] = [];
         copyColumn.forEach(col => {
             if (col.fixed === 'left') {
                 leftCol.push(col);
@@ -961,8 +961,8 @@ function dealColumns() {
      * @param parentFixed 父节点固定列继承。
      */
     function flat(
-        arr: PrivateStkTableColumn<DT>[],
-        parent: PrivateStkTableColumn<DT> | null,
+        arr: PrivateStkTableColumn<PrivateRowDT>[],
+        parent: PrivateStkTableColumn<PrivateRowDT> | null,
         depth = 0 /* , parentFixed: 'left' | 'right' | null = null */,
     ) {
         /** 所有子节点数量 */
@@ -1134,7 +1134,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     sortOrderIndex.value = sortOrderIndex.value % 3;
 
     let order = sortSwitchOrder[sortOrderIndex.value];
-    const sortConfig: SortConfig<any> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
+    const sortConfig: SortConfig<DT> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
     const { defaultSort } = sortConfig;
     const colKeyGenValue = colKeyGen.value;
 
@@ -1161,7 +1161,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
             }
         }
     }
-    let dataSourceTemp: any[] = props.dataSource.slice();
+    let dataSourceTemp: DT[] = props.dataSource.slice();
     if (!props.sortRemote || options.force) {
         const sortOption = col || defaultSort;
         if (sortOption) {

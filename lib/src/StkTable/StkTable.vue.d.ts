@@ -1,7 +1,9 @@
 import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 
 /** Generic stands for DataType */
-type DT = any & PrivateRowDT;
+type DT = Record<string | number, any> & {
+    children?: DT[];
+} & PrivateRowDT;
 /**
  * 选中一行
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
@@ -36,7 +38,7 @@ declare function setSorter(colKey: string, order: Order, option?: {
     force?: boolean;
     silent?: boolean;
     sort?: boolean;
-}): any[];
+}): DT[];
 declare function resetSorter(): void;
 /**
  * set scroll bar position
@@ -45,22 +47,22 @@ declare function resetSorter(): void;
  */
 declare function scrollTo(top?: number | null, left?: number | null): void;
 /** get current table data */
-declare function getTableData(): any[];
+declare function getTableData(): DT[];
 /**
  * get current sort info
  * @return {{key:string,order:Order}[]}
  */
 declare function getSortColumns(): {
-    key: string | number | symbol | undefined;
+    key: string | number | undefined;
     order: "desc" | "asc";
 }[];
 declare function __VLS_template(): {
     tableHeader?(_: {
-        col: PrivateStkTableColumn<any>;
+        col: PrivateStkTableColumn<PrivateRowDT>;
     }): any;
     expand?(_: {
         row: any;
-        col: any;
+        col: StkTableColumn<any> | undefined;
     }): any;
     empty?(_: {}): any;
     customBottom?(_: {}): any;
@@ -310,7 +312,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      *
      * en: Table sort column colKey
      */
-    sortCol: import('vue').Ref<string | number | symbol | undefined, string | number | symbol | undefined>;
+    sortCol: import('vue').Ref<string | number | undefined, string | number | undefined>;
     /**
      * 表格排序列顺序
      *
@@ -384,11 +386,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         expand?: boolean;
     }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
-    "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
-    "row-click": (ev: MouseEvent, row: any, data: {
+    "sort-change": (col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>) => void;
+    "row-click": (ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => void;
-    "current-change": (ev: MouseEvent | null, row: any, data: {
+    "current-change": (ev: MouseEvent | null, row: DT | undefined, data: {
         select: boolean;
     }) => void;
     "cell-selected": (ev: MouseEvent | null, data: {
@@ -396,23 +398,23 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT | undefined;
         col: StkTableColumn<DT> | undefined;
     }) => void;
-    "row-dblclick": (ev: MouseEvent, row: any, data: {
+    "row-dblclick": (ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => void;
     "header-row-menu": (ev: MouseEvent) => void;
-    "row-menu": (ev: MouseEvent, row: any, data: {
+    "row-menu": (ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => void;
-    "cell-click": (ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+    "cell-click": (ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: {
         rowIndex: number;
     }) => void;
-    "cell-mouseenter": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mouseleave": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mouseover": (ev: MouseEvent, row: any, col: StkTableColumn<any>) => void;
-    "cell-mousedown": (ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+    "cell-mouseenter": (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+    "cell-mouseleave": (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+    "cell-mouseover": (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+    "cell-mousedown": (ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: {
         rowIndex: number;
     }) => void;
-    "header-cell-click": (ev: MouseEvent, col: StkTableColumn<any>) => void;
+    "header-cell-click": (ev: MouseEvent, col: StkTableColumn<DT>) => void;
     scroll: (ev: Event, data: {
         startIndex: number;
         endIndex: number;
@@ -422,7 +424,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     "th-drag-start": (dragStartKey: string) => void;
     "th-drop": (targetColKey: string) => void;
     "row-order-change": (dragStartKey: string, targetRowKey: string) => void;
-    "col-resize": (col: StkTableColumn<any>) => void;
+    "col-resize": (col: StkTableColumn<DT>) => void;
     "toggle-row-expand": (data: {
         expanded: boolean;
         row: DT;
@@ -433,7 +435,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT;
         col: StkTableColumn<DT> | null;
     }) => void;
-    "update:columns": (cols: StkTableColumn<any>[]) => void;
+    "update:columns": (cols: StkTableColumn<DT>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string;
     /** 最小表格宽度 */
@@ -629,8 +631,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         startIndex: number;
         endIndex: number;
     }) => any) | undefined;
-    "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
-    "onCol-resize"?: ((col: StkTableColumn<any>) => any) | undefined;
+    "onUpdate:columns"?: ((cols: StkTableColumn<DT>[]) => any) | undefined;
+    "onCol-resize"?: ((col: StkTableColumn<DT>) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
         expanded: boolean;
         row: DT;
@@ -645,11 +647,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT;
         col: StkTableColumn<DT> | null;
     }) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
-    "onRow-click"?: ((ev: MouseEvent, row: any, data: {
+    "onSort-change"?: ((col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>) => any) | undefined;
+    "onRow-click"?: ((ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => any) | undefined;
-    "onCurrent-change"?: ((ev: MouseEvent | null, row: any, data: {
+    "onCurrent-change"?: ((ev: MouseEvent | null, row: DT | undefined, data: {
         select: boolean;
     }) => any) | undefined;
     "onCell-selected"?: ((ev: MouseEvent | null, data: {
@@ -657,23 +659,23 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT | undefined;
         col: StkTableColumn<DT> | undefined;
     }) => any) | undefined;
-    "onRow-dblclick"?: ((ev: MouseEvent, row: any, data: {
+    "onRow-dblclick"?: ((ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => any) | undefined;
     "onHeader-row-menu"?: ((ev: MouseEvent) => any) | undefined;
-    "onRow-menu"?: ((ev: MouseEvent, row: any, data: {
+    "onRow-menu"?: ((ev: MouseEvent, row: DT, data: {
         rowIndex: number;
     }) => any) | undefined;
-    "onCell-click"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+    "onCell-click"?: ((ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: {
         rowIndex: number;
     }) => any) | undefined;
-    "onCell-mouseenter"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mouseleave"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mouseover"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>) => any) | undefined;
-    "onCell-mousedown"?: ((ev: MouseEvent, row: any, col: StkTableColumn<any>, data: {
+    "onCell-mouseenter"?: ((ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => any) | undefined;
+    "onCell-mouseleave"?: ((ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => any) | undefined;
+    "onCell-mouseover"?: ((ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => any) | undefined;
+    "onCell-mousedown"?: ((ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: {
         rowIndex: number;
     }) => any) | undefined;
-    "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
+    "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<DT>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
 }>, {
     width: string;
