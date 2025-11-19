@@ -280,7 +280,7 @@ import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/co
 import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
-type DT = Record<string | number, any> & PrivateRowDT;
+type DT = any & PrivateRowDT;
 
 /** generate table instance id */
 const stkTableId = createStkTableId();
@@ -356,7 +356,7 @@ const props = withDefaults(
         /** 单元格再次点击否可以取消选中 (cellActive=true)*/
         selectedCellRevokable?: boolean;
         /** 表头是否可拖动。支持回调函数。 */
-        headerDrag?: boolean | HeaderDragConfig;
+        headerDrag?: boolean | HeaderDragConfig<DT>;
         /**
          * 给行附加className<br>
          * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
@@ -434,7 +434,7 @@ const props = withDefaults(
         headless: false,
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
-        autoRowHeight: false,
+        autoRowHeight: () => false,
         rowHover: true,
         rowActive: () => DEFAULT_ROW_ACTIVE_CONFIG,
         rowCurrentRevokable: true,
@@ -455,9 +455,9 @@ const props = withDefaults(
         cellHover: false,
         cellActive: false,
         selectedCellRevokable: true,
-        headerDrag: false,
+        headerDrag: () => false,
         rowClassName: () => '',
-        colResizable: false,
+        colResizable: () => false,
         colMinWidth: 10,
         bordered: true,
         autoResize: true,
