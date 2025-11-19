@@ -72,7 +72,7 @@ export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         }
 
         if (row) {
-            row.__EXP__ = expand ? col : null;
+            row[expandedKey] = expand ? col : null;
         }
 
         dataSourceCopy.value = tempData;
