@@ -184,7 +184,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         if (hasExpandCol.value) {
             const expandedRowHeight = props.expandConfig?.height;
             const tempRowHeightFn = rowHeightFn;
-            rowHeightFn = (row?: DT) => (row && row.__EXPANDED_ROW__ && expandedRowHeight) || tempRowHeightFn(row);
+            rowHeightFn = (row?: DT) => (row && row.__EXP_R__ && expandedRowHeight) || tempRowHeightFn(row);
         }
         return rowHeightFn;
     });

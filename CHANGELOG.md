@@ -1,4 +1,8 @@
 
+## 0.8.12
+* Bugfix
+  - fix: customCell -> `CustomCellProps['expanded']` always return undefined
+
 ## 0.8.11
 * Change
  - customCell 

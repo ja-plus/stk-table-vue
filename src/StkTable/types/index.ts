@@ -149,7 +149,7 @@ export type PrivateRowDT = {
      * if row expanded
      * @private
      */
-    __EXP__?: StkTableColumn<any> | null;
+    __EXP__?: StkTableColumn<any>;
     /**
      * if tree node row expanded
      * @private
@@ -242,8 +242,10 @@ export type ExpandConfig = {
 };
 
 export type ExpandedRow = PrivateRowDT & {
-    __EXPANDED_ROW__: any;
-    __EXPANDED_COL__: any;
+    /** expanded row */
+    __EXP_R__: any;
+    /** expanded col */
+    __EXP_C__: any;
 };
 
 /** drag row config */

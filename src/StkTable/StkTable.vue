@@ -115,12 +115,11 @@
                         active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
                         hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
                         [rowClassName(row, getRowIndex(rowIndex)) || '']: true,
-                        expanded: row?.__EXP__,
-                        'expanded-row': row && row.__EXPANDED_ROW__,
+                        expanded: row && row.__EXP__,
+                        'expanded-row': row && row.__EXP_R__,
                     }"
                     :style="{
-                        '--row-height':
-                            row && row.__EXPANDED_ROW__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
+                        '--row-height': row && row.__EXP_R__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
                     }"
                     @click="onRowClick($event, row, getRowIndex(rowIndex))"
                     @dblclick="onRowDblclick($event, row, getRowIndex(rowIndex))"
@@ -130,10 +129,10 @@
                     @drop="onTrDrop($event, getRowIndex(rowIndex))"
                 >
                     <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td v-if="row && row.__EXPANDED_ROW__" :colspan="virtualX_columnPart.length">
+                    <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
                         <div class="table-cell-wrapper">
-                            <slot name="expand" :row="row.__EXPANDED_ROW__" :col="row.__EXPANDED_COL__">
-                                {{ row.__EXPANDED_ROW__?.[row.__EXPANDED_COL__.dataIndex] ?? '' }}
+                            <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
+                                {{ row.__EXP_R__?.[row.__EXP_C__.dataIndex] ?? '' }}
                             </slot>
                         </div>
                     </td>
@@ -173,8 +172,8 @@
                                     :rowIndex="getRowIndex(rowIndex)"
                                     :colIndex="colIndex"
                                     :cellValue="row && row[col.dataIndex]"
-                                    :expanded="row ? row.__EXP_ : null"
-                                    :tree-expanded="row ? row.__T_EXP__ : null"
+                                    :expanded="row && row.__EXP__"
+                                    :tree-expanded="row && row.__T_EXP__"
                                 >
                                     <template #stkFoldIcon>
                                         <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
@@ -1015,7 +1014,7 @@ function dealColumns() {
     tableHeadersForCalc.value = tableHeadersForCalcTemp;
 }
 
-function updateDataSource(val:DT[]) {
+function updateDataSource(val: DT[]) {
     if (!Array.isArray(val)) {
         console.warn('invalid dataSource');
         return;
@@ -1040,7 +1039,6 @@ function updateDataSource(val:DT[]) {
         onColumnSort(column, false);
     }
 }
-
 
 /**
  * 行唯一值生成

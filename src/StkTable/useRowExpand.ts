@@ -11,7 +11,7 @@ type Option<DT extends Record<string, any>> = {
 export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
     const expandedKey = '__EXP__';
 
-    function isExpanded(row: DT, col?: StkTableColumn<DT> | null) {
+    function isExpanded(row: DT, col?: StkTableColumn<DT>) {
         return row?.[expandedKey] === col ? !row?.[expandedKey] : true;
     }
     /** click expended icon to toggle expand row */
@@ -55,7 +55,7 @@ export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
         }
 
         const row = tempData[index];
-        const col = data?.col || null;
+        const col = data?.col;
 
         if (expand == null) {
             expand = isExpanded(row, col);
@@ -65,14 +65,14 @@ export function useRowExpand({ dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
             // insert new expanded row
             const newExpandRow: ExpandedRow = {
                 __ROW_K__: EXPANDED_ROW_KEY_PREFIX + rowKey,
-                __EXPANDED_ROW__: row,
-                __EXPANDED_COL__: col,
+                __EXP_R__: row,
+                __EXP_C__: col,
             };
             tempData.splice(index + 1, 0, newExpandRow);
         }
 
         if (row) {
-            row[expandedKey] = expand ? col : null;
+            row[expandedKey] = expand ? col : void 0;
         }
 
         dataSourceCopy.value = tempData;
