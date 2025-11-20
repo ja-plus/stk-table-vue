@@ -3,7 +3,8 @@
 * Bugfix
   - fix: customCell -> `CustomCellProps['expanded']` always return undefined
   - fix: type CustomCellProps['expanded'] and CustomCellProps['treeExpanded'] to be optional.
-  - fix:  If set props['headerDrag'] an object, it will cause warning, which is validated by vue. Same as `autoRowHeight` , `rowActive`, `colResizable`.
+  - fix: If set props['headerDrag'] an object, it will cause warning, which is validated by vue. Same as `autoRowHeight` , `rowActive`, `colResizable`.
+  - fix: `props.treeConfig.defaultExpandAll` will take effect only in first load. Because when sorting table will trigger effect.
 
 ## 0.8.11
 * Change

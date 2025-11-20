@@ -11,7 +11,8 @@ type Option<DT extends Record<string, any>> = {
 
 export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>) {
     const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = props.treeConfig;
-
+    /** It used to check if it is first load. To execute defaultExpandXXX */
+    let isFirstLoad = true;
     /** click expended icon to toggle expand row */
     function toggleTreeNode(row: DT, col: any) {
         const expand = row ? !row.__T_EXP__ : false;
@@ -82,38 +83,44 @@ export function useTree({ props, dataSourceCopy, rowKeyGen, emits }: Option<DT>)
         // }
     }
 
+    function recursionFlat(data: DT[] | undefined, level: number, parent?: DT): DT[] {
+        if (!data) return [];
+        let result: DT[] = []
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
+            result.push(item);
+            const isExpanded = Boolean(item.__T_EXP__);
+            setNodeExpanded(item, isExpanded, level, parent);
+            if (isFirstLoad && !isExpanded) {
+                // first load will expand all node if defaultExpandAll is true
+                if (defaultExpandAll) {
+                    setNodeExpanded(item, true);
+                } else {
+                    if (defaultExpandLevel && level < defaultExpandLevel) {
+                        setNodeExpanded(item, true);
+                    }
+                    if (defaultExpandKeys?.includes(rowKeyGen(item))) {
+                        setNodeExpanded(item, true);
+                    }
+                }
+            }
+            if (item.__T_EXP__) {
+                const res = recursionFlat(item.children, level + 1, item);
+                result = result.concat(res);
+            }
+        }
+        return result;
+    };
+
     /**
      * 根据保存的展开状态，深度遍历，展平树形数据。
+     * en: flatten tree data by saved expand state.
      * @param data
      * @returns
      */
     function flatTreeData(data: DT[]) {
-        const result: DT[] = [];
-        (function recursion(data: DT[] | undefined, level: number, parent?: DT) {
-            if (!data) return;
-            for (let i = 0; i < data.length; i++) {
-                const item = data[i];
-                result.push(item);
-                const isExpanded = Boolean(item.__T_EXP__);
-                setNodeExpanded(item, isExpanded, level, parent);
-                if (!isExpanded) {
-                    if (defaultExpandAll) {
-                        setNodeExpanded(item, true);
-                    } else {
-                        if (defaultExpandLevel && level < defaultExpandLevel) {
-                            setNodeExpanded(item, true);
-                        }
-                        if (defaultExpandKeys?.includes(rowKeyGen(item))) {
-                            setNodeExpanded(item, true);
-                        }
-                        if (!item.__T_EXP__) {
-                            continue;
-                        }
-                    }
-                }
-                recursion(item.children, level + 1, item);
-            }
-        })(data, 0);
+        const result = recursionFlat(data, 0);
+        isFirstLoad = false;
         return result;
     }
 
