@@ -1,5 +1,7 @@
 
 ## 0.8.12
+* Feature
+  - Add `bordered` prop `body-h`.
 * Bugfix
   - fix: customCell -> `CustomCellProps['expanded']` always return undefined
   - fix: type CustomCellProps['expanded'] and CustomCellProps['treeExpanded'] to be optional.

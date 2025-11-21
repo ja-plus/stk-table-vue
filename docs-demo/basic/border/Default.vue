@@ -27,20 +27,24 @@ const dataSource = ref(
         <StkTable bordered :columns="columns" :data-source="dataSource"></StkTable>
     </article>
     <article>
-        <header>bordered=false - 没有分割线</header>
+        <header>bordered=false</header>
         <StkTable :bordered="false" :columns="columns" :data-source="dataSource"></StkTable>
     </article>
     <article>
-        <header>bordered="h"- 仅横线</header>
+        <header>bordered="h"</header>
         <StkTable bordered="h" :columns="columns" :data-source="dataSource"></StkTable>
     </article>
     <article>
-        <header>bordered="v" - 仅竖线</header>
+        <header>bordered="v"</header>
         <StkTable bordered="v" :columns="columns" :data-source="dataSource"></StkTable>
     </article>
     <article>
-        <header>bordered="body-v" - 表头横竖线，表体仅竖线</header>
+        <header>bordered="body-v"</header>
         <StkTable bordered="body-v" :columns="columns" :data-source="dataSource"></StkTable>
+    </article>
+    <article>
+        <header>bordered="body-h"</header>
+        <StkTable bordered="body-h" :columns="columns" :data-source="dataSource"></StkTable>
     </article>
 </template>
 
