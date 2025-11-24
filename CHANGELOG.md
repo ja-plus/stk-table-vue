@@ -1,4 +1,8 @@
 
+## 0.8.13
+* Bugfix
+   - fix: `props.bordered` type define. Add `body-h`.
+
 ## 0.8.12
 * Feature
   - Add `bordered` prop `body-h`.
