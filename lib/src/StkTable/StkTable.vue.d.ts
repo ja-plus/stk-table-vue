@@ -157,7 +157,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * "v" - 仅展示竖线
      * "body-v" - 仅表体展示竖线
      */
-    bordered?: boolean | "h" | "v" | "body-v";
+    bordered?: boolean | "h" | "v" | "body-v" | "body-h";
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
@@ -526,7 +526,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * "v" - 仅展示竖线
      * "body-v" - 仅表体展示竖线
      */
-    bordered?: boolean | "h" | "v" | "body-v";
+    bordered?: boolean | "h" | "v" | "body-v" | "body-h";
     /**
      * 自动重新计算虚拟滚动高度宽度。默认true
      * [非响应式]
@@ -714,7 +714,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowClassName: (row: DT, i: number) => string | undefined;
     colResizable: boolean | ColResizableConfig<DT>;
     colMinWidth: number;
-    bordered: boolean | "h" | "v" | "body-v";
+    bordered: boolean | "h" | "v" | "body-v" | "body-h";
     autoResize: boolean | (() => void);
     fixedColShadow: boolean;
     hideHeaderTitle: boolean | string[];
