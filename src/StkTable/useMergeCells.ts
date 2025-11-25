@@ -35,20 +35,25 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
     /**
      * abstract the logic of hiding cells
      */
-    function hideCells(rowKey: UniqKey, startIndex: number, count: number, isSelfRow = false, mergeCellKey: string) {
-        for (let i = startIndex; i < startIndex + count; i++) {
-            if (!isSelfRow || i !== startIndex) {
-                // self row does not need to be hidden
-                const nextCol = tableHeaderLast.value[i];
-                if (!nextCol) break;
-                const nextColKey = colKeyGen.value(nextCol);
-                if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
-                hiddenCellMap.value[rowKey].add(nextColKey);
-            }
+    function hideCells(rowKey: UniqKey, colKey: UniqKey, colspan: number, isSelfRow = false, mergeCellKey: string) {
+        const startIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
 
-            // if other row hovered, the rowspan cell need to be highlight
-            if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
-            hoverRowMap.value[rowKey].add(mergeCellKey);
+        for (let i = startIndex; i < startIndex + colspan; i++) {
+            if(!isSelfRow) {
+                // if other row hovered, the rowspan cell need to be highlight
+                if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
+                hoverRowMap.value[rowKey].add(mergeCellKey);
+            }
+            if (isSelfRow && i === startIndex) {
+                // self row start cell does not need to be hidden
+                continue;
+            }
+            const nextCol = tableHeaderLast.value[i];
+            if (!nextCol) break;
+            const nextColKey = colKeyGen.value(nextCol);
+            if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
+            hiddenCellMap.value[rowKey].add(nextColKey);
+
         }
     }
 
@@ -78,25 +83,24 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
 
         const rowKey = rowKeyGen(row);
 
-        const colKey = colKeyGen.value(col);
-        const curColIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
         const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
-        const mergedCellKey = pureCellKeyGen(rowKey, colKey);
-
         if (curRowIndex === -1) return;
+
+        const colKey = colKeyGen.value(col);
+        const mergedCellKey = pureCellKeyGen(rowKey, colKey);
 
         for (let i = curRowIndex; i < curRowIndex + rowspan; i++) {
             const row = virtual_dataSourcePart.value[i];
             if (!row) break;
-            hideCells(rowKeyGen(row), curColIndex, colspan, i === curRowIndex, mergedCellKey);
+            hideCells(rowKeyGen(row), colKey, colspan, i === curRowIndex, mergedCellKey);
         }
 
         return { colspan, rowspan };
     }
 
+    const emptySet = new Set<string>();
     function updateHoverMergedCells(rowKey: UniqKey | undefined) {
-        const set = rowKey === void 0 ? null : hoverRowMap.value[rowKey];
-        hoverMergedCells.value = set || new Set();
+        hoverMergedCells.value = rowKey === void 0 ? emptySet : hoverRowMap.value[rowKey] || emptySet;
     }
 
     function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
