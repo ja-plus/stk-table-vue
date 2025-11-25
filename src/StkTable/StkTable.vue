@@ -139,22 +139,10 @@
                             <td
                                 v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
-                                :data-cell-key="cellKeyGen(row, col)"
-                                :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                                :class="[
-                                    col.className,
-                                    fixedColClassMap.get(colKeyGen(col)),
-                                    {
-                                        'cell-hover': col.mergeCells && hoverMergedCells.has(cellKeyGen(row, col)),
-                                        'cell-active': col.mergeCells && activeMergedCells.has(cellKeyGen(row, col)),
-                                        'seq-column': col.type === 'seq',
-                                        active: props.cellActive && currentSelectedCellKey === cellKeyGen(row, col),
-                                        expanded: col.type === 'expand' && (row.__EXP__ ? colKeyGen(row.__EXP__) === colKeyGen(col) : false),
-                                        'tree-expanded': col.type === 'tree-node' && row.__T_EXP__,
-                                        'drag-row-cell': col.type === 'dragRow',
-                                    },
-                                ]"
-                                v-bind="mergeCellsWrapper(row, col, rowIndex, colIndex)"
+                                v-bind="{
+                                    ...getTDProps(row, col),
+                                    ...mergeCellsWrapper(row, col, rowIndex, colIndex),
+                                }"
                                 @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
                                 @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
                                 @mouseenter="onCellMouseEnter($event, row, col)"
@@ -1103,6 +1091,47 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
         return '';
     }
     return col.title || '';
+}
+
+function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>) {
+    const colKey = colKeyGen.value(col);
+    if (!row) {
+        return {
+            style: cellStyleMap.value[TagType.TD].get(colKey),
+        };
+    }
+
+    const cellKey = cellKeyGen(row, col);
+
+    const classList = [col.className, fixedColClassMap.value.get(colKeyGen.value(col))];
+    if (col.mergeCells) {
+        if (hoverMergedCells.value.has(cellKey)) {
+            classList.push('cell-hover');
+        }
+        if (activeMergedCells.value.has(cellKey)) {
+            classList.push('cell-active');
+        }
+    }
+
+    if (props.cellActive && currentSelectedCellKey.value === cellKey) {
+        classList.push('active');
+    }
+
+    if (col.type === 'seq') {
+        classList.push('seq-column');
+    } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKeyGen.value(col) : false)) {
+        classList.push('expanded');
+    } else if (col.type === 'tree-node' && row.__T_EXP__) {
+        classList.push('tree-expanded');
+    } else if (col.type === 'dragRow') {
+        classList.push('drag-row-cell');
+    }
+
+    return {
+        'data-cell-key': cellKey,
+        style: cellStyleMap.value[TagType.TD].get(colKey),
+        class: classList,
+    };
 }
 
 /**
