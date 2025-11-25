@@ -44,7 +44,7 @@ export const DEFAULT_SORT_CONFIG = {
 } satisfies SortConfig<any>;
 
 export const DEFAULT_ROW_ACTIVE_CONFIG: Required<RowActiveOption<any>> = {
-    enabled: false,
+    enabled: true,
     disabled: () => false,
-    revokable: false,
+    revokable: true,
 };

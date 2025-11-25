@@ -1,7 +1,10 @@
 
 ## 0.8.13
+* Optimize
+  - optimize: hover row performance when merged cells only has colspan.
 * Bugfix
    - fix: `props.bordered` type define. Add `body-h`.
+   - fix: `props.rowActive` default value change to `{ enabled: true, revokable: true }`.
 
 ## 0.8.12
 * Feature
