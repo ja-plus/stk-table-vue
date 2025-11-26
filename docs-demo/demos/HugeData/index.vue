@@ -187,6 +187,34 @@ function handleOptimizeScrollChange(v: boolean) {
 function handleScroll(e: Event, { startIndex, endIndex }: any) {
     console.log('scroll', startIndex, endIndex);
 }
+
+function handleRowSpan(v: boolean) {
+    const col = columns.value.find(col => col.dataIndex === 'code');
+    if (!col) return;
+    if (v) {
+        col.mergeCells = ({ rowIndex }) => {
+            return {
+                rowspan: rowIndex % 2 ? 1 : 2,
+            };
+        };
+    } else {
+        col.mergeCells = void 0;
+    }
+}
+
+function handleColSpan(v: boolean) {
+    const col = columns.value.find(col => col.dataIndex === 'bondAbbreviation');
+    if (!col) return;
+    if (v) {
+        col.mergeCells = ({ rowIndex }) => {
+            return {
+                colspan: rowIndex % 2 ? 1 : 2,
+            };
+        };
+    } else {
+        col.mergeCells = void 0;
+    }
+}
 </script>
 <template>
     <div class="row">
@@ -221,6 +249,8 @@ function handleScroll(e: Event, { startIndex, endIndex }: any) {
     <CheckItem v-model="rowByRow" text="整数行滚动" />
     <CheckItem v-model="translateZ" text="tr分层" />
     <CheckItem :mode-value="false" text="拖动白屏优化" @change="handleOptimizeScrollChange" />
+    <CheckItem :mode-value="false" text="rowspan Test" @change="handleRowSpan" />
+    <CheckItem :mode-value="false" text="colspan Test" @change="handleColSpan" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
