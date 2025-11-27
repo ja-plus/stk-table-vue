@@ -1,4 +1,8 @@
 
+## 0.8.14
+* Optimize 
+  - optimize: `scrollRowByRow=‘scrollbar’` performance.
+
 ## 0.8.13
 * Optimize
   - optimize: hover row performance when merged cells only has colspan.
