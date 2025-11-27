@@ -10,6 +10,7 @@
         "baseUrl": ".",
         "moduleResolution": "bundler",
         "jsxImportSource": "vue",
+        "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
         "lib": [
             "ESNext",

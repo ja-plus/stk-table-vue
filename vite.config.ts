@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'node:path';
 import dts from 'vite-plugin-dts';
+import pkg from './package.json';
+import banner from 'vite-plugin-banner'
+
 // https://vitejs.dev/config/
 export default defineConfig({
     build: {
@@ -36,6 +39,18 @@ export default defineConfig({
     },
     plugins: [
         vue(),
+        banner(
+            [
+                '/**',
+                ` * name: ${pkg.name}`,
+                ` * version: v${pkg.version}`,
+                ` * description: ${pkg.description}`,
+                ` * author: ${pkg.author}`,
+                ` * homepage: ${pkg.homepage}`,
+                ` * license: ${pkg.license}`,
+                ' */'
+            ].join('\n'),
+        ),
         ...(process.env.NODE_ENV === 'production' ? [dts()] : []),
         // (function (){
         //   return {

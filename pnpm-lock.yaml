@@ -74,6 +74,9 @@ importers:
       vite:
         specifier: ^7.2.2
         version: 7.2.2(@types/node@22.19.1)(less@4.2.2)
+      vite-plugin-banner:
+        specifier: ^0.8.1
+        version: 0.8.1
       vite-plugin-dts:
         specifier: 3.9.1
         version: 3.9.1(@types/node@22.19.1)(rollup@4.44.2)(typescript@5.8.3)(vite@7.2.2(@types/node@22.19.1)(less@4.2.2))
@@ -2811,6 +2814,9 @@ packages:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
+
+  vite-plugin-banner@0.8.1:
+    resolution: {integrity: sha512-0+gGguHk3MH0HvzMSOCJC6fGgH4+jtY9KlKVZh+hwwE+PBkGVzY8xe657JL74vEgbeUJD37XjVqTrmve8XvZBQ==}
 
   vite-plugin-dts@3.9.1:
     resolution: {integrity: sha512-rVp2KM9Ue22NGWB8dNtWEr+KekN3rIgz1tWD050QnRGlriUCmaDwa7qA5zDEjbXg5lAXhYMSBJtx3q3hQIJZSg==}
@@ -5889,6 +5895,8 @@ snapshots:
       - terser
       - tsx
       - yaml
+
+  vite-plugin-banner@0.8.1: {}
 
   vite-plugin-dts@3.9.1(@types/node@22.19.1)(rollup@4.44.2)(typescript@5.8.3)(vite@7.2.2(@types/node@22.19.1)(less@4.2.2)):
     dependencies:

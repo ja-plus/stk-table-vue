@@ -4,6 +4,7 @@
   "description": "High performance realtime virtual table for vue3 and vue2.7",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/src/StkTable/index.d.ts",
+  "homepage": "https://ja-plus.github.io/stk-table-vue/",
   "packageManager": "pnpm@10.7.0",
   "directories": {
     "test": "test"
@@ -62,6 +63,7 @@
     "stk-table-vue": "^0.8.7",
     "typescript": "^5.8.3",
     "vite": "^7.2.2",
+    "vite-plugin-banner": "^0.8.1",
     "vite-plugin-dts": "3.9.1",
     "vitepress": "^1.6.4",
     "vitepress-demo-plugin": "^1.4.7",

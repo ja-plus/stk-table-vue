@@ -1,3 +1,11 @@
+/**
+ * name: stk-table-vue
+ * version: v0.8.13
+ * description: High performance realtime virtual table for vue3 and vue2.7
+ * author: japlus
+ * homepage: https://ja-plus.github.io/stk-table-vue/
+ * license: MIT
+ */
 @keyframes stk-table-dim{
   from{
     background-color:var(--highlight-color);
