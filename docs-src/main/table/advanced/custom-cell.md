@@ -131,7 +131,9 @@ export type CustomCellProps<T extends Record<string, any>> = {
      * - 不展开: null
      * - 展开: 返回column配置
      */
-    expanded?: PrivateRowDT['__EXP__'];
+    expanded?: StkTableColumn<any>;
+    /** 树节点当前行是否展开 */
+    treeExpanded?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

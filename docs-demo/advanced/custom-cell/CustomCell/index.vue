@@ -6,7 +6,7 @@ import YieldCell from './YieldCell.vue';
 
 const columns: StkTableColumn<DataType>[] = [
     { title: 'Code', dataIndex: 'code' },
-    { title: '收益率', dataIndex: 'yield', align: 'right', customCell: YieldCell },
+    { title: 'Yield Rate', dataIndex: 'yield', align: 'right', customCell: YieldCell },
 ];
 
 const dataSource: DataType[] = [
