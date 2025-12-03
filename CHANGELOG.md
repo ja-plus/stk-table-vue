@@ -1,7 +1,7 @@
 
 ## 0.8.14
 * Optimize 
-  - optimize: `scrollRowByRow=‘scrollbar’` performance.
+  - optimize: `scrollRowByRow='scrollbar'` performance.
 
 ## 0.8.13
 * Optimize
