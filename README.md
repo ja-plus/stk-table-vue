@@ -31,11 +31,6 @@
 ## Demo
 [<span style="font-size: 16px;font-weight: bold;">Online Demo in stackblitz</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
 
-## Compare
-Compare performance with other vue table [vue-table-compare](https://github.com/ja-plus/vue-table-compare)
-
-
-
 ## Usage
 > npm install stk-table-vue
 
@@ -88,23 +83,17 @@ const dataSource = [
 [Vue2.7 Usage](https://ja-plus.github.io/stk-table-vue/main/start/vue2-usage.html)
 
 ## API
-### Props
-[Props 表格配置](https://ja-plus.github.io/stk-table-vue/main/api/table-props.html)
+* [Props](https://ja-plus.github.io/stk-table-vue/main/api/table-props.html)
 
-### Emits
-[Emits 事件](https://ja-plus.github.io/stk-table-vue/main/api/emits.html)
+* [Emits](https://ja-plus.github.io/stk-table-vue/main/api/emits.html)
 
-### Slots
-[Slots 插槽](https://ja-plus.github.io/stk-table-vue/main/api/slots.html)
+* [Slots](https://ja-plus.github.io/stk-table-vue/main/api/slots.html)
 
-### Expose
-[Expose 实例方法](https://ja-plus.github.io/stk-table-vue/main/api/expose.html)
+* [Expose](https://ja-plus.github.io/stk-table-vue/main/api/expose.html)
 
-### StkTableColumn 列配置
-[StkTableColumn 列配置](https://ja-plus.github.io/stk-table-vue/main/api/stk-table-column.html)
+* [StkTableColumn: Define column type](https://ja-plus.github.io/stk-table-vue/main/api/stk-table-column.html)
 
-### setHighlightDimCell & setHighlightDimRow
-[Highlight 高亮](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
+* [Highlight: setHighlightDimCell & setHighlightDimRow](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
 
 
 ### Example
@@ -174,6 +163,9 @@ const dataSource = [
   ]
 </script>
 ```
+
+## Compare
+Compare performance with other vue table [vue-table-compare](https://github.com/ja-plus/vue-table-compare)
 
 
 ## Other

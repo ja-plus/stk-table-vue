@@ -1,4 +1,4 @@
-## 提示
+## Tips
 
 ### Disable title on header cell hover
 * Set the `title` field in `StkTableColumn` to an empty string (""). This will remove the title from the th element.

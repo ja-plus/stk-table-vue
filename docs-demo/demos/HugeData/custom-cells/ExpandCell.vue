@@ -2,6 +2,8 @@
 import type { CustomCellProps } from '@/StkTable/types/index';
 import { emitter } from '../event';
 import { DataType } from '../types';
+import { useI18n } from '../../../hooks/useI18n/index';
+const { t } = useI18n();
 const props = defineProps<CustomCellProps<DataType>>();
 function handleClick() {
     emitter.emit('toggle-expand', props.row);
@@ -10,7 +12,7 @@ function handleClick() {
 <template>
     <div class="expand-cell" @click="handleClick">
         <span class="triangle-arrow" :class="{ expand: props.row._isExpand }"></span>
-        <span class="text">最优</span>
+        <span class="text">{{ t('Best') }}</span>
     </div>
 </template>
 <style scoped lang="less">
