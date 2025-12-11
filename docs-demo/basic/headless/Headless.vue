@@ -3,13 +3,15 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n';
+const { t } = useI18n();
 
 const headless = ref(true);
 const columns: StkTableColumn<any>[] = [
-    { dataIndex: 'vHead', title: 'vHead', className: 'v-head', width: 100 },
-    { dataIndex: 'col1', title: 'col1' },
-    { dataIndex: 'vHead2', title: 'vHead2', className: 'v-head', width: 100 },
-    { dataIndex: 'col2', title: 'col2' },
+    { dataIndex: 'vHead', title: t('vHead'), className: 'v-head', width: 100 },
+    { dataIndex: 'col1', title: t('col1') },
+    { dataIndex: 'vHead2', title: t('vHead2'), className: 'v-head', width: 100 },
+    { dataIndex: 'col2', title: t('col2') },
 ];
 const data = [
     { vHead: 'Name', col1: 'Jack', vHead2: 'Birthday', col2: '1990-01-01' },
@@ -19,7 +21,7 @@ const data = [
 </script>
 
 <template>
-    <CheckItem v-model="headless" text="headless"></CheckItem>
+    <CheckItem v-model="headless" :text="t('headless')"></CheckItem>
     <StkTable
         row-key="id"
         :row-active="false"

@@ -3,14 +3,17 @@ import { StkTableColumn } from '@/StkTable/index';
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const virtual = ref(false);
 const stripe = ref(false);
 
 const columns = ref<StkTableColumn<any>[]>([
     { type: 'expand', dataIndex: '', width: 50, align: 'center', fixed: 'left' },
-    { dataIndex: 'id', title: 'ID', width: 100 },
-    { dataIndex: 'address', title: 'Address' },
+    { dataIndex: 'id', title: t('id'), width: 100 },
+    { dataIndex: 'address', title: t('address') },
 ]);
 
 const data = new Array(100).fill(0).map((it, index) => {
@@ -27,8 +30,8 @@ function handleToggleRowExpand(data: any) {
 </script>
 <template>
     <div>
-        <CheckItem v-model="virtual" text="virtual"></CheckItem>
-        <CheckItem v-model="stripe" text="stripe"></CheckItem>
+        <CheckItem v-model="virtual" :text="t('virtual')"></CheckItem>
+        <CheckItem v-model="stripe" :text="t('stripe')"></CheckItem>
         <StkTable
             row-key="id"
             style="height: 200px"

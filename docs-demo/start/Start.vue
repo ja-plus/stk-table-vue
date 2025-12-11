@@ -2,6 +2,9 @@
 import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue';
 import { StkTableColumn } from '../../src/StkTable/index';
 import StkTable from '../StkTable.vue';
+import { useI18n } from '../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const stkTableRef = useTemplateRef('stkTableRef'); // vue3.5+
 // const stkTableRef = ref<InstanceType<typeof StkTable>>(); //vue3.2
@@ -13,9 +16,9 @@ type DataType = {
     address: string;
 };
 const columns: StkTableColumn<DataType>[] = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Age', dataIndex: 'age', key: 'age', align: 'right' },
-    { title: 'Address', dataIndex: 'address', key: 'address' },
+    { title: t('name'), dataIndex: 'name', key: 'name' },
+    { title: t('age'), dataIndex: 'age', key: 'age', align: 'right' },
+    { title: t('address'), dataIndex: 'address', key: 'address' },
 ];
 const dataSource: DataType[] = [
     { id: 'k1', name: 'Tom', age: 18, address: 'Beijing' },

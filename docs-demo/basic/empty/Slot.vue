@@ -3,12 +3,15 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import NoData from '../../assets/svg-components/NoData.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('address'), dataIndex: 'address' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 
 const dataSource = ref([]);
@@ -18,7 +21,7 @@ const dataSource = ref([]);
         <template #empty>
             <div style="padding: 20px; display: flex; flex-direction: column; align-items: center">
                 <NoData />
-                <p>No Data <a href="#" style="color: #1890ff">Click here</a></p>
+                <p>{{ t('noData') }} <a href="#" style="color: #1890ff">{{ t('clickHere') }}</a></p>
             </div>
         </template>
     </StkTable>

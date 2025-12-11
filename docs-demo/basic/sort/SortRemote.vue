@@ -3,6 +3,8 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import { Order, SortConfig } from '@/StkTable/types';
+import { useI18n } from '../../hooks/useI18n';
+const { t } = useI18n();
 
 type DataType = {
     key: string;
@@ -10,8 +12,8 @@ type DataType = {
 };
 
 const columns: StkTableColumn<DataType>[] = [
-    { title: 'No.', dataIndex: '' as any, type: 'seq', width: 50 },
-    { title: 'Name', dataIndex: 'name', sorter: true },
+    { title: t('seq'), dataIndex: '' as any, type: 'seq', width: 50 },
+    { title: t('name'), dataIndex: 'name', sorter: true },
 ];
 
 const dataSource = ref<DataType[]>(

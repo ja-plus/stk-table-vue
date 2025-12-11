@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { StkTableColumn } from '@/StkTable';
 import StkTable from '../../StkTable.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 const columns: StkTableColumn<any>[] = [
-    { title: 'ID', dataIndex: 'id' },
+    { title: t('id'), dataIndex: 'id' },
     {
-        title: 'Name',
+        title: t('name'),
         dataIndex: 'name',
         mergeCells: ({ rowIndex }) => {
             return {
@@ -12,8 +15,8 @@ const columns: StkTableColumn<any>[] = [
             };
         },
     },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 const dataSource = [
     { id: 1, name: 'Tom', age: 18, gender: 'male' },

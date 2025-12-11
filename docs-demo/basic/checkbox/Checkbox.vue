@@ -8,14 +8,14 @@
         :data-source="dataSource"
     />
     <div class="info-box">
-        <h3>Selected:</h3>
+        <h3>{{ t('selected') }}:</h3>
         <div class="selected-items">
             <template v-if="selectedItems.length > 0">
                 <span v-for="item in selectedItems" :key="item.id" class="selected-item">
                     {{ item.name }}
                 </span>
             </template>
-            <span v-else>No select</span>
+            <span v-else>{{ t('noSelect') }}</span>
         </div>
     </div>
 </template>
@@ -24,6 +24,9 @@
 import { computed, h, ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 // 模拟数据
 const dataSource = ref<Record<string, any>[]>([
@@ -88,9 +91,9 @@ const columns = ref<StkTableColumn<any>[]>([
             ]);
         },
     },
-    { title: 'Name', dataIndex: 'name', width: 120 },
-    { title: 'Age', dataIndex: 'age', width: 80, align: 'right' },
-    { title: 'Address', dataIndex: 'address', width: 200 },
+    { title: t('name'), dataIndex: 'name', width: 120 },
+    { title: t('age'), dataIndex: 'age', width: 80, align: 'right' },
+    { title: t('address'), dataIndex: 'address', width: 200 },
 ]);
 </script>
 

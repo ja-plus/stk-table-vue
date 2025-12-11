@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 type DataType = {
     key: string;
@@ -11,9 +14,9 @@ type DataType = {
 };
 
 const columns: StkTableColumn<DataType>[] = [
-    { title: 'Name', dataIndex: 'name', width: 100, sorter: true },
-    { title: 'Age', dataIndex: 'age', sorter: true },
-    { title: 'Gender', dataIndex: 'gender', sorter: true },
+    { title: t('name'), dataIndex: 'name', width: 100, sorter: true },
+    { title: t('age'), dataIndex: 'age', sorter: true },
+    { title: t('gender'), dataIndex: 'gender', sorter: true },
 ];
 
 const dataSource = ref<DataType[]>(

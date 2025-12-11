@@ -2,12 +2,15 @@
 import { StkTableColumn } from '@/StkTable';
 import StkTable from '../../../StkTable.vue';
 import { dataSource } from './dataSource';
+import { useI18n } from '../../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'ID', dataIndex: 'id', width: 100, },
-    { title: 'Continent', dataIndex: 'continent', width: 100, mergeCells, },
-    { title: 'Country', dataIndex: 'country', width: 120, mergeCells, },
-    { title: 'Province', dataIndex: 'province' },
+    { title: t('id'), dataIndex: 'id', width: 100, },
+    { title: t('continent'), dataIndex: 'continent', width: 100, mergeCells, },
+    { title: t('country'), dataIndex: 'country', width: 120, mergeCells, },
+    { title: t('province'), dataIndex: 'province' },
 ];
 
 function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
@@ -42,7 +45,7 @@ function addMoreData() {
 }
 </script>
 <template>
-    <button class="btn" @click="addMoreData">Add 1000 row</button>
+    <button class="btn" @click="addMoreData">{{ t('add1000Row') }}</button>
     <StkTable style="max-height: 300px" virtual cell-hover row-key="id" :columns="columns" :data-source="dataSource">
     </StkTable>
 </template>

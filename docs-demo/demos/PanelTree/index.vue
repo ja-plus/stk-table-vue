@@ -25,6 +25,9 @@ import type { StkTableColumn } from '@/StkTable/index';
 import { nextTick, ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { RowDataType } from './type';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const stkTableRef = useTemplateRef('stkTableRef');
 
@@ -43,13 +46,13 @@ const columns: StkTableColumn<RowDataType>[] = [
             }
         },
     },
-    { title: 'Name', dataIndex: 'name', width: 100, fixed: 'left' },
-    { title: 'Age', dataIndex: 'age', width: 80, sorter: true, sortConfig: { sortChildren: true } },
-    { title: 'Address', dataIndex: 'address', width: 200 },
-    { title: 'Email', dataIndex: 'email', width: 200 },
-    { title: 'Phone', dataIndex: 'phone', width: 150 },
-    { title: 'Website', dataIndex: 'website', width: 200 },
-    { title: 'Company', dataIndex: 'company', width: 200 },
+    { title: t('name'), dataIndex: 'name', width: 100, fixed: 'left' },
+    { title: t('age'), dataIndex: 'age', width: 80, sorter: true, sortConfig: { sortChildren: true } },
+    { title: t('address'), dataIndex: 'address', width: 200 },
+    { title: t('email'), dataIndex: 'email', width: 200 },
+    { title: t('phone'), dataIndex: 'phone', width: 150 },
+    { title: t('website'), dataIndex: 'website', width: 200 },
+    { title: t('company'), dataIndex: 'company', width: 200 },
 ];
 
 // 初始化表格数据

@@ -1,54 +1,56 @@
 <script setup lang="ts">
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n';
+const { t } = useI18n();
 const columns: StkTableColumn<any>[] = [
     {
         dataIndex: 'Basic',
-        title: 'Basic',
+        title: t('basic'),
         children: [
-            { dataIndex: 'id', title: 'ID', width: 100 },
+            { dataIndex: 'id', title: t('id'), width: 100 },
             {
                 dataIndex: 'lv2',
-                title: 'Lv 2',
+                title: t('lv2'),
                 width: 100,
                 children: [
-                    { dataIndex: 'lv2_1', title: 'Lv 2.1', width: 100 },
-                    { dataIndex: 'lv2_2', title: 'Lv 2.2', width: 100 },
+                    { dataIndex: 'lv2_1', title: t('lv2_1'), width: 100 },
+                    { dataIndex: 'lv2_2', title: t('lv2_2'), width: 100 },
                 ],
             },
         ],
     },
     {
         dataIndex: 'age',
-        title: 'Age',
+        title: t('age'),
         width: '50px',
         children: [
-            { dataIndex: 'id3', title: 'ID', width: 50 },
+            { dataIndex: 'id3', title: t('id'), width: 50 },
             {
                 dataIndex: 'lv5',
-                title: 'Lv 2',
+                title: t('lv2'),
                 width: 100,
             },
         ],
     },
-    { dataIndex: 'email', title: 'Email', width: '130px' },
+    { dataIndex: 'email', title: t('email'), width: '130px' },
     {
         dataIndex: 'other',
-        title: 'Other',
+        title: t('other'),
         children: new Array(2).fill(0).map((it, i) => {
             return {
                 dataIndex: 'other' + i,
-                title: 'Other ' + i,
+                title: t('other') + ' ' + i,
                 width: 100,
             };
         }),
     },
     {
         dataIndex: 'right',
-        title: 'Right',
+        title: t('right'),
         children: [
-            { dataIndex: 'right-1', title: 'right-1', width: 50 },
-            { dataIndex: 'right-2', title: 'right-2', width: 100 },
+            { dataIndex: 'right-1', title: t('right1'), width: 50 },
+            { dataIndex: 'right-2', title: t('right2'), width: 100 },
         ],
     },
 ];

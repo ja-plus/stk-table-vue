@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { StkTableColumn } from '@/StkTable/index';
 import mockjs from 'mockjs';
-import { getIsZH } from '../../hooks/getIsZH';
+import { useI18n } from '../../hooks/useI18n/index';
 import StkTable from '../../StkTable.vue';
 import Panel from './Panel.vue';
 import type { DataType } from './types';
 
-const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
+const { isZH } = useI18n();
 
-    const isZH = getIsZH();
+const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
 
 
 const data = new Array(20).fill(0).map((_, i) => ({

@@ -4,7 +4,7 @@ export const columns: StkTableColumn<any>[] = [
     { type: 'tree-node', title: 'Area', dataIndex: 'area' },
     { title: 'GDP', dataIndex: 'gdp', align: 'right', sorter: true, sortType: 'number' },
     { title: 'Population', dataIndex: 'population', align: 'right', sorter: true, sortType: 'number' },
-    { title: 'GDP per capita', dataIndex: 'gdpPerCapita', align: 'right', sorter: true, sortType: 'number' },
+    { title: 'GDPPerCapita', dataIndex: 'gdpPerCapita', align: 'right', sorter: true, sortType: 'number' },
 ];
 export const getDataSource = () => [
     {

@@ -3,14 +3,17 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const virtual = ref(false);
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Gender', dataIndex: 'gender' },
-    { title: 'Address', dataIndex: 'address', maxWidth: 200 },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('gender'), dataIndex: 'gender' },
+    { title: t('address'), dataIndex: 'address', maxWidth: 200 },
 ];
 
 const dataSource = ref([
@@ -32,7 +35,7 @@ const dataSource = ref([
 ]);
 </script>
 <template>
-    <CheckItem v-model="virtual" text="virtual"></CheckItem>
+    <CheckItem v-model="virtual" :text="t('virtual')"></CheckItem>
     <StkTable
         style="height: 200px"
         :virtual="virtual"

@@ -3,6 +3,9 @@ import { ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 const stkTableRef = useTemplateRef('stkTableRef');
 
 const stripe = ref(true);
@@ -17,10 +20,10 @@ const cellHover = ref(true);
 const selectedCellRevokable = ref(true);
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('address'), dataIndex: 'address' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 
 const dataSource = ref([
@@ -40,22 +43,22 @@ function setSelectedCell(row: any, col: StkTableColumn<any>) {
 }
 </script>
 <template>
-    <CheckItem v-model="stripe" text="stripe(斑马纹)"></CheckItem>
+    <CheckItem v-model="stripe" :text="'stripe' + '(' + t('zebraStripes') + ')'"></CheckItem>
     <br />
-    <CheckItem v-model="rowActive.enabled" text="rowActive(行选中状态)"></CheckItem>
-    <CheckItem v-model="cellActive" text="cellActive(单元格选中状态)"></CheckItem>
+    <CheckItem v-model="rowActive.enabled" :text="'rowActive' + '(' + t('rowSelectedState') + ')'"></CheckItem>
+    <CheckItem v-model="cellActive" :text="'cellActive' + '(' + t('cellSelectedState') + ')'"></CheckItem>
     <br />
-    <CheckItem v-model="rowHover" text="rowHover(行悬浮状态)"></CheckItem>
-    <CheckItem v-model="cellHover" text="cellHover(单元格悬浮状态)"></CheckItem>
+    <CheckItem v-model="rowHover" :text="'rowHover' + '(' + t('rowHoverState') + ')'"></CheckItem>
+    <CheckItem v-model="cellHover" :text="'cellHover' + '(' + t('cellHoverState') + ')'"></CheckItem>
     <br />
     <CheckItem
         v-model="rowActive.revokable"
-        text="rowActive.revokable(行选中状态是否可取消)"
+        :text="'rowActive.revokable(' + t('rowSelectedStateCancellable') + ')'"
     ></CheckItem>
     <br />
     <CheckItem
         v-model="selectedCellRevokable"
-        text="selectedCellRevokable(单元格选中状态是否可取消)"
+        :text="'selectedCellRevokable' + '(' + t('cellSelectedStateCancellable') + ')'"
     ></CheckItem>
     <hr />
     <button class="btn" @click="setCurrentRow('Jack')">setCurrentRow('Jack')</button>

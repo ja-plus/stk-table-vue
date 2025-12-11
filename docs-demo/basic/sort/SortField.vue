@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n';
+const { t } = useI18n();
 
 type DataType = {
     key: string;
@@ -11,16 +13,16 @@ type DataType = {
 };
 
 const columns: StkTableColumn<DataType>[] = [
-    { type: 'seq', title: 'No.', dataIndex: '' as any, width: 50 },
-    { title: 'Name', dataIndex: 'name' },
+    { type: 'seq', title: t('seq'), dataIndex: '' as any, width: 50 },
+    { title: t('name'), dataIndex: 'name' },
     {
-        title: 'Period',
+        title: t('period'),
         dataIndex: 'period',
         align: 'right',
         sorter: true,
         sortField: 'periodNumber',
     },
-    { title: 'PeriodNumber', dataIndex: 'periodNumber', align: 'right' },
+    { title: t('periodNumber'), dataIndex: 'periodNumber', align: 'right' },
 ];
 
 const dataSource = ref<DataType[]>([

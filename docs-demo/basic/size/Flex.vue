@@ -4,15 +4,17 @@ import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import { useData } from 'vitepress';
 import RangeInput from '../../components/RangeInput.vue';
+import { useI18n } from '../../hooks/useI18n';
 const { isDark } = useData();
+const { t } = useI18n();
 
 const height = ref(150);
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('address'), dataIndex: 'address' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 
 const dataSource = ref(
@@ -27,7 +29,7 @@ const dataSource = ref(
 );
 </script>
 <template>
-    <RangeInput v-model="height" min="100" max="800" label="height" suffix="px"></RangeInput>
+    <RangeInput v-model="height" min="100" max="800" :label="t('height')" suffix="px"></RangeInput>
     <article :class="{ dark: isDark }" :style="{ height: height + 'px' }">
         <header>Flex Content</header>
         <StkTable :columns="columns" :data-source="dataSource"></StkTable>

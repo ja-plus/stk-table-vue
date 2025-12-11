@@ -3,15 +3,17 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import RangeInput from '../../components/RangeInput.vue';
+import { useI18n } from '../../hooks/useI18n';
+const { t } = useI18n();
 
 const width = ref(400);
 const height = ref(150);
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('address'), dataIndex: 'address' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 
 const dataSource = ref(
@@ -28,14 +30,20 @@ const dataSource = ref(
 <template>
     <div>
         <div>
-            <RangeInput v-model="width" min="100" max="800" label="width" suffix="px"></RangeInput>
+            <RangeInput
+                v-model="width"
+                min="100"
+                max="800"
+                :label="t('width')"
+                suffix="px"
+            ></RangeInput>
         </div>
         <div>
             <RangeInput
                 v-model="height"
                 min="100"
                 max="800"
-                label="height"
+                :label="t('height')"
                 suffix="px"
             ></RangeInput>
         </div>

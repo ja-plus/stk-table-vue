@@ -3,14 +3,17 @@ import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 const rowByRow = ref<boolean | 'scrollbar'>(true);
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', width: 50, dataIndex: '', title: 'No.' },
-    { title: 'Name', dataIndex: 'name', width: 100, sorter: true },
-    { title: 'Age', dataIndex: 'age', width: 100, sorter: true },
-    { title: 'Gender', dataIndex: 'gender', width: 100, sorter: true },
-    { title: 'Address', dataIndex: 'address', sorter: true },
+    { type: 'seq', width: 50, dataIndex: '', title: t('seq') },
+    { title: t('name'), dataIndex: 'name', width: 100, sorter: true },
+    { title: t('age'), dataIndex: 'age', width: 100, sorter: true },
+    { title: t('gender'), dataIndex: 'gender', width: 100, sorter: true },
+    { title: t('address'), dataIndex: 'address', sorter: true },
 ];
 
 const dataSource = new Array(1000).fill(0).map((_, index) => {

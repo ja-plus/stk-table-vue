@@ -3,13 +3,15 @@ import { StkTableColumn } from '@/StkTable';
 import StkTable from '../../StkTable.vue';
 import { getDataSource2 } from './config';
 import { shallowRef, useTemplateRef } from 'vue';
+import { useI18n } from '../../hooks/useI18n';
 const stkTableRef = useTemplateRef('stkTableRef');
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'tree-node', title: 'Area', dataIndex: 'area', width: 200 },
-    { title: 'GDP', dataIndex: 'gdp', align: 'right', width: 100, sorter: true, sortType: 'number' },
-    { title: 'Population', dataIndex: 'population', align: 'right', width: 100, sorter: true, sortType: 'number' },
-    { title: 'GDP per capita', dataIndex: 'gdpPerCapita', align: 'right', width: 200, sorter: true, sortType: 'number' },
+    { type: 'tree-node', title: t('area'), dataIndex: 'area', width: 200 },
+    { title: t('gdp'), dataIndex: 'gdp', align: 'right', width: 100, sorter: true, sortType: 'number' },
+    { title: t('population'), dataIndex: 'population', align: 'right', width: 100, sorter: true, sortType: 'number' },
+    { title: t('gdpPerCapita'), dataIndex: 'gdpPerCapita', align: 'right', width: 200, sorter: true, sortType: 'number' },
 ];
 const dataSource = shallowRef(getDataSource2());
 

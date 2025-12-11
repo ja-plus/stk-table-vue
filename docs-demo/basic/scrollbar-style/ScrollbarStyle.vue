@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', dataIndex: '', title: 'No.', width: 50 },
-    { title: 'Name', dataIndex: 'name', sorter: true, width: 100 },
-    { title: 'Age', dataIndex: 'age', sorter: true, width: 100 },
-    { title: 'Address', dataIndex: 'address', sorter: true, width: 300 },
-    { title: 'Gender', dataIndex: 'gender', sorter: true, width: 100 },
+    { type: 'seq', dataIndex: '', title: t('seq'), width: 50 },
+    { title: t('name'), dataIndex: 'name', sorter: true, width: 100 },
+    { title: t('age'), dataIndex: 'age', sorter: true, width: 100 },
+    { title: t('address'), dataIndex: 'address', sorter: true, width: 300 },
+    { title: t('gender'), dataIndex: 'gender', sorter: true, width: 100 },
     ...new Array(10).fill(0).map((_, index) => {
-        return { title: `Column ${index}`, dataIndex: `column${index}`, sorter: true, width: 100 };
+        return { title: t('column') + ' ' + index, dataIndex: `column${index}`, sorter: true, width: 100 };
     }),
 ];
 

@@ -3,6 +3,9 @@ import { h, ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const virtual = ref(false);
 
@@ -13,7 +16,7 @@ const columns = ref<StkTableColumn<any>[]>([
     {
         type: 'expand',
         dataIndex: 'name',
-        title: '自定义展开行',
+        title: t('customExpandRow'),
         width: 80,
         customCell: props => {
             let className = 'custom-expand-icon';
@@ -30,14 +33,14 @@ const columns = ref<StkTableColumn<any>[]>([
             );
         },
     },
-    { dataIndex: 'id', title: 'id(100px)', width: '100px' },
-    { dataIndex: 'address', title: 'address' },
-    { dataIndex: 'email', title: 'email' },
-    { dataIndex: 'phone', title: 'phone' },
-    { dataIndex: 'website', title: 'website' },
-    { dataIndex: 'company', title: 'company' },
-    { dataIndex: 'catchPhrase', title: 'catchPhrase' },
-    { dataIndex: 'bs', title: 'bs' },
+    { dataIndex: 'id', title: t('id') + '(100px)', width: '100px' },
+    { dataIndex: 'address', title: t('address') },
+    { dataIndex: 'email', title: t('email') },
+    { dataIndex: 'phone', title: t('phone') },
+    { dataIndex: 'website', title: t('website') },
+    { dataIndex: 'company', title: t('company') },
+    { dataIndex: 'catchPhrase', title: t('catchPhrase') },
+    { dataIndex: 'bs', title: t('bs') },
 ]);
 
 const data = new Array(100).fill(0).map((it, index) => {
@@ -62,7 +65,7 @@ function handleToggleRowExpand(data: any) {
 </script>
 <template>
     <div>
-        <CheckItem v-model="virtual" text="virtual"></CheckItem>
+        <CheckItem v-model="virtual" :text="t('virtual')"></CheckItem>
         <StkTable
             ref="stkTableRef"
             row-key="id"

@@ -2,13 +2,16 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { type: 'seq', width: 50, dataIndex: '', title: 'No.' },
-    { title: 'Name', dataIndex: 'name', sorter: true },
-    { title: 'Age', dataIndex: 'age', sorter: true },
-    { title: 'Address', dataIndex: 'address', sorter: true },
-    { title: 'Gender', dataIndex: 'gender', sorter: true },
+    { type: 'seq', width: 50, dataIndex: '', title: t('seq') },
+    { title: t('name'), dataIndex: 'name', sorter: true },
+    { title: t('age'), dataIndex: 'age', sorter: true },
+    { title: t('address'), dataIndex: 'address', sorter: true },
+    { title: t('gender'), dataIndex: 'gender', sorter: true },
 ];
 
 const dataSource = ref(

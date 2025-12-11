@@ -1,8 +1,8 @@
 <template>
     <div>
-        <button class="btn" @click="updateCell">Try update</button>
+        <button class="btn" @click="updateCell">{{ t('tryUpdate') }}</button>
         <button class="btn" @click="updateLastColPercent">
-            {{ updateLastColInterval ? 'Stop' : 'Start' }} update last column
+            {{ updateLastColInterval ? t('stop') : t('start') }} {{ t('updateLastColumn') }}
         </button>
         <StkTable
             ref="stkTableRef"
@@ -25,6 +25,9 @@ import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import MatrixCell from './MatrixCell.vue';
 import { CellDataType, RowDataType } from './type';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const stkTableRef = useTemplateRef('stkTableRef');
 

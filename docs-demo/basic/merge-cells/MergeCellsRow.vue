@@ -2,6 +2,9 @@
 import { StkTableColumn } from '@/StkTable';
 import { ref, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const stkTableRef = useTemplateRef('stkTableRef');
 
@@ -12,7 +15,7 @@ const rowSpanCount = {
 
 const columns: StkTableColumn<any>[] = [
     {
-        title: 'Continent',
+        title: t('continent'),
         dataIndex: 'continent',
         mergeCells({ row }) {
             if (row.id === '1-1-1') {
@@ -23,7 +26,7 @@ const columns: StkTableColumn<any>[] = [
         },
     },
     {
-        title: 'Country',
+        title: t('country'),
         dataIndex: 'country',
         mergeCells({ row }) {
             if (row.id === '1-1-1') {
@@ -31,7 +34,7 @@ const columns: StkTableColumn<any>[] = [
             }
         },
     },
-    { title: 'Province', dataIndex: 'province' },
+    { title: t('province'), dataIndex: 'province' },
 ];
 const dataSource = ref([
     { id: '1-1-1', continent: 'Asia', country: 'China', province: 'Beijing' },
@@ -57,8 +60,8 @@ function setCurrentRow() {
 }
 </script>
 <template>
-    <button class="btn" @click="deleteARow">Delete 'Guangzhou' row</button>
-    <button class="btn" @click="setCurrentRow">setCurrentRow(Guangzhou)</button>
+    <button class="btn" @click="deleteARow">{{ t('deleteGuangzhouRow') }}</button>
+    <button class="btn" @click="setCurrentRow">{{ t('setCurrentRowGuangzhou') }}</button>
     <StkTable
         ref="stkTableRef"
         style="max-height: 300px"

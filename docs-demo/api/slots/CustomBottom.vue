@@ -2,12 +2,15 @@
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
-    { title: 'Name', dataIndex: 'name' },
-    { title: 'Age', dataIndex: 'age' },
-    { title: 'Address', dataIndex: 'address' },
-    { title: 'Gender', dataIndex: 'gender' },
+    { title: t('name'), dataIndex: 'name' },
+    { title: t('age'), dataIndex: 'age' },
+    { title: t('address'), dataIndex: 'address' },
+    { title: t('gender'), dataIndex: 'gender' },
 ];
 
 const dataSource = ref<any[]>([]);
@@ -31,12 +34,12 @@ function clearData() {
 }
 </script>
 <template>
-    <button class="btn" @click="addData">增加5条数据</button>
-    <button class="btn" @click="clearData">清除数据</button>
+    <button class="btn" @click="addData">{{ t('addFiveData') }}</button>
+    <button class="btn" @click="clearData">{{ t('clearData') }}</button>
     <StkTable style="height: 200px" :columns="columns" :data-source="dataSource">
         <template #customBottom>
             <div class="custom-bottom">
-                <span>Custom Bottom</span>
+                <span>{{ t('customBottom') }}</span>
             </div>
         </template>
     </StkTable>

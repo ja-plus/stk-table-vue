@@ -3,6 +3,9 @@ import { h, ref, shallowRef } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '@/StkTable/types';
 import CheckItem from '../../components/CheckItem.vue';
+import { useI18n } from '../../hooks/useI18n/index';
+
+const { t } = useI18n();
 
 const p = ref({
     virtual: false,
@@ -13,12 +16,12 @@ const columns = ref<StkTableColumn<any>[]>([
         type: 'dragRow',
         key: 'dragRow',
         width: 100,
-        title: 'Builtin drag|内置拖拽',
+        title: t('builtinDrag'),
         dataIndex: '',
         align: 'center',
     },
-    { dataIndex: 'email', title: 'email' },
-    { dataIndex: 'phone', title: 'phone', width: 150 },
+    { dataIndex: 'email', title: t('email') },
+    { dataIndex: 'phone', title: t('phone'), width: 150 },
 ]);
 
 const data = shallowRef(
@@ -34,7 +37,7 @@ const data = shallowRef(
 </script>
 <template>
     <div>
-        <CheckItem v-model="p.virtual" text="virtual"></CheckItem>
+        <CheckItem v-model="p.virtual" :text="t('virtual')"></CheckItem>
         <StkTable
             v-model:columns="columns"
             row-key="id"
