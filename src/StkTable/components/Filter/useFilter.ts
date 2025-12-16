@@ -4,6 +4,7 @@ import type StkTable from '../../StkTable.vue';
 import type { Ref } from 'vue';
 import type { FilterStatus, UseFilterOptions, FilterOption } from './types';
 import { CustomCellProps, CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
+import { Panel } from 'ja-contextmenu';
 
 /**
  * 从数据源提取筛选选项
