@@ -1,0 +1,19 @@
+
+.stk-filter-dropdown {
+    position: absolute;
+    width: 120px;
+    max-height: 200px;
+    background-color: #181c21;
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    >.stk-table {
+        --cell-padding-x: 4px;
+        flex: 1;
+        min-height: 0;
+    }
+}
