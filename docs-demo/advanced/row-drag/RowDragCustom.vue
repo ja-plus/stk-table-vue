@@ -94,11 +94,10 @@ function handleDragLeave(e: DragEvent) {
 }
 
 function handleDrop(e: DragEvent, endIndex: number) {
-    const target = e.target as HTMLElement;
-    removeHoverStyle(target);
-    const sourceIndex = Number(e.dataTransfer?.getData('startIndex')) || 0;
-    if (sourceIndex === void 0) return;
-    const d = [...data.value];
+    removeHoverStyle(e.target as HTMLElement);
+    const sourceIndex = Number(e.dataTransfer?.getData('sourceIndex'));
+    if (isNaN(sourceIndex) || sourceIndex === endIndex) return;
+    const d = data.value.slice();
     const sourceData = d[sourceIndex];
     d.splice(sourceIndex, 1);
     d.splice(endIndex, 0, sourceData);
