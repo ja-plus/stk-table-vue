@@ -1,10 +1,7 @@
-import { ref, h } from 'vue';
+import { CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
+import { h, ref } from 'vue';
 import Filter from './Filter.vue';
-import type StkTable from '../../StkTable.vue';
-import type { Ref } from 'vue';
-import type { FilterStatus, UseFilterOptions, FilterOption } from './types';
-import { CustomCellProps, CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
-import { Panel } from 'ja-contextmenu';
+import type { FilterOption, FilterStatus } from './types';
 
 /**
  * 从数据源提取筛选选项
@@ -40,9 +37,8 @@ export function useFilter() {
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
     // 创建筛选组件
-    const FilterComponent = (config?: { options?: FilterOption[] }) => {
+    function FilterComponent(config?: { options?: FilterOption[] }) {
         // 如果有数据源和列信息，自动提取筛选选项
-
         return (props: CustomHeaderCellProps<any>) =>
             h(Filter, {
                 ...props,

@@ -184,6 +184,13 @@ export type UniqKeyProp = UniqKey | UniqKeyFun;
 
 export type SortConfig<T extends Record<string, any>> = {
     /**
+     * TODO: Sort icon display strategy
+     * - only-sort[default]: Only show sort icon in sorted column 
+     * - always 
+     * - none
+     */
+    // showIcon?: "always" | 'only-sort' | 'none';
+    /**
      * 1. trigger when init
      * 2. trigger when sort direction is null
      */
