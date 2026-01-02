@@ -45,7 +45,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             sorter: true,
             customHeaderCell: Filter({
                 options: [
-                    { label: '1000000', value: 1000000 },
+                    { label: '100w', value: 1000000 },
                     { label: '500000', value: 500000 },
                     { label: '2000', value: 2000 },
                 ]
