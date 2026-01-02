@@ -5,6 +5,7 @@ import { nextTick, onMounted, ref, shallowRef, useTemplateRef } from 'vue';
 import { insertToOrderedArray, tableSort } from '../../../src/StkTable/index';
 import CheckItem from '../../components/CheckItem.vue';
 import RadioGroup from '../../components/RadioGroup.vue';
+import RangeInput from '../../components/RangeInput.vue';
 import { useI18n } from '../../hooks/useI18n/index';
 import StkTable from '../../StkTable.vue';
 import { columns as columnsRaw } from './columns';
