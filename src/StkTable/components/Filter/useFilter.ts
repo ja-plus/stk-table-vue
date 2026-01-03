@@ -45,7 +45,7 @@ export function useFilter() {
                 filterStatus: filterStatus.value[props.col.dataIndex], // TODO ColKeyGen
                 filterOptions: config?.options || [],
             });
-    };
+    }
 
     return {
         Filter: FilterComponent,

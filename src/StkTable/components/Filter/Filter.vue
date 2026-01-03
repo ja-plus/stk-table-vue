@@ -13,7 +13,11 @@ function handleIconClick(e: MouseEvent) {
     const target = e.target as HTMLElement;
     const pos = target.getBoundingClientRect();
     getDropdownIns().then(ins => {
-        ins.show({ x: pos.left, y: pos.bottom }, props.filterOptions)   
+        if (ins.visible) {
+            ins.hide();
+            return;
+        }
+        ins.show({ x: pos.left, y: pos.bottom }, props.filterOptions);
     });
 }
 </script>

@@ -6,7 +6,7 @@ export interface FilterOption {
     value: any;
     selected?: boolean;
     /**
-     * TODO: 自定义筛选函数 
+     * TODO: 自定义筛选函数
      * @param row 行数据
      * @returns 是否匹配
      */
