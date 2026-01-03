@@ -15,16 +15,10 @@ export interface FilterOption {
 
 // 筛选状态接口
 export interface FilterStatus {
-    value: any[]; // 筛选值
+    value: any[];
 }
 
 // useFilter选项接口
 export interface UseFilterOptions {
     filterRemote: boolean; // 是否远程筛选
-}
-
-// Filter组件属性接口
-export interface FilterProps {
-    filterStatus?: FilterStatus;
-    filterOptions?: FilterOption[]; // 自定义筛选选项
 }

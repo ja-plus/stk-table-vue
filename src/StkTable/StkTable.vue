@@ -949,7 +949,7 @@ function filterDataSource(dataSource: DT[]) {
     const filterKeys = Object.keys(filterStatus.value);
     if (!filterKeys?.length) return dataSource;
     return dataSource.filter(row => {
-        return filterKeys.some(key => {
+        return filterKeys.every(key => {
             const { value } = filterStatus.value[key];
             if (!value?.length) return true;
             return value.some(v => row[key] == v);

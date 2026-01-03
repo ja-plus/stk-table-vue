@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { CustomHeaderCellProps } from '@/StkTable/types';
 import { getDropdownIns } from './Dropdown/index';
-import { FilterOption, FilterProps } from './types';
+import { FilterOption } from './types';
 
-const props = defineProps<CustomHeaderCellProps<any> & FilterProps>();
+const props = defineProps<
+    CustomHeaderCellProps<any> & {
+        active?: boolean; // 是否激活筛选
+        options?: FilterOption[]; // 自定义筛选选项
+    }
+>();
 const emit = defineEmits<{
     (e: 'update:filterStatus', value: FilterOption['value'][]): void;
 }>();
@@ -17,7 +22,7 @@ function handleIconClick(e: MouseEvent) {
             ins.hide();
             return;
         }
-        ins.show({ x: pos.left, y: pos.bottom }, props.filterOptions);
+        ins.show({ x: pos.left, y: pos.bottom }, props.options);
     });
 }
 
@@ -27,19 +32,8 @@ function handleConfirm(value: FilterOption['value'][]) {
 </script>
 
 <template>
-    <div class="stk-filter">
+    <div class="stk-filter" :class="{ 'stk-filter--active': props.active }">
         {{ props.col.title }}
         <i class="icon-filter" @click="handleIconClick">V</i>
     </div>
 </template>
-
-<style scoped lang="less">
-.stk-filter {
-}
-
-.icon-filter {
-    &:hover {
-        color: #409eff;
-    }
-}
-</style>

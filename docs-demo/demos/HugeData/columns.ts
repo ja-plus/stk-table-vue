@@ -46,8 +46,8 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             sorter: true,
             customHeaderCell: Filter({
                 options: [
-                    { label: '100w', value: 3000 },
-                    { label: '500000', value: 4000 },
+                    { label: '3000', value: 3000 },
+                    { label: '4000', value: 4000 },
                     { label: '2000', value: 2000 },
                 ],
             }),
@@ -77,6 +77,13 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             align: 'right',
             headerAlign: 'right',
             sorter: true,
+            customHeaderCell: Filter({
+                options: [
+                    { label: '5000', value: 5000 },
+                    { label: '4000', value: 4000 },
+                    { label: '2000', value: 2000 },
+                ],
+            }),
         },
         {
             dataIndex: 'lastPrice',

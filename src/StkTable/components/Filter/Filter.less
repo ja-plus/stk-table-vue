@@ -1,13 +1,26 @@
+.stk-filter {
+    &.stk-filter--active {
+        .icon-filter {
+            color: #1b63d9;
+        }
+    }
+
+    .icon-filter {
+        &:hover {
+            color: #409eff;
+        }
+    }
+}
 
 .stk-filter-dropdown {
-    --border-color: #303439;//暗色
+    --border-color: #303439; //暗色
     --btn-hover-color: #2a2f34;
     --bg-color: #181c21;
-    
+
     position: absolute;
     width: 120px;
     max-height: 200px;
-    background-color: var(--bg-color);  
+    background-color: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -20,22 +33,28 @@
         padding: 8px 0;
         flex: 1;
         min-height: 0;
+
         tr {
             cursor: pointer;
         }
     }
+
     .stk-filter-dropdown-checkbox {
-       text-align: center;
+        text-align: center;
     }
+
     footer {
         display: flex;
         border-top: 1px solid var(--border-color);
+
         button {
-            flex:1;
+            flex: 1;
             cursor: pointer;
+
             &:first-child {
                 border-right: 1px solid var(--border-color);
             }
+
             &:hover {
                 background-color: var(--btn-hover-color);
             }
