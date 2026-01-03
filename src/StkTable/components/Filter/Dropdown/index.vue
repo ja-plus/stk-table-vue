@@ -9,9 +9,14 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
         title: '',
         dataIndex: 'value',
         className: 'stk-filter-dropdown-checkbox',
-        customCell: ({ row }) => h('input', { type: 'checkbox', checked: row.selected, onChange: e => handleSelectChange(e, row) }),
+        customCell: ({ row }) =>
+            h('input', {
+                type: 'checkbox',
+                checked: row.selected,
+                onChange: e => handleSelectChange(e, row),
+            }),
     },
-    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', {}, [row.label, row.selected ? '（已选）' : '']) },
+    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label, row.selected ? '（已选）' : '']) },
 ]);
 
 const visible = ref(false);
@@ -20,6 +25,10 @@ const options = ref<FilterOption[]>([]);
 
 const dropdownEl = ref<HTMLDivElement>();
 const checkedTempValue = ref<Set<FilterOption['value']>>(new Set());
+
+const emit = defineEmits<{
+    (e: 'confirm', options: FilterOption[]): void;
+}>();
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
@@ -61,6 +70,7 @@ function handleSelectChange(e: Event, row: FilterOption) {
 
 function confirm() {
     options.value.forEach(opt => (opt.selected = checkedTempValue.value.has(opt.value)));
+    emit('confirm', Array.from(checkedTempValue.value));
     hide();
 }
 
@@ -76,11 +86,11 @@ defineExpose({ visible, show, hide });
         <StkTable
             row-key="id"
             theme="dark"
-            :row-active="false"
-            :row-height="20"
             headless
             virtual
             no-data-full
+            :row-active="false"
+            :row-height="20"
             :bordered="false"
             :columns="columns"
             :data-source="options"

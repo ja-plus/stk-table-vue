@@ -1,16 +1,21 @@
-import type Dropdown from './index.vue';
 import { createApp } from 'vue';
+import { FilterOption } from '../types';
+import type Dropdown from './index.vue';
 import './style.less';
 
 let DropdownIns: InstanceType<typeof Dropdown> | null = null;
 
-export async function getDropdownIns() {
+export async function getDropdownIns(onConfirm?: (values: FilterOption['value'][]) => void) {
     if (!DropdownIns) {
         const div = document.createElement('div');
         div.classList.add('stk-filter-dropdown-wrapper');
         document.body.appendChild(div);
-        const Dropdown = await import('./index.vue').then(module => module.default);
-        DropdownIns = createApp(Dropdown).mount(div) as InstanceType<typeof Dropdown>;
+        const DropdownApp = await import('./index.vue').then(module => module.default);
+        DropdownIns = createApp(DropdownApp, {
+            onConfirm: (values: FilterOption['value'][]) => {
+                onConfirm?.(values);
+            },
+        }).mount(div) as InstanceType<typeof DropdownApp>;
     }
     return DropdownIns;
 }

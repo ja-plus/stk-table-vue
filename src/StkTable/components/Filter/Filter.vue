@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { CustomHeaderCellProps } from '@/StkTable/types';
 import { getDropdownIns } from './Dropdown/index';
-import { FilterProps, FilterStatus } from './types';
+import { FilterOption, FilterProps } from './types';
 
 const props = defineProps<CustomHeaderCellProps<any> & FilterProps>();
 const emit = defineEmits<{
-    (e: 'update:filterStatus', filterStatus: FilterStatus): void;
+    (e: 'update:filterStatus', value: FilterOption['value'][]): void;
 }>();
 
 function handleIconClick(e: MouseEvent) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
     const pos = target.getBoundingClientRect();
-    getDropdownIns().then(ins => {
+    getDropdownIns(handleConfirm).then(ins => {
         if (ins.visible) {
             ins.hide();
             return;
         }
         ins.show({ x: pos.left, y: pos.bottom }, props.filterOptions);
     });
+}
+
+function handleConfirm(value: FilterOption['value'][]) {
+    emit('update:filterStatus', value);
 }
 </script>
 
@@ -32,6 +36,7 @@ function handleIconClick(e: MouseEvent) {
 <style scoped lang="less">
 .stk-filter {
 }
+
 .icon-filter {
     &:hover {
         color: #409eff;

@@ -15,10 +15,7 @@ export interface FilterOption {
 
 // 筛选状态接口
 export interface FilterStatus {
-    type: 'number' | 'string';
     value: any[]; // 筛选值
-    isOpen?: boolean; // 筛选面板是否打开
-    options?: FilterOption[]; // 可选项
 }
 
 // useFilter选项接口
@@ -28,6 +25,6 @@ export interface UseFilterOptions {
 
 // Filter组件属性接口
 export interface FilterProps {
-    filterStatus: FilterStatus;
+    filterStatus?: FilterStatus;
     filterOptions?: FilterOption[]; // 自定义筛选选项
 }

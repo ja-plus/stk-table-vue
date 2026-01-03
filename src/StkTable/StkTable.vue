@@ -225,6 +225,7 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
+import { FilterStatus } from './components/Filter';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -684,6 +685,8 @@ const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
 const [tableHeaders, tableHeadersForCalc, dealColumns] = useTableColumns<DT>(props.virtualX, isRelativeMode);
 
+const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
+
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
 
@@ -933,7 +936,25 @@ function initDataSource(v = props.dataSource) {
         // only tree data need flat
         dataSourceTemp = flatTreeData(dataSourceTemp);
     }
+    dataSourceTemp = filterDataSource(dataSourceTemp);
     dataSourceCopy.value = dataSourceTemp;
+}
+
+function setFilter(status: Record<UniqKey, FilterStatus>) {
+    filterStatus.value = status;
+    initDataSource();
+}
+
+function filterDataSource(dataSource: DT[]) {
+    const filterKeys = Object.keys(filterStatus.value);
+    if (!filterKeys?.length) return dataSource;
+    return dataSource.filter(row => {
+        return filterKeys.some(key => {
+            const { value } = filterStatus.value[key];
+            if (!value?.length) return true;
+            return value.some(v => row[key] == v);
+        });
+    });
 }
 
 function dealDefaultSorter() {
@@ -1709,5 +1730,12 @@ defineExpose({
      * @see {@link copySelectedArea}
      */
     copySelectedArea,
+    /*
+     * 设置筛选状态
+     *
+     * en: Set filter status
+     * @see {@link setFilter}
+     */
+    setFilter,
 });
 </script>

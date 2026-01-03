@@ -1,5 +1,5 @@
 import { CustomHeaderCellProps, UniqKey } from '@/StkTable/types';
-import { h, ref } from 'vue';
+import { defineComponent, getCurrentInstance, h, markRaw, ref } from 'vue';
 import Filter from './Filter.vue';
 import type { FilterOption, FilterStatus } from './types';
 
@@ -33,18 +33,29 @@ function extractFilterOptions(dataSource: any[], columnKey: string): FilterOptio
  * @returns 筛选组件和筛选状态
  */
 export function useFilter() {
-    // 筛选状态
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
-    // 创建筛选组件
     function FilterComponent(config?: { options?: FilterOption[] }) {
-        // 如果有数据源和列信息，自动提取筛选选项
-        return (props: CustomHeaderCellProps<any>) =>
-            h(Filter, {
-                ...props,
-                filterStatus: filterStatus.value[props.col.dataIndex], // TODO ColKeyGen
-                filterOptions: config?.options || [],
-            });
+        return markRaw(
+            defineComponent({
+                // eslint-disable-next-line vue/require-prop-types
+                props: ['col', 'colIndex', 'options', 'filterStatus'],
+                setup(props: CustomHeaderCellProps<any>) {
+                    const parent = getCurrentInstance()?.parent;
+                    console.log('🚀 ~ FilterComponent ~ parent:', parent);
+                    return () =>
+                        h(Filter, {
+                            ...props,
+                            filterStatus: filterStatus.value[props.col.dataIndex], // TODO ColKeyGen
+                            filterOptions: config?.options || [],
+                            'onUpdate:filterStatus': (value: FilterOption['value'][]) => {
+                                filterStatus.value[props.col.dataIndex] = { value };
+                                parent?.exposed?.setFilter(filterStatus.value);
+                            },
+                        });
+                },
+            }),
+        );
     }
 
     return {
