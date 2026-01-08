@@ -77,15 +77,14 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
                     highlightDimRowsAnimation.forEach((store, rowKeyValue) => {
                         const { ts, duration } = store;
                         const timeOffset = nowTs - ts;
-                        if (nowTs - ts < duration) {
+                        if (timeOffset < duration) {
                             updateRowAnimation(rowKeyValue, store, timeOffset);
                         } else {
                             highlightDimRowsAnimation.delete(rowKeyValue);
                         }
                     });
 
-                    if (highlightDimRowsAnimation.size > 0) {
-                        // 还有高亮的行,则下一次循环
+                    if (highlightDimRowsAnimation.size) {
                         recursion();
                     } else {
                         // 没有则停止循环
@@ -227,13 +226,14 @@ export function useHighlight({ props, stkTableId, tableContainerRef }: Params) {
      */
     function updateRowAnimation(rowKeyValue: UniqKey, store: HighlightDimRowStore, timeOffset: number) {
         const rowEl = document.getElementById(stkTableId + '-' + String(rowKeyValue));
-        const { visible, keyframe, duration: initialDuration } = store;
+        const { visible } = store;
         if (!rowEl) {
             if (visible) {
                 store.visible = false; // 标记为不可见
             }
             return;
         }
+        const { keyframe, duration: initialDuration } = store;
         // 只有元素 不可见 -> 可见 时才需要更新
         if (!visible) {
             store.visible = true; // 标记为可见
