@@ -3,6 +3,7 @@
 * Optimize 
   - optimize: `scrollRowByRow='scrollbar'` performance.
   - optimize: table row attribute code.
+  - optimize: add `vt-x-right` td.
 
 ## 0.8.13
 * Optimize

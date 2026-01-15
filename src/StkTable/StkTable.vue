@@ -174,6 +174,7 @@
                             </td>
                         </template>
                     </template>
+                    <td v-if="virtualX_on" class="vt-x-right"></td>
                 </tr>
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
                 <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
