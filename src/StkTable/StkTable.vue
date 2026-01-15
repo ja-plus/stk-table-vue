@@ -90,7 +90,7 @@
                 @dragover="onTrDragOver"
                 @dragenter="onTrDragEnter"
                 @dragend="onTrDragEnd"
-                @click="onRowClick"
+                @click="(onRowClick($event), onCellClick($event))"
                 @dblclick="onRowDblclick"
                 @contextmenu="onRowMenu"
                 @mouseover="onTrMouseOver"
@@ -123,7 +123,6 @@
                                 v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
                                 v-bind="getTDProps(row, col, rowIndex, colIndex)"
-                                @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
                                 @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
                                 @mouseenter="onCellMouseEnter($event, row, col)"
                                 @mouseleave="onCellMouseLeave($event, row, col)"
@@ -244,7 +243,7 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
-import { getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { getClosestColIndex, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -1151,7 +1150,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     return {
-        'data-cell-key': cellKey,
+        'data-col-index': colIndex,
         style: cellStyleMap.value[TagType.TD].get(colKey),
         class: classList,
         ...mergeCellsWrapper(row, col, rowIndex, colIndex),
@@ -1306,7 +1305,15 @@ function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
 }
 
 /** 单元格单击 */
-function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
+function onCellClick(e: MouseEvent) {
+    const rowIndex = getClosestTrIndex(e);
+    if (rowIndex === void 0) return;
+    const row = dataSourceCopy.value[rowIndex];
+    if (!row) return;
+    const colIndex = getClosestColIndex(e);
+    if (colIndex === void 0) return;
+    const col = tableHeaderLast.value[colIndex];
+    if (!col) return;
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
         const result = { row, col, select: false, rowIndex };
