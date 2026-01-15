@@ -54,18 +54,7 @@
                     <th
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="colKeyGen(col)"
-                        :data-col-key="colKeyGen(col)"
-                        :draggable="isHeaderDraggable(col) ? 'true' : 'false'"
-                        :rowspan="virtualX_on ? 1 : col.__R_SP__"
-                        :colspan="col.__C_SP__"
-                        :style="cellStyleMap[TagType.TH].get(colKeyGen(col))"
-                        :title="getHeaderTitle(col)"
-                        :class="[
-                            col.sorter ? 'sortable' : '',
-                            colKeyGen(col) === sortCol && sortOrderIndex !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex],
-                            col.headerClassName,
-                            fixedColClassMap.get(colKeyGen(col)),
-                        ]"
+                        v-bind="getTHProps(col)"
                         @click="
                             e => {
                                 onColumnSort(col);
@@ -105,20 +94,9 @@
                 </tr>
                 <tr
                     v-for="(row, rowIndex) in virtual_dataSourcePart"
-                    :id="stkTableId + '-' + (rowKey ? rowKeyGen(row) : getRowIndex(rowIndex))"
                     ref="trRef"
-                    :key="rowKey ? rowKeyGen(row) : getRowIndex(rowIndex)"
-                    :data-row-key="rowKey ? rowKeyGen(row) : getRowIndex(rowIndex)"
-                    :class="{
-                        active: rowKey ? rowKeyGen(row) === currentRowKey : row === currentRow,
-                        hover: props.showTrHoverClass && (rowKey ? rowKeyGen(row) === currentHoverRowKey : row === currentHoverRowKey),
-                        [rowClassName(row, getRowIndex(rowIndex)) || '']: true,
-                        expanded: row && row.__EXP__,
-                        'expanded-row': row && row.__EXP_R__,
-                    }"
-                    :style="{
-                        '--row-height': row && row.__EXP_R__ && props.virtual && props.expandConfig?.height && props.expandConfig?.height + 'px',
-                    }"
+                    :key="rowKeyGen(row)"
+                    v-bind="getTRProps(row, rowIndex)"
                     @click="onRowClick($event, row, getRowIndex(rowIndex))"
                     @dblclick="onRowDblclick($event, row, getRowIndex(rowIndex))"
                     @contextmenu="onRowMenu($event, row, getRowIndex(rowIndex))"
@@ -139,10 +117,7 @@
                             <td
                                 v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
-                                v-bind="{
-                                    ...getTDProps(row, col),
-                                    ...mergeCellsWrapper(row, col, rowIndex, colIndex),
-                                }"
+                                v-bind="getTDProps(row, col, rowIndex, colIndex)"
                                 @click="onCellClick($event, row, col, getRowIndex(rowIndex))"
                                 @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
                                 @mouseenter="onCellMouseEnter($event, row, col)"
@@ -1026,9 +1001,7 @@ function updateDataSource(val: DT[]) {
     }
 }
 
-/**
- * 行唯一值生成
- */
+/** tr key */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
     let key = rowKeyGenCache.get(row) || (row as PrivateRowDT).__ROW_K__;
@@ -1044,12 +1017,11 @@ function rowKeyGen(row: DT | null | undefined) {
     return key;
 }
 
-/** 单元格唯一值 */
+/** td key */
 function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
     return rowKeyGen(row) + CELL_KEY_SEPARATE + colKeyGen.value(col);
 }
 
-/** 单元格样式 */
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
@@ -1093,7 +1065,44 @@ function getHeaderTitle(col: StkTableColumn<DT>): string {
     return col.title || '';
 }
 
-function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>) {
+function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
+    const rowIndex = getRowIndex(index);
+    const rowKey = rowKeyGen(row);
+
+    const classList = props.rowClassName(row, rowIndex) || '' + ' ' + (row?.__EXP__ ? 'expanded' : '') + ' ' + (row?.__EXP_R__ ? 'expanded-row' : '');
+    const needRowHeight = row?.__EXP_R__ && props.virtual && props.expandConfig?.height;
+
+    const result = {
+        id: stkTableId + '-' + rowKey,
+        'data-row-key': rowKey,
+        class: classList,
+        style: '',
+    };
+    if (needRowHeight) {
+        result.style = `--row-height: ${props.expandConfig?.height}px`;
+    }
+    return result;
+}
+
+function getTHProps(col: PrivateStkTableColumn<DT>) {
+    const colKey = colKeyGen.value(col);
+    return {
+        'data-col-key': colKey,
+        draggable: Boolean(isHeaderDraggable(col)),
+        rowspan: virtualX_on.value ? 1 : col.__R_SP__,
+        colspan: col.__C_SP__,
+        style: cellStyleMap.value[TagType.TH].get(colKey),
+        title: getHeaderTitle(col),
+        class: [
+            col.sorter ? 'sortable' : '',
+            colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
+            col.headerClassName,
+            fixedColClassMap.value.get(colKey),
+        ],
+    };
+}
+
+function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>, rowIndex: number, colIndex: number) {
     const colKey = colKeyGen.value(col);
     if (!row) {
         return {
@@ -1102,8 +1111,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     const cellKey = cellKeyGen(row, col);
-
-    const classList = [col.className, fixedColClassMap.value.get(colKeyGen.value(col))];
+    const classList = [col.className, fixedColClassMap.value.get(colKey)];
     if (col.mergeCells) {
         if (hoverMergedCells.value.has(cellKey)) {
             classList.push('cell-hover');
@@ -1119,9 +1127,9 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
 
     if (col.type === 'seq') {
         classList.push('seq-column');
-    } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKeyGen.value(col) : false)) {
+    } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKey : false)) {
         classList.push('expanded');
-    } else if (col.type === 'tree-node' && row.__T_EXP__) {
+    } else if (row.__T_EXP__ && col.type === 'tree-node') {
         classList.push('tree-expanded');
     } else if (col.type === 'dragRow') {
         classList.push('drag-row-cell');
@@ -1131,11 +1139,14 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         'data-cell-key': cellKey,
         style: cellStyleMap.value[TagType.TD].get(colKey),
         class: classList,
+        ...mergeCellsWrapper(row, col, rowIndex, colIndex),
     };
 }
 
 /**
  * 表头点击排序
+ *
+ * en: Sort a column
  * @param click 是否为点击表头触发
  * @param options.force sort-remote 开启后是否强制排序
  * @param options.emit 是否触发回调
@@ -1285,7 +1296,7 @@ function onCellClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: 
     emits('cell-click', e, row, col, { rowIndex });
 }
 
-/** 表头单元格单击 */
+/** th click */
 function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
     emits('header-cell-click', e, col);
 }
@@ -1362,12 +1373,10 @@ function onTableScroll(e: Event) {
     const isYScroll = scrollTop !== vScrollTop;
     const isXScroll = scrollLeft !== vScrollLeft;
 
-    // 纵向滚动有变化
     if (isYScroll) {
         updateVirtualScrollY(scrollTop);
     }
 
-    // 横向滚动有变化
     if (isXScroll) {
         if (virtualX_on.value) {
             updateVirtualScrollX(scrollLeft);
@@ -1413,6 +1422,8 @@ function onTrMouseLeave(e: MouseEvent) {
 
 /**
  * 选中一行
+ *
+ * en: Select a row
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if set true not emit `current-change`. default:false
  * @param {boolean} option.deep if set true, deep search in children. default:false

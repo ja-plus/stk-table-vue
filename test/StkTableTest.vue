@@ -67,11 +67,11 @@
         columns:
         <div v-for="col in columns" :key="col.dataIndex">{{ col }}</div>
     </div> -->
-    <StkTableSimple></StkTableSimple>
+    <!-- <StkTableSimple></StkTableSimple>
     <StkTableMultiHeader></StkTableMultiHeader>
 
     <ExpandRow></ExpandRow>
-    <DragRow></DragRow>
+    <DragRow></DragRow> -->
 
     <!-- <StkTableC
         ref="stkTableC"
@@ -86,12 +86,12 @@
         @col-order-change="onColOrderChange2"
     ></StkTableC> -->
 
-    <FixedMode></FixedMode>
+    <!-- <FixedMode></FixedMode>
     <StkTableInsertSort />
-    <AutoRowHeight />
+    <AutoRowHeight /> -->
 
     <hr />
-    <DocTable></DocTable>
+    <!-- <DocTable></DocTable> -->
 </template>
 
 <script lang="ts" setup>
@@ -148,34 +148,34 @@ const props = ref({
 
 const dataSource = shallowRef<any>(
     // [{}, null],
-    new Array(30).fill(0).map((it, i) => {
-        const key1 = 'name' + i;
+    new Array(3000).fill(0).map((it, i) => {
+        const key1 = 'n' + i;
         return {
             name: key1,
             age: Math.ceil(Math.random() * 100),
             email: 'add@sa.com',
             gender: Number(Math.random() * 100 - 50).toFixed(2),
             address: 'ahshshsshshhs',
-            children: new Array(5).fill(0).map((it, i) => {
-                const key2 = key1 + '-children' + i;
-                return {
-                    name: key2,
-                    age: Math.ceil(Math.random() * 100),
-                    email: 'add@sa.com',
-                    gender: Number(Math.random() * 100 - 50).toFixed(2),
-                    address: 'ahshshsshshhs',
-                    children: new Array(5).fill(0).map((it, i) => {
-                        const key3 = key2 + '-child' + i;
-                        return {
-                            name: key3,
-                            age: Math.ceil(Math.random() * 100),
-                            email: 'add@sa.com',
-                            gender: Number(Math.random() * 100 - 50).toFixed(2),
-                            address: 'ahshshsshshhs',
-                        };
-                    }),
-                };
-            }),
+            // children: new Array(5).fill(0).map((it, i) => {
+            //     const key2 = key1 + '-children' + i;
+            //     return {
+            //         name: key2,
+            //         age: Math.ceil(Math.random() * 100),
+            //         email: 'add@sa.com',
+            //         gender: Number(Math.random() * 100 - 50).toFixed(2),
+            //         address: 'ahshshsshshhs',
+            //         children: new Array(5).fill(0).map((it, i) => {
+            //             const key3 = key2 + '-child' + i;
+            //             return {
+            //                 name: key3,
+            //                 age: Math.ceil(Math.random() * 100),
+            //                 email: 'add@sa.com',
+            //                 gender: Number(Math.random() * 100 - 50).toFixed(2),
+            //                 address: 'ahshshsshshhs',
+            //             };
+            //         }),
+            //     };
+            // }),
         };
     }),
 );
@@ -541,8 +541,8 @@ function scrollAndDataToLess() {
 
 <style scoped>
 .stk-table-parent {
-    width: 800px;
-    height: 400px;
+    width: 1800px;
+    height: 800px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;

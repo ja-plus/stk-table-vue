@@ -2,6 +2,7 @@
 ## 0.8.14
 * Optimize 
   - optimize: `scrollRowByRow='scrollbar'` performance.
+  - optimize: table row attribute code.
 
 ## 0.8.13
 * Optimize
