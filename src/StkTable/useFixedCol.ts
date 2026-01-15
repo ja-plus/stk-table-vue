@@ -40,18 +40,20 @@ export function useFixedCol<DT extends Record<string, any>>({
         tableHeaders.value.forEach(cols => {
             cols.forEach(col => {
                 const fixed = col.fixed;
-                const showShadow = fixedColShadow && fixed && fixedShadowColsValue.includes(col);
-                const classObj: Record<string, any> = {
-                    'fixed-cell--active': fixedColsValue.includes(col), // 表示该列正在被固定
-                };
+                const showShadow = fixed && fixedColShadow && fixedShadowColsValue.includes(col);
+                const classList = [];
+                if (fixedColsValue.includes(col)) {
+                    // 表示该列正在被固定
+                    classList.push('fixed-cell--active');
+                }
                 if (fixed) {
-                    classObj['fixed-cell'] = true;
-                    classObj['fixed-cell--' + fixed] = true;
+                    classList.push('fixed-cell');
+                    classList.push('fixed-cell--' + fixed);
                 }
                 if (showShadow) {
-                    classObj['fixed-cell--shadow'] = true;
+                    classList.push('fixed-cell--shadow');
                 }
-                colMap.set(colKey(col), classObj);
+                colMap.set(colKey(col), classList);
             });
         });
         return colMap;
