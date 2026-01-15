@@ -85,7 +85,17 @@
                 </tr>
             </thead>
 
-            <tbody class="stk-tbody-main" @dragover="onTrDragOver" @dragenter="onTrDragEnter" @dragend="onTrDragEnd">
+            <tbody
+                class="stk-tbody-main"
+                @dragover="onTrDragOver"
+                @dragenter="onTrDragEnter"
+                @dragend="onTrDragEnd"
+                @click="onRowClick"
+                @dblclick="onRowDblclick"
+                @contextmenu="onRowMenu"
+                @mouseover="onTrMouseOver"
+                @mouseleave="onTrMouseLeave"
+            >
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
@@ -97,11 +107,6 @@
                     ref="trRef"
                     :key="rowKeyGen(row)"
                     v-bind="getTRProps(row, rowIndex)"
-                    @click="onRowClick($event, row, getRowIndex(rowIndex))"
-                    @dblclick="onRowDblclick($event, row, getRowIndex(rowIndex))"
-                    @contextmenu="onRowMenu($event, row, getRowIndex(rowIndex))"
-                    @mouseover="onTrMouseOver($event, row)"
-                    @mouseleave="onTrMouseLeave($event)"
                     @drop="onTrDrop($event, getRowIndex(rowIndex))"
                 >
                     <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -239,7 +244,7 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
-import { howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -607,7 +612,7 @@ const currentSelectedCellKey = ref<string | undefined>();
 /** 当前hover行 */
 let currentHoverRow: DT | null = null;
 /** 当前hover的行的key */
-const currentHoverRowKey = ref(null);
+const currentHoverRowKey = ref<UniqKey | null>(null);
 /** 当前hover的列的key */
 // const currentColHoverKey = ref(null);
 
@@ -1070,15 +1075,24 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const rowIndex = getRowIndex(index);
     const rowKey = rowKeyGen(row);
 
-    const classList = props.rowClassName(row, rowIndex) || '' + ' ' + (row?.__EXP__ ? 'expanded' : '') + ' ' + (row?.__EXP_R__ ? 'expanded-row' : '');
-    const needRowHeight = row?.__EXP_R__ && props.virtual && props.expandConfig?.height;
+    let classStr = props.rowClassName(row, rowIndex) || '' + ' ' + (row?.__EXP__ ? 'expanded' : '') + ' ' + (row?.__EXP_R__ ? 'expanded-row' : '');
+    if (currentRowKey.value === rowKey || row === currentRow.value) {
+        classStr += ' active';
+    }
+    if (props.showTrHoverClass && (rowKey === currentHoverRowKey.value || row === currentHoverRow)) {
+        classStr += ' hover';
+    }
 
     const result = {
         id: stkTableId + '-' + rowKey,
         'data-row-key': rowKey,
-        class: classList,
+        'data-row-index': getRowIndex(rowIndex),
+        class: classStr,
         style: '',
     };
+
+    const needRowHeight = row?.__EXP_R__ && props.virtual && props.expandConfig?.height;
+
     if (needRowHeight) {
         result.style = `--row-height: ${props.expandConfig?.height}px`;
     }
@@ -1214,7 +1228,11 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
     }
 }
 
-function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
+function onRowClick(e: MouseEvent) {
+    const rowIndex = getClosestTrIndex(e);
+    if (rowIndex === void 0) return;
+    const row = dataSourceCopy.value[rowIndex];
+    if (!row) return;
     emits('row-click', e, row, { rowIndex });
     if (rowActiveProp.value.disabled?.(row)) return;
     const isCurrentRow = props.rowKey ? currentRowKey.value === rowKeyGen(row) : currentRow.value === row;
@@ -1229,17 +1247,23 @@ function onRowClick(e: MouseEvent, row: DT, rowIndex: number) {
     emits('current-change', e, row, { select: !isCurrentRow });
 }
 
-function onRowDblclick(e: MouseEvent, row: DT, rowIndex: number) {
+function onRowDblclick(e: MouseEvent) {
+    const rowIndex = getClosestTrIndex(e);
+    if (rowIndex === void 0) return;
+    const row = dataSourceCopy.value[rowIndex];
+    if (!row) return;
     emits('row-dblclick', e, row, { rowIndex });
 }
 
-/** 表头行右键 */
 function onHeaderMenu(e: MouseEvent) {
     emits('header-row-menu', e);
 }
 
-/** 表体行右键 */
-function onRowMenu(e: MouseEvent, row: DT, rowIndex: number) {
+function onRowMenu(e: MouseEvent) {
+    const rowIndex = getClosestTrIndex(e);
+    if (rowIndex === void 0) return;
+    const row = dataSourceCopy.value[rowIndex];
+    if (!row) return;
     emits('row-menu', e, row, { rowIndex });
 }
 
@@ -1398,12 +1422,16 @@ function onTableScroll(e: Event) {
 }
 
 /** tr hover */
-function onTrMouseOver(_e: MouseEvent, row: DT) {
+function onTrMouseOver(e: MouseEvent) {
+    const tr = getClosestTr(e);
+    if (!tr) return;
+    const rowIndex = Number(tr.dataset.rowIndex);
+    const row = dataSourceCopy.value[rowIndex];
     if (currentHoverRow === row) return;
     currentHoverRow = row;
-    const rowKey = rowKeyGen(row);
+    const rowKey = tr.dataset.rowKey;
     if (props.showTrHoverClass) {
-        currentHoverRowKey.value = rowKey;
+        currentHoverRowKey.value = rowKey || null;
     }
     if (props.rowHover) {
         updateHoverMergedCells(rowKey);
@@ -1411,7 +1439,7 @@ function onTrMouseOver(_e: MouseEvent, row: DT) {
 }
 
 function onTrMouseLeave(e: MouseEvent) {
-    if ((e.target as HTMLTableRowElement).tagName !== 'TR') return;
+    if ((e.target as HTMLElement).tagName !== 'TR') return;
     currentHoverRow = null;
     if (props.showTrHoverClass) {
         currentHoverRowKey.value = null;

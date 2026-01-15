@@ -1,5 +1,6 @@
 import { computed, ShallowRef } from 'vue';
 import { DragRowConfig } from './types';
+import { getClosestTr } from './utils';
 
 type Params = {
     props: any;
@@ -21,12 +22,6 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
     const dragRowConfig = computed<DragRowConfig>(() => {
         return { mode: 'insert', ...props.dragRowConfig };
     });
-
-    function getClosestTr(e: DragEvent) {
-        const target = e.target as HTMLElement;
-        const tr = target?.closest('tr');
-        return tr;
-    }
 
     function onTrDragStart(e: DragEvent, rowIndex: number) {
         const tr = getClosestTr(e);

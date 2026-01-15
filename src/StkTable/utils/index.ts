@@ -240,3 +240,15 @@ export function getBrowsersVersion(browserName: string) {
 export function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey) {
     return rowKey + CELL_KEY_SEPARATE + colKey;
 }
+
+export function getClosestTr(e: MouseEvent) {
+    const target = e.target as HTMLElement;
+    const tr = target?.closest('tr');
+    return tr;
+}
+
+export function getClosestTrIndex(e: MouseEvent) {
+    const tr = getClosestTr(e);
+    if (!tr) return;
+    return Number(tr.dataset.rowIndex);
+}

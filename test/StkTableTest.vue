@@ -115,6 +115,7 @@ const seqConfig = {
     startIndex: 20,
 };
 const props = ref({
+    // showTrHoverClass: true,
     rowKey: 'name',
     theme: 'dark' as 'dark' | 'light',
     stripe: true,
