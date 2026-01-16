@@ -39,11 +39,9 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
         const startIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
 
         for (let i = startIndex; i < startIndex + colspan; i++) {
-            if(!isSelfRow) {
-                // if other row hovered, the rowspan cell need to be highlight
-                if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
-                hoverRowMap.value[rowKey].add(mergeCellKey);
-            }
+            // if other row hovered, the rowspan cell need to be highlight
+            if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
+            hoverRowMap.value[rowKey].add(mergeCellKey);
             if (isSelfRow && i === startIndex) {
                 // self row start cell does not need to be hidden
                 continue;
@@ -53,7 +51,6 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
             const nextColKey = colKeyGen.value(nextCol);
             if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
             hiddenCellMap.value[rowKey].add(nextColKey);
-
         }
     }
 
@@ -106,7 +103,7 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
     function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
         if (!rowActiveProp.value.enabled) return;
         if (clear) {
-            activeMergedCells.value.clear();
+            activeMergedCells.value = new Set();
             return;
         }
         activeMergedCells.value = (rowKey !== void 0 && hoverRowMap.value[rowKey]) || new Set(hoverMergedCells.value);

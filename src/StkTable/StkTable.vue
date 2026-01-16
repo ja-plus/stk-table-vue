@@ -50,7 +50,6 @@
             @dblclick="onRowDblclick"
             @contextmenu="onRowMenu"
             @mouseover="onTrMouseOver"
-            @mouseleave="onTrMouseLeave"
         >
             <thead v-if="!headless">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
@@ -88,14 +87,7 @@
                 </tr>
             </thead>
 
-            <tbody
-                class="stk-tbody-main"
-                @click="onCellClick"
-                @mousedown="onCellMouseDown"
-                @mouseenter="onCellMouseEnter"
-                @mouseleave="onCellMouseLeave"
-                @mouseover="onCellMouseOver"
-            >
+            <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                     <template v-if="fixedMode && headless">
@@ -108,6 +100,7 @@
                     :key="rowKeyGen(row)"
                     v-bind="getTRProps(row, rowIndex)"
                     @drop="onTrDrop($event, getRowIndex(rowIndex))"
+                    @mouseleave="onTrMouseLeave"
                 >
                     <td v-if="virtualX_on" class="vt-x-left"></td>
                     <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
@@ -123,6 +116,8 @@
                                 v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
                                 v-bind="getTDProps(row, col, rowIndex, colIndex)"
+                                @mouseenter="onCellMouseEnter"
+                                @mouseleave="onCellMouseLeave"
                             >
                                 <component
                                     :is="col.customCell"
@@ -1080,7 +1075,7 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const result = {
         id: stkTableId + '-' + rowKey,
         'data-row-key': rowKey,
-        'data-row-i': getRowIndex(rowIndex),
+        'data-row-i': rowIndex,
         class: classStr,
         style: '',
     };
@@ -1402,7 +1397,7 @@ function onTableScroll(e: Event) {
 function onTrMouseOver(e: MouseEvent) {
     const tr = getClosestTr(e);
     if (!tr) return;
-    const rowIndex = Number(tr.dataset.rowIndex);
+    const rowIndex = Number(tr.dataset.rowI);
     const row = dataSourceCopy.value[rowIndex];
     if (currentHoverRow === row) return;
     currentHoverRow = row;

@@ -5,6 +5,11 @@
   - optimize: table row attribute code.
   - optimize: add `vt-x-right` td.
   - optimize: proxy tr,td mouse events to ancestor element to improve performance.
+* Bugfix
+  - fix: rowspan merged cells hover & active background color exception.
+  - fix: rowspan merged cells active background could not be canceled by other row.
+* Change
+  - remove td attribute `data-cell-key`, you can get cell element by `[data-row-key="${rowKeyValue}"] [data-col-key="${colKeyValue}"]`.
 
 ## 0.8.13
 * Optimize
