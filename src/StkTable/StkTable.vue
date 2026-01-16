@@ -43,6 +43,14 @@
             :class="{
                 'fixed-mode': props.fixedMode,
             }"
+            @dragover="onTrDragOver"
+            @dragenter="onTrDragEnter"
+            @dragend="onTrDragEnd"
+            @click="onRowClick"
+            @dblclick="onRowDblclick"
+            @contextmenu="onRowMenu"
+            @mouseover="onTrMouseOver"
+            @mouseleave="onTrMouseLeave"
         >
             <thead v-if="!headless">
                 <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
@@ -55,15 +63,10 @@
                         v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                         :key="colKeyGen(col)"
                         v-bind="getTHProps(col)"
-                        @click="
-                            e => {
-                                onColumnSort(col);
-                                onHeaderCellClick(e, col);
-                            }
-                        "
-                        @dragstart="onThDragStart"
-                        @drop="onThDrop"
-                        @dragover="onThDragOver"
+                        @click="e => onHeaderCellClick(e, col)"
+                        @dragstart="headerDrag ? onThDragStart : void 0"
+                        @drop="headerDrag ? onThDrop : void 0"
+                        @dragover="headerDrag ? onThDragOver : void 0"
                     >
                         <div
                             v-if="colResizeOn(col) && colIndex > 0"
@@ -87,14 +90,11 @@
 
             <tbody
                 class="stk-tbody-main"
-                @dragover="onTrDragOver"
-                @dragenter="onTrDragEnter"
-                @dragend="onTrDragEnd"
-                @click="(onRowClick($event), onCellClick($event))"
-                @dblclick="onRowDblclick"
-                @contextmenu="onRowMenu"
-                @mouseover="onTrMouseOver"
-                @mouseleave="onTrMouseLeave"
+                @click="onCellClick"
+                @mousedown="onCellMouseDown"
+                @mouseenter="onCellMouseEnter"
+                @mouseleave="onCellMouseLeave"
+                @mouseover="onCellMouseOver"
             >
                 <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                     <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
@@ -123,10 +123,6 @@
                                 v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                 :key="colKeyGen(col)"
                                 v-bind="getTDProps(row, col, rowIndex, colIndex)"
-                                @mousedown="onCellMouseDown($event, row, col, getRowIndex(rowIndex))"
-                                @mouseenter="onCellMouseEnter($event, row, col)"
-                                @mouseleave="onCellMouseLeave($event, row, col)"
-                                @mouseover="onCellMouseOver($event, row, col)"
                             >
                                 <component
                                     :is="col.customCell"
@@ -243,7 +239,7 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
-import { getClosestColIndex, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { getClosestColKey, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -1057,9 +1053,8 @@ const cellStyleMap = computed(() => {
 });
 
 function getRowIndex(rowIndex: number) {
-    return rowIndex + (virtual_on.value ? virtualScroll.value.startIndex : 0);
+    return rowIndex + virtualScroll.value.startIndex;
 }
-
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
     const colKey = colKeyGen.value(col);
@@ -1085,7 +1080,7 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const result = {
         id: stkTableId + '-' + rowKey,
         'data-row-key': rowKey,
-        'data-row-index': getRowIndex(rowIndex),
+        'data-row-i': getRowIndex(rowIndex),
         class: classStr,
         style: '',
     };
@@ -1150,7 +1145,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     return {
-        'data-col-index': colIndex,
+        'data-col-key': colKey,
         style: cellStyleMap.value[TagType.TD].get(colKey),
         class: classList,
         ...mergeCellsWrapper(row, col, rowIndex, colIndex),
@@ -1229,7 +1224,6 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
 
 function onRowClick(e: MouseEvent) {
     const rowIndex = getClosestTrIndex(e);
-    if (rowIndex === void 0) return;
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-click', e, row, { rowIndex });
@@ -1248,7 +1242,6 @@ function onRowClick(e: MouseEvent) {
 
 function onRowDblclick(e: MouseEvent) {
     const rowIndex = getClosestTrIndex(e);
-    if (rowIndex === void 0) return;
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-dblclick', e, row, { rowIndex });
@@ -1260,41 +1253,10 @@ function onHeaderMenu(e: MouseEvent) {
 
 function onRowMenu(e: MouseEvent) {
     const rowIndex = getClosestTrIndex(e);
-    if (rowIndex === void 0) return;
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-menu', e, row, { rowIndex });
 }
-
-/**
- * proxy events
- */
-// function onTbodyClick(e: MouseEvent, type: 1 | 2) {
-//     const el = (e.target as HTMLElement).closest<HTMLElement>('td,tr');
-//     if (!el) return;
-//     if (el.tagName === 'TD') {
-//         const [rowKey, colKey] = el.dataset.cellKey?.split(CELL_KEY_SEPARATE) || [];
-//         const row = dataSourceCopy.value.find(item => rowKeyGen(item) === rowKey);
-//         const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
-//         if (col) {
-//             if (col.type === 'expand') {
-//                 toggleExpandRow(row, col);
-//             }
-//             if (type === 1) {
-//                 onCellClick(e, row, col);
-//             } else if (type === 2) {
-//                 onCellMouseDown(e, row, col);
-//             }
-//         }
-//         if (type === 1) {
-//             onRowClick(e, row);
-//         }
-//     } else if (el.tagName === 'TR') {
-//         const rowKey = el.dataset.rowKey;
-//         const row = dataSourceCopy.value.find(item => rowKeyGen(item) === rowKey);
-//         onRowClick(e, row);
-//     }
-// }
 
 function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
     if (col.type === 'expand') {
@@ -1304,15 +1266,12 @@ function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
     }
 }
 
-/** 单元格单击 */
 function onCellClick(e: MouseEvent) {
     const rowIndex = getClosestTrIndex(e);
-    if (rowIndex === void 0) return;
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
-    const colIndex = getClosestColIndex(e);
-    if (colIndex === void 0) return;
-    const col = tableHeaderLast.value[colIndex];
+    const colKey = getClosestColKey(e);
+    const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
     if (!col) return;
     if (props.cellActive) {
         const cellKey = cellKeyGen(row, col);
@@ -1328,27 +1287,39 @@ function onCellClick(e: MouseEvent) {
     emits('cell-click', e, row, col, { rowIndex });
 }
 
+function getCellEventData(e: MouseEvent) {
+    const rowIndex = getClosestTrIndex(e) || 0;
+    const row = dataSourceCopy.value[rowIndex];
+    const colKey = getClosestColKey(e);
+    const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey) as any;
+    return { row, col, rowIndex };
+}
+
 /** th click */
 function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
+    onColumnSort(col);
     emits('header-cell-click', e, col);
 }
 
 /** td mouseenter */
-function onCellMouseEnter(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+function onCellMouseEnter(e: MouseEvent) {
+    const { row, col } = getCellEventData(e);
     emits('cell-mouseenter', e, row, col);
 }
 
 /** td mouseleave */
-function onCellMouseLeave(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+function onCellMouseLeave(e: MouseEvent) {
+    const { row, col } = getCellEventData(e);
     emits('cell-mouseleave', e, row, col);
 }
-
 /** td mouseover event */
-function onCellMouseOver(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
+function onCellMouseOver(e: MouseEvent) {
+    const { row, col } = getCellEventData(e);
     emits('cell-mouseover', e, row, col);
 }
 
-function onCellMouseDown(e: MouseEvent, row: DT, col: StkTableColumn<DT>, rowIndex: number) {
+function onCellMouseDown(e: MouseEvent) {
+    const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
 }
 
@@ -1366,22 +1337,21 @@ function onTableWheel(e: WheelEvent) {
         return;
     }
     const dom = tableContainerRef.value;
-    if (!dom) return;
-    if (!virtual_on.value && !virtualX_on.value) return;
+    if ((!virtual_on.value && !virtualX_on.value) || !dom) return;
 
-    const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
-    const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
-    const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
-    const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
     const { deltaY, deltaX, shiftKey } = e;
 
     if (virtual_on.value && deltaY && !shiftKey) {
+        const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
+        const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
         if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
             e.preventDefault(); // parent element scroll
         }
         dom.scrollTop += deltaY;
     }
     if (virtualX_on.value) {
+        const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
+        const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
         let distance = deltaX;
         if (shiftKey && deltaY) {
             distance = deltaY;

@@ -249,17 +249,10 @@ export function getClosestTr(e: MouseEvent) {
 
 export function getClosestTrIndex(e: MouseEvent) {
     const tr = getClosestTr(e);
-    if (!tr) return;
-    return Number(tr.dataset.rowIndex);
+    if (!tr) return -1;
+    return Number(tr.dataset.rowI);
 }
 
-function getClosestTd(e: MouseEvent) {
-    const target = e.target as HTMLElement;
-    const td = target?.closest('td');
-    return td;
-}
-export function getClosestColIndex(e: MouseEvent) {
-    const td = getClosestTd(e);
-    if (!td) return;
-    return Number(td.dataset.colIndex);
+export function getClosestColKey(e: MouseEvent) {
+    return (e.target as HTMLElement)?.closest('td')?.dataset.colKey;
 }

@@ -4,7 +4,7 @@
   - optimize: `scrollRowByRow='scrollbar'` performance.
   - optimize: table row attribute code.
   - optimize: add `vt-x-right` td.
-  - optimize: proxy tr events to improve performance.
+  - optimize: proxy tr,td mouse events to ancestor element to improve performance.
 
 ## 0.8.13
 * Optimize
