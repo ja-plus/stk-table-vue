@@ -1,14 +1,14 @@
-export const mockData = {
+export const mockData = (isZH: boolean) => ({
     source: '1',
     code: '2400001.IB',
-    bondAbbreviation: '24特别国债01',
+    bondAbbreviation: isZH ? '24特别国债01' : '24 Special Government Bond 01',
     remainingPeriod: '29.40Y',
     bestBuyVol: '5000',
     bestBuyPrice: '2.0275',
     bestSellPrice: '2.0275',
     bestSellVol: '5000',
     lastPrice: 2.03,
-    orgName: '中华人民共和国财政部',
+    orgName: isZH ? '中华人民共和国财政部' : "The People's Republic of China Ministry of Finance",
     couponRate: '2.5000',
     orgDebtRating: 'AAA',
     cbImpliedRating: 'AA',
@@ -47,4 +47,4 @@ export const mockData = {
     // bestTime: '17:30:00',
     bestBidClearingSpeed: 'Forward',
     bestOfrClearingSpeed: 'Forward',
-};
+});

@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import { CustomCellProps } from '@/StkTable/types';
-import { defineProps } from 'vue';
 import type { RowDataType } from './type';
 
 const props = defineProps<CustomCellProps<RowDataType>>();

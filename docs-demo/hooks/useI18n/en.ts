@@ -1,4 +1,5 @@
 export const en = {
+    abbreviation: 'Abbreviation',
     dataAmount: 'Data Amount',
     simulateUpdateData: 'Simulate Update Data',
     start: 'start',
@@ -122,5 +123,5 @@ export const en = {
     bidCnBondBp: 'Bid-CnBond(BP)',
     cnBondOfrBp: 'CnBond-Ofr(BP)',
     bidCsiBp: 'Bid-CSI(BP)',
-    csiOfrBp: 'CSI-Ofr(BP)'
+    csiOfrBp: 'CSI-Ofr(BP)',
 };

@@ -59,12 +59,14 @@ onMounted(() => {
     simulateUpdateData();
 });
 
+const mockDataResult = mockData(isZH.value);
+
 function initDataSource() {
     const curDate = new Date();
     const curHour = curDate.getHours();
     const curMinute = curDate.getMinutes();
     const dataSourceTemp = Array.from({ length: dataSize.value }).map((_, index) => {
-        const data = Object.assign({}, mockData, createData(index)) as any;
+        const data = Object.assign({}, mockDataResult, createData(index)) as any;
         data.bestTime =
             String(Random.integer(0, curHour)).padStart(2, '0') +
             ':' +
@@ -92,7 +94,6 @@ function handleToggleExpand(row: DataType) {
         return;
     }
     if (expand) {
-        // 插入六条记录
         const insertRows: DataType[] = [...new Array(6).fill(null)].map((_, index) => {
             return {
                 _isChildren: true, // 标记为子节点
@@ -125,7 +126,7 @@ function simulateUpdateData() {
         const curSeconds = curDate.getSeconds();
         const curMilliseconds = curDate.getMilliseconds();
         const newData: any = {
-            ...mockData,
+            ...mockDataResult,
             ...createData(Random.integer(0, dataSource.value.length - 1)),
             bestTime:
                 String(curHour).padStart(2, '0') +

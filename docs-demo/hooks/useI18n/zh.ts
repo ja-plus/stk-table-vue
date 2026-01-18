@@ -1,4 +1,5 @@
 export const zh = {
+    abbreviation: '简称',
     dataAmount: '数据量',
     simulateUpdateData: '模拟更新数据',
     start: '开始',

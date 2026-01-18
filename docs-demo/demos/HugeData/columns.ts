@@ -30,7 +30,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
         },
         {
             dataIndex: 'bondAbbreviation',
-            title: t('name'),
+            title: t('abbreviation'),
             width: 150,
         },
         { dataIndex: 'remainingPeriod', title: t('remainingPeriod') },
@@ -104,7 +104,7 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
         { dataIndex: 'industry', title: t('industry') },
         { dataIndex: 'ratingOrg', title: t('ratingOrg') },
         { dataIndex: 'bondType', title: t('bondType') },
-        { dataIndex: 'orgName', title: t('issuer'), sortField: 'orgName' },
+        { dataIndex: 'orgName', title: t('issuer'), sortField: 'orgName', width: 180 },
         {
             dataIndex: 'bestBidNetPrice',
             sortType: 'number',

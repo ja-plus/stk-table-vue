@@ -10,9 +10,11 @@ const { isZH } = useI18n();
 const columns: StkTableColumn<DataType>[] = [{ dataIndex: 'title', title: '', customCell: Panel }];
 const data = new Array(10).fill(0).map((_, i) => ({
     id: i,
-    title: isZH ? mockjs.Random.csentence(3, 15) : mockjs.Random.sentence(1, 5),
-    content: isZH ? mockjs.Random.cparagraph(0.5, 20) : mockjs.Random.paragraph(1, 20),
-    date: isZH ? mockjs.Random.datetime('yyyy-MM-dd HH:mm'): mockjs.Random.datetime('MM/dd/yyyy HH:mm'),
+    title: isZH.value ? mockjs.Random.csentence(3, 15) : mockjs.Random.sentence(1, 5),
+    content: isZH.value ? mockjs.Random.cparagraph(0.5, 20) : mockjs.Random.paragraph(1, 20),
+    date: isZH.value
+        ? mockjs.Random.datetime('yyyy-MM-dd HH:mm')
+        : mockjs.Random.datetime('MM/dd/yyyy HH:mm'),
 }));
 </script>
 
