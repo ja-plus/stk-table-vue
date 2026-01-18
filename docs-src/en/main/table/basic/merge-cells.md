@@ -48,6 +48,8 @@ This allows you to directly define merge counts in the data without additional j
 In virtual list mode, all merged cells (mergeCells function) will be traversed, which may have a certain impact on performance.
 :::
 ::: warning Note
+If the rowspan is very large (e.g. 1000 rows), the merged cell will still render all the rows it covers. Therefore, rowspan is not recommended to be very large.
+
 This feature does not support **horizontal virtual list** yet.
 :::
 

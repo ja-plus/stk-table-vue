@@ -48,6 +48,8 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 虚拟列表模式下，会遍历**所有**的合并单元格(mergeCells函数)，对性能有一定影响。
 :::
 ::: warning 注意
+如果rowspan特别大（比如1000行），则依然会渲染这个合并单元格覆盖的所有行。因此 rowspan 不建议很大。
+
 此功能暂不支持 **横向虚拟列表**。
 :::
 

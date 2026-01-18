@@ -72,7 +72,7 @@
                             class="table-header-resizer left"
                             @mousedown="onThResizeMouseDown($event, col, true)"
                         ></div>
-                        <div class="table-header-cell-wrapper" :style="{ '--row-span': virtualX_on ? 1 : col.__R_SP__ }">
+                        <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__}`">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else>
                                 <slot name="tableHeader" :col="col">
@@ -142,7 +142,7 @@
                                     v-else
                                     class="table-cell-wrapper"
                                     :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
-                                    :style="col.type === 'tree-node' ? { paddingLeft: row.__T_LV__ && row.__T_LV__ * 16 + 'px' } : {}"
+                                    :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
                                 >
                                     <template v-if="col.type === 'seq'">
                                         {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
