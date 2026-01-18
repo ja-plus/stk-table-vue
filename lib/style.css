@@ -250,8 +250,6 @@
 .stk-table .vt-x-left,
 .stk-table .vt-x-right{
   padding:0;
-  background:none;
-  pointer-events:none;
 }
 .stk-table .column-resize-indicator{
   width:0;

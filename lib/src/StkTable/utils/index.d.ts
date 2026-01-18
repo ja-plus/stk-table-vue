@@ -51,3 +51,6 @@ export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: num
 export declare function transformWidthToStr(width?: string | number): string | undefined;
 export declare function getBrowsersVersion(browserName: string): number;
 export declare function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey): string;
+export declare function getClosestTr(e: MouseEvent): HTMLTableRowElement | null;
+export declare function getClosestTrIndex(e: MouseEvent): number;
+export declare function getClosestColKey(e: MouseEvent): string | undefined;

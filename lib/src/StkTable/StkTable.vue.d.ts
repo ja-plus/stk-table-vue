@@ -4,6 +4,8 @@ import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, H
 type DT = any & PrivateRowDT;
 /**
  * 选中一行
+ *
+ * en: Select a row
  * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
  * @param {boolean} option.silent if set true not emit `current-change`. default:false
  * @param {boolean} option.deep if set true, deep search in children. default:false
@@ -680,6 +682,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     minWidth: string;
     maxWidth: string;
     sortConfig: SortConfig<DT>;
+    colKey: UniqKeyProp;
     rowHeight: number;
     headless: boolean;
     autoRowHeight: boolean | AutoRowHeightConfig<DT>;
@@ -687,7 +690,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | string | null;
-    colKey: UniqKeyProp;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
