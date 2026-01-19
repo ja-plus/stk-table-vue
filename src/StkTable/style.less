@@ -47,9 +47,13 @@
 
     /** 拖动行hover背景 */
     --drag-handle-hover-color: #d0d1e0;
+    
+    /** 自定义滚动条颜色 */
+    --scrollbar-thumb-color: #c1c1d7;
+    --scrollbar-thumb-hover-color: #a8a8c1;
 
     position: relative;
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -576,4 +580,34 @@
         background-color: var(--tr-active-bgc);
     }
 
+}
+
+
+.stk-scrollbar {
+    z-index: 100;
+    position: sticky;
+    background-color: var(--scrollbar-thumb-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    user-select: none;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: var(--scrollbar-thumb-hover-color);
+    }
+
+    &.vertical {
+        right: 0;
+        top: 0;
+        width: 8px;
+        height: 100px;
+    }
+
+    &.horizontal {
+        bottom: 0;
+        left: 0;
+        height: 8px;
+        width: 100px;
+    }
 }
