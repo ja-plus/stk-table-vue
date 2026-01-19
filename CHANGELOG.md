@@ -29,10 +29,10 @@
 
 ## 0.8.11
 * Change
- - customCell 
-  - slot `stkFoldIcon` implements default event; 
-  - always provide `expanded` and `treeExpanded` props.
-  - `props.rowKeyGen` default value change to `Math.random().toString(36).slice(2)`.
+  - customCell 
+    - slot `stkFoldIcon` implements default event; 
+    - always provide `expanded` and `treeExpanded` props.
+    - `props.rowKeyGen` default value change to `Math.random().toString(36).slice(2)`.
 * Optimize 
   - optimize col.type === 'expand' || col.type === 'tree-node' template DOM level.
 
