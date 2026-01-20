@@ -542,8 +542,8 @@ function scrollAndDataToLess() {
 
 <style scoped>
 .stk-table-parent {
-    width: 1800px;
-    height: 800px;
+    width: 800px;
+    height: 500px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
