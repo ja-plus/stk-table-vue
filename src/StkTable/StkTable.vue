@@ -195,13 +195,12 @@
                 class="stk-scrollbar vertical"
                 :style="{
                     height: `${verticalScrollbarHeight}px`,
-                    top: `${verticalScrollbarTop}px`,
+                    transform: `translateY(${verticalScrollbarTop}px)`,
                 }"
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart="onVerticalScrollbarMouseDown"
             ></div>
         </div>
-
         <!-- 自定义水平滚动条 -->
         <div
             v-if="showCustomScrollbar"
@@ -209,7 +208,7 @@
             class="stk-scrollbar horizontal"
             :style="{
                 width: `${horizontalScrollbarWidth}px`,
-                left: `${horizontalScrollbarLeft}px`,
+                transform: `translateX(${horizontalScrollbarLeft}px)`,
             }"
             @mousedown="onHorizontalScrollbarMouseDown"
             @touchstart="onHorizontalScrollbarMouseDown"
@@ -221,7 +220,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, onUnmounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';

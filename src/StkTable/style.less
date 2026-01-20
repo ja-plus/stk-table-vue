@@ -588,10 +588,10 @@
     position: sticky;
     background-color: var(--scrollbar-thumb-color);
     border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease;
     user-select: none;
     flex-shrink: 0;
+    transform-origin: top left;
 
     &:hover {
         background-color: var(--scrollbar-thumb-hover-color);
@@ -602,6 +602,7 @@
         top: 0;
         width: 8px;
         height: 100px;
+        margin-left: auto;
     }
 
     &.horizontal {
@@ -609,5 +610,6 @@
         left: 0;
         height: 8px;
         width: 100px;
+        margin-top: auto;
     }
 }
