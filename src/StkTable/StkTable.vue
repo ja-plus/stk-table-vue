@@ -194,10 +194,11 @@
                 </table>
                 <slot name="customBottom"></slot>
             </div>
+            <div v-if="showScrollbar.y" class="stk-scrollbar-track vertical"></div>
             <div
                 v-if="showScrollbar.y"
                 ref="verticalScrollbarRef"
-                class="stk-scrollbar vertical"
+                class="stk-scrollbar-thumb vertical"
                 :style="{
                     height: `${scrollbar.h}px`,
                     transform: `translateY(${scrollbar.top}px)`,
@@ -209,10 +210,11 @@
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
+        <div v-if="showScrollbar.x" class="stk-scrollbar-track horizontal"></div>
         <div
             v-if="showScrollbar.x"
             ref="horizontalScrollbarRef"
-            class="stk-scrollbar horizontal"
+            class="stk-scrollbar-thumb horizontal"
             :style="{
                 width: `${scrollbar.w}px`,
                 transform: `translateX(${scrollbar.left}px)`,
