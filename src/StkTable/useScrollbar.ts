@@ -1,21 +1,17 @@
 import { ref, onMounted, onUnmounted, nextTick, Ref } from 'vue';
 import { throttle } from './utils/index';
 
-/**
- * 自定义滚动条配置选项
- */
-export interface ScrollbarOptions {
-    /** 是否启用自定义滚动条 */
+export type ScrollbarOptions = {
     enabled?: boolean;
-    /** 滚动条最小高度 */
-    minBarHeight?: number;
-    /** 滚动条最小宽度 */
-    minBarWidth?: number;
-    /** 滚动条宽度 */
-    barWidth?: number;
-    /** 滚动条高度 */
-    barHeight?: number;
-}
+    /** scroll-y width */
+    width?: number;
+    /** scroll-x height */
+    height?: number;
+    /** min scroll-y width */
+    minWidth?: number;
+    /** min scroll-x height */
+    minHeight?: number;
+};
 
 /**
  * 自定义滚动条hooks
@@ -26,29 +22,24 @@ export interface ScrollbarOptions {
 export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: ScrollbarOptions = {}) {
     const defaultOptions: Required<ScrollbarOptions> = {
         enabled: true,
-        minBarHeight: 20,
-        minBarWidth: 20,
-        barWidth: 8,
-        barHeight: 8,
+        minHeight: 20,
+        minWidth: 20,
+        width: 8,
+        height: 8,
     };
 
     const mergedOptions = { ...defaultOptions, ...options };
 
-    const showScrollbar = ref({
-        x: false,
-        y: false,
-    });
-    const verticalScrollbarHeight = ref(0);
-    const verticalScrollbarTop = ref(0);
-    const horizontalScrollbarWidth = ref(0);
-    const horizontalScrollbarLeft = ref(0);
+    const showScrollbar = ref({ x: false, y: false });
+
+    const scrollbar = ref({ h: 0, w: 0, top: 0, left: 0 });
 
     let isDraggingVertical = false;
     let isDraggingHorizontal = false;
     let dragStartY = 0;
     let dragStartX = 0;
-    let dragStartScrollTop = 0;
-    let dragStartScrollLeft = 0;
+    let dragStartTop = 0;
+    let dragStartLeft = 0;
 
     let resizeObserver: ResizeObserver | null = null;
 
@@ -86,14 +77,14 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
 
         if (needVertical) {
             const ratio = clientHeight / scrollHeight;
-            verticalScrollbarHeight.value = Math.max(mergedOptions.minBarHeight, ratio * clientHeight);
-            verticalScrollbarTop.value = (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - verticalScrollbarHeight.value);
+            scrollbar.value.h = Math.max(mergedOptions.minHeight, ratio * clientHeight);
+            scrollbar.value.top = (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - scrollbar.value.h);
         }
 
         if (needHorizontal) {
             const ratio = clientWidth / scrollWidth;
-            horizontalScrollbarWidth.value = Math.max(mergedOptions.minBarWidth, ratio * clientWidth);
-            horizontalScrollbarLeft.value = (scrollLeft / (scrollWidth - clientWidth)) * (clientWidth - horizontalScrollbarWidth.value);
+            scrollbar.value.w = Math.max(mergedOptions.minWidth, ratio * clientWidth);
+            scrollbar.value.left = (scrollLeft / (scrollWidth - clientWidth)) * (clientWidth - scrollbar.value.w);
         }
     }
 
@@ -104,18 +95,13 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         const container = containerRef.value;
         if (!container) return;
 
-        dragStartScrollTop = container.scrollTop;
+        dragStartTop = container.scrollTop;
+        dragStartY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
 
-        if (e instanceof MouseEvent) {
-            dragStartY = e.clientY;
-        } else {
-            dragStartY = e.touches[0].clientY;
-        }
-
-        document.addEventListener('mousemove', onVerticalScrollbarDrag);
-        document.addEventListener('mouseup', onScrollbarDragEnd);
-        document.addEventListener('touchmove', onVerticalScrollbarDrag, { passive: false });
-        document.addEventListener('touchend', onScrollbarDragEnd);
+        document.addEventListener('mousemove', onVerticalDrag);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onVerticalDrag, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
     }
 
     function onHorizontalScrollbarMouseDown(e: MouseEvent | TouchEvent) {
@@ -125,81 +111,60 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         const container = containerRef.value;
         if (!container) return;
 
-        dragStartScrollLeft = container.scrollLeft;
+        dragStartLeft = container.scrollLeft;
 
-        if (e instanceof MouseEvent) {
-            dragStartX = e.clientX;
-        } else {
-            dragStartX = e.touches[0].clientX;
-        }
+        dragStartX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
 
-        document.addEventListener('mousemove', onHorizontalScrollbarDrag);
-        document.addEventListener('mouseup', onScrollbarDragEnd);
-        document.addEventListener('touchmove', onHorizontalScrollbarDrag, { passive: false });
-        document.addEventListener('touchend', onScrollbarDragEnd);
+        document.addEventListener('mousemove', onHorizontalDrag);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onHorizontalDrag, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
     }
 
-    function onVerticalScrollbarDrag(e: MouseEvent | TouchEvent) {
+    function onVerticalDrag(e: MouseEvent | TouchEvent) {
         if (!isDraggingVertical || !containerRef.value) return;
 
         e.preventDefault();
 
-        let clientY = 0;
-        if (e instanceof MouseEvent) {
-            clientY = e.clientY;
-        } else {
-            clientY = e.touches[0].clientY;
-        }
+        const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
 
         const deltaY = clientY - dragStartY;
         const container = containerRef.value;
         const { scrollHeight, clientHeight } = container;
 
-        // 计算新的scrollTop
         const scrollRange = scrollHeight - clientHeight;
-        const trackRange = clientHeight - verticalScrollbarHeight.value;
+        const trackRange = clientHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
-        container.scrollTop = dragStartScrollTop + scrollDelta;
-
-        // updateCustomScrollbar();
+        container.scrollTop = dragStartTop + scrollDelta;
     }
 
-    function onHorizontalScrollbarDrag(e: MouseEvent | TouchEvent) {
+    function onHorizontalDrag(e: MouseEvent | TouchEvent) {
         if (!isDraggingHorizontal || !containerRef.value) return;
 
         e.preventDefault();
 
-        let clientX = 0;
-        if (e instanceof MouseEvent) {
-            clientX = e.clientX;
-        } else {
-            clientX = e.touches[0].clientX;
-        }
+        const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
 
         const deltaX = clientX - dragStartX;
         const container = containerRef.value;
         const { scrollWidth, clientWidth } = container;
 
-        // 计算新的scrollLeft
         const scrollRange = scrollWidth - clientWidth;
-        const trackRange = clientWidth - horizontalScrollbarWidth.value;
+        const trackRange = clientWidth - scrollbar.value.w;
         const scrollDelta = (deltaX / trackRange) * scrollRange;
-        container.scrollLeft = dragStartScrollLeft + scrollDelta;
-
-        // 立即更新滚动条位置，确保拖动时同步
-        // updateCustomScrollbar();
+        container.scrollLeft = dragStartLeft + scrollDelta;
     }
 
-    function onScrollbarDragEnd() {
+    function onDragEnd() {
         isDraggingVertical = false;
         isDraggingHorizontal = false;
 
-        document.removeEventListener('mousemove', onVerticalScrollbarDrag);
-        document.removeEventListener('mousemove', onHorizontalScrollbarDrag);
-        document.removeEventListener('mouseup', onScrollbarDragEnd);
-        document.removeEventListener('touchmove', onVerticalScrollbarDrag);
-        document.removeEventListener('touchmove', onHorizontalScrollbarDrag);
-        document.removeEventListener('touchend', onScrollbarDragEnd);
+        document.removeEventListener('mousemove', onVerticalDrag);
+        document.removeEventListener('mousemove', onHorizontalDrag);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchmove', onVerticalDrag);
+        document.removeEventListener('touchmove', onHorizontalDrag);
+        document.removeEventListener('touchend', onDragEnd);
     }
 
     function initScrollbar() {
@@ -209,15 +174,10 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     }
 
     return {
+        scrollbar,
         showScrollbar,
-        verticalScrollbarHeight,
-        verticalScrollbarTop,
-        horizontalScrollbarWidth,
-        horizontalScrollbarLeft,
-
         onVerticalScrollbarMouseDown,
         onHorizontalScrollbarMouseDown,
-
         updateCustomScrollbar,
     };
 }

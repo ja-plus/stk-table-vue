@@ -194,14 +194,13 @@
                 </table>
                 <slot name="customBottom"></slot>
             </div>
-            <!-- 自定义垂直滚动条 -->
             <div
                 v-if="showScrollbar.y"
                 ref="verticalScrollbarRef"
                 class="stk-scrollbar vertical"
                 :style="{
-                    height: `${verticalScrollbarHeight}px`,
-                    transform: `translateY(${verticalScrollbarTop}px)`,
+                    height: `${scrollbar.h}px`,
+                    transform: `translateY(${scrollbar.top}px)`,
                 }"
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart="onVerticalScrollbarMouseDown"
@@ -210,14 +209,13 @@
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
-        <!-- 自定义水平滚动条 -->
         <div
             v-if="showScrollbar.x"
             ref="horizontalScrollbarRef"
             class="stk-scrollbar horizontal"
             :style="{
-                width: `${horizontalScrollbarWidth}px`,
-                transform: `translateX(${horizontalScrollbarLeft}px)`,
+                width: `${scrollbar.w}px`,
+                transform: `translateX(${scrollbar.left}px)`,
             }"
             @mousedown="onHorizontalScrollbarMouseDown"
             @touchstart="onHorizontalScrollbarMouseDown"
@@ -756,16 +754,8 @@ const SRBRBottomHeight = computed(() => {
 
 const rowKeyGenCache = new WeakMap();
 
-const {
-    showScrollbar,
-    verticalScrollbarHeight,
-    verticalScrollbarTop,
-    horizontalScrollbarWidth,
-    horizontalScrollbarLeft,
-    onVerticalScrollbarMouseDown,
-    onHorizontalScrollbarMouseDown,
-    updateCustomScrollbar,
-} = useScrollbar(tableContainerRef);
+const { scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
+    useScrollbar(tableContainerRef);
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
