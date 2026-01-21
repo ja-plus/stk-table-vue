@@ -96,6 +96,7 @@ export const enConfig = defineConfig({
                                     { text: 'More Performance Optimization', link: '/other/optimize' },
                                     { text: 'Tips', link: '/other/tips' },
                                     { text: 'Q&A', link: '/other/qa' },
+                                    { text: 'Change Log', link: '/other/change' },
                                 ]
                             }
                         ]

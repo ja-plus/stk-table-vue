@@ -26,18 +26,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import StkTable from '../../StkTable.vue';
+import { useI18n } from '../../hooks/useI18n';
+
+const { t } = useI18n();
 
 const generateData = (count: number) => {
     return Array.from({ length: count }, (_, i) => ({
         id: i + 1,
-        name: `用户${i + 1}`,
+        name: `Name${i + 1}`,
         age: Math.floor(Math.random() * 50) + 18,
         email: `user${i + 1}@example.com`,
-        address: `北京市朝阳区建国路${Math.floor(Math.random() * 1000) + 1}号`,
+        address: `Address${Math.floor(Math.random() * 1000) + 1}`,
         phone: `138${Math.floor(Math.random() * 100000000) + 100000000}`,
-        company: `公司${i + 1}`,
-        department: `部门${i + 1}`,
-        position: `职位${i + 1}`,
+        company: `Company${i + 1}`,
+        department: `Department${i + 1}`,
+        position: `Position${i + 1}`,
         salary: Math.floor(Math.random() * 100000) + 50000,
     }));
 };
@@ -45,22 +48,22 @@ const generateData = (count: number) => {
 const dataSource = ref(generateData(100));
 
 const columns = ref([
-    { dataIndex: 'id', title: 'ID', width: 80 },
-    { dataIndex: 'name', title: '姓名', width: 120 },
-    { dataIndex: 'age', title: '年龄', width: 80 },
-    { dataIndex: 'email', title: '邮箱', width: 200 },
-    { dataIndex: 'address', title: '地址', width: 250 },
-    { dataIndex: 'phone', title: '电话', width: 150 },
-    { dataIndex: 'company', title: '公司', width: 200 },
-    { dataIndex: 'department', title: '部门', width: 150 },
-    { dataIndex: 'position', title: '职位', width: 150 },
-    { dataIndex: 'salary', title: '薪资', width: 120 },
-    { dataIndex: 'id', title: 'ID', width: 80 },
-    { dataIndex: 'name', title: '姓名', width: 120 },
-    { dataIndex: 'age', title: '年龄', width: 80 },
-    { dataIndex: 'email', title: '邮箱', width: 200 },
-    { dataIndex: 'address', title: '地址', width: 250 },
-    { dataIndex: 'phone', title: '电话', width: 150 },
+    { dataIndex: 'id', title: t('ID'), width: 80 },
+    { dataIndex: 'name', title: t('Name'), width: 120 },
+    { dataIndex: 'age', title: t('Age'), width: 80 },
+    { dataIndex: 'email', title: t('Email'), width: 200 },
+    { dataIndex: 'address', title: t('Address'), width: 250 },
+    { dataIndex: 'phone', title: t('Phone'), width: 150 },
+    { dataIndex: 'company', title: t('Company'), width: 200 },
+    { dataIndex: 'department', title: t('Department'), width: 150 },
+    { dataIndex: 'position', title: t('Position'), width: 150 },
+    { dataIndex: 'salary', title: t('Salary'), width: 120 },
+    { dataIndex: 'id', title: t('ID'), width: 80 },
+    { dataIndex: 'name', title: t('Name'), width: 120 },
+    { dataIndex: 'age', title: t('Age'), width: 80 },
+    { dataIndex: 'email', title: t('Email'), width: 200 },
+    { dataIndex: 'address', title: t('Address'), width: 250 },
+    { dataIndex: 'phone', title: t('Phone'), width: 150 },
 ]);
 </script>
 
