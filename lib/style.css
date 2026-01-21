@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.8.13
+ * version: v0.9.0-beta.1
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -44,6 +44,8 @@
   --fixed-col-shadow-color-from:rgba(0, 0, 0, 0.1);
   --fixed-col-shadow-color-to:rgba(0, 0, 0, 0);
   --drag-handle-hover-color:#d0d1e0;
+  --sb-thumb-color:#c1c1d7;
+  --sb-thumb-hover-color:#a8a8c1;
   position:relative;
   overflow:auto;
   display:flex;
@@ -72,7 +74,12 @@
   --fixed-col-shadow-color-from:rgba(135, 135, 156, 0.1);
   --fixed-col-shadow-color-to:rgba(135, 135, 156, 0);
   --drag-handle-hover-color:#5d6064;
+  --sb-thumb-color:rgba(93, 96, 100, 0.9);
+  --sb-thumb-hover-color:#727782;
   color:#d1d1e0;
+}
+.stk-table.scrollbar-on{
+  overflow:hidden;
 }
 .stk-table.headless.bordered{
   border-top:1px solid var(--border-color);
@@ -420,4 +427,38 @@
 }
 .stk-table td.cell-active{
   background-color:var(--tr-active-bgc);
+}
+.stk-table:hover .stk-sb-thumb{
+  opacity:0.7;
+}
+.stk-sb-thumb{
+  z-index:100;
+  position:sticky;
+  background-color:var(--sb-thumb-color);
+  border-radius:4px;
+  transition:transform 0.1s ease, opacity 0.5s ease;
+  -webkit-user-select:none;
+     -moz-user-select:none;
+          user-select:none;
+  opacity:0;
+  flex-shrink:0;
+}
+.stk-sb-thumb:hover{
+  background-color:var(--sb-thumb-hover-color);
+}
+.stk-sb-thumb:active{
+  opacity:1;
+  background-color:var(--sb-thumb-hover-color);
+}
+.stk-sb-thumb.vertical{
+  margin-left:auto;
+  top:0;
+  right:0;
+  width:var(--sb-width);
+}
+.stk-sb-thumb.horizontal{
+  margin-top:auto;
+  bottom:0;
+  left:0;
+  height:var(--sb-height);
 }

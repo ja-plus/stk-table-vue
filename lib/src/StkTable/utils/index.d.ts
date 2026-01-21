@@ -54,3 +54,10 @@ export declare function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey): string
 export declare function getClosestTr(e: MouseEvent): HTMLTableRowElement | null;
 export declare function getClosestTrIndex(e: MouseEvent): number;
 export declare function getClosestColKey(e: MouseEvent): string | undefined;
+/**
+ * 改进的节流函数，确保最后一个调用不会被丢弃
+ * @param fn 要执行的函数
+ * @param delay 延迟时间（毫秒）
+ * @returns 节流处理后的函数
+ */
+export declare function throttle<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void;
