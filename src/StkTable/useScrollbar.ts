@@ -19,7 +19,7 @@ export type ScrollbarOptions = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: ScrollbarOptions = {}) {
+export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: boolean | ScrollbarOptions = false) {
     const defaultOptions: Required<ScrollbarOptions> = {
         enabled: true,
         minHeight: 20,
@@ -28,7 +28,10 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         height: 8,
     };
 
-    const mergedOptions = { ...defaultOptions, ...options };
+    const mergedOptions = {
+        ...defaultOptions,
+        ...(typeof options === 'boolean' ? { enabled: options } : options),
+    };
 
     const showScrollbar = ref({ x: false, y: false });
 
@@ -48,7 +51,7 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     }, 200);
 
     onMounted(() => {
-        if (containerRef.value) {
+        if (mergedOptions.enabled && containerRef.value) {
             resizeObserver = new ResizeObserver(throttledUpdateScrollbar);
             resizeObserver.observe(containerRef.value);
         }
@@ -174,6 +177,7 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     }
 
     return {
+        scrollbarOptions: mergedOptions,
         scrollbar,
         showScrollbar,
         onVerticalScrollbarMouseDown,

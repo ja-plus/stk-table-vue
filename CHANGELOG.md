@@ -1,4 +1,10 @@
 
+## 0.9.0
+* Feature
+  - Add: Custom scrollbar support. 
+    - `props.scrollbar` to enable and configure custom scrollbar. 
+    - It can resolve the white screen problem when dragging vanilla scrollbar.
+
 ## 0.8.14
 * Optimize 
   - optimize: `scrollRowByRow='scrollbar'` performance.

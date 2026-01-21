@@ -49,12 +49,11 @@
     --drag-handle-hover-color: #d0d1e0;
     
     /** 自定义滚动条颜色 */
-    --scrollbar-track-color: transparent;
-    --scrollbar-thumb-color: #c1c1d7;
-    --scrollbar-thumb-hover-color: #a8a8c1;
+    --sb-thumb-color: #c1c1d7;
+    --sb-thumb-hover-color: #a8a8c1;
 
     position: relative;
-    overflow: hidden;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -90,9 +89,16 @@
 
         --drag-handle-hover-color: #5d6064;
 
+         --sb-thumb-color: rgba(93, 96, 100, .9);
+         --sb-thumb-hover-color: rgb(114, 119, 130);
+
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
+    }
+
+    &.scrollbar-on {
+        overflow: hidden;
     }
 
     &.headless {
@@ -583,69 +589,40 @@
 
 }
 
-
-/* 滚动条轨道 */
-.stk-scrollbar-track {
-    z-index: 99;
-    position: sticky;
-    background-color: var(--scrollbar-track-color);
-    border-radius: 4px;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    user-select: none;
-    pointer-events: none;
-    flex-shrink: 0;
-
-    /* 当鼠标悬停在表格上时显示轨道 */
-    .stk-table:hover & {
-        opacity: 1;
-    }
-
-    &.vertical {
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 8px;
-    }
-
-    &.horizontal {
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 8px;
-    }
+.stk-table:hover .stk-sb-thumb  {
+    opacity: 0.7;
 }
 
-/* 滚动条滑块 */
-.stk-scrollbar-thumb {
+.stk-sb-thumb {
     z-index: 100;
     position: sticky;
-    background-color: var(--scrollbar-thumb-color);
+    background-color: var(--sb-thumb-color);
     border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.5s ease;
+    transition: transform 0.1s ease, opacity 0.5s ease;
     user-select: none;
-    opacity: 0.5;
+    opacity: 0;
     flex-shrink: 0;
 
-
-    .stk-table:hover & {
-        opacity: 0.9;
+    &:hover {
+        background-color: var(--sb-thumb-hover-color);
     }
 
-    &:hover {
-        background-color: var(--scrollbar-thumb-hover-color);
+    &:active {
+        opacity: 1;
+        background-color: var(--sb-thumb-hover-color);
     }
 
     &.vertical {
+        margin-left: auto;
         top:0;
         right: 0;
-        width: 8px;
+        width: var(--sb-width);
     }
 
     &.horizontal {
+        margin-top: auto;
         bottom: 0;
         left:0;
-        height: 8px;
+        height: var(--sb-height);
     }
 }

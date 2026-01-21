@@ -41,6 +41,7 @@
             class="vp-raw"
             row-key="name"
             cell-fixed-mode="sticky"
+            scrollbar
             :seq-config="seqConfig"
             :row-height="28"
             :header-row-height="36"

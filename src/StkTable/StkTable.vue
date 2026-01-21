@@ -24,12 +24,15 @@
             'fixed-relative-mode': isRelativeMode,
             'auto-row-height': props.autoRowHeight,
             'scroll-row-by-row': isSRBRActive,
+            'scrollbar-on': scrollbarOptions.enabled,
         }"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
             '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
+            '--sb-width': `${scrollbarOptions.width}px`,
+            '--sb-height': `${scrollbarOptions.height}px`,
         }"
         @scroll="onTableScroll"
         @wheel="onTableWheel"
@@ -194,11 +197,10 @@
                 </table>
                 <slot name="customBottom"></slot>
             </div>
-            <div v-if="showScrollbar.y" class="stk-scrollbar-track vertical"></div>
             <div
                 v-if="showScrollbar.y"
                 ref="verticalScrollbarRef"
-                class="stk-scrollbar-thumb vertical"
+                class="stk-sb-thumb vertical"
                 :style="{
                     height: `${scrollbar.h}px`,
                     transform: `translateY(${scrollbar.top}px)`,
@@ -210,11 +212,10 @@
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
-        <div v-if="showScrollbar.x" class="stk-scrollbar-track horizontal"></div>
         <div
             v-if="showScrollbar.x"
             ref="horizontalScrollbarRef"
-            class="stk-scrollbar-thumb horizontal"
+            class="stk-sb-thumb horizontal"
             :style="{
                 width: `${scrollbar.w}px`,
                 transform: `translateX(${scrollbar.left}px)`,
@@ -271,7 +272,7 @@ import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useMaxRowSpan } from './useMaxRowSpan';
 import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
-import { useScrollbar } from './useScrollbar';
+import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
 import { useScrollRowByRow } from './useScrollRowByRow';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
@@ -425,6 +426,13 @@ const props = withDefaults(
          * - scrollbar：仅拖动滚动条生效
          */
         scrollRowByRow?: boolean | 'scrollbar';
+        /**
+         * 自定义滚动条配置
+         * - false: 禁用自定义滚动条
+         * - true: 启用默认配置的自定义滚动条
+         * - ScrollbarOptions: 启用并配置自定义滚动条
+         */
+        scrollbar?: boolean | ScrollbarOptions;
     }>(),
     {
         width: '',
@@ -474,6 +482,7 @@ const props = withDefaults(
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
         scrollRowByRow: false,
+        scrollbar: false,
     },
 );
 
@@ -756,8 +765,8 @@ const SRBRBottomHeight = computed(() => {
 
 const rowKeyGenCache = new WeakMap();
 
-const { scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar(tableContainerRef);
+const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
+    useScrollbar(tableContainerRef, props.scrollbar);
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
