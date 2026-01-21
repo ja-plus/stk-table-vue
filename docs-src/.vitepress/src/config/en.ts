@@ -50,7 +50,7 @@ export const enConfig = defineConfig({
                                     { text: 'Sorting', link: '/table/basic/sort' },
                                     { text: 'Row & Cell Selection/Hover', link: '/table/basic/row-cell-mouse-event' },
                                     { text: 'Checkbox', link: '/table/basic/checkbox' },
-                                    { text: 'Cell Merging (✨NEW)', link: '/table/basic/merge-cells' },
+                                    { text: 'Cell Merging', link: '/table/basic/merge-cells' },
                                     { text: 'Headless', link: '/table/basic/headless' },
                                     { text: 'Row Expansion', link: '/table/basic/expand-row' },
                                     { text: 'Tree', link: '/table/basic/tree' },

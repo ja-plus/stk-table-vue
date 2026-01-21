@@ -76,7 +76,7 @@ export const zhConfig = defineConfig({
                                     { text: '排序', link: '/table/basic/sort', },
                                     { text: '行、单元格选中/悬浮', link: '/table/basic/row-cell-mouse-event', },
                                     { text: '复选框', link: '/table/basic/checkbox', },
-                                    { text: '单元格合并(✨NEW)', link: '/table/basic/merge-cells', },
+                                    { text: '单元格合并', link: '/table/basic/merge-cells', },
                                     { text: '无头', link: '/table/basic/headless', },
                                     { text: '行展开', link: '/table/basic/expand-row', },
                                     { text: '树形', link: '/table/basic/tree', },
@@ -121,7 +121,7 @@ export const zhConfig = defineConfig({
                                 text: '其他',
                                 collapsed: false,
                                 items: [
-                                    { text: '更多性能优化', link: '/other/optimize' },
+                                    { text: '更多优化', link: '/other/optimize' },
                                     { text: 'Tips', link: '/other/tips' },
                                     { text: 'Q&A', link: '/other/qa' },
                                 ]
