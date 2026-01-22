@@ -392,10 +392,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     })) | (UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
-        expand? /**
-         * 是否可变行高
-         * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
-         */: boolean;
+        expand?: boolean;
     }) => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
