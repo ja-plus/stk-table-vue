@@ -42,7 +42,7 @@
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
         <div style="display: flex">
-            <div style="display: flex; flex-direction: column">
+            <div style="display: flex; flex-direction: column; flex: 1">
                 <table
                     class="stk-table-main"
                     :style="{ width, minWidth, maxWidth }"
@@ -230,7 +230,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, customRef, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -872,18 +872,11 @@ watch(
 watch(
     () => props.virtual,
     () => {
-        nextTick(() => {
-            initVirtualScrollY();
-        });
+        nextTick(initVirtualScrollY);
     },
 );
 
-watch(
-    () => props.rowHeight,
-    () => {
-        initVirtualScrollY();
-    },
-);
+watch(() => props.rowHeight, initVirtualScrollY);
 
 watch(
     () => props.virtualX,
@@ -901,9 +894,12 @@ watch(
     () => props.dataSource,
     val => {
         updateDataSource(val);
-        nextTick(() => {
-            updateCustomScrollbar();
-        });
+    },
+);
+watch(
+    () => dataSourceCopy.value,
+    () => {
+        nextTick(updateCustomScrollbar);
     },
 );
 
@@ -1380,12 +1376,43 @@ function onCellMouseDown(e: MouseEvent) {
     emits('cell-mousedown', e, row, col, { rowIndex });
 }
 
+// isWheeling: true when wheel event is triggered, auto reset to false after 200ms
+const isWheeling = customRef((track, trigger) => {
+    let value = false;
+    let timer = 0;
+
+    return {
+        get() {
+            track();
+            return value;
+        },
+        set(newValue) {
+            value = newValue;
+            trigger();
+
+            // If setting to true, set a timer to reset to false after 200ms
+            if (newValue) {
+                clearTimeout(timer);
+                timer = self.setTimeout(() => {
+                    value = false;
+                    trigger();
+                    timer = 0;
+                }, 200);
+            }
+        },
+    };
+});
+
 /**
  * proxy scroll, prevent white screen
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
-    if (props.smoothScroll) {
+    // Mark wheel event as active, will reset to false after 200ms of inactivity
+    isWheeling.value = true;
+
+    const sbEnabled = scrollbarOptions.enabled;
+    if (props.smoothScroll && !sbEnabled) {
         return;
     }
     // if is resizing, not allow scroll
@@ -1394,27 +1421,31 @@ function onTableWheel(e: WheelEvent) {
         return;
     }
     const dom = tableContainerRef.value;
-    if ((!virtual_on.value && !virtualX_on.value) || !dom) return;
+    if (!dom) return;
 
     const { deltaY, deltaX, shiftKey } = e;
 
-    if (virtual_on.value && deltaY && !shiftKey) {
+    if ((virtual_on.value || sbEnabled) && deltaY && !shiftKey) {
         const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
         const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
-        if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
-            e.preventDefault(); // parent element scroll
+        // If scrolling down and not at bottom, or at bottom but still actively wheeling
+        // If scrolling up and not at top, or at top but still actively wheeling
+        if ((deltaY > 0 && (!isScrollBottom || isWheeling.value)) || (deltaY < 0 && (scrollTop > 0 || isWheeling.value))) {
+            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
         }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on.value) {
+    if (virtualX_on.value || sbEnabled) {
         const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
         const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
         let distance = deltaX;
         if (shiftKey && deltaY) {
             distance = deltaY;
         }
-        if ((distance > 0 && !isScrollRight) || (distance < 0 && scrollLeft > 0)) {
-            e.preventDefault();
+        // If scrolling right and not at right, or at right but still actively wheeling
+        // If scrolling left and not at left, or at left but still actively wheeling
+        if ((distance > 0 && (!isScrollRight || isWheeling.value)) || (distance < 0 && (scrollLeft > 0 || isWheeling.value))) {
+            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
         }
         dom.scrollLeft += distance;
     }
@@ -1454,7 +1485,6 @@ function onTableScroll(e: Event) {
         emits('scroll-x', e);
     }
 
-    // 更新自定义滚动条位置
     updateCustomScrollbar();
 }
 

@@ -9,6 +9,7 @@ const dataSource = getDataSource();
         :tree-config="{
             defaultExpandAll: true,
         }"
+        scrollbar
         :columns="columns"
         :data-source="dataSource"
     ></StkTable>
