@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.8.14
+ * version: v0.9.0
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -196,7 +196,7 @@
 .stk-table.fixed-relative-mode .fixed-cell--active{
   position:relative;
 }
-.stk-table.scroll-row-by-row .stk-table-main{
+.stk-table.scroll-row-by-row .stk-table-scroll-container{
   position:sticky;
   top:0;
 }
@@ -286,6 +286,14 @@
   animation-name:stk-table-dim;
   animation-duration:var(--highlight-duration);
   animation-timing-function:var(--highlight-timing-function);
+}
+.stk-table .stk-table-scroll-container{
+  display:flex;
+}
+.stk-table .stk-table-main-wrapper{
+  display:flex;
+  flex-direction:column;
+  flex:1;
 }
 .stk-table .seq-column{
   text-align:center;
@@ -436,7 +444,6 @@
   z-index:100;
   position:sticky;
   background-color:var(--sb-thumb-color);
-  border-radius:4px;
   transition:transform 0.1s ease, opacity 0.5s ease;
   -webkit-user-select:none;
      -moz-user-select:none;
@@ -455,11 +462,13 @@
   margin-left:auto;
   top:0;
   right:0;
+  border-radius:calc(var(--sb-width) / 2);
   width:var(--sb-width);
 }
 .stk-sb-thumb.horizontal{
   margin-top:auto;
   bottom:0;
   left:0;
+  border-radius:calc(var(--sb-height) / 2);
   height:var(--sb-height);
 }
