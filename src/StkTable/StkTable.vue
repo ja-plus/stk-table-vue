@@ -69,16 +69,16 @@
                                 :key="colKeyGen(col)"
                                 v-bind="getTHProps(col)"
                                 @click="e => onHeaderCellClick(e, col)"
-                                @dragstart="headerDrag ? onThDragStart : void 0"
-                                @drop="headerDrag ? onThDrop : void 0"
-                                @dragover="headerDrag ? onThDragOver : void 0"
+                                @dragstart="onThDragStart"
+                                @drop="onThDrop"
+                                @dragover="onThDragOver"
                             >
                                 <div
                                     v-if="colResizeOn(col) && colIndex > 0"
                                     class="table-header-resizer left"
                                     @mousedown="onThResizeMouseDown($event, col, true)"
                                 ></div>
-                                <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__}`">
+                                <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
                                     <component
                                         :is="col.customHeaderCell"
                                         v-if="col.customHeaderCell"
