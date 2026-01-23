@@ -63,9 +63,9 @@
                         :key="colKeyGen(col)"
                         v-bind="getTHProps(col)"
                         @click="e => onHeaderCellClick(e, col)"
-                        @dragstart="headerDrag ? onThDragStart : void 0"
-                        @drop="headerDrag ? onThDrop : void 0"
-                        @dragover="headerDrag ? onThDragOver : void 0"
+                        @dragstart="onThDragStart"
+                        @drop="onThDrop"
+                        @dragover="onThDragOver"
                     >
                         <div
                             v-if="colResizeOn(col) && colIndex > 0"

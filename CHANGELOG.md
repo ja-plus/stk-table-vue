@@ -1,4 +1,8 @@
 
+## 0.8.15
+* Bugfix
+  - fix: header drag not work.
+
 ## 0.8.14
 * Optimize 
   - optimize: `scrollRowByRow='scrollbar'` performance.
