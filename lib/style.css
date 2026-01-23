@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.8.13
+ * version: v0.8.14
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -286,6 +286,7 @@
 .stk-table .drag-row-cell .table-cell-wrapper{
   display:inline-flex;
   align-items:center;
+  vertical-align:middle;
 }
 .stk-table .drag-row-cell .drag-row-handle{
   cursor:grab;
