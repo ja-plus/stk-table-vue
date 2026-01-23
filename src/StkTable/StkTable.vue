@@ -72,7 +72,7 @@
                             class="table-header-resizer left"
                             @mousedown="onThResizeMouseDown($event, col, true)"
                         ></div>
-                        <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__}`">
+                        <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
                             <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
                             <template v-else>
                                 <slot name="tableHeader" :col="col">
@@ -149,7 +149,7 @@
                                     </template>
                                     <template v-else-if="col.type === 'dragRow'">
                                         <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                        <span>
+                                        <span v-if="row?.[col.dataIndex]">
                                             {{ row?.[col.dataIndex] ?? '' }}
                                         </span>
                                     </template>
