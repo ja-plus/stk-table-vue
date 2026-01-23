@@ -41,8 +41,8 @@
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
-        <div style="display: flex">
-            <div style="display: flex; flex-direction: column; flex: 1">
+        <div class="stk-table-scroll-container">
+            <div class="stk-table-main-wrapper">
                 <table
                     class="stk-table-main"
                     :style="{ width, minWidth, maxWidth }"
