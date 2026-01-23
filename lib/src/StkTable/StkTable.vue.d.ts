@@ -1,4 +1,5 @@
 import { AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -64,8 +65,8 @@ declare function __VLS_template(): {
         row: any;
         col: StkTableColumn<any> | undefined;
     }): any;
-    empty?(_: {}): any;
     customBottom?(_: {}): any;
+    empty?(_: {}): any;
 };
 declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     width?: string;
@@ -205,6 +206,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - scrollbar：仅拖动滚动条生效
      */
     scrollRowByRow?: boolean | "scrollbar";
+    /**
+     * 自定义滚动条配置
+     * - false: 禁用自定义滚动条
+     * - true: 启用默认配置的自定义滚动条
+     * - ScrollbarOptions: 启用并配置自定义滚动条
+     */
+    scrollbar?: boolean | ScrollbarOptions;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -257,6 +265,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellFixedMode: string;
     smoothScroll: boolean;
     scrollRowByRow: boolean;
+    scrollbar: boolean;
 }>>, {
     /**
      * 重新计算虚拟列表宽高
@@ -577,6 +586,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - scrollbar：仅拖动滚动条生效
      */
     scrollRowByRow?: boolean | "scrollbar";
+    /**
+     * 自定义滚动条配置
+     * - false: 禁用自定义滚动条
+     * - true: 启用默认配置的自定义滚动条
+     * - ScrollbarOptions: 启用并配置自定义滚动条
+     */
+    scrollbar?: boolean | ScrollbarOptions;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -629,6 +645,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellFixedMode: string;
     smoothScroll: boolean;
     scrollRowByRow: boolean;
+    scrollbar: boolean;
 }>>> & Readonly<{
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -693,6 +710,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | string | null;
+    scrollbar: boolean | ScrollbarOptions;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;

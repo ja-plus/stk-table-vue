@@ -256,3 +256,32 @@ export function getClosestTrIndex(e: MouseEvent) {
 export function getClosestColKey(e: MouseEvent) {
     return (e.target as HTMLElement)?.closest('td')?.dataset.colKey;
 }
+
+/**
+ * 改进的节流函数，确保最后一个调用不会被丢弃
+ * @param fn 要执行的函数
+ * @param delay 延迟时间（毫秒）
+ * @returns 节流处理后的函数
+ */
+export function throttle<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void {
+    let timer: number;
+    let lastArgs: Parameters<T> | null = null;
+
+    const callFn = function () {
+        if (lastArgs) {
+            fn(...lastArgs);
+            lastArgs = null;
+        }
+    };
+
+    return function (...args: Parameters<T>) {
+        lastArgs = args;
+        if (!timer) {
+            callFn();
+            timer = self.setTimeout(() => {
+                callFn();
+                timer = 0;
+            }, delay);
+        }
+    };
+}

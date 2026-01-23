@@ -186,5 +186,23 @@ export type StkProps = {
    * - scrollbar: Only effective when dragging the scrollbar, can be used to solve the white screen problem when dragging (v0.7.2)
    */
   scrollRowByRow?: boolean | 'scrollbar';
+  /**
+   * Custom scrollbar configuration
+   * - false: Disable custom scrollbar
+   * - true: Enable custom scrollbar with default configuration
+   * - ScrollbarOptions: Enable and configure custom scrollbar
+   */
+  scrollbar?: boolean | {
+    /** Whether to enable scrollbar */
+    enabled?: boolean;
+    /** Vertical scrollbar width default: 8 */
+    width?: number;
+    /** Horizontal scrollbar height default: 8 */
+    height?: number;
+    /** Scrollbar thumb minimum width default: 20 */
+    minWidth?: number;
+    /** Scrollbar thumb minimum height default: 20 */
+    minHeight?: number;
+  };
 };
 ```

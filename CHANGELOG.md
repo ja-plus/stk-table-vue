@@ -1,10 +1,17 @@
 
+## 0.9.0
+* Feature
+  - Add: Custom scrollbar support. 
+    - `props.scrollbar` to enable and configure custom scrollbar. 
+    - It can resolve the white screen problem when dragging vanilla scrollbar.
+
 ## 0.8.15
 * Bugfix
   - fix: header drag not work.
   - fix: inner drag handle no in vertical center.
 * Change
   - enlarge drag row handle size to 20px.
+
 
 ## 0.8.14
 * Optimize 

@@ -24,12 +24,15 @@
             'fixed-relative-mode': isRelativeMode,
             'auto-row-height': props.autoRowHeight,
             'scroll-row-by-row': isSRBRActive,
+            'scrollbar-on': scrollbarOptions.enabled,
         }"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
             '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
+            '--sb-width': `${scrollbarOptions.width}px`,
+            '--sb-height': `${scrollbarOptions.height}px`,
         }"
         @scroll="onTableScroll"
         @wheel="onTableWheel"
@@ -37,148 +40,189 @@
         <div v-if="SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
-        <table
-            class="stk-table-main"
-            :style="{ width, minWidth, maxWidth }"
-            :class="{
-                'fixed-mode': props.fixedMode,
-            }"
-            @dragover="onTrDragOver"
-            @dragenter="onTrDragEnter"
-            @dragend="onTrDragEnd"
-            @click="onRowClick"
-            @dblclick="onRowDblclick"
-            @contextmenu="onRowMenu"
-            @mouseover="onTrMouseOver"
-        >
-            <thead v-if="!headless">
-                <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
-                    <th
-                        v-if="virtualX_on"
-                        class="vt-x-left"
-                        :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
-                    ></th>
-                    <th
-                        v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
-                        :key="colKeyGen(col)"
-                        v-bind="getTHProps(col)"
-                        @click="e => onHeaderCellClick(e, col)"
-                        @dragstart="onThDragStart"
-                        @drop="onThDrop"
-                        @dragover="onThDragOver"
-                    >
-                        <div
-                            v-if="colResizeOn(col) && colIndex > 0"
-                            class="table-header-resizer left"
-                            @mousedown="onThResizeMouseDown($event, col, true)"
-                        ></div>
-                        <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
-                            <component :is="col.customHeaderCell" v-if="col.customHeaderCell" :col="col" :colIndex="colIndex" :rowIndex="rowIndex" />
-                            <template v-else>
-                                <slot name="tableHeader" :col="col">
-                                    <span class="table-header-title">{{ col.title }}</span>
-                                </slot>
-                            </template>
-                            <SortIcon v-if="col.sorter" class="table-header-sorter" />
-                        </div>
-                        <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
-                    </th>
-                    <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
-                </tr>
-            </thead>
 
-            <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
-                <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
-                    <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
-                    <template v-if="fixedMode && headless">
-                        <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
-                    </template>
-                </tr>
-                <tr
-                    v-for="(row, rowIndex) in virtual_dataSourcePart"
-                    ref="trRef"
-                    :key="rowKeyGen(row)"
-                    v-bind="getTRProps(row, rowIndex)"
-                    @drop="onTrDrop($event, getRowIndex(rowIndex))"
-                    @mouseleave="onTrMouseLeave"
+        <div class="stk-table-scroll-container">
+            <div class="stk-table-main-wrapper">
+                <table
+                    class="stk-table-main"
+                    :style="{ width, minWidth, maxWidth }"
+                    :class="{
+                        'fixed-mode': props.fixedMode,
+                    }"
+                    @dragover="onTrDragOver"
+                    @dragenter="onTrDragEnter"
+                    @dragend="onTrDragEnd"
+                    @click="onRowClick"
+                    @dblclick="onRowDblclick"
+                    @contextmenu="onRowMenu"
+                    @mouseover="onTrMouseOver"
                 >
-                    <td v-if="virtualX_on" class="vt-x-left"></td>
-                    <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
-                        <div class="table-cell-wrapper">
-                            <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
-                            </slot>
-                        </div>
-                    </td>
-                    <template v-else>
-                        <template v-for="(col, colIndex) in virtualX_columnPart">
-                            <td
-                                v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
+                    <thead v-if="!headless">
+                        <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
+                            <th
+                                v-if="virtualX_on"
+                                class="vt-x-left"
+                                :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
+                            ></th>
+                            <th
+                                v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
                                 :key="colKeyGen(col)"
-                                v-bind="getTDProps(row, col, rowIndex, colIndex)"
-                                @mouseenter="onCellMouseEnter"
-                                @mouseleave="onCellMouseLeave"
+                                v-bind="getTHProps(col)"
+                                @click="e => onHeaderCellClick(e, col)"
+                                @dragstart="onThDragStart"
+                                @drop="onThDrop"
+                                @dragover="onThDragOver"
                             >
-                                <component
-                                    :is="col.customCell"
-                                    v-if="col.customCell"
-                                    class="table-cell-wrapper"
-                                    :col="col"
-                                    :row="row"
-                                    :rowIndex="getRowIndex(rowIndex)"
-                                    :colIndex="colIndex"
-                                    :cellValue="row && row[col.dataIndex]"
-                                    :expanded="row && row.__EXP__"
-                                    :tree-expanded="row && row.__T_EXP__"
-                                >
-                                    <template #stkFoldIcon>
-                                        <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                    </template>
-                                    <template #stkDragIcon>
-                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                    </template>
-                                </component>
                                 <div
-                                    v-else
-                                    class="table-cell-wrapper"
-                                    :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
-                                    :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
-                                >
-                                    <template v-if="col.type === 'seq'">
-                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                    </template>
-                                    <template v-else-if="col.type === 'dragRow'">
-                                        <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                        <span v-if="row?.[col.dataIndex]">
-                                            {{ row?.[col.dataIndex] ?? '' }}
-                                        </span>
-                                    </template>
-                                    <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
-                                        <TriangleIcon
-                                            v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
-                                            @click="triangleClick($event, row, col)"
-                                        />
-                                        <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
-                                            {{ row?.[col.dataIndex] ?? '' }}
-                                        </span>
-                                    </template>
+                                    v-if="colResizeOn(col) && colIndex > 0"
+                                    class="table-header-resizer left"
+                                    @mousedown="onThResizeMouseDown($event, col, true)"
+                                ></div>
+                                <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
+                                    <component
+                                        :is="col.customHeaderCell"
+                                        v-if="col.customHeaderCell"
+                                        :col="col"
+                                        :colIndex="colIndex"
+                                        :rowIndex="rowIndex"
+                                    />
                                     <template v-else>
-                                        {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                        <slot name="tableHeader" :col="col">
+                                            <span class="table-header-title">{{ col.title }}</span>
+                                        </slot>
                                     </template>
+                                    <SortIcon v-if="col.sorter" class="table-header-sorter" />
+                                </div>
+                                <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
+                            </th>
+                            <th
+                                v-if="virtualX_on"
+                                class="vt-x-right"
+                                :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"
+                            ></th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
+                        <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                            <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
+                            <template v-if="fixedMode && headless">
+                                <td
+                                    v-for="col in virtualX_columnPart"
+                                    :key="colKeyGen(col)"
+                                    :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
+                                ></td>
+                            </template>
+                        </tr>
+                        <tr
+                            v-for="(row, rowIndex) in virtual_dataSourcePart"
+                            ref="trRef"
+                            :key="rowKeyGen(row)"
+                            v-bind="getTRProps(row, rowIndex)"
+                            @drop="onTrDrop($event, getRowIndex(rowIndex))"
+                            @mouseleave="onTrMouseLeave"
+                        >
+                            <td v-if="virtualX_on" class="vt-x-left"></td>
+                            <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
+                                <div class="table-cell-wrapper">
+                                    <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
+                                        {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
+                                    </slot>
                                 </div>
                             </td>
-                        </template>
-                    </template>
-                    <td v-if="virtualX_on" class="vt-x-right"></td>
-                </tr>
-                <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
-                <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
-            </tbody>
-        </table>
+                            <template v-else>
+                                <template v-for="(col, colIndex) in virtualX_columnPart">
+                                    <td
+                                        v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
+                                        :key="colKeyGen(col)"
+                                        v-bind="getTDProps(row, col, rowIndex, colIndex)"
+                                        @mouseenter="onCellMouseEnter"
+                                        @mouseleave="onCellMouseLeave"
+                                    >
+                                        <component
+                                            :is="col.customCell"
+                                            v-if="col.customCell"
+                                            class="table-cell-wrapper"
+                                            :col="col"
+                                            :row="row"
+                                            :rowIndex="getRowIndex(rowIndex)"
+                                            :colIndex="colIndex"
+                                            :cellValue="row && row[col.dataIndex]"
+                                            :expanded="row && row.__EXP__"
+                                            :tree-expanded="row && row.__T_EXP__"
+                                        >
+                                            <template #stkFoldIcon>
+                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
+                                            </template>
+                                            <template #stkDragIcon>
+                                                <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                            </template>
+                                        </component>
+                                        <div
+                                            v-else
+                                            class="table-cell-wrapper"
+                                            :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
+                                            :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
+                                        >
+                                            <template v-if="col.type === 'seq'">
+                                                {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                            </template>
+                                            <template v-else-if="col.type === 'dragRow'">
+                                                <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                                <span>
+                                                    {{ row?.[col.dataIndex] ?? '' }}
+                                                </span>
+                                            </template>
+                                            <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
+                                                <TriangleIcon
+                                                    v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
+                                                    @click="triangleClick($event, row, col)"
+                                                />
+                                                <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                                    {{ row?.[col.dataIndex] ?? '' }}
+                                                </span>
+                                            </template>
+                                            <template v-else>
+                                                {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                            </template>
+                                        </div>
+                                    </td>
+                                </template>
+                            </template>
+                            <td v-if="virtualX_on" class="vt-x-right"></td>
+                        </tr>
+                        <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                        <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
+                    </tbody>
+                </table>
+                <slot name="customBottom"></slot>
+            </div>
+            <div
+                v-if="showScrollbar.y"
+                ref="verticalScrollbarRef"
+                class="stk-sb-thumb vertical"
+                :style="{
+                    height: `${scrollbar.h}px`,
+                    transform: `translateY(${scrollbar.top}px)`,
+                }"
+                @mousedown="onVerticalScrollbarMouseDown"
+                @touchstart="onVerticalScrollbarMouseDown"
+            ></div>
+        </div>
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
-        <slot name="customBottom"></slot>
+        <div
+            v-if="showScrollbar.x"
+            ref="horizontalScrollbarRef"
+            class="stk-sb-thumb horizontal"
+            :style="{
+                width: `${scrollbar.w}px`,
+                transform: `translateX(${scrollbar.left}px)`,
+            }"
+            @mousedown="onHorizontalScrollbarMouseDown"
+            @touchstart="onHorizontalScrollbarMouseDown"
+        ></div>
     </div>
 </template>
 
@@ -186,7 +230,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, customRef, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -228,6 +272,7 @@ import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useMaxRowSpan } from './useMaxRowSpan';
 import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
+import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
 import { useScrollRowByRow } from './useScrollRowByRow';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
@@ -381,6 +426,13 @@ const props = withDefaults(
          * - scrollbar：仅拖动滚动条生效
          */
         scrollRowByRow?: boolean | 'scrollbar';
+        /**
+         * 自定义滚动条配置
+         * - false: 禁用自定义滚动条
+         * - true: 启用默认配置的自定义滚动条
+         * - ScrollbarOptions: 启用并配置自定义滚动条
+         */
+        scrollbar?: boolean | ScrollbarOptions;
     }>(),
     {
         width: '',
@@ -430,6 +482,7 @@ const props = withDefaults(
         cellFixedMode: 'sticky',
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
         scrollRowByRow: false,
+        scrollbar: false,
     },
 );
 
@@ -712,6 +765,9 @@ const SRBRBottomHeight = computed(() => {
 
 const rowKeyGenCache = new WeakMap();
 
+const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
+    useScrollbar(tableContainerRef, props.scrollbar);
+
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
@@ -809,24 +865,18 @@ watch(
         nextTick(() => {
             initVirtualScrollX();
             updateFixedShadow();
+            updateCustomScrollbar();
         });
     },
 );
 watch(
     () => props.virtual,
     () => {
-        nextTick(() => {
-            initVirtualScrollY();
-        });
+        nextTick(initVirtualScrollY);
     },
 );
 
-watch(
-    () => props.rowHeight,
-    () => {
-        initVirtualScrollY();
-    },
-);
+watch(() => props.rowHeight, initVirtualScrollY);
 
 watch(
     () => props.virtualX,
@@ -842,7 +892,15 @@ watch(
 
 watch(
     () => props.dataSource,
-    val => updateDataSource(val),
+    val => {
+        updateDataSource(val);
+    },
+);
+watch(
+    () => dataSourceCopy.value,
+    () => {
+        nextTick(updateCustomScrollbar);
+    },
 );
 
 watch(
@@ -1318,12 +1376,43 @@ function onCellMouseDown(e: MouseEvent) {
     emits('cell-mousedown', e, row, col, { rowIndex });
 }
 
+// isWheeling: true when wheel event is triggered, auto reset to false after 200ms
+const isWheeling = customRef((track, trigger) => {
+    let value = false;
+    let timer = 0;
+
+    return {
+        get() {
+            track();
+            return value;
+        },
+        set(newValue) {
+            value = newValue;
+            trigger();
+
+            // If setting to true, set a timer to reset to false after 200ms
+            if (newValue) {
+                clearTimeout(timer);
+                timer = self.setTimeout(() => {
+                    value = false;
+                    trigger();
+                    timer = 0;
+                }, 200);
+            }
+        },
+    };
+});
+
 /**
  * proxy scroll, prevent white screen
  * @param e
  */
 function onTableWheel(e: WheelEvent) {
-    if (props.smoothScroll) {
+    // Mark wheel event as active, will reset to false after 200ms of inactivity
+    isWheeling.value = true;
+
+    const sbEnabled = scrollbarOptions.enabled;
+    if (props.smoothScroll && !sbEnabled) {
         return;
     }
     // if is resizing, not allow scroll
@@ -1332,27 +1421,31 @@ function onTableWheel(e: WheelEvent) {
         return;
     }
     const dom = tableContainerRef.value;
-    if ((!virtual_on.value && !virtualX_on.value) || !dom) return;
+    if (!dom) return;
 
     const { deltaY, deltaX, shiftKey } = e;
 
-    if (virtual_on.value && deltaY && !shiftKey) {
+    if ((virtual_on.value || sbEnabled) && deltaY && !shiftKey) {
         const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
         const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
-        if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
-            e.preventDefault(); // parent element scroll
+        // If scrolling down and not at bottom, or at bottom but still actively wheeling
+        // If scrolling up and not at top, or at top but still actively wheeling
+        if ((deltaY > 0 && (!isScrollBottom || isWheeling.value)) || (deltaY < 0 && (scrollTop > 0 || isWheeling.value))) {
+            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
         }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on.value) {
+    if (virtualX_on.value || sbEnabled) {
         const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
         const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
         let distance = deltaX;
         if (shiftKey && deltaY) {
             distance = deltaY;
         }
-        if ((distance > 0 && !isScrollRight) || (distance < 0 && scrollLeft > 0)) {
-            e.preventDefault();
+        // If scrolling right and not at right, or at right but still actively wheeling
+        // If scrolling left and not at left, or at left but still actively wheeling
+        if ((distance > 0 && (!isScrollRight || isWheeling.value)) || (distance < 0 && (scrollLeft > 0 || isWheeling.value))) {
+            e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
         }
         dom.scrollLeft += distance;
     }
@@ -1391,6 +1484,8 @@ function onTableScroll(e: Event) {
     if (isXScroll) {
         emits('scroll-x', e);
     }
+
+    updateCustomScrollbar();
 }
 
 /** tr hover */

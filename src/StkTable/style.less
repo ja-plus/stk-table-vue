@@ -48,6 +48,10 @@
     /** 拖动行hover背景 */
     --drag-handle-hover-color: #d0d1e0;
 
+    /** 自定义滚动条颜色 */
+    --sb-thumb-color: #c1c1d7;
+    --sb-thumb-hover-color: #a8a8c1;
+
     position: relative;
     overflow: auto;
     display: flex;
@@ -85,9 +89,16 @@
 
         --drag-handle-hover-color: #5d6064;
 
+        --sb-thumb-color: rgba(93, 96, 100, 0.9);
+        --sb-thumb-hover-color: rgb(114, 119, 130);
+
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
+    }
+
+    &.scrollbar-on {
+        overflow: hidden;
     }
 
     &.headless {
@@ -218,7 +229,6 @@
 
     /**虚拟滚动模式 */
     &.virtual {
-
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
             overflow: hidden;
@@ -273,7 +283,7 @@
     }
 
     &.scroll-row-by-row {
-        .stk-table-main {
+        .stk-table-scroll-container {
             position: sticky;
             top: 0;
         }
@@ -388,9 +398,19 @@
 
     .highlight-cell {
         animation-name: stk-table-dim;
-        animation-duration:  var(--highlight-duration);
+        animation-duration: var(--highlight-duration);
         animation-timing-function: var(--highlight-timing-function);
         /* 必须分开写，否则var(step(x))不兼容旧浏览器*/
+    }
+
+    .stk-table-scroll-container {
+        display: flex;
+    }
+
+    .stk-table-main-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
     .seq-column {
@@ -416,7 +436,7 @@
                 cursor: grabbing;
             }
 
-            >svg {
+            > svg {
                 vertical-align: -2px;
             }
         }
@@ -539,11 +559,10 @@
 
     .expanded,
     .tree-expanded {
-        >.table-cell-wrapper .stk-fold-icon::before {
+        > .table-cell-wrapper .stk-fold-icon::before {
             transform: rotate(90deg);
         }
     }
-
 
     .stk-fold-icon {
         display: inline-flex;
@@ -572,9 +591,49 @@
     td.cell-hover {
         background-color: var(--tr-hover-bgc);
     }
-    
+
     td.cell-active {
         background-color: var(--tr-active-bgc);
     }
+}
 
+.stk-table:hover .stk-sb-thumb {
+    opacity: 0.7;
+}
+
+.stk-sb-thumb {
+    z-index: 100;
+    position: sticky;
+    background-color: var(--sb-thumb-color);
+    transition:
+        transform 0.1s ease,
+        opacity 0.5s ease;
+    user-select: none;
+    opacity: 0;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: var(--sb-thumb-hover-color);
+    }
+
+    &:active {
+        opacity: 1;
+        background-color: var(--sb-thumb-hover-color);
+    }
+
+    &.vertical {
+        margin-left: auto;
+        top: 0;
+        right: 0;
+        border-radius: calc(var(--sb-width) / 2);
+        width: var(--sb-width);
+    }
+
+    &.horizontal {
+        margin-top: auto;
+        bottom: 0;
+        left: 0;
+        border-radius: calc(var(--sb-height) / 2);
+        height: var(--sb-height);
+    }
 }

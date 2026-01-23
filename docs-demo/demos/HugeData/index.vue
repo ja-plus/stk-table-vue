@@ -280,6 +280,7 @@ function handleColSpan(v: boolean) {
         stripe
         col-resizable
         sort-remote
+        scrollbar
         :scroll-row-by-row="rowByRow || optimizeDragScroll"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"

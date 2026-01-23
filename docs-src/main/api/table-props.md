@@ -186,5 +186,23 @@ export type StkProps = {
    * - scrollbar：仅拖动滚动条生效,可用于处理拖动白屏问题(v0.7.2)
    */
   scrollRowByRow?: boolean | 'scrollbar';
+  /**
+   * 自定义滚动条配置
+   * - false: 禁用自定义滚动条
+   * - true: 启用默认配置的自定义滚动条
+   * - ScrollbarOptions: 启用并配置自定义滚动条
+   */
+  scrollbar?: boolean | {
+    /** 是否启用滚动条 */
+    enabled?: boolean;
+    /** 垂直滚动条宽度 default: 8 */
+    width?: number;
+    /** 水平滚动条高度 default: 8 */
+    height?: number;
+    /** 滚动条滑块最小宽度 default: 20 */
+    minWidth?: number;
+    /** 滚动条滑块最小高度 default: 20 */
+    minHeight?: number;
+  };
 };
 ```

@@ -41,6 +41,7 @@
             class="vp-raw"
             row-key="name"
             cell-fixed-mode="sticky"
+            scrollbar
             :seq-config="seqConfig"
             :row-height="28"
             :header-row-height="36"
@@ -542,8 +543,8 @@ function scrollAndDataToLess() {
 
 <style scoped>
 .stk-table-parent {
-    width: 1800px;
-    height: 800px;
+    width: 800px;
+    height: 500px;
     margin-bottom: 20px;
     display: flex;
     flex-direction: column;
