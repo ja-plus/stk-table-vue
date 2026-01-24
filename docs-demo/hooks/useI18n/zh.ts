@@ -58,7 +58,7 @@ export const zh = {
     catchPhrase: '口号',
     bs: '业务描述',
     corporation: '公司',
-    longTitle: '长标题，长标题',
+    longTitle: '长标题，长标题，长标题，长标题',
     showOverflow: '显示溢出',
     showHeaderOverflow: '显示表头溢出',
     rowActive: '行选中',

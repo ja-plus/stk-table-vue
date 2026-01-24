@@ -1,7 +1,7 @@
 # Row Unique Key
 
 ::: tip
-Remember to specify `rowKey` in virtual list mode
+Beware to specify `rowKey` in virtual list mode
 :::
 
 | props | Type | Default | Description |

@@ -43,7 +43,7 @@
 ::: warning
 设置了默认排序时，如果**没有排序**则会排序**默认排序**字段。
 
-点击下方表格 `Name` 列排序观察其行为。
+点击下方表格 `姓名` 列排序观察其行为。
 :::
 <demo vue="basic/sort/DefaultSort.vue"></demo>
 

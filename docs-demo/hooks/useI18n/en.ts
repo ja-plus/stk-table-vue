@@ -58,7 +58,7 @@ export const en = {
     catchPhrase: 'Catch Phrase',
     bs: 'BS',
     corporation: 'Corporation',
-    longTitle: 'Long Title, LongTitle',
+    longTitle: 'Long Title, LongTitle, LongTitle, LongTitle',
     showOverflow: 'showOverflow',
     showHeaderOverflow: 'showHeaderOverflow',
     rowActive: 'rowActive',
