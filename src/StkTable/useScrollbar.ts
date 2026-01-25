@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted, nextTick, Ref } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, Ref, computed } from 'vue';
 import { throttle } from './utils/index';
 
 export type ScrollbarOptions = {
@@ -19,19 +19,19 @@ export type ScrollbarOptions = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: boolean | ScrollbarOptions = false) {
-    const defaultOptions: Required<ScrollbarOptions> = {
+export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: Ref<boolean | ScrollbarOptions> = ref(false)) {
+    const defaultOptions = ref<Required<ScrollbarOptions>>({
         enabled: true,
         minHeight: 20,
         minWidth: 20,
         width: 8,
         height: 8,
-    };
+    });
 
-    const mergedOptions = {
-        ...defaultOptions,
-        ...(typeof options === 'boolean' ? { enabled: options } : options),
-    };
+    const mergedOptions = computed(() => ({
+        ...defaultOptions.value,
+        ...(typeof options.value === 'boolean' ? { enabled: options.value } : options.value),
+    }));
 
     const showScrollbar = ref({ x: false, y: false });
 
@@ -51,7 +51,7 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     }, 200);
 
     onMounted(() => {
-        if (mergedOptions.enabled && containerRef.value) {
+        if (mergedOptions.value.enabled && containerRef.value) {
             resizeObserver = new ResizeObserver(throttledUpdateScrollbar);
             resizeObserver.observe(containerRef.value);
         }
@@ -69,7 +69,7 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     });
 
     function updateCustomScrollbar() {
-        if (!mergedOptions.enabled || !containerRef.value) return;
+        if (!mergedOptions.value.enabled || !containerRef.value) return;
 
         const container = containerRef.value;
         const { scrollHeight, clientHeight, scrollWidth, clientWidth, scrollTop, scrollLeft } = container;
@@ -80,13 +80,13 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
 
         if (needVertical) {
             const ratio = clientHeight / scrollHeight;
-            scrollbar.value.h = Math.max(mergedOptions.minHeight, ratio * clientHeight);
+            scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * clientHeight);
             scrollbar.value.top = (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - scrollbar.value.h);
         }
 
         if (needHorizontal) {
             const ratio = clientWidth / scrollWidth;
-            scrollbar.value.w = Math.max(mergedOptions.minWidth, ratio * clientWidth);
+            scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * clientWidth);
             scrollbar.value.left = (scrollLeft / (scrollWidth - clientWidth)) * (clientWidth - scrollbar.value.w);
         }
     }

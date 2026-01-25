@@ -1,4 +1,8 @@
 
+## 0.9.1
+* Feature
+  - `props.scrollbar` reactive.
+
 ## 0.9.0
 * Feature
   - Add: Custom scrollbar support. 

@@ -37,6 +37,7 @@ const rowByRow = ref(false);
 const optimizeDragScroll = ref<'scrollbar'>();
 const translateZ = ref(false);
 const updateFreq = ref(1000);
+const scrollbar = ref(true);
 
 const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
@@ -265,6 +266,7 @@ function handleColSpan(v: boolean) {
     />
     <CheckItem :mode-value="false" :text="t('rowspanTest')" @change="handleRowSpan" />
     <CheckItem :mode-value="false" :text="t('colspanTest')" @change="handleColSpan" />
+    <CheckItem v-model="scrollbar" text="scrollbar" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
@@ -280,7 +282,7 @@ function handleColSpan(v: boolean) {
         stripe
         col-resizable
         sort-remote
-        scrollbar
+        :scrollbar="scrollbar"
         :scroll-row-by-row="rowByRow || optimizeDragScroll"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"

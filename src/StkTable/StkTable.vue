@@ -198,7 +198,7 @@
                 <slot name="customBottom"></slot>
             </div>
             <div
-                v-if="showScrollbar.y"
+                v-if="scrollbarOptions.enabled && showScrollbar.y"
                 ref="verticalScrollbarRef"
                 class="stk-sb-thumb vertical"
                 :style="{
@@ -213,7 +213,7 @@
             <slot name="empty">暂无数据</slot>
         </div>
         <div
-            v-if="showScrollbar.x"
+            v-if="scrollbarOptions.enabled && showScrollbar.x"
             ref="horizontalScrollbarRef"
             class="stk-sb-thumb horizontal"
             :style="{
@@ -230,7 +230,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, customRef, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, customRef, nextTick, onMounted, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -766,7 +766,7 @@ const SRBRBottomHeight = computed(() => {
 const rowKeyGenCache = new WeakMap();
 
 const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar(tableContainerRef, props.scrollbar);
+    useScrollbar(tableContainerRef, toRef(props, 'scrollbar'));
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
@@ -1411,7 +1411,7 @@ function onTableWheel(e: WheelEvent) {
     // Mark wheel event as active, will reset to false after 200ms of inactivity
     isWheeling.value = true;
 
-    const sbEnabled = scrollbarOptions.enabled;
+    const sbEnabled = scrollbarOptions.value.enabled;
     if (props.smoothScroll && !sbEnabled) {
         return;
     }
