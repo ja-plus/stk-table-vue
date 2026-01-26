@@ -6,6 +6,8 @@
   - fix: slot `customBottom` position.
 * BreakChange
   - deprecated: `props.width` | `props.minWidth` | `props.maxWidth`。You can use your css to cover it.
+* Change
+  - remove: `.stk-table-main-wrapper`
 
 ## 0.9.0
 * Feature
