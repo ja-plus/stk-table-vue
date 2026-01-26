@@ -4,6 +4,7 @@
   - `props.scrollbar` reactive.
 * Bugfix
   - fix: slot `customBottom` position.
+  - fix: scrollbar active style.
 * BreakChange
   - deprecated: `props.width` | `props.minWidth` | `props.maxWidth`。You can use your css to cover it.
 * Change
