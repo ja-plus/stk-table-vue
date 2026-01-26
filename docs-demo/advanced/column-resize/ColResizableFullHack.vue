@@ -34,7 +34,6 @@ const dataSource = [
         v-model:columns="columns"
         row-key="name"
         style="height: 200px"
-        width="unset"
         virtual
         :col-resizable="{
             disabled: col => col.dataIndex === 'op',
@@ -43,3 +42,9 @@ const dataSource = [
         :data-source="dataSource"
     ></StkTable>
 </template>
+
+<style scoped>
+:deep(.stk-table-main) {
+    flex: 1 !important;
+}
+</style>

@@ -117,6 +117,7 @@
         .stk-table-main {
             width: fit-content;
             min-width: min-content;
+            flex: none;
         }
     }
 
@@ -386,13 +387,11 @@
     .stk-table-main {
         border-spacing: 0;
         border-collapse: separate;
-        width: fit-content;
-        /* 不加会导致width 超过100%时为100%，行hover高亮会断开*/
-        min-width: 100%;
+        flex: 1;
 
         &.fixed-mode {
             table-layout: fixed;
-            min-width: min-content;
+            flex: none;
         }
     }
 
@@ -409,12 +408,6 @@
 
     .stk-table-scroll-container {
         display: flex;
-    }
-
-    .stk-table-main-wrapper {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
     }
 
     .seq-column {

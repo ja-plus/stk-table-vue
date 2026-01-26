@@ -33,7 +33,7 @@ After enabling column width adjustment, columns will not fill the container by d
 This way, you don't need to add the `v-model` modifier before `columns`; you can manually update the value of `StkTableColumn['width']`.
 
 ## Hack to Make Columns Fill Container
-If you want columns to fill the container, you can manually set `props.width` to `unset`, so the table will fill the container.
+If you want columns to fill the container, you can manually set `.stk-table-main` to `flex: 1`, so the table will fill the container.
 
 Then replace `width` with `minWidth` for a column, and this column will automatically occupy the remaining width, while other columns remain at their set widths.
 

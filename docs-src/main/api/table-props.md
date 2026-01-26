@@ -3,9 +3,9 @@
 ```ts
 export type StkProps = {
   width?: string;
-  /** 最小表格宽度 */
+  /** 最小表格宽度 @deprecated 0.9.1 使用css选择器`.stk-table-main`设置*/
   minWidth?: string;
-  /** 表格最大宽度*/
+  /** 表格最大宽度 @deprecated 0.9.1 使用css选择器`.stk-table-main`设置*/
   maxWidth?: string;
   /** 斑马线条纹 */
   stripe?: boolean;

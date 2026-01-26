@@ -20,9 +20,9 @@ Configuring `StkTableColumn['width']` will also configure `StkTableColumn['minWi
 
 
 ## Table Not Full Width
-The table in the component has a default `min-width=100%`, which will fill the entire container. Therefore, if the `sum of all column widths` < `container width`, it will automatically adjust according to the proportion of the configured column widths to make the table fill the entire container. (This is also the default behavior of native tables)
+The table in the component will fill the entire container. Therefore, if the `sum of all column widths` < `container width`, it will automatically adjust according to the proportion of the configured column widths to make the table fill the entire container. (This is also the default behavior of native tables)
 
-If you want it not to fill the container, you can set `StkTable['minWidth']` to `unset`.
+If you want it not to fill the container, you can set `.stk-table-main` to `flex: none`.
 
 <demo vue="basic/column-width/TableWidthFit.vue"></demo>
 

@@ -14,7 +14,7 @@
 ```
 
 ::: warning
-打开列宽调整后，列宽不会默认铺满容器。表格的 `width` 将被设置为 `fit-content`。如果有异常，请检查是否传入了 `props.width` 。
+打开列宽调整后，列宽不会默认铺满容器 。
 :::
 
 <demo vue="advanced/column-resize/ColResizable.vue"></demo>
@@ -33,7 +33,7 @@
 这样，您可以不用在 `columns` 前添加 `v-model` 修饰符，手动更新 `StkTableColumn['width']` 的值即可。
 
 ## 列宽铺满容器hack方式
-如果您希望列宽铺满容器，可以手动设置 `props.width` 为 `unset`，这样表格将铺满容器。
+如果您希望列宽铺满容器，可以通过css设置 `.stk-table-main` 为 `flex: 1`，这样表格将铺满容器。
 
 然后把某一列 `width` 替换为 `minWidth`，这样这一列就会自动占满剩余宽度，其他列依然是设置的宽度 。
 

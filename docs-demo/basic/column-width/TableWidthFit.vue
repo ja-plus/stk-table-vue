@@ -39,9 +39,13 @@ const dataSource = ref([
     <CheckItem v-model="virtual" :text="t('virtual')"></CheckItem>
     <StkTable
         style="height: 200px"
-        min-width="unset"
         :virtual="virtual"
         :columns="columns"
         :data-source="dataSource"
     ></StkTable>
 </template>
+<style scoped>
+:deep(.stk-table-main) {
+    flex: none;
+}
+</style>

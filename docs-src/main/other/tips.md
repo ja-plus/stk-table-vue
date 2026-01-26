@@ -8,4 +8,4 @@
 * 暂不支持。可以通过 `customHeaderCell` 自定义实现功能。
 
 ### props.fixedMode
-* **低版本浏览器** 需要设置 `props.width`（default: width=fit-content不生效）。否则列宽不设宽度会变为0。
+* **低版本浏览器** 需要通过css设置 `.stk-table-main` 的 width（default: width=fit-content不生效）。否则列宽不设宽度会变为0。

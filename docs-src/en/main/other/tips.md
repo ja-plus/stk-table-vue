@@ -8,4 +8,4 @@
 * Not supported yet. You can implement this functionality through `customHeaderCell`.
 
 ### props.fixedMode
-* For **older browsers**, you need to set `props.width` (default: width=fit-content doesn't work). Otherwise, columns without specified width will have zero width.
+* For **older browsers**, If you are using a low version of browser, you need to set the width of `.stk-table-main` to `unset` in css. Otherwise, the width of the column will be 0.

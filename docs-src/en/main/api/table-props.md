@@ -3,9 +3,9 @@
 ```ts
 export type StkProps = {
   width?: string;
-  /** Minimum table width */
+  /** Minimum table width @deprecated 0.9.1 Use css selector `.stk-table-main` to set*/
   minWidth?: string;
-  /** Maximum table width */
+  /** Maximum table width @deprecated 0.9.1 Use css selector `.stk-table-main` to set*/
   maxWidth?: string;
   /** Zebra stripes */
   stripe?: boolean;

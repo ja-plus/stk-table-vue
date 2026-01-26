@@ -42,160 +42,150 @@
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
         <div class="stk-table-scroll-container">
-            <div class="stk-table-main-wrapper">
-                <table
-                    class="stk-table-main"
-                    :style="{ width, minWidth, maxWidth }"
-                    :class="{
-                        'fixed-mode': props.fixedMode,
-                    }"
-                    @dragover="onTrDragOver"
-                    @dragenter="onTrDragEnter"
-                    @dragend="onTrDragEnd"
-                    @click="onRowClick"
-                    @dblclick="onRowDblclick"
-                    @contextmenu="onRowMenu"
-                    @mouseover="onTrMouseOver"
-                >
-                    <thead v-if="!headless">
-                        <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
-                            <th
-                                v-if="virtualX_on"
-                                class="vt-x-left"
-                                :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
-                            ></th>
-                            <th
-                                v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
-                                :key="colKeyGen(col)"
-                                v-bind="getTHProps(col)"
-                                @click="e => onHeaderCellClick(e, col)"
-                                @dragstart="onThDragStart"
-                                @drop="onThDrop"
-                                @dragover="onThDragOver"
-                            >
-                                <div
-                                    v-if="colResizeOn(col) && colIndex > 0"
-                                    class="table-header-resizer left"
-                                    @mousedown="onThResizeMouseDown($event, col, true)"
-                                ></div>
-                                <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
-                                    <component
-                                        :is="col.customHeaderCell"
-                                        v-if="col.customHeaderCell"
-                                        :col="col"
-                                        :colIndex="colIndex"
-                                        :rowIndex="rowIndex"
-                                    />
-                                    <template v-else>
-                                        <slot name="tableHeader" :col="col">
-                                            <span class="table-header-title">{{ col.title }}</span>
-                                        </slot>
-                                    </template>
-                                    <SortIcon v-if="col.sorter" class="table-header-sorter" />
-                                </div>
-                                <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
-                            </th>
-                            <th
-                                v-if="virtualX_on"
-                                class="vt-x-right"
-                                :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"
-                            ></th>
-                        </tr>
-                    </thead>
-
-                    <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
-                        <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
-                            <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
-                            <template v-if="fixedMode && headless">
-                                <td
-                                    v-for="col in virtualX_columnPart"
-                                    :key="colKeyGen(col)"
-                                    :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                                ></td>
-                            </template>
-                        </tr>
-                        <tr
-                            v-for="(row, rowIndex) in virtual_dataSourcePart"
-                            ref="trRef"
-                            :key="rowKeyGen(row)"
-                            v-bind="getTRProps(row, rowIndex)"
-                            @drop="onTrDrop($event, getRowIndex(rowIndex))"
-                            @mouseleave="onTrMouseLeave"
+            <table
+                class="stk-table-main"
+                :style="{ width, minWidth, maxWidth }"
+                :class="{
+                    'fixed-mode': props.fixedMode,
+                }"
+                @dragover="onTrDragOver"
+                @dragenter="onTrDragEnter"
+                @dragend="onTrDragEnd"
+                @click="onRowClick"
+                @dblclick="onRowDblclick"
+                @contextmenu="onRowMenu"
+                @mouseover="onTrMouseOver"
+            >
+                <thead v-if="!headless">
+                    <tr v-for="(row, rowIndex) in tableHeaders" :key="rowIndex" @contextmenu="onHeaderMenu($event)">
+                        <th
+                            v-if="virtualX_on"
+                            class="vt-x-left"
+                            :style="`min-width:${virtualScrollX.offsetLeft}px;width:${virtualScrollX.offsetLeft}px`"
+                        ></th>
+                        <th
+                            v-for="(col, colIndex) in virtualX_on && rowIndex === tableHeaders.length - 1 ? virtualX_columnPart : row"
+                            :key="colKeyGen(col)"
+                            v-bind="getTHProps(col)"
+                            @click="e => onHeaderCellClick(e, col)"
+                            @dragstart="onThDragStart"
+                            @drop="onThDrop"
+                            @dragover="onThDragOver"
                         >
-                            <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
-                                <div class="table-cell-wrapper">
-                                    <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                        {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
+                            <div
+                                v-if="colResizeOn(col) && colIndex > 0"
+                                class="table-header-resizer left"
+                                @mousedown="onThResizeMouseDown($event, col, true)"
+                            ></div>
+                            <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
+                                <component
+                                    :is="col.customHeaderCell"
+                                    v-if="col.customHeaderCell"
+                                    :col="col"
+                                    :colIndex="colIndex"
+                                    :rowIndex="rowIndex"
+                                />
+                                <template v-else>
+                                    <slot name="tableHeader" :col="col">
+                                        <span class="table-header-title">{{ col.title }}</span>
                                     </slot>
-                                </div>
-                            </td>
-                            <template v-else>
-                                <template v-for="(col, colIndex) in virtualX_columnPart">
-                                    <td
-                                        v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
-                                        :key="colKeyGen(col)"
-                                        v-bind="getTDProps(row, col, rowIndex, colIndex)"
-                                        @mouseenter="onCellMouseEnter"
-                                        @mouseleave="onCellMouseLeave"
-                                    >
-                                        <component
-                                            :is="col.customCell"
-                                            v-if="col.customCell"
-                                            class="table-cell-wrapper"
-                                            :col="col"
-                                            :row="row"
-                                            :rowIndex="getRowIndex(rowIndex)"
-                                            :colIndex="colIndex"
-                                            :cellValue="row && row[col.dataIndex]"
-                                            :expanded="row && row.__EXP__"
-                                            :tree-expanded="row && row.__T_EXP__"
-                                        >
-                                            <template #stkFoldIcon>
-                                                <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                            </template>
-                                            <template #stkDragIcon>
-                                                <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                            </template>
-                                        </component>
-                                        <div
-                                            v-else
-                                            class="table-cell-wrapper"
-                                            :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
-                                            :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
-                                        >
-                                            <template v-if="col.type === 'seq'">
-                                                {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                            </template>
-                                            <template v-else-if="col.type === 'dragRow'">
-                                                <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                                <span>
-                                                    {{ row?.[col.dataIndex] ?? '' }}
-                                                </span>
-                                            </template>
-                                            <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
-                                                <TriangleIcon
-                                                    v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
-                                                    @click="triangleClick($event, row, col)"
-                                                />
-                                                <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
-                                                    {{ row?.[col.dataIndex] ?? '' }}
-                                                </span>
-                                            </template>
-                                            <template v-else>
-                                                {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
-                                            </template>
-                                        </div>
-                                    </td>
                                 </template>
+                                <SortIcon v-if="col.sorter" class="table-header-sorter" />
+                            </div>
+                            <div v-if="colResizeOn(col)" class="table-header-resizer right" @mousedown="onThResizeMouseDown($event, col)"></div>
+                        </th>
+                        <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
+                    </tr>
+                </thead>
+
+                <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
+                    <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                        <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
+                        <template v-if="fixedMode && headless">
+                            <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                        </template>
+                    </tr>
+                    <tr
+                        v-for="(row, rowIndex) in virtual_dataSourcePart"
+                        ref="trRef"
+                        :key="rowKeyGen(row)"
+                        v-bind="getTRProps(row, rowIndex)"
+                        @drop="onTrDrop($event, getRowIndex(rowIndex))"
+                        @mouseleave="onTrMouseLeave"
+                    >
+                        <td v-if="virtualX_on" class="vt-x-left"></td>
+                        <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
+                            <div class="table-cell-wrapper">
+                                <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
+                                    {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
+                                </slot>
+                            </div>
+                        </td>
+                        <template v-else>
+                            <template v-for="(col, colIndex) in virtualX_columnPart">
+                                <td
+                                    v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
+                                    :key="colKeyGen(col)"
+                                    v-bind="getTDProps(row, col, rowIndex, colIndex)"
+                                    @mouseenter="onCellMouseEnter"
+                                    @mouseleave="onCellMouseLeave"
+                                >
+                                    <component
+                                        :is="col.customCell"
+                                        v-if="col.customCell"
+                                        class="table-cell-wrapper"
+                                        :col="col"
+                                        :row="row"
+                                        :rowIndex="getRowIndex(rowIndex)"
+                                        :colIndex="colIndex"
+                                        :cellValue="row && row[col.dataIndex]"
+                                        :expanded="row && row.__EXP__"
+                                        :tree-expanded="row && row.__T_EXP__"
+                                    >
+                                        <template #stkFoldIcon>
+                                            <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
+                                        </template>
+                                        <template #stkDragIcon>
+                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                        </template>
+                                    </component>
+                                    <div
+                                        v-else
+                                        class="table-cell-wrapper"
+                                        :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
+                                        :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
+                                    >
+                                        <template v-if="col.type === 'seq'">
+                                            {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                        </template>
+                                        <template v-else-if="col.type === 'dragRow'">
+                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                            <span>
+                                                {{ row?.[col.dataIndex] ?? '' }}
+                                            </span>
+                                        </template>
+                                        <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
+                                            <TriangleIcon
+                                                v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
+                                                @click="triangleClick($event, row, col)"
+                                            />
+                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                                {{ row?.[col.dataIndex] ?? '' }}
+                                            </span>
+                                        </template>
+                                        <template v-else>
+                                            {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                        </template>
+                                    </div>
+                                </td>
                             </template>
-                            <td v-if="virtualX_on" class="vt-x-right"></td>
-                        </tr>
-                        <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
-                        <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
-                    </tbody>
-                </table>
-            </div>
+                        </template>
+                        <td v-if="virtualX_on" class="vt-x-right"></td>
+                    </tr>
+                    <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                    <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
+                </tbody>
+            </table>
             <div
                 v-if="scrollbarOptions.enabled && showScrollbar.y"
                 ref="verticalScrollbarRef"
@@ -292,10 +282,11 @@ const stkTableId = createStkTableId();
  */
 const props = withDefaults(
     defineProps<{
+        /** 表格宽度*/
         width?: string;
-        /** 最小表格宽度 */
+        /** 最小表格宽度 @deprecated*/
         minWidth?: string;
-        /** 表格最大宽度*/
+        /** 表格最大宽度 @deprecated*/
         maxWidth?: string;
         /** 斑马线条纹 */
         stripe?: boolean;
