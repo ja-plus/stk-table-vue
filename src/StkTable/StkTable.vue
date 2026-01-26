@@ -195,7 +195,6 @@
                         <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
                     </tbody>
                 </table>
-                <slot name="customBottom"></slot>
             </div>
             <div
                 v-if="scrollbarOptions.enabled && showScrollbar.y"
@@ -212,6 +211,7 @@
         <div v-if="(!dataSourceCopy || !dataSourceCopy.length) && showNoData" class="stk-table-no-data" :class="{ 'no-data-full': noDataFull }">
             <slot name="empty">暂无数据</slot>
         </div>
+        <slot name="customBottom"></slot>
         <div
             v-if="scrollbarOptions.enabled && showScrollbar.x"
             ref="horizontalScrollbarRef"

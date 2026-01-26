@@ -2,6 +2,8 @@
 ## 0.9.1
 * Feature
   - `props.scrollbar` reactive.
+* Bugfix
+  - fix: slot `customBottom` position.
 
 ## 0.9.0
 * Feature
