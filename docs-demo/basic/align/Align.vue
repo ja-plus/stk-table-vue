@@ -29,8 +29,8 @@ const dataSource = ref<Data[]>([
 </script>
 <template>
     <RadioGroup
-        v-model="align"
-        :text="t('align')"
+        v-model="headerAlign"
+        :text="t('headerAlign')"
         :options="[
             { label: 'left', value: 'left' },
             { label: 'center', value: 'center' },
@@ -38,8 +38,8 @@ const dataSource = ref<Data[]>([
         ]"
     ></RadioGroup>
     <RadioGroup
-        v-model="headerAlign"
-        :text="t('headerAlign')"
+        v-model="align"
+        :text="t('align')"
         :options="[
             { label: 'left', value: 'left' },
             { label: 'center', value: 'center' },

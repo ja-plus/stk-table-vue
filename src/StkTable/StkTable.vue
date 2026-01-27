@@ -30,7 +30,7 @@
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
-            '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : '',
+            '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : null,
             '--sb-width': `${scrollbarOptions.width}px`,
             '--sb-height': `${scrollbarOptions.height}px`,
         }"
@@ -77,7 +77,7 @@
                                 class="table-header-resizer left"
                                 @mousedown="onThResizeMouseDown($event, col, true)"
                             ></div>
-                            <div class="table-header-cell-wrapper" :style="`--row-span:${virtualX_on ? 1 : col.__R_SP__ || 1}`">
+                            <div class="table-header-cell-wrapper" :style="virtualX_on ? null : col.__R_SP__ ? `--row-span:${col.__R_SP__}` : null">
                                 <component
                                     :is="col.customHeaderCell"
                                     v-if="col.customHeaderCell"
@@ -153,7 +153,7 @@
                                         v-else
                                         class="table-cell-wrapper"
                                         :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
-                                        :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : ''"
+                                        :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : null"
                                     >
                                         <template v-if="col.type === 'seq'">
                                             {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
@@ -169,7 +169,7 @@
                                                 v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
                                                 @click="triangleClick($event, row, col)"
                                             />
-                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : ''">
+                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : null">
                                                 {{ row?.[col.dataIndex] ?? '' }}
                                             </span>
                                         </template>
@@ -1086,8 +1086,8 @@ const cellStyleMap = computed(() => {
                 style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
             }
             const colKey = colKeyGen.value(col);
-            thMap.set(colKey, Object.assign({ textAlign: col.headerAlign }, style, getFixedStyle(TagType.TH, col, depth)));
-            tdMap.set(colKey, Object.assign({ textAlign: col.align }, style, getFixedStyle(TagType.TD, col, depth)));
+            thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
+            tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
         });
     });
     return {
@@ -1121,12 +1121,12 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
         classStr += ' hover';
     }
 
-    const result = {
+    const result: Record<string, number | string | null> = {
         id: stkTableId + '-' + rowKey,
         'data-row-key': rowKey,
         'data-row-i': rowIndex,
         class: classStr,
-        style: '',
+        style: null,
     };
 
     const needRowHeight = row?.__EXP_R__ && props.virtual && props.expandConfig?.height;
@@ -1151,6 +1151,7 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
             colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
+            col.headerAlign && (col.headerAlign === 'left' ? 'cell-text-l' : col.headerAlign === 'right' ? 'cell-text-r' : null),
         ],
     };
 }
@@ -1164,7 +1165,11 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     const cellKey = cellKeyGen(row, col);
-    const classList = [col.className, fixedColClassMap.value.get(colKey)];
+    const classList = [
+        col.className,
+        fixedColClassMap.value.get(colKey),
+        col.align && (col.align === 'center' ? 'cell-text-c' : col.align === 'right' ? 'cell-text-r' : null),
+    ];
     if (col.mergeCells) {
         if (hoverMergedCells.value.has(cellKey)) {
             classList.push('cell-hover');
