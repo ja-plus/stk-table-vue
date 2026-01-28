@@ -197,7 +197,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      */
     cellFixedMode?: "sticky" | "relative";
     /**
-     * 是否平滑滚动。default: chrome < 85 || chrome > 120 ? true : false
+     * 是否平滑滚动。default: chrome < 85 ? true : false
      * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
@@ -575,7 +575,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      */
     cellFixedMode?: "sticky" | "relative";
     /**
-     * 是否平滑滚动。default: chrome < 85 || chrome > 120 ? true : false
+     * 是否平滑滚动。default: chrome < 85 ? true : false
      * - false: 使用 onwheel 滚动。为了防止滚动过快导致白屏。
      * - true: 不使用 onwheel 滚动。鼠标滚轮滚动时更加平滑。滚动过快时会白屏。
      */
