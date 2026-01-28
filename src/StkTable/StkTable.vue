@@ -220,7 +220,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, customRef, nextTick, onMounted, ref, shallowRef, toRaw, toRef, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -268,6 +268,7 @@ import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
+import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
@@ -1373,31 +1374,7 @@ function onCellMouseDown(e: MouseEvent) {
 }
 
 // isWheeling: true when wheel event is triggered, auto reset to false after 200ms
-const isWheeling = customRef((track, trigger) => {
-    let value = false;
-    let timer = 0;
-
-    return {
-        get() {
-            track();
-            return value;
-        },
-        set(newValue) {
-            value = newValue;
-            trigger();
-
-            // If setting to true, set a timer to reset to false after 200ms
-            if (newValue) {
-                clearTimeout(timer);
-                timer = self.setTimeout(() => {
-                    value = false;
-                    trigger();
-                    timer = 0;
-                }, 200);
-            }
-        },
-    };
-});
+const [isWheeling, setIsWheeling] = useWheeling();
 
 /**
  * proxy scroll, prevent white screen
@@ -1405,7 +1382,6 @@ const isWheeling = customRef((track, trigger) => {
  */
 function onTableWheel(e: WheelEvent) {
     // Mark wheel event as active, will reset to false after 200ms of inactivity
-    isWheeling.value = true;
 
     const sbEnabled = scrollbarOptions.value.enabled;
     if (props.smoothScroll && !sbEnabled) {
@@ -1421,17 +1397,21 @@ function onTableWheel(e: WheelEvent) {
 
     const { deltaY, deltaX, shiftKey } = e;
 
-    if ((virtual_on.value || sbEnabled) && deltaY && !shiftKey) {
+    if (virtual_on.value && deltaY && !shiftKey) {
         const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
         const isScrollBottom = scrollHeight - containerHeight - scrollTop < 10;
         // If scrolling down and not at bottom, or at bottom but still actively wheeling
         // If scrolling up and not at top, or at top but still actively wheeling
-        if ((deltaY > 0 && (!isScrollBottom || isWheeling.value)) || (deltaY < 0 && (scrollTop > 0 || isWheeling.value))) {
+        if ((deltaY > 0 && !isScrollBottom) || (deltaY < 0 && scrollTop > 0)) {
+            setIsWheeling(true);
             e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
+        }
+        if (isWheeling()) {
+            e.preventDefault();
         }
         dom.scrollTop += deltaY;
     }
-    if (virtualX_on.value || sbEnabled) {
+    if (virtualX_on.value) {
         const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
         const isScrollRight = scrollWidth - containerWidth - scrollLeft < 10;
         let distance = deltaX;
@@ -1440,8 +1420,12 @@ function onTableWheel(e: WheelEvent) {
         }
         // If scrolling right and not at right, or at right but still actively wheeling
         // If scrolling left and not at left, or at left but still actively wheeling
-        if ((distance > 0 && (!isScrollRight || isWheeling.value)) || (distance < 0 && (scrollLeft > 0 || isWheeling.value))) {
+        if ((distance > 0 && !isScrollRight) || (distance < 0 && scrollLeft > 0)) {
+            setIsWheeling(true);
             e.preventDefault(); // Prevent parent element scroll when actively wheeling at boundaries
+        }
+        if (isWheeling()) {
+            e.preventDefault();
         }
         dom.scrollLeft += distance;
     }

@@ -5,6 +5,7 @@
 * Bugfix
   - fix: slot `customBottom` position.
   - fix: scrollbar active style.
+  - fix: when use props.scrollbar. Can not scroll parent element when mouse over table .
 * Change
   - remove: `.stk-table-main-wrapper`
 
