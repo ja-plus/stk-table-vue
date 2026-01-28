@@ -65,14 +65,15 @@ declare function __VLS_template(): {
         row: any;
         col: StkTableColumn<any> | undefined;
     }): any;
-    customBottom?(_: {}): any;
     empty?(_: {}): any;
+    customBottom?(_: {}): any;
 };
 declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    /** 表格宽度*/
     width?: string;
-    /** 最小表格宽度 */
+    /** 最小表格宽度 @deprecated*/
     minWidth?: string;
-    /** 表格最大宽度*/
+    /** 表格最大宽度 @deprecated*/
     maxWidth?: string;
     /** 斑马线条纹 */
     stripe?: boolean;
@@ -446,10 +447,11 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+    /** 表格宽度*/
     width?: string;
-    /** 最小表格宽度 */
+    /** 最小表格宽度 @deprecated*/
     minWidth?: string;
-    /** 表格最大宽度*/
+    /** 表格最大宽度 @deprecated*/
     maxWidth?: string;
     /** 斑马线条纹 */
     stripe?: boolean;

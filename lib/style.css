@@ -52,6 +52,9 @@
   flex-direction:column;
   box-sizing:border-box;
 }
+.stk-table:hover .stk-sb-thumb{
+  opacity:0.7;
+}
 .stk-table.dark{
   --th-bgc:#202029;
   --th-color:#c0c0d1;
@@ -90,6 +93,7 @@
   width:fit-content;
   min-width:-moz-min-content;
   min-width:min-content;
+  flex:none;
 }
 .stk-table.is-col-resizing th{
   pointer-events:none;
@@ -254,6 +258,15 @@
   background-color:var(--td-bgc);
   height:var(--row-height);
 }
+.stk-table .cell-text-l{
+  text-align:left;
+}
+.stk-table .cell-text-c{
+  text-align:center;
+}
+.stk-table .cell-text-r{
+  text-align:right;
+}
 .stk-table .vt-x-left,
 .stk-table .vt-x-right{
   padding:0;
@@ -270,14 +283,11 @@
 .stk-table .stk-table-main{
   border-spacing:0;
   border-collapse:separate;
-  width:-moz-fit-content;
-  width:fit-content;
-  min-width:100%;
+  flex:1;
 }
 .stk-table .stk-table-main.fixed-mode{
   table-layout:fixed;
-  min-width:-moz-min-content;
-  min-width:min-content;
+  flex:none;
 }
 .stk-table .fixed-cell{
   background-color:inherit;
@@ -289,11 +299,6 @@
 }
 .stk-table .stk-table-scroll-container{
   display:flex;
-}
-.stk-table .stk-table-main-wrapper{
-  display:flex;
-  flex-direction:column;
-  flex:1;
 }
 .stk-table .seq-column{
   text-align:center;
@@ -437,35 +442,32 @@
 .stk-table td.cell-active{
   background-color:var(--tr-active-bgc);
 }
-.stk-table:hover .stk-sb-thumb{
-  opacity:0.7;
-}
-.stk-sb-thumb{
+.stk-table .stk-sb-thumb{
   z-index:100;
   position:sticky;
   background-color:var(--sb-thumb-color);
-  transition:transform 0.1s ease, opacity 0.5s ease;
+  transition:opacity 0.5s ease;
   -webkit-user-select:none;
      -moz-user-select:none;
           user-select:none;
   opacity:0;
   flex-shrink:0;
 }
-.stk-sb-thumb:hover{
+.stk-table .stk-sb-thumb:hover{
   background-color:var(--sb-thumb-hover-color);
 }
-.stk-sb-thumb:active{
+.stk-table .stk-sb-thumb:active{
   opacity:1;
   background-color:var(--sb-thumb-hover-color);
 }
-.stk-sb-thumb.vertical{
+.stk-table .stk-sb-thumb.vertical{
   margin-left:auto;
   top:0;
   right:0;
   border-radius:calc(var(--sb-width) / 2);
   width:var(--sb-width);
 }
-.stk-sb-thumb.horizontal{
+.stk-table .stk-sb-thumb.horizontal{
   margin-top:auto;
   bottom:0;
   left:0;

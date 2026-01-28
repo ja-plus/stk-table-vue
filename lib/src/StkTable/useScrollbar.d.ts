@@ -17,14 +17,14 @@ export type ScrollbarOptions = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export declare function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options?: boolean | ScrollbarOptions): {
-    scrollbarOptions: {
+export declare function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options?: Ref<boolean | ScrollbarOptions>): {
+    scrollbarOptions: import('vue').ComputedRef<{
         enabled: boolean;
         width: number;
         height: number;
         minWidth: number;
         minHeight: number;
-    };
+    }>;
     scrollbar: Ref<{
         h: number;
         w: number;
