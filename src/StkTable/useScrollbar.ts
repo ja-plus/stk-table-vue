@@ -69,9 +69,9 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     });
 
     function updateCustomScrollbar() {
-        if (!mergedOptions.value.enabled || !containerRef.value) return;
+        if (!mergedOptions.value.enabled) return;
 
-        const container = containerRef.value;
+        const container = containerRef.value as HTMLElement;
         const { scrollHeight, clientHeight, scrollWidth, clientWidth, scrollTop, scrollLeft } = container;
 
         const needVertical = scrollHeight > clientHeight;

@@ -1383,17 +1383,13 @@ const [isWheeling, setIsWheeling] = useWheeling();
 function onTableWheel(e: WheelEvent) {
     // Mark wheel event as active, will reset to false after 200ms of inactivity
 
-    const sbEnabled = scrollbarOptions.value.enabled;
-    if (props.smoothScroll && !sbEnabled) {
-        return;
-    }
+    if (props.smoothScroll) return;
     // if is resizing, not allow scroll
     if (isColResizing.value) {
         e.stopPropagation();
         return;
     }
-    const dom = tableContainerRef.value;
-    if (!dom) return;
+    const dom = tableContainerRef.value as HTMLElement;
 
     const { deltaY, deltaX, shiftKey } = e;
 
