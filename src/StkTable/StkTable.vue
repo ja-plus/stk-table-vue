@@ -124,7 +124,7 @@
                         <template v-else>
                             <template v-for="(col, colIndex) in virtualX_columnPart">
                                 <td
-                                    v-if="!hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
+                                    v-if="!hiddenCellMap || !hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
                                     :key="colKeyGen(col)"
                                     v-bind="getTDProps(row, col, rowIndex, colIndex)"
                                     @mouseenter="onCellMouseEnter"

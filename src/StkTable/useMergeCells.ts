@@ -14,7 +14,7 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
      * - key: rowKey
      * - value: colKey Set
      */
-    const hiddenCellMap = ref<Record<UniqKey, Set<UniqKey>>>({});
+    const hiddenCellMap = ref<Record<UniqKey, Set<UniqKey>> | null>(null);
     /**
      * hover other row and rowspan cell should be highlighted
      * - key: rowKey
@@ -28,7 +28,7 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
     const activeMergedCells = ref(new Set<string>());
 
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
-        hiddenCellMap.value = {};
+        hiddenCellMap.value = null;
         hoverRowMap.value = {};
     });
 
@@ -49,6 +49,7 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
             const nextCol = tableHeaderLast.value[i];
             if (!nextCol) break;
             const nextColKey = colKeyGen.value(nextCol);
+            if (!hiddenCellMap.value) hiddenCellMap.value = {};
             if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
             hiddenCellMap.value[rowKey].add(nextColKey);
         }

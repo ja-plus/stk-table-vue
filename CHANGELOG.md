@@ -1,4 +1,8 @@
 
+## 0.9.2
+* Optimize
+  - optimize: td v-if
+
 ## 0.9.1
 * Feature
   - `props.scrollbar` reactive.
