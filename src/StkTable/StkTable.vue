@@ -152,7 +152,7 @@
                                     <div
                                         v-else
                                         class="table-cell-wrapper"
-                                        :title="col.type !== 'seq' ? row?.[col.dataIndex] : ''"
+                                        :title="col.type !== 'seq' ? row && row[col.dataIndex] : ''"
                                         :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : null"
                                     >
                                         <template v-if="col.type === 'seq'">
@@ -174,7 +174,7 @@
                                             </span>
                                         </template>
                                         <template v-else>
-                                            {{ row?.[col.dataIndex] ?? getEmptyCellText(col, row) }}
+                                            {{ (row && row[col.dataIndex]) ?? getEmptyCellText(col, row) }}
                                         </template>
                                     </div>
                                 </td>
@@ -757,9 +757,6 @@ const SRBRBottomHeight = computed(() => {
 
 const rowKeyGenCache = new WeakMap();
 
-const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar(tableContainerRef, toRef(props, 'scrollbar'));
-
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
 
 const { onThDragStart, onThDragOver, onThDrop, isHeaderDraggable } = useThDrag({ props, emits, colKeyGen });
@@ -786,6 +783,9 @@ const {
     setAutoHeight,
     clearAllAutoHeight,
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
+
+const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
+    useScrollbar({ containerRef: tableContainerRef, virtualScroll, virtualScrollX }, toRef(props, 'scrollbar'));
 
 const {
     hiddenCellMap, //
@@ -1432,7 +1432,8 @@ function onTableWheel(e: WheelEvent) {
  */
 function onTableScroll(e: Event) {
     if (!e?.target) return;
-
+    // const target = e.target;
+    // requestAnimationFrame(() => {
     const { scrollTop, scrollLeft } = e.target as HTMLElement;
     const { scrollTop: vScrollTop } = virtualScroll.value;
     const { scrollLeft: vScrollLeft } = virtualScrollX.value;
@@ -1462,6 +1463,7 @@ function onTableScroll(e: Event) {
     }
 
     updateCustomScrollbar();
+    // });
 }
 
 /** tr hover */

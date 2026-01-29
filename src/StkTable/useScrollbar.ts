@@ -1,4 +1,5 @@
-import { ref, onMounted, onUnmounted, nextTick, Ref, computed } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, Ref } from 'vue';
+import type { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { throttle } from './utils/index';
 
 export type ScrollbarOptions = {
@@ -13,13 +14,19 @@ export type ScrollbarOptions = {
     minHeight?: number;
 };
 
+type Params = {
+    containerRef: Ref<HTMLDivElement | undefined>;
+    virtualScroll: Ref<VirtualScrollStore>;
+    virtualScrollX: Ref<VirtualScrollXStore>;
+};
+
 /**
  * 自定义滚动条hooks
  * @param containerRef 滚动容器的ref
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options: Ref<boolean | ScrollbarOptions> = ref(false)) {
+export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Params, options: Ref<boolean | ScrollbarOptions> = ref(false)) {
     const defaultOptions = ref<Required<ScrollbarOptions>>({
         enabled: true,
         minHeight: 20,
@@ -71,23 +78,23 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
     function updateCustomScrollbar() {
         if (!mergedOptions.value.enabled) return;
 
-        const container = containerRef.value as HTMLElement;
-        const { scrollHeight, clientHeight, scrollWidth, clientWidth, scrollTop, scrollLeft } = container;
+        const { scrollHeight, scrollTop, containerHeight } = virtualScroll.value;
+        const { scrollWidth, scrollLeft, containerWidth } = virtualScrollX.value;
 
-        const needVertical = scrollHeight > clientHeight;
-        const needHorizontal = scrollWidth > clientWidth;
+        const needVertical = scrollHeight > containerHeight;
+        const needHorizontal = scrollWidth > containerWidth;
         showScrollbar.value = { x: needHorizontal, y: needVertical };
 
         if (needVertical) {
-            const ratio = clientHeight / scrollHeight;
-            scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * clientHeight);
-            scrollbar.value.top = (scrollTop / (scrollHeight - clientHeight)) * (clientHeight - scrollbar.value.h);
+            const ratio = containerHeight / scrollHeight;
+            scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * containerHeight);
+            scrollbar.value.top = (scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h);
         }
 
         if (needHorizontal) {
-            const ratio = clientWidth / scrollWidth;
-            scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * clientWidth);
-            scrollbar.value.left = (scrollLeft / (scrollWidth - clientWidth)) * (clientWidth - scrollbar.value.w);
+            const ratio = containerWidth / scrollWidth;
+            scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * containerWidth);
+            scrollbar.value.left = (scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w);
         }
     }
 
@@ -95,10 +102,9 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         e.preventDefault();
         isDraggingVertical = true;
 
-        const container = containerRef.value;
-        if (!container) return;
+        const { scrollTop } = virtualScroll.value;
 
-        dragStartTop = container.scrollTop;
+        dragStartTop = scrollTop;
         dragStartY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
 
         document.addEventListener('mousemove', onVerticalDrag);
@@ -111,10 +117,8 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         e.preventDefault();
         isDraggingHorizontal = true;
 
-        const container = containerRef.value;
-        if (!container) return;
-
-        dragStartLeft = container.scrollLeft;
+        const { scrollLeft } = virtualScrollX.value;
+        dragStartLeft = scrollLeft;
 
         dragStartX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
 
@@ -132,13 +136,12 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
 
         const deltaY = clientY - dragStartY;
-        const container = containerRef.value;
-        const { scrollHeight, clientHeight } = container;
+        const { scrollHeight, containerHeight } = virtualScroll.value;
 
-        const scrollRange = scrollHeight - clientHeight;
-        const trackRange = clientHeight - scrollbar.value.h;
+        const scrollRange = scrollHeight - containerHeight;
+        const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
-        container.scrollTop = dragStartTop + scrollDelta;
+        containerRef.value.scrollTop = dragStartTop + scrollDelta;
     }
 
     function onHorizontalDrag(e: MouseEvent | TouchEvent) {
@@ -149,13 +152,12 @@ export function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, opti
         const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
 
         const deltaX = clientX - dragStartX;
-        const container = containerRef.value;
-        const { scrollWidth, clientWidth } = container;
+        const { scrollWidth, containerWidth } = virtualScrollX.value;
 
-        const scrollRange = scrollWidth - clientWidth;
-        const trackRange = clientWidth - scrollbar.value.w;
+        const scrollRange = scrollWidth - containerWidth;
+        const trackRange = containerWidth - scrollbar.value.w;
         const scrollDelta = (deltaX / trackRange) * scrollRange;
-        container.scrollLeft = dragStartLeft + scrollDelta;
+        containerRef.value.scrollLeft = dragStartLeft + scrollDelta;
     }
 
     function onDragEnd() {

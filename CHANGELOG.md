@@ -2,6 +2,7 @@
 ## 0.9.2
 * Optimize
   - optimize: td v-if
+  - optimize: custom scrollbar. Reduce reflow.
 
 ## 0.9.1
 * Feature
