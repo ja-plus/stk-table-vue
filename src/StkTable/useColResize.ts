@@ -90,15 +90,14 @@ export function useColResize<DT extends Record<string, any>>({
         const tableHeaderLastValue = tableHeaderLast.value;
         let revertMoveX = false;
         const colKey = colKeyGen.value;
-        /** 列下标 */
-        const colIndex = tableHeaderLastValue.findIndex(it => colKey(it) === colKey(col));
+        const colKeyValue = colKey(col);
+        const colIndex = tableHeaderLastValue.findIndex(it => colKey(it) === colKeyValue);
         const fixedIndex = fixedCols.value.indexOf(col);
-        /** 是否正在被固定 */
-        const isFixed = fixedIndex !== -1;
+        const isColFixed = fixedIndex !== -1;
 
         if (leftHandle) {
             // 左侧拖动条
-            if (isFixed && col.fixed === 'right') {
+            if (isColFixed && col.fixed === 'right') {
                 // 对于固定右侧的列，拖动左侧的把，需要反向计算
                 revertMoveX = true;
             } else {
@@ -109,9 +108,8 @@ export function useColResize<DT extends Record<string, any>>({
             }
         } else {
             // 右侧拖动条
-            if (isFixed && col.fixed === 'right') {
+            if (isColFixed && col.fixed === 'right') {
                 // 对于固定右侧的列，拖动右侧的把，需要拖动下一固定的列
-                revertMoveX = true;
                 col = fixedCols.value[fixedIndex + 1] || col;
             }
         }

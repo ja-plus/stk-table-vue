@@ -3,6 +3,8 @@
 * Optimize
   - optimize: td v-if
   - optimize: custom scrollbar. Reduce reflow.
+* Bugfix
+  - fix: when drag fixed right column, and the column is fixing, and drag the th right resize handle, the column width changed not correct.
 
 ## 0.9.1
 * Feature

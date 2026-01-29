@@ -188,7 +188,6 @@
             </table>
             <div
                 v-if="scrollbarOptions.enabled && showScrollbar.y"
-                ref="verticalScrollbarRef"
                 class="stk-sb-thumb vertical"
                 :style="{
                     height: `${scrollbar.h}px`,
@@ -204,7 +203,6 @@
         <slot name="customBottom"></slot>
         <div
             v-if="scrollbarOptions.enabled && showScrollbar.x"
-            ref="horizontalScrollbarRef"
             class="stk-sb-thumb horizontal"
             :style="{
                 width: `${scrollbar.w}px`,
