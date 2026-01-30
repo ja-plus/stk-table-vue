@@ -149,33 +149,23 @@
                                             <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
                                         </template>
                                     </component>
-                                    <div
-                                        v-else
+                                    <div v-else-if="!col.type" class="table-cell-wrapper" :title="row[col.dataIndex] || ''">
+                                        {{ (row && row[col.dataIndex]) ?? getEmptyCellText(col, row) }}
+                                    </div>
+                                    <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
+                                        {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
+                                    </div>
+                                    <TreeNodeCell
+                                        v-else-if="col.type === 'tree-node'"
                                         class="table-cell-wrapper"
-                                        :title="col.type !== 'seq' ? row && row[col.dataIndex] : ''"
-                                        :style="col.type === 'tree-node' && row.__T_LV__ ? `padding-left:${row.__T_LV__ * 16}px` : null"
-                                    >
-                                        <template v-if="col.type === 'seq'">
-                                            {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
-                                        </template>
-                                        <template v-else-if="col.type === 'dragRow'">
-                                            <DragHandle @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
-                                            <span>
-                                                {{ row?.[col.dataIndex] ?? '' }}
-                                            </span>
-                                        </template>
-                                        <template v-else-if="col.type === 'expand' || col.type === 'tree-node'">
-                                            <TriangleIcon
-                                                v-if="col.type === 'expand' || (col.type === 'tree-node' && row.children !== void 0)"
-                                                @click="triangleClick($event, row, col)"
-                                            />
-                                            <span :style="col.type === 'tree-node' && !row.children ? 'padding-left: 16px;' : null">
-                                                {{ row?.[col.dataIndex] ?? '' }}
-                                            </span>
-                                        </template>
-                                        <template v-else>
-                                            {{ (row && row[col.dataIndex]) ?? getEmptyCellText(col, row) }}
-                                        </template>
+                                        :col="col"
+                                        :row="row"
+                                        @click="triangleClick($event, row, col)"
+                                    ></TreeNodeCell>
+                                    <div v-else class="table-cell-wrapper" :title="row[col.dataIndex] || ''">
+                                        <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getRowIndex(rowIndex))" />
+                                        <TriangleIcon v-else-if="col.type === 'expand'" @click="triangleClick($event, row, col)" />
+                                        <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
                                     </div>
                                 </td>
                             </template>
@@ -221,6 +211,7 @@
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
+import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
 import {
     CELL_KEY_SEPARATE,
@@ -1164,11 +1155,13 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     const cellKey = cellKeyGen(row, col);
-    const classList = [
-        col.className,
-        fixedColClassMap.value.get(colKey),
-        col.align && (col.align === 'center' ? 'cell-text-c' : col.align === 'right' ? 'cell-text-r' : null),
-    ];
+    const classList = [col.className, fixedColClassMap.value.get(colKey)];
+
+    if (col.align === 'center') {
+        classList.push('cell-text-c');
+    } else if (col.align === 'right') {
+        classList.push('cell-text-r');
+    }
     if (col.mergeCells) {
         if (hoverMergedCells.value.has(cellKey)) {
             classList.push('cell-hover');
