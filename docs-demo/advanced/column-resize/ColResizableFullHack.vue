@@ -8,7 +8,7 @@ const columns = ref<StkTableColumn<any>[]>([
     { title: 'Age', dataIndex: 'age', width: 60 },
     { title: 'Gender', dataIndex: 'gender', width: 80 },
     { title: 'Address', dataIndex: 'address', width: 200 },
-    { title: 'Operate', dataIndex: 'op', minWidth: 100 },
+    { title: 'min-width: 120', dataIndex: 'op', minWidth: 120},
 ]);
 
 const dataSource = [

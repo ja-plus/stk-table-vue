@@ -1065,16 +1065,10 @@ const cellStyleMap = computed(() => {
         cols.forEach(col => {
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
-                width,
+                '--cw': width, // --cw : cell-width
+                minWidth: transformWidthToStr(col.minWidth),
+                maxWidth: transformWidthToStr(col.maxWidth),
             };
-            if (colResizable) {
-                // 如果要调整列宽，列宽必须固定。
-                style.minWidth = width;
-                style.maxWidth = width;
-            } else {
-                style.minWidth = transformWidthToStr(col.minWidth) ?? width;
-                style.maxWidth = transformWidthToStr(col.maxWidth) ?? width;
-            }
             const colKey = colKeyGen.value(col);
             thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
             tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
