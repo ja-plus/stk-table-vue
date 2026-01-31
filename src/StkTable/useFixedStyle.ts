@@ -42,28 +42,28 @@ export function useFixedStyle<DT extends Record<string, any>>({
         const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
         if (tagType === TagType.TH) {
-            // TH
-            if (isRelativeMode.value) {
-                style.top = virtualScroll.value.scrollTop + 'px';
+            if (!isRelativeMode.value) {
+                if(depth){
+                    style.top = depth  * (headerRowHeight ?? rowHeight) + 'px';
+                }
             } else {
-                style.top = depth * (headerRowHeight ?? rowHeight) + 'px';
+                style.top = virtualScroll.value.scrollTop + 'px';
             }
         }
 
-        if (fixed === 'left' || fixed === 'right') {
-            if (isRelativeMode.value) {
-                if (isFixedLeft) {
-                    style.left = scrollLeft - (virtualX_on.value ? offsetLeft : 0) + 'px';
-                } else {
-                    // fixed right
-                    style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
-                }
-            } else {
-                const lr = getFixedColPosition.value(col) + 'px';
+        if (fixed) {
+            if (!isRelativeMode.value) {
+                 const lr = getFixedColPosition.value(col) + 'px';
                 if (isFixedLeft) {
                     style.left = lr;
                 } else {
                     style.right = lr;
+                }
+            } else {
+                if (isFixedLeft) {
+                    style.left = scrollLeft - (virtualX_on.value ? offsetLeft : 0) + 'px';
+                } else {
+                    style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
                 }
             }
         }
