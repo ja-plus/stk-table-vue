@@ -88,13 +88,13 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
         if (needVertical) {
             const ratio = containerHeight / scrollHeight;
             scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * containerHeight);
-            scrollbar.value.top = (scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h);
+            scrollbar.value.top = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
         }
 
         if (needHorizontal) {
             const ratio = containerWidth / scrollWidth;
             scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * containerWidth);
-            scrollbar.value.left = (scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w);
+            scrollbar.value.left = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
         }
     }
 
