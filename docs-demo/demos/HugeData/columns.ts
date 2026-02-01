@@ -31,7 +31,8 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
         {
             dataIndex: 'bondAbbreviation',
             title: t('abbreviation'),
-            width: 150,
+            width: 130,
+            fixed: 'left',
         },
         { dataIndex: 'remainingPeriod', title: t('remainingPeriod') },
         {
@@ -90,7 +91,8 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             sortField: 'bestTime',
             align: 'center',
             sorter: true,
-            width: 150,
+            width: 120,
+            fixed: 'left',
         },
         { dataIndex: 'orgDebtRating', title: t('mainDebtRating') },
         { dataIndex: 'cbImpliedRating', title: t('impliedRatingCnBond'), width: 120 },

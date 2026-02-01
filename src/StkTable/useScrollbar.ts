@@ -58,9 +58,9 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
     }, 200);
 
     onMounted(() => {
-        if (mergedOptions.value.enabled && containerRef.value) {
+        if (mergedOptions.value.enabled) {
             resizeObserver = new ResizeObserver(throttledUpdateScrollbar);
-            resizeObserver.observe(containerRef.value);
+            resizeObserver.observe(containerRef.value!);
         }
         // if (tableMainRef.value) {
         //     resizeObserver.observe(tableMainRef.value);
@@ -129,7 +129,7 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
     }
 
     function onVerticalDrag(e: MouseEvent | TouchEvent) {
-        if (!isDraggingVertical || !containerRef.value) return;
+        if (!isDraggingVertical) return;
 
         e.preventDefault();
 
@@ -141,11 +141,11 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
         const scrollRange = scrollHeight - containerHeight;
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
-        containerRef.value.scrollTop = dragStartTop + scrollDelta;
+        containerRef.value!.scrollTop = dragStartTop + scrollDelta;
     }
 
     function onHorizontalDrag(e: MouseEvent | TouchEvent) {
-        if (!isDraggingHorizontal || !containerRef.value) return;
+        if (!isDraggingHorizontal) return;
 
         e.preventDefault();
 
@@ -157,7 +157,7 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
         const scrollRange = scrollWidth - containerWidth;
         const trackRange = containerWidth - scrollbar.value.w;
         const scrollDelta = (deltaX / trackRange) * scrollRange;
-        containerRef.value.scrollLeft = dragStartLeft + scrollDelta;
+        containerRef.value!.scrollLeft = dragStartLeft + scrollDelta;
     }
 
     function onDragEnd() {

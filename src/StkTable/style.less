@@ -6,7 +6,6 @@
 }
 
 .stk-table {
-    /* contain: strict;*/
     --row-height: 28px;
     --header-row-height: var(--row-height);
     --cell-padding-y: 0;
@@ -52,6 +51,7 @@
     --sb-thumb-color: #c1c1d7;
     --sb-thumb-hover-color: #a8a8c1;
 
+    // contain: layout paint size;
     position: relative;
     overflow: auto;
     display: flex;
@@ -574,7 +574,7 @@
 
     .expanded,
     .tree-expanded {
-        > .table-cell-wrapper .stk-fold-icon::before {
+         .stk-fold-icon::before {
             transform: rotate(90deg);
         }
     }
