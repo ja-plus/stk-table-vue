@@ -1420,37 +1420,37 @@ function onTableWheel(e: WheelEvent) {
 function onTableScroll(e: Event) {
     if (!e?.target) return;
     // const target = e.target;
-    // requestAnimationFrame(() => {
-    const { scrollTop, scrollLeft } = e.target as HTMLElement;
-    const { scrollTop: vScrollTop } = virtualScroll.value;
-    const { scrollLeft: vScrollLeft } = virtualScrollX.value;
-    const isYScroll = scrollTop !== vScrollTop;
-    const isXScroll = scrollLeft !== vScrollLeft;
+    requestAnimationFrame(() => {
+        const { scrollTop, scrollLeft } = e.target as HTMLElement;
+        const { scrollTop: vScrollTop } = virtualScroll.value;
+        const { scrollLeft: vScrollLeft } = virtualScrollX.value;
+        const isYScroll = scrollTop !== vScrollTop;
+        const isXScroll = scrollLeft !== vScrollLeft;
 
-    if (isYScroll) {
-        updateVirtualScrollY(scrollTop);
-    }
-
-    if (isXScroll) {
-        if (virtualX_on.value) {
-            updateVirtualScrollX(scrollLeft);
-        } else {
-            // 非虚拟滚动也记录一下滚动条位置。用于判断isXScroll
-            virtualScrollX.value.scrollLeft = scrollLeft;
+        if (isYScroll) {
+            updateVirtualScrollY(scrollTop);
         }
-        updateFixedShadow(virtualScrollX);
-    }
 
-    if (isYScroll) {
-        const { startIndex, endIndex } = virtualScroll.value;
-        emits('scroll', e, { startIndex, endIndex });
-    }
-    if (isXScroll) {
-        emits('scroll-x', e);
-    }
+        if (isXScroll) {
+            if (virtualX_on.value) {
+                updateVirtualScrollX(scrollLeft);
+            } else {
+                // 非虚拟滚动也记录一下滚动条位置。用于判断isXScroll
+                virtualScrollX.value.scrollLeft = scrollLeft;
+            }
+            updateFixedShadow(virtualScrollX);
+        }
 
-    updateCustomScrollbar();
-    // });
+        if (isYScroll) {
+            const { startIndex, endIndex } = virtualScroll.value;
+            emits('scroll', e, { startIndex, endIndex });
+        }
+        if (isXScroll) {
+            emits('scroll-x', e);
+        }
+
+        updateCustomScrollbar();
+    });
 }
 
 /** tr hover */
