@@ -258,13 +258,13 @@
   background-color:var(--td-bgc);
   height:var(--row-height);
 }
-.stk-table .cell-text-l{
+.stk-table .text-l{
   text-align:left;
 }
-.stk-table .cell-text-c{
+.stk-table .text-c{
   text-align:center;
 }
-.stk-table .cell-text-r{
+.stk-table .text-r{
   text-align:right;
 }
 .stk-table .vt-x-left,

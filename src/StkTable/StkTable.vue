@@ -1060,9 +1060,11 @@ function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
-    const { virtualX, colResizable } = props;
-    tableHeaders.value.forEach((cols, depth) => {
-        cols.forEach(col => {
+    const { virtualX } = props;
+    for (let depth = 0; depth < tableHeaders.value.length; depth++) {
+        const cols = tableHeaders.value[depth];
+        for (let i = 0; i < cols.length; i++) {
+            const col = cols[i];
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
                 '--cw': width, // --cw : cell-width
@@ -1072,8 +1074,8 @@ const cellStyleMap = computed(() => {
             const colKey = colKeyGen.value(col);
             thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
             tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
-        });
-    });
+        }
+    }
     return {
         [TagType.TH]: thMap,
         [TagType.TD]: tdMap,
@@ -1135,7 +1137,7 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
             colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
-            col.headerAlign && (col.headerAlign === 'left' ? 'cell-text-l' : col.headerAlign === 'right' ? 'cell-text-r' : null),
+            col.headerAlign && (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : null),
         ],
     };
 }
@@ -1152,9 +1154,9 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     const classList = [col.className, fixedColClassMap.value.get(colKey)];
 
     if (col.align === 'center') {
-        classList.push('cell-text-c');
+        classList.push('text-c');
     } else if (col.align === 'right') {
-        classList.push('cell-text-r');
+        classList.push('text-r');
     }
     if (col.mergeCells) {
         if (hoverMergedCells.value.has(cellKey)) {

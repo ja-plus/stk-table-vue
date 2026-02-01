@@ -6,8 +6,8 @@ import { PrivateStkTableColumn, StkTableColumn } from '../types';
  *
  * 关于列宽的操作往往在横向滚动中使用。既然已经有横向滚动了，则列宽会被压缩至minWidth，所以优先取minWidth
  */
-export function getColWidth(col: StkTableColumn<any> | null): number {
-    const val = col?.minWidth ?? col?.width ?? DEFAULT_COL_WIDTH;
+export function getColWidth(col: StkTableColumn<any>): number {
+    const val = col.minWidth ?? col.width ?? DEFAULT_COL_WIDTH;
     if (typeof val === 'number') {
         return Math.floor(val);
     }
@@ -15,8 +15,8 @@ export function getColWidth(col: StkTableColumn<any> | null): number {
 }
 
 /** 获取计算后的宽度 */
-export function getCalculatedColWidth(col: PrivateStkTableColumn<any> | null) {
-    return (col && col.__WIDTH__) ?? +DEFAULT_COL_WIDTH;
+export function getCalculatedColWidth(col: PrivateStkTableColumn<any>) {
+    return  col.__WIDTH__ || DEFAULT_COL_WIDTH;
 }
 
 /** 创建组件唯一标识 */
