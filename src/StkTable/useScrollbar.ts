@@ -19,6 +19,7 @@ type Params = {
     containerRef: Ref<HTMLDivElement | undefined>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
+    updateVirtualScrollY: (sTop?: number) => void;
 };
 
 /**
@@ -27,7 +28,7 @@ type Params = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX }: Params) {
+export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX, updateVirtualScrollY }: Params) {
     const defaultOptions = ref<Required<ScrollbarOptions>>({ enabled: true, minHeight: 20, minWidth: 20, width: 8, height: 8 });
 
     const mergedOptions = computed(() => {
@@ -79,7 +80,6 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
 
     function updateCustomScrollbar() {
         if (!mergedOptions.value.enabled) return;
-
         const { scrollHeight, scrollTop, containerHeight } = virtualScroll.value;
         const { scrollWidth, scrollLeft, containerWidth } = virtualScrollX.value;
 
@@ -143,7 +143,13 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
         const scrollRange = scrollHeight - containerHeight;
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
-        containerRef.value!.scrollTop = dragStartTop + scrollDelta;
+
+        // containerRef.value!.scrollTop = dragStartTop + scrollDelta;
+
+        const ratio = containerHeight / scrollHeight;
+        scrollbar.value.top = Math.round((dragStartTop + scrollDelta) * ratio);
+
+        updateVirtualScrollY(dragStartTop + scrollDelta);
     }
 
     function onHorizontalDrag(e: MouseEvent | TouchEvent) {

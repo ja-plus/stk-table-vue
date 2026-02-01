@@ -32,6 +32,7 @@ export type VirtualScrollStore = {
     scrollTop: number;
     /** 总滚动高度 */
     scrollHeight: number;
+    translateY: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -78,6 +79,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         offsetTop: 0,
         scrollTop: 0,
         scrollHeight: 0,
+        translateY: 0,
     });
 
     // TODO: init pageSize
@@ -273,16 +275,23 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     function updateVirtualScrollY(sTop = 0) {
         const { pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex, containerHeight } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
+        const dataSourceCopyTemp = dataSourceCopy.value;
+        const dataLength = dataSourceCopyTemp.length;
+        const rowHeight = getRowHeightFn.value();
+        const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
+        const maxTop = scrollHeight - containerHeight;
+        sTop = Math.max(0, Math.min(maxTop, sTop));
+
         virtualScroll.value.scrollTop = sTop;
+        virtualScroll.value.scrollHeight = scrollHeight;
+        virtualScroll.value.translateY = -(sTop % rowHeight);
 
         if (!virtual_on.value) {
             return;
         }
 
-        const dataSourceCopyTemp = dataSourceCopy.value;
-        const rowHeight = getRowHeightFn.value();
         const { autoRowHeight, stripe, optimizeVue2Scroll } = props;
-        const dataLength = dataSourceCopyTemp.length;
+        // const dataLength = dataSourceCopyTemp.length;
 
         let startIndex = 0;
         let endIndex = dataLength;

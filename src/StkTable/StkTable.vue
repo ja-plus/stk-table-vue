@@ -39,7 +39,7 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <div v-if="SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
+        <!-- <div v-if="SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div> -->
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
@@ -100,13 +100,19 @@
                     </tr>
                 </thead>
 
-                <tbody class="stk-tbody-main" @click="onCellClick" @mousedown="onCellMouseDown" @mouseover="onCellMouseOver">
-                    <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                <tbody
+                    class="stk-tbody-main"
+                    :style="{ transform: `translateY(${virtualScroll.translateY}px)` }"
+                    @click="onCellClick"
+                    @mousedown="onCellMouseDown"
+                    @mouseover="onCellMouseOver"
+                >
+                    <!-- <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                         <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                         <template v-if="fixedMode && headless">
                             <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
                         </template>
-                    </tr>
+                    </tr> -->
                     <tr
                         v-for="(row, rowIndex) in virtual_dataSourcePart"
                         ref="trRef"
@@ -174,8 +180,8 @@
                         </template>
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
-                    <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
-                    <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
+                    <!-- <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr> -->
+                    <!-- <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr> -->
                 </tbody>
             </table>
             <div
@@ -761,7 +767,7 @@ const {
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
 
 const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar({ props, containerRef: tableContainerRef, virtualScroll, virtualScrollX });
+    useScrollbar({ props, containerRef: tableContainerRef, virtualScroll, virtualScrollX, updateVirtualScrollY });
 
 const {
     hiddenCellMap, //
@@ -1319,7 +1325,10 @@ function onTableWheel(e: WheelEvent) {
         if (isWheeling()) {
             e.preventDefault();
         }
-        dom.scrollTop += deltaY;
+        updateVirtualScrollY(scrollTop + deltaY);
+        updateCustomScrollbar();
+
+        // dom.scrollTop += deltaY;
     }
     if (virtualX_on.value) {
         const { containerWidth, scrollLeft, scrollWidth } = virtualScrollX.value;
