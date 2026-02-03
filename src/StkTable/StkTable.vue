@@ -39,7 +39,11 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <!-- <div v-if="SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div> -->
+        <div
+            v-if="!scrollbarOptions.experimentalScrollY && SRBRTotalHeight"
+            class="row-by-row-table-height"
+            :style="`height: ${SRBRTotalHeight}px`"
+        ></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
@@ -107,12 +111,18 @@
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
                 >
-                    <!-- <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
-                        <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
-                        <template v-if="fixedMode && headless">
-                            <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
-                        </template>
-                    </tr> -->
+                    <template v-if="!scrollbarOptions.experimentalScrollY">
+                        <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
+                            <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
+                            <template v-if="fixedMode && headless">
+                                <td
+                                    v-for="col in virtualX_columnPart"
+                                    :key="colKeyGen(col)"
+                                    :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
+                                ></td>
+                            </template>
+                        </tr>
+                    </template>
                     <tr
                         v-for="(row, rowIndex) in virtual_dataSourcePart"
                         ref="trRef"
@@ -180,8 +190,10 @@
                         </template>
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
-                    <!-- <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr> -->
-                    <!-- <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr> -->
+                    <template v-if="!scrollbarOptions.experimentalScrollY">
+                        <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
+                        <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
+                    </template>
                 </tbody>
             </table>
             <div
@@ -1325,8 +1337,12 @@ function onTableWheel(e: WheelEvent) {
         if (isWheeling()) {
             e.preventDefault();
         }
-        updateVirtualScrollY(scrollTop + deltaY);
-        updateCustomScrollbar();
+        if (scrollbarOptions.value.experimentalScrollY) {
+            updateVirtualScrollY(scrollTop + deltaY);
+            updateCustomScrollbar();
+        } else {
+            dom.scrollTop += deltaY;
+        }
 
         // dom.scrollTop += deltaY;
     }

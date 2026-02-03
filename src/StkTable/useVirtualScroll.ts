@@ -177,7 +177,8 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     });
 
     const getRowHeightFn = computed(() => {
-        let rowHeightFn: (row?: PrivateRowDT) => number = () => props.rowHeight || DEFAULT_ROW_HEIGHT;
+        const rowHeight = props.rowHeight || DEFAULT_ROW_HEIGHT;
+        let rowHeightFn: (row?: PrivateRowDT) => number = () => rowHeight;
         if (props.autoRowHeight) {
             const tempRowHeightFn = rowHeightFn;
             rowHeightFn = (row?: PrivateRowDT) => getAutoRowHeight(row) || tempRowHeightFn(row);
@@ -275,16 +276,20 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     function updateVirtualScrollY(sTop = 0) {
         const { pageSize, scrollTop, startIndex: oldStartIndex, endIndex: oldEndIndex, containerHeight } = virtualScroll.value;
         // 先更新滚动条位置记录，其他地方有依赖。(stripe 时ArrowUp/Down滚动依赖)
+
         const dataSourceCopyTemp = dataSourceCopy.value;
         const dataLength = dataSourceCopyTemp.length;
+
         const rowHeight = getRowHeightFn.value();
         const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
-        const maxTop = scrollHeight - containerHeight;
-        sTop = Math.max(0, Math.min(maxTop, sTop));
+        let maxTop: number;
+        sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
 
-        virtualScroll.value.scrollTop = sTop;
-        virtualScroll.value.scrollHeight = scrollHeight;
-        virtualScroll.value.translateY = -(sTop % rowHeight);
+        Object.assign(virtualScroll.value, {
+            scrollTop: sTop,
+            scrollHeight,
+            translateY: -(sTop % rowHeight),
+        });
 
         if (!virtual_on.value) {
             return;

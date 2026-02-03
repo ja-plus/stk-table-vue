@@ -4,6 +4,8 @@ import { throttle } from './utils/index';
 
 export type ScrollbarOptions = {
     enabled?: boolean;
+    /** use transform to simulate scroll */
+    experimentalScrollY?: boolean;
     /** scroll-y width */
     width?: number;
     /** scroll-x height */
@@ -29,7 +31,14 @@ type Params = {
  * @returns 滚动条相关状态和方法
  */
 export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX, updateVirtualScrollY }: Params) {
-    const defaultOptions = ref<Required<ScrollbarOptions>>({ enabled: true, minHeight: 20, minWidth: 20, width: 8, height: 8 });
+    const defaultOptions = ref<Required<ScrollbarOptions>>({
+        enabled: true,
+        experimentalScrollY: false,
+        minHeight: 20,
+        minWidth: 20,
+        width: 8,
+        height: 8,
+    });
 
     const mergedOptions = computed(() => {
         const res = {
@@ -144,12 +153,16 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
 
-        // containerRef.value!.scrollTop = dragStartTop + scrollDelta;
+        if (mergedOptions.value.experimentalScrollY) {
+            const ratio = containerHeight / scrollHeight;
+            const top = Math.round((dragStartTop + scrollDelta) * ratio);
+            const maxTop = containerHeight - scrollbar.value.h;
 
-        const ratio = containerHeight / scrollHeight;
-        scrollbar.value.top = Math.round((dragStartTop + scrollDelta) * ratio);
-
-        updateVirtualScrollY(dragStartTop + scrollDelta);
+            scrollbar.value.top = top < 0 ? 0 : top > maxTop ? maxTop : top;
+            updateVirtualScrollY(dragStartTop + scrollDelta);
+        } else {
+            containerRef.value!.scrollTop = dragStartTop + scrollDelta;
+        }
     }
 
     function onHorizontalDrag(e: MouseEvent | TouchEvent) {

@@ -39,6 +39,7 @@ const translateZ = ref(false);
 const updateFreq = ref(1000);
 const scrollbar = ref(true);
 const areaSelection = ref(true);
+const experimentalScrollY = ref(false);
 
 const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
@@ -269,6 +270,7 @@ function handleColSpan(v: boolean) {
     <CheckItem :mode-value="false" :text="t('colspanTest')" @change="handleColSpan" />
     <CheckItem v-model="scrollbar" text="scrollbar" />
     <CheckItem v-model="areaSelection" text="areaSelection" />
+    <CheckItem v-model="experimentalScrollY" text="experimentalScrollY" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
@@ -285,7 +287,7 @@ function handleColSpan(v: boolean) {
         col-resizable
         sort-remote
         :area-selection="areaSelection"
-        :scrollbar="scrollbar"
+        :scrollbar="experimentalScrollY ? { experimentalScrollY: true } : scrollbar"
         :scroll-row-by-row="rowByRow || optimizeDragScroll"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
