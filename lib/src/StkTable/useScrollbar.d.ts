@@ -1,4 +1,5 @@
 import { Ref } from 'vue';
+import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 export type ScrollbarOptions = {
     enabled?: boolean;
@@ -11,13 +12,18 @@ export type ScrollbarOptions = {
     /** min scroll-x height */
     minHeight?: number;
 };
+type Params = {
+    containerRef: Ref<HTMLDivElement | undefined>;
+    virtualScroll: Ref<VirtualScrollStore>;
+    virtualScrollX: Ref<VirtualScrollXStore>;
+};
 /**
  * 自定义滚动条hooks
  * @param containerRef 滚动容器的ref
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export declare function useScrollbar(containerRef: Ref<HTMLDivElement | undefined>, options?: Ref<boolean | ScrollbarOptions>): {
+export declare function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Params, options?: Ref<boolean | ScrollbarOptions>): {
     scrollbarOptions: import('vue').ComputedRef<{
         enabled: boolean;
         width: number;
@@ -55,3 +61,4 @@ export declare function useScrollbar(containerRef: Ref<HTMLDivElement | undefine
     onHorizontalScrollbarMouseDown: (e: MouseEvent | TouchEvent) => void;
     updateCustomScrollbar: () => void;
 };
+export {};

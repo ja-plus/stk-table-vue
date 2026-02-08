@@ -9,7 +9,7 @@ type Options = {
     virtual_dataSourcePart: ShallowRef<any[]>;
 };
 export declare function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKeyGen, virtual_dataSourcePart }: Options): {
-    hiddenCellMap: Ref<Record<UniqKey, Set<UniqKey>>, Record<UniqKey, Set<UniqKey>>>;
+    hiddenCellMap: Ref<Record<UniqKey, Set<UniqKey>> | null, Record<UniqKey, Set<UniqKey>> | null>;
     mergeCellsWrapper: (row: MergeCellsParam<any>["row"], col: MergeCellsParam<any>["col"], rowIndex: MergeCellsParam<any>["rowIndex"], colIndex: MergeCellsParam<any>["colIndex"]) => {
         colspan?: number;
         rowspan?: number;

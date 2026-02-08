@@ -30,7 +30,7 @@
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
-            '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : null,
+            '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : void 0,
             '--sb-width': `${scrollbarOptions.width}px`,
             '--sb-height': `${scrollbarOptions.height}px`,
         }"
