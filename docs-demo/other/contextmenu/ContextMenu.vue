@@ -4,9 +4,11 @@ import { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
 import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
 import { shallowRef, useTemplateRef } from 'vue';
 import StkTable from '../../StkTable.vue';
-// import { useData } from 'vitepress';
+import { useData } from 'vitepress';
 
-// const { isDark } = useData();
+import 'ja-contextmenu/styles/dark.css';
+
+const { isDark } = useData();
 
 type Data = {
     id: number;
@@ -32,7 +34,9 @@ const dataSource = shallowRef<Data[]>([
     { id: 5, name: 'Qian Qi', age: 26, department: 'Technical Department' },
 ]);
 
-const contextMenu = new ContextMenu();
+const contextMenu = new ContextMenu({
+    theme: () => (isDark.value ? 'dark' : ('' as any)),
+});
 const menuOption: MenuOption<any> = {
     items: [
         {

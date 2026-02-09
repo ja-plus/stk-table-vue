@@ -43,8 +43,3 @@ document.body.oncontextmenu = (e) => {
 ## Demo
 
 <demo vue="other/contextmenu/ContextMenu.vue"></demo>
-
-### 右键菜单样式
-
-- 可以通过自定义 CSS 来调整菜单样式
-- 确保样式优先级正确，避免被其他样式覆盖
