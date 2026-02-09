@@ -122,6 +122,7 @@ export const zhConfig = defineConfig({
                                 text: '其他',
                                 collapsed: false,
                                 items: [
+                                    { text: '右键菜单', link: '/other/contextmenu' },
                                     { text: '更多优化', link: '/other/optimize' },
                                     { text: 'Tips', link: '/other/tips' },
                                     { text: 'Q&A', link: '/other/qa' },

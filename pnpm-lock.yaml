@@ -44,6 +44,9 @@ importers:
       happy-dom:
         specifier: ^18.0.1
         version: 18.0.1
+      ja-contextmenu:
+        specifier: ^1.10.6
+        version: 1.10.6
       less:
         specifier: ^4.2.0
         version: 4.2.2
@@ -1907,6 +1910,9 @@ packages:
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+
+  ja-contextmenu@1.10.6:
+    resolution: {integrity: sha512-oNx0ckNJVdov5mKRt4NgKJ6HpC85UABAgw1+PZTUJkciRA3EtRYKhTiMH0IyHVdONVrbGg0RyP/I/cVQ7Fm2NQ==}
 
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
@@ -4818,6 +4824,8 @@ snapshots:
   is-what@4.1.16: {}
 
   isexe@2.0.0: {}
+
+  ja-contextmenu@1.10.6: {}
 
   jackspeak@3.4.3:
     dependencies:
