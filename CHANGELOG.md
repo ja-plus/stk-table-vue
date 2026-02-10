@@ -2,6 +2,9 @@
 ## 0.10.0
 * Feature
   - Add: `cellSelection` prop to enable cell drag selection.
+    - Add: `getSelectedCells` method to get selected cells information.
+    - Add: `clearSelectedCells` method to clear selected cells.
+    - Add: emit `selected-cells-change` event when selected cells changed.
 
 ## 0.9.2
 * Optimize
