@@ -52,8 +52,8 @@
     --sb-thumb-hover-color: #a8a8c1;
 
     /** 单元格选区 */
-    --cell-selection-bgc: rgba(33, 133, 208, 0.15);
-    --cell-selection-border-color: #2185d0;
+    --cs-bgc: rgba(33, 133, 208, 0.15);
+    --cs-bc: #2185d0;
 
     // contain: layout paint size;
     position: relative;
@@ -61,6 +61,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    outline: none;
 
     &:hover .stk-sb-thumb {
         opacity: 0.7;
@@ -100,8 +101,8 @@
         --sb-thumb-color: rgba(93, 96, 100, 0.9);
         --sb-thumb-hover-color: rgb(114, 119, 130);
 
-        --cell-selection-bgc: rgba(33, 133, 208, 0.25);
-        --cell-selection-border-color: #4a9fe5;
+        --cs-bgc: rgba(33, 133, 208, 0.25);
+        --cs-bc: #4a9fe5;
 
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
@@ -226,36 +227,6 @@
         user-select: none;
     }
 
-    /* 单元格选区 - 使用 inset box-shadow 实现边框，不占用内部空间 */
-    td.cell-range-selected {
-        --_cs-top: 0;
-        --_cs-bottom: 0;
-        --_cs-left: 0;
-        --_cs-right: 0;
-        background-color: var(--cell-selection-bgc);
-        box-shadow:
-            inset 0 var(--_cs-top) 0 0 var(--cell-selection-border-color),
-            inset 0 var(--_cs-bottom) 0 0 var(--cell-selection-border-color),
-            inset var(--_cs-left) 0 0 0 var(--cell-selection-border-color),
-            inset var(--_cs-right) 0 0 0 var(--cell-selection-border-color);
-    }
-
-    td.cell-range-top {
-        --_cs-top: 2px;
-    }
-
-    td.cell-range-bottom {
-        --_cs-bottom: -2px;
-    }
-
-    td.cell-range-left {
-        --_cs-left: 2px;
-    }
-
-    td.cell-range-right {
-        --_cs-right: -2px;
-    }
-
     /* td 溢出*/
     &.text-overflow {
         .table-cell-wrapper {
@@ -280,6 +251,7 @@
 
     /**虚拟滚动模式 */
     &.virtual {
+
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
             overflow: hidden;
@@ -421,9 +393,11 @@
     .text-l {
         text-align: left;
     }
+
     .text-c {
         text-align: center;
     }
+
     .text-r {
         text-align: right;
     }
@@ -453,6 +427,32 @@
             table-layout: fixed;
             flex: none;
         }
+    }
+
+    /* 单元格选区 - 使用 inset box-shadow 实现边框，不占用内部空间 */
+    .cell-range-selected {
+        background-color: var(--cs-bgc);
+        box-shadow:
+            inset 0 var(--cs-t, 0) 0 0 var(--cs-bc),
+            inset 0 var(--cs-b, 0) 0 0 var(--cs-bc),
+            inset var(--cs-l, 0) 0 0 0 var(--cs-bc),
+            inset var(--cs-r, 0) 0 0 0 var(--cs-bc);
+    }
+
+    .cell-range-t {
+        --cs-t: 2px;
+    }
+
+    .cell-range-b {
+        --cs-b: -2px;
+    }
+
+    .cell-range-l {
+        --cs-l: 2px;
+    }
+
+    .cell-range-r {
+        --cs-r: -2px;
     }
 
     .fixed-cell {
@@ -494,7 +494,7 @@
             cursor: grabbing;
         }
 
-        > svg {
+        >svg {
             vertical-align: -2px;
         }
     }
@@ -616,7 +616,7 @@
 
     .expanded,
     .tree-expanded {
-         .stk-fold-icon::before {
+        .stk-fold-icon::before {
             transform: rotate(90deg);
         }
     }

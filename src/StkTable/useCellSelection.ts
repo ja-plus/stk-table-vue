@@ -34,6 +34,8 @@ const EDGE_ZONE = 40;
  */
 const SCROLL_SPEED_MAX = 15;
 
+const POINT_EDGE_OFFSET = 2;
+
 /**
  * 单元格拖拽选区
  */
@@ -62,10 +64,11 @@ export function useCellSelection<DT extends Record<string, any>>({
 
     /** colKey → absolute index 映射 */
     const colKeyToIndexMap = computed(() => {
+        const headers = tableHeaderLast.value;
         const map = new Map<UniqKey, number>();
-        tableHeaderLast.value.forEach((col, i) => {
-            map.set(colKeyGen.value(col), i);
-        });
+        for (let i = 0; i < headers.length; i++) {
+            map.set(colKeyGen.value(headers[i]), i);
+        }
         return map;
     });
 
@@ -73,6 +76,7 @@ export function useCellSelection<DT extends Record<string, any>>({
     const selectedCellKeys = computed<Set<string>>(() => {
         const range = selectionRange.value;
         if (!range) return new Set();
+
         const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
         const keys = new Set<string>();
         const cols = tableHeaderLast.value;
@@ -82,8 +86,9 @@ export function useCellSelection<DT extends Record<string, any>>({
             if (!row) continue;
             for (let c = minCol; c <= maxCol; c++) {
                 const col = cols[c];
-                if (!col) continue;
-                keys.add(cellKeyGen(row, col));
+                if (col) {
+                    keys.add(cellKeyGen(row, col));
+                }
             }
         }
         return keys;
@@ -130,17 +135,16 @@ export function useCellSelection<DT extends Record<string, any>>({
 
     /** mousedown 处理：设置锚点，开始拖选 */
     function onSelectionMouseDown(e: MouseEvent) {
-        if (!props.cellSelection) return;
-        // 仅响应左键
-        if (e.button !== 0) return;
+        if (!props.cellSelection || e.button !== 0) return;
 
-        const rowIndex = getClosestTrIndex(e);
-        const colKey = getClosestColKey(e);
+        const rowIndex = getClosestTrIndex(e.target as HTMLElement);
+        const colKey = getClosestColKey(e.target as HTMLElement);
         const colIndex = getColIndexByKey(colKey);
+
         if (rowIndex < 0 || colIndex < 0) return;
 
+        // Shift 扩选：从锚点到当前位置
         if (e.shiftKey && anchorCell) {
-            // Shift 扩选：从锚点到当前位置
             selectionRange.value = {
                 startRowIndex: anchorCell.rowIndex,
                 startColIndex: anchorCell.colIndex,
@@ -185,10 +189,13 @@ export function useCellSelection<DT extends Record<string, any>>({
     function updateSelectionFromEvent(e: MouseEvent) {
         const target = e.target as HTMLElement;
         if (!target) return;
-        const rowIndex = getClosestTrIndex(e);
-        const colKey = getClosestColKey(e);
+
+        const rowIndex = getClosestTrIndex(target);
+        if (Number.isNaN(rowIndex) || rowIndex < 0) return;
+
+        const colKey = getClosestColKey(target);
         const colIndex = getColIndexByKey(colKey);
-        if (Number.isNaN(rowIndex) || rowIndex < 0 || colIndex < 0) return;
+        if (colIndex < 0) return;
 
         updateSelectionEnd(rowIndex, colIndex);
     }
@@ -212,11 +219,13 @@ export function useCellSelection<DT extends Record<string, any>>({
         if (!container) return;
 
         const rect = container.getBoundingClientRect();
+        const { top, bottom, left, right } = rect;
+
         const nearEdge =
-            lastMouseClientY < rect.top + EDGE_ZONE ||
-            lastMouseClientY > rect.bottom - EDGE_ZONE ||
-            lastMouseClientX < rect.left + EDGE_ZONE ||
-            lastMouseClientX > rect.right - EDGE_ZONE;
+            lastMouseClientY < top + EDGE_ZONE ||
+            lastMouseClientY > bottom - EDGE_ZONE ||
+            lastMouseClientX < left + EDGE_ZONE ||
+            lastMouseClientX > right - EDGE_ZONE;
 
         if (nearEdge && !autoScrollRafId) {
             autoScrollLoop();
@@ -234,24 +243,25 @@ export function useCellSelection<DT extends Record<string, any>>({
         }
 
         const rect = container.getBoundingClientRect();
+        const { top, bottom, left, right } = rect;
         let deltaX = 0;
         let deltaY = 0;
 
         // Y方向
-        if (lastMouseClientY < rect.top + EDGE_ZONE) {
-            const dist = Math.max(0, rect.top + EDGE_ZONE - lastMouseClientY);
+        if (lastMouseClientY < top + EDGE_ZONE) {
+            const dist = Math.max(0, top + EDGE_ZONE - lastMouseClientY);
             deltaY = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        } else if (lastMouseClientY > rect.bottom - EDGE_ZONE) {
-            const dist = Math.max(0, lastMouseClientY - (rect.bottom - EDGE_ZONE));
+        } else if (lastMouseClientY > bottom - EDGE_ZONE) {
+            const dist = Math.max(0, lastMouseClientY - (bottom - EDGE_ZONE));
             deltaY = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
         }
 
         // X方向
-        if (lastMouseClientX < rect.left + EDGE_ZONE) {
-            const dist = Math.max(0, rect.left + EDGE_ZONE - lastMouseClientX);
+        if (lastMouseClientX < left + EDGE_ZONE) {
+            const dist = Math.max(0, left + EDGE_ZONE - lastMouseClientX);
             deltaX = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        } else if (lastMouseClientX > rect.right - EDGE_ZONE) {
-            const dist = Math.max(0, lastMouseClientX - (rect.right - EDGE_ZONE));
+        } else if (lastMouseClientX > right - EDGE_ZONE) {
+            const dist = Math.max(0, lastMouseClientX - (right - EDGE_ZONE));
             deltaX = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
         }
 
@@ -275,10 +285,12 @@ export function useCellSelection<DT extends Record<string, any>>({
     function updateSelectionFromPoint(container: HTMLElement, containerRect: DOMRect) {
         // 获取表头高度，钳制 Y 时跳过表头区域
         const thead = container.querySelector('thead');
-        const headerBottom = thead ? containerRect.top + thead.offsetHeight : containerRect.top;
+        const { top, bottom, left, right } = containerRect;
 
-        const x = Math.max(containerRect.left + 2, Math.min(lastMouseClientX, containerRect.right - 2));
-        const y = Math.max(headerBottom + 2, Math.min(lastMouseClientY, containerRect.bottom - 2));
+        const headerBottom = thead ? top + thead.offsetHeight : top;
+
+        const x = Math.max(left + POINT_EDGE_OFFSET, Math.min(lastMouseClientX, right - POINT_EDGE_OFFSET));
+        const y = Math.max(headerBottom + POINT_EDGE_OFFSET, Math.min(lastMouseClientY, bottom - POINT_EDGE_OFFSET));
 
         const el = document.elementFromPoint(x, y);
         if (!el) return;
@@ -287,9 +299,10 @@ export function useCellSelection<DT extends Record<string, any>>({
         const tr = (el as HTMLElement).closest?.('tr');
         if (!td || !tr) return;
 
-        const rowIndex = Number(tr.dataset.rowI);
-        const colKey = td.dataset.colKey;
+        const rowIndex = getClosestTrIndex(tr);
+        const colKey = getClosestColKey(td);
         const colIndex = getColIndexByKey(colKey);
+
         if (Number.isNaN(rowIndex) || rowIndex < 0 || colIndex < 0) return;
 
         updateSelectionEnd(rowIndex, colIndex);
@@ -334,10 +347,7 @@ export function useCellSelection<DT extends Record<string, any>>({
     /** 获取 cellSelection 配置中的格式化回调 */
     function getFormatCellFn() {
         const cfg = props.cellSelection;
-        if (cfg && typeof cfg === 'object' && typeof cfg.formatCellForClipboard === 'function') {
-            return cfg.formatCellForClipboard;
-        }
-        return null;
+        return cfg && typeof cfg === 'object' && typeof cfg.formatCellForClipboard === 'function' ? cfg.formatCellForClipboard : null;
     }
 
     /**
@@ -345,15 +355,13 @@ export function useCellSelection<DT extends Record<string, any>>({
      * Esc 取消选区
      **/
     function onKeydown(e: KeyboardEvent) {
-        if (!props.cellSelection) return;
-        if (!selectionRange.value) return;
+        if (!props.cellSelection || !selectionRange.value) return;
+
         // Esc 键：取消当前选区
         if (e.key === 'Escape' || e.key === 'Esc') {
-            if (selectionRange.value) {
-                clearSelectedCells();
-                emitSelectionChange();
-                e.preventDefault();
-            }
+            clearSelectedCells();
+            emitSelectionChange();
+            e.preventDefault();
             return;
         }
 
@@ -370,6 +378,7 @@ export function useCellSelection<DT extends Record<string, any>>({
         for (let r = minRow; r <= maxRow; r++) {
             const row = data[r];
             if (!row) continue;
+
             const cells: string[] = [];
             for (let c = minCol; c <= maxCol; c++) {
                 const col = cols[c];
@@ -378,11 +387,7 @@ export function useCellSelection<DT extends Record<string, any>>({
                     continue;
                 }
                 const rawValue = row[col.dataIndex];
-                if (formatCell) {
-                    cells.push(formatCell(row, col, rawValue));
-                } else {
-                    cells.push(!rawValue ? '' : String(rawValue));
-                }
+                cells.push(formatCell ? formatCell(row, col, rawValue) : !rawValue ? '' : String(rawValue));
             }
             lines.push(cells.join('\t'));
         }
@@ -403,17 +408,16 @@ export function useCellSelection<DT extends Record<string, any>>({
      */
     function getCellSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
         const nr = normalizedRange.value;
-        if (!nr) return [];
-        if (!selectedCellKeys.value.has(cellKey)) return [];
+        if (!nr || !selectedCellKeys.value.has(cellKey)) return [];
 
-        const colIndex = colKeyToIndexMap.value.get(colKey) ?? -1;
-        if (colIndex < 0) return [];
+        const colIndex = colKeyToIndexMap.value.get(colKey);
+        if (colIndex === void 0 || colIndex < 0) return [];
 
         const classes: string[] = ['cell-range-selected'];
-        if (absoluteRowIndex === nr.minRow) classes.push('cell-range-top');
-        if (absoluteRowIndex === nr.maxRow) classes.push('cell-range-bottom');
-        if (colIndex === nr.minCol) classes.push('cell-range-left');
-        if (colIndex === nr.maxCol) classes.push('cell-range-right');
+        if (absoluteRowIndex === nr.minRow) classes.push('cell-range-t');
+        if (absoluteRowIndex === nr.maxRow) classes.push('cell-range-b');
+        if (colIndex === nr.minCol) classes.push('cell-range-l');
+        if (colIndex === nr.maxCol) classes.push('cell-range-r');
         return classes;
     }
 

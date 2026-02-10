@@ -158,25 +158,25 @@
           user-select:none;
 }
 .stk-table td.cell-range-selected{
-  --_cs-top:0;
-  --_cs-bottom:0;
-  --_cs-left:0;
-  --_cs-right:0;
+  --cs-top:0;
+  --cs-bottom:0;
+  --cs-left:0;
+  --cs-right:0;
   background-color:var(--cell-selection-bgc);
   box-shadow:inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color);
-  box-shadow:inset 0 var(--_cs-top) 0 0 var(--cell-selection-border-color), inset 0 var(--_cs-bottom) 0 0 var(--cell-selection-border-color), inset var(--_cs-left) 0 0 0 var(--cell-selection-border-color), inset var(--_cs-right) 0 0 0 var(--cell-selection-border-color);
+  box-shadow:inset 0 var(--cs-top) 0 0 var(--cell-selection-border-color), inset 0 var(--cs-bottom) 0 0 var(--cell-selection-border-color), inset var(--cs-left) 0 0 0 var(--cell-selection-border-color), inset var(--cs-right) 0 0 0 var(--cell-selection-border-color);
 }
-.stk-table td.cell-range-top{
-  --_cs-top:2px;
+.stk-table td.cell-range-t{
+  --cs-top:2px;
 }
-.stk-table td.cell-range-bottom{
-  --_cs-bottom:-2px;
+.stk-table td.cell-range-b{
+  --cs-bottom:-2px;
 }
-.stk-table td.cell-range-left{
-  --_cs-left:2px;
+.stk-table td.cell-range-l{
+  --cs-left:2px;
 }
-.stk-table td.cell-range-right{
-  --_cs-right:-2px;
+.stk-table td.cell-range-r{
+  --cs-right:-2px;
 }
 .stk-table.text-overflow .table-cell-wrapper{
   white-space:nowrap;

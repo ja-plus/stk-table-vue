@@ -24,7 +24,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
     });
 
     function onTrDragStart(e: DragEvent, rowIndex: number) {
-        const tr = getClosestTr(e);
+        const tr = getClosestTr(e.target as HTMLElement);
         if (tr) {
             const trRect = tr.getBoundingClientRect();
             const x = e.clientX - (trRect.left ?? 0);
@@ -53,7 +53,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
     function onTrDragEnter(e: DragEvent) {
         if (!trDragFlag) return;
         e.preventDefault();
-        const tr = getClosestTr(e);
+        const tr = getClosestTr(e.target as HTMLElement);
         if (oldTr && oldTr !== tr) {
             // 两个tr不一样说明移动到了另一个tr中
             oldTr.classList.remove(TR_DRAG_OVER_CLASS);
@@ -66,7 +66,7 @@ export function useTrDrag({ props, emits, dataSourceCopy }: Params) {
 
     function onTrDragEnd(e: DragEvent) {
         if (!trDragFlag) return;
-        const tr = getClosestTr(e);
+        const tr = getClosestTr(e.target as HTMLElement);
         if (tr) {
             tr.classList.remove(TR_DRAGGING_CLASS);
         }

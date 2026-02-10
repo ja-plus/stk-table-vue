@@ -241,20 +241,19 @@ export function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey) {
     return rowKey + CELL_KEY_SEPARATE + colKey;
 }
 
-export function getClosestTr(e: MouseEvent) {
-    const target = e.target as HTMLElement;
+export function getClosestTr(target: HTMLElement) {
     const tr = target?.closest('tr');
     return tr;
 }
 
-export function getClosestTrIndex(e: MouseEvent) {
-    const tr = getClosestTr(e);
+export function getClosestTrIndex(target: HTMLElement) {
+    const tr = getClosestTr(target);
     if (!tr) return -1;
     return Number(tr.dataset.rowI);
 }
 
-export function getClosestColKey(e: MouseEvent) {
-    return (e.target as HTMLElement)?.closest('td')?.dataset.colKey;
+export function getClosestColKey(target: HTMLElement) {
+    return (target as HTMLElement)?.closest('td')?.dataset.colKey;
 }
 
 /**

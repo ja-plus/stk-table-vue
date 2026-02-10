@@ -1288,7 +1288,7 @@ function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, 
 }
 
 function onRowClick(e: MouseEvent) {
-    const rowIndex = getClosestTrIndex(e);
+    const rowIndex = getClosestTrIndex(e.target as HTMLElement);
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-click', e, row, { rowIndex });
@@ -1306,7 +1306,7 @@ function onRowClick(e: MouseEvent) {
 }
 
 function onRowDblclick(e: MouseEvent) {
-    const rowIndex = getClosestTrIndex(e);
+    const rowIndex = getClosestTrIndex(e.target as HTMLElement);
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-dblclick', e, row, { rowIndex });
@@ -1317,7 +1317,7 @@ function onHeaderMenu(e: MouseEvent) {
 }
 
 function onRowMenu(e: MouseEvent) {
-    const rowIndex = getClosestTrIndex(e);
+    const rowIndex = getClosestTrIndex(e.target as HTMLElement);
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
     emits('row-menu', e, row, { rowIndex });
@@ -1332,10 +1332,10 @@ function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
 }
 
 function onCellClick(e: MouseEvent) {
-    const rowIndex = getClosestTrIndex(e);
+    const rowIndex = getClosestTrIndex(e.target as HTMLElement);
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
-    const colKey = getClosestColKey(e);
+    const colKey = getClosestColKey(e.target as HTMLElement);
     const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
     if (!col) return;
     if (props.cellActive) {
@@ -1353,9 +1353,9 @@ function onCellClick(e: MouseEvent) {
 }
 
 function getCellEventData(e: MouseEvent) {
-    const rowIndex = getClosestTrIndex(e) || 0;
+    const rowIndex = getClosestTrIndex(e.target as HTMLElement) || 0;
     const row = dataSourceCopy.value[rowIndex];
-    const colKey = getClosestColKey(e);
+    const colKey = getClosestColKey(e.target as HTMLElement);
     const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey) as any;
     return { row, col, rowIndex };
 }
@@ -1487,7 +1487,7 @@ function onTableScroll(e: Event) {
 
 /** tr hover */
 function onTrMouseOver(e: MouseEvent) {
-    const tr = getClosestTr(e);
+    const tr = getClosestTr(e.target as HTMLElement);
     if (!tr) return;
     const rowIndex = Number(tr.dataset.rowI);
     const row = dataSourceCopy.value[rowIndex];
