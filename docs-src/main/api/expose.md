@@ -182,3 +182,17 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
  */
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
+
+### getSelectedCells 
+获取选中的单元格信息
+
+```ts
+function getSelectedCells(): {
+    rows: DT[];
+    cols: StkTableColumn<DT>[];
+    range: CellSelectionRange
+}
+```
+
+### clearSelectedCells
+清除选中的单元格

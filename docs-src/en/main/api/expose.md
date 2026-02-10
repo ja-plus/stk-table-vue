@@ -183,3 +183,17 @@ Set tree structure expanded row
  */
 function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
 ```
+
+### getSelectedCells 
+Get selected cells information
+
+```ts
+function getSelectedCells(): {
+    rows: DT[];
+    cols: StkTableColumn<DT>[];
+    range: CellSelectionRange
+}
+```
+
+### clearSelectedCells
+Clear selected cells

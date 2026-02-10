@@ -856,7 +856,7 @@ const {
     onSelectionMouseDown,
     getCellSelectionClasses,
     getSelectedCells,
-    clearSelection,
+    clearSelectedCells,
 } = useCellSelection({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen, cellKeyGen });
 
 watch(
@@ -1764,8 +1764,8 @@ defineExpose({
      * 清空拖选选区
      *
      * en: Clear cell selection range (cellSelection=true)
-     * @see {@link clearSelection}
+     * @see {@link clearSelectedCells}
      */
-    clearSelection,
+    clearSelectedCells,
 });
 </script>

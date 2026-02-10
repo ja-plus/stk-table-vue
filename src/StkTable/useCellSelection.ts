@@ -23,9 +23,15 @@ function normalizeRange(range: CellSelectionRange) {
     };
 }
 
-/** 自动滚动：鼠标距容器边缘多少px开始触发 */
+/**
+ * 自动滚动：鼠标距容器边缘多少px开始触发
+ * en: Mouse distance from container edge to start auto scroll
+ */
 const EDGE_ZONE = 40;
-/** 自动滚动：每帧最大滚动像素 */
+/**
+ * 自动滚动：每帧最大滚动像素
+ * en: Maximum scroll pixels per frame
+ */
 const SCROLL_SPEED_MAX = 15;
 
 /**
@@ -90,6 +96,32 @@ export function useCellSelection<DT extends Record<string, any>>({
         return normalizeRange(range);
     });
 
+    // 生命周期：在表格容器上注册 keydown
+    onMounted(() => {
+        addListener();
+    });
+    onBeforeUnmount(() => {
+        removeListener();
+    });
+
+    function addListener() {
+        removeListener();
+        const el = tableContainerRef.value;
+        if (el) {
+            el.addEventListener('keydown', onKeydown);
+        }
+    }
+
+    function removeListener() {
+        const el = tableContainerRef.value;
+        if (el) {
+            el.removeEventListener('keydown', onKeydown);
+        }
+        document.removeEventListener('mousemove', onDocumentMouseMove);
+        document.removeEventListener('mouseup', onDocumentMouseUp);
+        stopAutoScroll();
+    }
+
     /** 根据colKey获取列的绝对索引 */
     function getColIndexByKey(colKey: string | undefined): number {
         if (!colKey) return -1;
@@ -98,8 +130,6 @@ export function useCellSelection<DT extends Record<string, any>>({
 
     /** mousedown 处理：设置锚点，开始拖选 */
     function onSelectionMouseDown(e: MouseEvent) {
-        console.log('🚀 ~ onKeydown ~ props.cellSelection:', props.cellSelection);
-
         if (!props.cellSelection) return;
         // 仅响应左键
         if (e.button !== 0) return;
@@ -154,12 +184,9 @@ export function useCellSelection<DT extends Record<string, any>>({
     /** 从 MouseEvent 目标元素更新选区 */
     function updateSelectionFromEvent(e: MouseEvent) {
         const target = e.target as HTMLElement;
-        const td = target?.closest?.('td');
-        const tr = target?.closest?.('tr');
-        if (!td || !tr) return;
-
-        const rowIndex = Number(tr.dataset.rowI);
-        const colKey = td.dataset.colKey;
+        if (!target) return;
+        const rowIndex = getClosestTrIndex(e);
+        const colKey = getClosestColKey(e);
         const colIndex = getColIndexByKey(colKey);
         if (Number.isNaN(rowIndex) || rowIndex < 0 || colIndex < 0) return;
 
@@ -323,7 +350,7 @@ export function useCellSelection<DT extends Record<string, any>>({
         // Esc 键：取消当前选区
         if (e.key === 'Escape' || e.key === 'Esc') {
             if (selectionRange.value) {
-                clearSelection();
+                clearSelectedCells();
                 emitSelectionChange();
                 e.preventDefault();
             }
@@ -407,27 +434,10 @@ export function useCellSelection<DT extends Record<string, any>>({
     }
 
     /** 清空选区 */
-    function clearSelection() {
+    function clearSelectedCells() {
         selectionRange.value = null;
         isSelecting.value = false;
     }
-
-    // 生命周期：在表格容器上注册 keydown
-    onMounted(() => {
-        const el = tableContainerRef.value;
-        if (el) {
-            el.addEventListener('keydown', onKeydown);
-        }
-    });
-    onBeforeUnmount(() => {
-        const el = tableContainerRef.value;
-        if (el) {
-            el.removeEventListener('keydown', onKeydown);
-        }
-        document.removeEventListener('mousemove', onDocumentMouseMove);
-        document.removeEventListener('mouseup', onDocumentMouseUp);
-        stopAutoScroll();
-    });
 
     return {
         selectionRange,
@@ -437,6 +447,6 @@ export function useCellSelection<DT extends Record<string, any>>({
         onSelectionMouseDown,
         getCellSelectionClasses,
         getSelectedCells,
-        clearSelection,
+        clearSelectedCells,
     };
 }
