@@ -19,7 +19,7 @@ export type CustomCellProps<T extends Record<string, any>> = {
      */
     expanded?: PrivateRowDT['__EXP__'];
     /** if tree expanded */
-    treeExpanded?: PrivateRowDT['__T_EXP__']
+    treeExpanded?: PrivateRowDT['__T_EXP__'];
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
@@ -165,11 +165,11 @@ export type PrivateRowDT = {
      * @private
      */
     __T_LV__?: number;
-      /** expanded row */
+    /** expanded row */
     __EXP_R__?: any;
     /** expanded col */
     __EXP_C__?: StkTableColumn<any>;
-    children?: any[]
+    children?: any[];
 };
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
@@ -246,7 +246,6 @@ export type ExpandConfig = {
     height?: number;
 };
 
-
 /** drag row config */
 export type DragRowConfig = {
     mode?: 'none' | 'insert' | 'swap';
@@ -305,7 +304,7 @@ export type CellSelectionRange = {
 };
 
 /** 单元格选区配置 */
-export type CellSelectionConfig<T extends Record<string, any> = any> = boolean | {
+export type CellSelectionConfig<T extends Record<string, any> = any> = {
     /**
      * 复制时的单元格文本格式化回调。
      * 如果你使用了 customCell 自定义渲染，应该提供此回调以确保复制内容与展示内容一致。

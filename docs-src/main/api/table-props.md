@@ -81,6 +81,18 @@ export type StkProps = {
   cellActive?: boolean;
   /** 单元格再次点击否可以取消选中 (cellActive=true)*/
   selectedCellRevokable?: boolean;
+  /** 是否启用单元格范围选中（拖拽选区） */
+  cellSelection?: boolean | {
+    /**
+     * 复制时的单元格文本格式化回调。
+     * 如果你使用了 customCell 自定义渲染，应该提供此回调以确保复制内容与展示内容一致。
+     * @param row 行数据
+     * @param col 列配置
+     * @param rawValue row[col.dataIndex] 的原始值
+     * @returns 复制到剪贴板的文本
+     */
+    formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
+  };
   /** 表头是否可拖动。支持回调函数。 */
   headerDrag?:
     | boolean

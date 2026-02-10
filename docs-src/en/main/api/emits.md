@@ -3,139 +3,145 @@
 ```ts
  {
     /**
-     * 排序变更触发。defaultSort.dataIndex 找不到时，col 将返回null。
+     * Triggered when sorting changes. When defaultSort.dataIndex is not found, col will return null.
      *
      * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>)```
      */
     (e: 'sort-change', col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>): void;
     /**
-     * 一行点击事件
+     * Click event for a row
      *
      * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
     (e: 'row-click', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
-     * 选中一行触发。ev返回null表示不是点击事件触发的
+     * Triggered when a row is selected. ev returns null if not triggered by a click event
      *
      * ```(ev: MouseEvent | null, row: DT | undefined, data: { select: boolean } })```
      */
     (e: 'current-change', ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }): void;
     /**
-     * 选中单元格触发。ev返回null表示不是点击事件触发的
+     * Triggered when a cell is selected. ev returns null if not triggered by a click event
      *
      * ```(ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | null })```
      */
     (e: 'cell-selected', ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | undefined }): void;
     /**
-     * 行双击事件
+     * Double click event for a row
      *
      * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
     (e: 'row-dblclick', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
-     * 表头右键事件
+     * Right click event for table header
      *
      * ```(ev: MouseEvent)```
      */
     (e: 'header-row-menu', ev: MouseEvent): void;
     /**
-     * 表体行右键点击事件
+     * Right click event for table body row
      *
      * ```(ev: MouseEvent, row: DT, data: { rowIndex: number })```
      */
     (e: 'row-menu', ev: MouseEvent, row: DT, data: { rowIndex: number }): void;
     /**
-     * 单元格点击事件
+     * Click event for a cell
      *
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number })```
      */
     (e: 'cell-click', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }): void;
     /**
-     * 单元格鼠标进入事件
+     * Mouse enter event for a cell
      *
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
      */
     (e: 'cell-mouseenter', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
-     * 单元格鼠标移出事件
+     * Mouse leave event for a cell
      *
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
      */
     (e: 'cell-mouseleave', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
-     * 单元格悬浮事件
+     * Mouse over event for a cell
      *
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>)```
      */
     (e: 'cell-mouseover', ev: MouseEvent, row: DT, col: StkTableColumn<DT>): void;
     /**
-     * 单元格鼠标按下事件
+     * Mouse down event for a cell
      *
      * ```(ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number })```
      */
     (e: 'cell-mousedown', ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }): void;
     /**
-     * 表头单元格点击事件
+     * Click event for header cell
      *
      * ```(ev: MouseEvent, col: StkTableColumn<DT>)```
      */
     (e: 'header-cell-click', ev: MouseEvent, col: StkTableColumn<DT>): void;
     /**
-     * 表格滚动事件
+     * Table scroll event
      *
      * ```(ev: Event, data: { startIndex: number; endIndex: number })```
      */
     (e: 'scroll', ev: Event, data: { startIndex: number; endIndex: number }): void;
     /**
-     * 表格横向滚动事件
+     * Table horizontal scroll event
      *
      * ```(ev: Event)```
      */
     (e: 'scroll-x', ev: Event): void;
     /**
-     * 表头列拖动事件
+     * Header column drag event
      *
      * ```(dragStartKey: string, targetColKey: string)```
      */
     (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
     /**
-     * 表头列拖动开始
+     * Header column drag start
      *
      * ```(dragStartKey: string)```
      */
     (e: 'th-drag-start', dragStartKey: string): void;
     /**
-     * 表头列拖动drop
+     * Header column drag drop
      *
      * ```(targetColKey: string)```
      */
     (e: 'th-drop', targetColKey: string): void;
     /**
-     * 行拖动事件
+     * Row drag event
      *
      * ```(dragStartKey: string, targetRowKey: string)```
      */
     (e: 'row-order-change', dragStartKey: string, targetRowKey: string): void;
     /**
-     * 列宽变动时触发
+     * Triggered when column width changes
      *
      *  ```(col: StkTableColumn<DT>)```
      */
     (e: 'col-resize', col: StkTableColumn<DT>): void;
     /**
-     * 展开行触发
+     * Triggered when expanding a row
      *
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT>|null })```
      */
     (e: 'toggle-row-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
     /**
-     * 点击展开树行触发
+     * Triggered when clicking to expand a tree row
      *
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT>|null })```
      */
     (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
+     /**
+     * Cell selection change event
+     *
+     * ```(range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     */
+    (e: 'cell-selection-change', range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] }): void;
     /**
-     * v-model:columns col resize 时更新宽度
+     * Update width when v-model:columns col is resized
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
 }

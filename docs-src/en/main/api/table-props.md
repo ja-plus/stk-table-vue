@@ -81,6 +81,18 @@ export type StkProps = {
   cellActive?: boolean;
   /** Whether clicking the cell again can deselect it (cellActive=true) */
   selectedCellRevokable?: boolean;
+  /** Whether to enable cell range selection (drag selection) */
+  cellSelection?: boolean | {
+    /**
+     * Custom cell text formatter for clipboard copy.
+     * If you use customCell to render cells, you should provide this callback to ensure the copied text matches the displayed content.
+     * @param row Row data
+     * @param col Column configuration
+     * @param rawValue row[col.dataIndex] raw value
+     * @returns Text to be copied to clipboard
+     */
+    formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
+  };
   /** Whether header can be dragged. Supports callback function. */
   headerDrag?:
     | boolean

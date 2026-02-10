@@ -134,6 +134,12 @@
      * ```( data: { expanded: boolean; row: DT; col: StkTableColumn<DT>|null })```
      */
     (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
+     /**
+     * 单元格选区变更事件
+     *
+     * ```(range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     */
+    (e: 'cell-selection-change', range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] }): void;
     /**
      * v-model:columns col resize 时更新宽度
      */

@@ -344,7 +344,7 @@ const props = withDefaults(
         /** 单元格再次点击否可以取消选中 (cellActive=true)*/
         selectedCellRevokable?: boolean;
         /** 是否启用单元格范围选中（拖拽选区） */
-        cellSelection?: CellSelectionConfig;
+        cellSelection?: boolean | CellSelectionConfig;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | HeaderDragConfig<DT>;
         /**
