@@ -110,6 +110,7 @@ export const enConfig = defineConfig({
                     { text: 'Virtual List', link: '/virtual-list' },
                     { text: 'Matrix', link: '/matrix' },
                     { text: 'Cell Edit', link: '/cell-edit' },
+                    { text: 'Drag Selection', link: '/drag-selection' },
                     { text: 'Panel Tree', link: '/panel-tree' },
                 ]
             }
