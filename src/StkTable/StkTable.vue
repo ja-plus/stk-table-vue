@@ -25,7 +25,9 @@
             'auto-row-height': props.autoRowHeight,
             'scroll-row-by-row': isSRBRActive,
             'scrollbar-on': scrollbarOptions.enabled,
+            'is-cell-selecting': isCellSelecting,
         }"
+        :tabindex="props.cellSelection ? 0 : void 0"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
@@ -223,6 +225,8 @@ import {
 } from './const';
 import {
     AutoRowHeightConfig,
+    CellSelectionConfig,
+    CellSelectionRange,
     ColResizableConfig,
     DragRowConfig,
     ExpandConfig,
@@ -258,6 +262,7 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
+import { useCellSelection } from './useCellSelection';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
@@ -338,6 +343,8 @@ const props = withDefaults(
         cellActive?: boolean;
         /** 单元格再次点击否可以取消选中 (cellActive=true)*/
         selectedCellRevokable?: boolean;
+        /** 是否启用单元格范围选中（拖拽选区） */
+        cellSelection?: CellSelectionConfig;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | HeaderDragConfig<DT>;
         /**
@@ -445,6 +452,7 @@ const props = withDefaults(
         cellHover: false,
         cellActive: false,
         selectedCellRevokable: true,
+        cellSelection: false,
         headerDrag: () => false,
         rowClassName: () => '',
         colResizable: () => false,
@@ -601,6 +609,12 @@ const emits = defineEmits<{
      */
     (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
     /**
+     * 单元格选区变更事件
+     *
+     * ```(range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     */
+    (e: 'cell-selection-change', range: CellSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+    /**
      * v-model:columns col resize 时更新宽度
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
@@ -707,7 +721,7 @@ const rowKeyGenComputed = computed(() => {
     if (typeof rowKey === 'function') {
         return (row: DT) => (rowKey as (row: DT) => string)(row);
     } else {
-        return (row: DT) => (row as any)[rowKey];
+        return (row: DT) => row[rowKey];
     }
 });
 
@@ -836,6 +850,14 @@ const { isColResizing, onThResizeMouseDown, colResizeOn } = useColResize({
 const { toggleExpandRow, setRowExpand } = useRowExpand({ dataSourceCopy, rowKeyGen, emits });
 
 const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSourceCopy, rowKeyGen, emits });
+
+const {
+    isSelecting: isCellSelecting,
+    onSelectionMouseDown,
+    getCellSelectionClasses,
+    getSelectedCells,
+    clearSelection,
+} = useCellSelection({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen, cellKeyGen });
 
 watch(
     () => props.columns,
@@ -1171,6 +1193,12 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         classList.push('active');
     }
 
+    // 单元格拖选选区样式
+    if (props.cellSelection) {
+        const absRowIndex = getRowIndex(rowIndex);
+        classList.push(...getCellSelectionClasses(cellKey, absRowIndex, colKey));
+    }
+
     if (col.type === 'seq') {
         classList.push('seq-column');
     } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKey : false)) {
@@ -1358,6 +1386,10 @@ function onCellMouseOver(e: MouseEvent) {
 function onCellMouseDown(e: MouseEvent) {
     const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
+    // 单元格拖选
+    if (props.cellSelection) {
+        onSelectionMouseDown(e);
+    }
 }
 
 // isWheeling: true when wheel event is triggered, auto reset to false after 200ms
@@ -1721,5 +1753,19 @@ defineExpose({
      * @see {@link setTreeExpand}
      */
     setTreeExpand,
+    /**
+     * 获取拖选选中的单元格信息
+     *
+     * en: Get selected cells info (cellSelection=true)
+     * @see {@link getSelectedCells}
+     */
+    getSelectedCells,
+    /**
+     * 清空拖选选区
+     *
+     * en: Clear cell selection range (cellSelection=true)
+     * @see {@link clearSelection}
+     */
+    clearSelection,
 });
 </script>
