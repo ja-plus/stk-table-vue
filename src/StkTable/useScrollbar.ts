@@ -15,6 +15,7 @@ export type ScrollbarOptions = {
 };
 
 type Params = {
+    props: any;
     containerRef: Ref<HTMLDivElement | undefined>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
@@ -26,23 +27,24 @@ type Params = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Params, options: Ref<boolean | ScrollbarOptions> = ref(false)) {
-    const defaultOptions = ref<Required<ScrollbarOptions>>({
-        enabled: true,
-        minHeight: 20,
-        minWidth: 20,
-        width: 8,
-        height: 8,
-    });
+export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX }: Params) {
+    const defaultOptions = ref<Required<ScrollbarOptions>>({ enabled: true, minHeight: 20, minWidth: 20, width: 8, height: 8 });
 
-    const mergedOptions = computed(() => ({
-        ...defaultOptions.value,
-        ...(typeof options.value === 'boolean' ? { enabled: options.value } : options.value),
-    }));
+    const mergedOptions = computed(() => {
+        const res = {
+            ...defaultOptions.value,
+            ...(typeof props.scrollbar === 'boolean' ? { enabled: props.scrollbar } : props.scrollbar),
+        };
+        if (!props.virtual) {
+            res.enabled = false;
+            console.warn('[StkTable] scrollbar only works in virtual mode');
+        }
+        return res;
+    });
 
     const showScrollbar = ref({ x: false, y: false });
 
-    const scrollbar = ref({ h: 0, w: 0, top: 0, left: 0 });
+    const scrollbar = ref({ h: 0, w: 0, t: 0, l: 0 });
 
     let isDraggingVertical = false;
     let isDraggingHorizontal = false;
@@ -88,13 +90,13 @@ export function useScrollbar({ containerRef, virtualScroll, virtualScrollX }: Pa
         if (needVertical) {
             const ratio = containerHeight / scrollHeight;
             scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * containerHeight);
-            scrollbar.value.top = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
+            scrollbar.value.t = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
         }
 
         if (needHorizontal) {
             const ratio = containerWidth / scrollWidth;
             scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * containerWidth);
-            scrollbar.value.left = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
+            scrollbar.value.l = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
         }
     }
 

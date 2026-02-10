@@ -7,6 +7,8 @@
     - Add: emit `selected-cells-change` event when selected cells changed.
 * Optimize
   - Use Qoder to optimize code.
+* Bugfix
+  - `props.scrollbar` not work correctly common mode(not in virtual mode) .Now change to: `props.scrollbar` only take effect in `virtual` mode.
 
 ## 0.9.2
 * Optimize

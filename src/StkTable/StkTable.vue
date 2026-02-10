@@ -183,7 +183,7 @@
                 class="stk-sb-thumb vertical"
                 :style="{
                     height: `${scrollbar.h}px`,
-                    transform: `translateY(${scrollbar.top}px)`,
+                    transform: `translateY(${scrollbar.t}px)`,
                 }"
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart="onVerticalScrollbarMouseDown"
@@ -198,7 +198,7 @@
             class="stk-sb-thumb horizontal"
             :style="{
                 width: `${scrollbar.w}px`,
-                transform: `translateX(${scrollbar.left}px)`,
+                transform: `translateX(${scrollbar.l}px)`,
             }"
             @mousedown="onHorizontalScrollbarMouseDown"
             @touchstart="onHorizontalScrollbarMouseDown"
@@ -210,7 +210,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, toRef, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
@@ -246,6 +246,7 @@ import {
     UniqKeyProp,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
+import { useCellSelection } from './useCellSelection';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
 import { useFixedStyle } from './useFixedStyle';
@@ -262,7 +263,6 @@ import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
-import { useCellSelection } from './useCellSelection';
 import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
@@ -788,7 +788,7 @@ const {
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
 
 const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar({ containerRef: tableContainerRef, virtualScroll, virtualScrollX }, toRef(props, 'scrollbar'));
+    useScrollbar({ props, containerRef: tableContainerRef, virtualScroll, virtualScrollX });
 
 const {
     hiddenCellMap, //
@@ -1039,7 +1039,7 @@ function updateDataSource(val: DT[]) {
     }
 
     let needInitVirtualScrollY = false;
-    if (dataSourceCopy.value.length !== val.length) {
+    if (/* slots.customBottom || */ dataSourceCopy.value.length !== val.length) {
         needInitVirtualScrollY = true;
     }
     initDataSource(val);
@@ -1061,17 +1061,17 @@ function updateDataSource(val: DT[]) {
 /** tr key */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
-    
+
     let key = rowKeyGenCache.get(row);
     if (key !== undefined) return key;
-    
+
     // Check for cached key in row object
     const cachedRowKey = (row as PrivateRowDT).__ROW_K__;
     if (cachedRowKey !== undefined) {
         rowKeyGenCache.set(row, cachedRowKey);
         return cachedRowKey;
     }
-    
+
     key = rowKeyGenComputed.value(row);
 
     if (key === void 0) {
@@ -1093,7 +1093,7 @@ const cellStyleMap = computed(() => {
     const { virtualX } = props;
     const headers = tableHeaders.value;
     const colKeyGenValue = colKeyGen.value;
-    
+
     for (let depth = 0, depthLen = headers.length; depth < depthLen; depth++) {
         const cols = headers[depth];
         for (let i = 0, colsLen = cols.length; i < colsLen; i++) {

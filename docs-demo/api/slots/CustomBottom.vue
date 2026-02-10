@@ -36,7 +36,7 @@ function clearData() {
 <template>
     <button class="btn" @click="addData">{{ t('addFiveData') }}</button>
     <button class="btn" @click="clearData">{{ t('clearData') }}</button>
-    <StkTable style="height: 200px" scrollbar :columns="columns" :data-source="dataSource">
+    <StkTable style="height: 200px" :columns="columns" :data-source="dataSource">
         <template #customBottom>
             <div class="custom-bottom">
                 <span>{{ t('customBottom') }}</span>
@@ -47,6 +47,6 @@ function clearData() {
 <style scoped>
 .custom-bottom {
     text-align: center;
-    padding: 10px 0;
+    padding: 40px 0;
 }
 </style>

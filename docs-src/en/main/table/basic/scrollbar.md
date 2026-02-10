@@ -27,13 +27,18 @@ Built-in DOM-implemented scrollbar, enabled via `props.scrollbar`.
 <span style="color: #ff9800;">Can solve scrolling white screen issues.</span>
 
 ```ts 
-<StkTable 
+<StkTable
+  virtual
   scrollbar //[!code ++]
 ></StkTable>
-<StkTable 
+<StkTable
+  virtual 
   :scrollbar="{ width: 10, height: 10 }" // [!code ++]
 ></StkTable>
 ```
+::: tip
+Effective only when using virtual scrolling (`virtual`).
+:::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>
 

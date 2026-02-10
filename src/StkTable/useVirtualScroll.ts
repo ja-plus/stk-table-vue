@@ -69,7 +69,6 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 }: Option<DT>) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
-
     const virtualScroll = ref<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
@@ -408,7 +407,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
     let vue2ScrollXTimeout: null | number = null;
 
-    /** 
+    /**
      * Calculate virtual scroll parameters based on horizontal scroll bar position
      */
     function updateVirtualScrollX(sLeft = 0) {

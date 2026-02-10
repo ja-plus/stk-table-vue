@@ -28,12 +28,17 @@
 
 ```ts 
 <StkTable 
+  virtual
   scrollbar //[!code ++]
 ></StkTable>
-<StkTable 
+<StkTable
+  virtual
   :scrollbar="{ width: 10, height: 10 }" // [!code ++]
 ></StkTable>
 ```
+::: tip 注意
+仅在虚拟列表(virtual)下生效
+:::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue"></demo>
 
