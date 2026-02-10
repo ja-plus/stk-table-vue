@@ -70,6 +70,7 @@ export const enConfig = defineConfig({
                                     { text: 'Highlight Rows & Cells', link: '/table/advanced/highlight' },
                                     { text: 'Virtual List (Large Data)', link: '/table/advanced/virtual' },
                                     { text: 'Variable Row Height Virtual List', link: '/table/advanced/auto-height-virtual' },
+                                    { text: 'Drag Selection(✨NEW)', link: '/table/advanced/drag-selection' },
                                     { text: 'Column Resize', link: '/table/advanced/column-resize' },
                                     { text: 'Column Drag Reorder', link: '/table/advanced/header-drag' },
                                     { text: 'Row Drag Reorder', link: '/table/advanced/row-drag' },
@@ -110,7 +111,6 @@ export const enConfig = defineConfig({
                     { text: 'Virtual List', link: '/virtual-list' },
                     { text: 'Matrix', link: '/matrix' },
                     { text: 'Cell Edit', link: '/cell-edit' },
-                    { text: 'Drag Selection', link: '/drag-selection' },
                     { text: 'Panel Tree', link: '/panel-tree' },
                 ]
             }

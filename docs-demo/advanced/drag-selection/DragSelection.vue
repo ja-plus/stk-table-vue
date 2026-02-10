@@ -5,12 +5,10 @@
             :columns="cols"
             :row-key="rowKey"
             :cell-selection="{ formatCellForClipboard: formatCell }"
-            style="height: 400px; border: 1px solid #e6e6e6"
+            style="height: 400px"
             @cell-selection-change="onSelectionChange"
         />
-
         <div style="margin-top: 12px">
-            <strong>当前选区：</strong>
             <pre style="white-space: pre-wrap">{{ JSON.stringify(currentRange, null, 2) }}</pre>
         </div>
     </div>
@@ -18,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import StkTable from '../StkTable.vue';
+import StkTable from '../../StkTable.vue';
 
 type Row = { id: number; name: string; age: number; city: string };
 
@@ -55,8 +53,6 @@ function formatCell(row: Row, col: any, raw: any) {
 
 <style scoped>
 pre {
-    background: #fafafa;
     padding: 8px;
-    border: 1px solid #eee;
 }
 </style>

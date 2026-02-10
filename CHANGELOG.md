@@ -1,4 +1,8 @@
 
+## 0.10.0
+* Feature
+  - Add: `cellSelection` prop to enable cell drag selection.
+
 ## 0.9.2
 * Optimize
   - optimize: td v-if

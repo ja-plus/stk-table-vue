@@ -96,6 +96,7 @@ export const zhConfig = defineConfig({
                                     { text: '高亮行、单元格', link: '/table/advanced/highlight', },
                                     { text: '虚拟列表(大量数据)', link: '/table/advanced/virtual', },
                                     { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
+                                    { text: '拖拽选区(✨NEW)', link: '/table/advanced/drag-selection' },
                                     { text: '列宽调整', link: '/table/advanced/column-resize', },
                                     { text: '列拖动更换顺序', link: '/table/advanced/header-drag', },
                                     { text: '行拖动更换顺序', link: '/table/advanced/row-drag', },
@@ -138,7 +139,6 @@ export const zhConfig = defineConfig({
                     { text: '虚拟单列表', link: '/virtual-list' },
                     { text: '矩阵', link: '/matrix' },
                     { text: '单元格编辑', link: '/cell-edit' },
-                    { text: '拖拽选区', link: '/drag-selection' },
                     { text: '面板树', link: '/panel-tree' },
                 ]
             }

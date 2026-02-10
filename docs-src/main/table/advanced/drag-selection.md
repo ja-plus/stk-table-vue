@@ -1,10 +1,10 @@
-# 拖拽选区（Cell Selection）
+# 拖拽选区 <Badge type="tip" text="^0.10.0" /> 
 
-此示例展示如何通过 `cellSelection` 启用表格的单元格拖拽选区，并支持复制到剪贴板（Ctrl/Cmd + C）。
+通过 `cellSelection` 启用表格的单元格拖拽选区。
 
-示例组件：
+支持复制到剪贴板（Ctrl/Cmd + C）。
 
-<demo vue="demos/DragSelection.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/demos/DragSelection.vue"></demo>
+<demo vue="advanced/drag-selection/DragSelection.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/drag-selection/DragSelection.vue"></demo>
 
 说明：
 
