@@ -36,22 +36,40 @@ export function useMergeCells({ rowActiveProp, tableHeaderLast, rowKeyGen, colKe
      * abstract the logic of hiding cells
      */
     function hideCells(rowKey: UniqKey, colKey: UniqKey, colspan: number, isSelfRow = false, mergeCellKey: string) {
-        const startIndex = tableHeaderLast.value.findIndex(item => colKeyGen.value(item) === colKey);
+        const headers = tableHeaderLast.value;
+        const colKeyGenValue = colKeyGen.value;
+        const startIndex = headers.findIndex(item => colKeyGenValue(item) === colKey);
 
-        for (let i = startIndex; i < startIndex + colspan; i++) {
-            // if other row hovered, the rowspan cell need to be highlight
-            if (!hoverRowMap.value[rowKey]) hoverRowMap.value[rowKey] = new Set();
-            hoverRowMap.value[rowKey].add(mergeCellKey);
+        if (startIndex === -1) return;
+
+        // Initialize maps if needed
+        if (!hoverRowMap.value[rowKey]) {
+            hoverRowMap.value[rowKey] = new Set();
+        }
+        if (!hiddenCellMap.value) {
+            hiddenCellMap.value = {};
+        }
+        if (!hiddenCellMap.value[rowKey]) {
+            hiddenCellMap.value[rowKey] = new Set();
+        }
+
+        const hoverSet = hoverRowMap.value[rowKey];
+        const hiddenSet = hiddenCellMap.value[rowKey];
+        const endIndex = Math.min(startIndex + colspan, headers.length);
+
+        for (let i = startIndex; i < endIndex; i++) {
+            hoverSet.add(mergeCellKey);
+
             if (isSelfRow && i === startIndex) {
                 // self row start cell does not need to be hidden
                 continue;
             }
-            const nextCol = tableHeaderLast.value[i];
+
+            const nextCol = headers[i];
             if (!nextCol) break;
-            const nextColKey = colKeyGen.value(nextCol);
-            if (!hiddenCellMap.value) hiddenCellMap.value = {};
-            if (!hiddenCellMap.value[rowKey]) hiddenCellMap.value[rowKey] = new Set();
-            hiddenCellMap.value[rowKey].add(nextColKey);
+
+            const nextColKey = colKeyGenValue(nextCol);
+            hiddenSet.add(nextColKey);
         }
     }
 

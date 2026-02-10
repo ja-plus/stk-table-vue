@@ -5,6 +5,8 @@
     - Add: `getSelectedCells` method to get selected cells information.
     - Add: `clearSelectedCells` method to clear selected cells.
     - Add: emit `selected-cells-change` event when selected cells changed.
+* Optimize
+  - Use Qoder to optimize code.
 
 ## 0.9.2
 * Optimize

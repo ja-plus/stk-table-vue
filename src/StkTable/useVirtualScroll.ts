@@ -241,10 +241,11 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     const autoRowHeightMap = new Map<string, number>();
     /** 如果行高度有变化，则要调用此方法清除保存的行高 */
     function setAutoHeight(rowKey: UniqKey, height?: number | null) {
+        const key = String(rowKey);
         if (!height) {
-            autoRowHeightMap.delete(String(rowKey));
+            autoRowHeightMap.delete(key);
         } else {
-            autoRowHeightMap.set(String(rowKey), height);
+            autoRowHeightMap.set(key, height);
         }
     }
 
@@ -289,12 +290,15 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         let autoRowHeightTop = 0;
 
         if (autoRowHeight || hasExpandCol.value) {
-            if (autoRowHeight) {
-                trRef.value?.forEach(tr => {
-                    const { rowKey } = tr.dataset;
-                    if (!rowKey || autoRowHeightMap.has(rowKey)) return;
+            if (autoRowHeight && trRef.value) {
+                // Batch DOM measurements for better performance
+                const trElements = trRef.value;
+                for (let i = 0, len = trElements.length; i < len; i++) {
+                    const tr = trElements[i];
+                    const rowKey = tr.dataset.rowKey;
+                    if (!rowKey || autoRowHeightMap.has(rowKey)) continue;
                     autoRowHeightMap.set(rowKey, tr.offsetHeight);
-                });
+                }
             }
             // calculate startIndex
             for (let i = 0; i < dataLength; i++) {

@@ -125,10 +125,10 @@ export function strCompare(a: string, b: string, isNumber: boolean, localeCompar
 function separatedData<T extends Record<string, any>>(sortOption: SortOption<T>, targetDataSource: T[], isNumber?: boolean) {
     const emptyArr: T[] = [];
     const valueArr: T[] = [];
+    const sortField = sortOption.sortField || sortOption.dataIndex;
 
-    for (let i = 0; i < targetDataSource.length; i++) {
+    for (let i = 0, len = targetDataSource.length; i < len; i++) {
         const row = targetDataSource[i];
-        const sortField = sortOption.sortField || sortOption.dataIndex;
         const isEmpty = isEmptyValue(row?.[sortField], isNumber); // deal row is null
         if (isEmpty) {
             emptyArr.push(row);

@@ -35,13 +35,18 @@ export function useFixedCol<DT extends Record<string, any>>({
         const colMap = new Map();
         const fixedShadowColsValue = fixedShadowCols.value;
         const fixedColsValue = fixedCols.value;
-        const colKey = colKeyGen.value;
+        const colKeyFn = colKeyGen.value;
         const fixedColShadow = props.fixedColShadow;
-        tableHeaders.value.forEach(cols => {
-            cols.forEach(col => {
+        const headers = tableHeaders.value;
+        
+        for (let i = 0, len = headers.length; i < len; i++) {
+            const cols = headers[i];
+            for (let j = 0, colLen = cols.length; j < colLen; j++) {
+                const col = cols[j];
                 const fixed = col.fixed;
                 const showShadow = fixed && fixedColShadow && fixedShadowColsValue.includes(col);
                 const classList = [];
+                
                 if (fixedColsValue.includes(col)) {
                     // 表示该列正在被固定
                     classList.push('fixed-cell--active');
@@ -53,9 +58,9 @@ export function useFixedCol<DT extends Record<string, any>>({
                 if (showShadow) {
                     classList.push('fixed-cell--shadow');
                 }
-                colMap.set(colKey(col), classList);
-            });
-        });
+                colMap.set(colKeyFn(col), classList);
+            }
+        }
         return colMap;
     });
 

@@ -1061,16 +1061,24 @@ function updateDataSource(val: DT[]) {
 /** tr key */
 function rowKeyGen(row: DT | null | undefined) {
     if (!row) return row;
-    let key = rowKeyGenCache.get(row) || (row as PrivateRowDT).__ROW_K__;
-    if (!key) {
-        key = rowKeyGenComputed.value(row);
-
-        if (key === void 0) {
-            // key为undefined时，不应该高亮行。因此重新生成key
-            key = Math.random().toString(36).slice(2);
-        }
-        rowKeyGenCache.set(row, key);
+    
+    let key = rowKeyGenCache.get(row);
+    if (key !== undefined) return key;
+    
+    // Check for cached key in row object
+    const cachedRowKey = (row as PrivateRowDT).__ROW_K__;
+    if (cachedRowKey !== undefined) {
+        rowKeyGenCache.set(row, cachedRowKey);
+        return cachedRowKey;
     }
+    
+    key = rowKeyGenComputed.value(row);
+
+    if (key === void 0) {
+        // key为undefined时，不应该高亮行。因此重新生成key
+        key = Math.random().toString(36).slice(2);
+    }
+    rowKeyGenCache.set(row, key);
     return key;
 }
 
@@ -1083,9 +1091,12 @@ const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
     const { virtualX } = props;
-    for (let depth = 0; depth < tableHeaders.value.length; depth++) {
-        const cols = tableHeaders.value[depth];
-        for (let i = 0; i < cols.length; i++) {
+    const headers = tableHeaders.value;
+    const colKeyGenValue = colKeyGen.value;
+    
+    for (let depth = 0, depthLen = headers.length; depth < depthLen; depth++) {
+        const cols = headers[depth];
+        for (let i = 0, colsLen = cols.length; i < colsLen; i++) {
             const col = cols[i];
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
             const style: CSSProperties = {
@@ -1093,7 +1104,7 @@ const cellStyleMap = computed(() => {
                 minWidth: transformWidthToStr(col.minWidth),
                 maxWidth: transformWidthToStr(col.maxWidth),
             };
-            const colKey = colKeyGen.value(col);
+            const colKey = colKeyGenValue(col);
             thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
             tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
         }
