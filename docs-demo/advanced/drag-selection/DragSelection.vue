@@ -1,11 +1,12 @@
 <template>
     <div style="padding: 16px">
         <StkTable
+            style="height: 400px"
+            row-key="id"
+            :row-active="false"
             :data-source="rows"
             :columns="cols"
-            :row-key="rowKey"
             :cell-selection="{ formatCellForClipboard: formatCell }"
-            style="height: 400px"
             @cell-selection-change="onSelectionChange"
         />
         <div style="margin-top: 12px">
@@ -20,29 +21,31 @@ import StkTable from '../../StkTable.vue';
 
 type Row = { id: number; name: string; age: number; city: string };
 
-const rowKey = (r: Row) => r.id;
-
 const cols = [
-    { title: 'ID', dataIndex: 'id' },
-    { title: '姓名', dataIndex: 'name' },
-    { title: '年龄', dataIndex: 'age' },
-    { title: '城市', dataIndex: 'city' },
+    { title: 'ID', dataIndex: 'id', fixed: 'left', width: 50 },
+    { title: 'Name', dataIndex: 'name', width: 120 },
+    { title: 'Age', dataIndex: 'age', width: 80 },
+    { title: 'City', dataIndex: 'city', width: 120 },
+    { title: 'City', dataIndex: 'city1', width: 120 },
+    { title: 'City', dataIndex: 'city2', width: 120 },
+    { title: 'City', dataIndex: 'city3', width: 120 },
+    { title: 'City', dataIndex: 'city4', width: 120 },
 ];
 
 const rows = Array.from({ length: 100 }, (_, i) => ({
     id: i + 1,
-    name: `用户${i + 1}`,
+    name: `User${i + 1}`,
     age: 20 + (i % 30),
-    city: ['北京', '上海', '广州', '深圳'][i % 4],
+    city: ['Beijing', 'Shanghai', 'Guangzhou', 'Shenzhen'][i % 4],
 }));
 
 const currentRange = ref(null as any);
 
-function onSelectionChange(range: any, payload: any) {
+function onSelectionChange(range: any, data: any) {
     currentRange.value = {
         range,
-        rows: payload.rows?.length ?? 0,
-        cols: payload.cols?.length ?? 0,
+        rows: data.rows?.length ?? 0,
+        cols: data.cols?.length ?? 0,
     };
 }
 

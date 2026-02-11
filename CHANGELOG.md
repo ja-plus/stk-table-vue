@@ -9,6 +9,7 @@
   - Use Qoder to optimize code.
 * Bugfix
   - `props.scrollbar` not work correctly common mode(not in virtual mode) .Now change to: `props.scrollbar` only take effect in `virtual` mode.
+  - row hover background-color change to opaque color
 
 ## 0.9.2
 * Optimize
