@@ -749,6 +749,16 @@ const SRBRBottomHeight = computed(() => {
     return (containerHeight - tableHeaderHeight.value) % rowHeight;
 });
 
+const scrollbarOptions = computed(() => ({
+    enabled: true,
+    experimentalScrollY: false,
+    minHeight: 20,
+    minWidth: 20,
+    width: 8,
+    height: 8,
+    ...(typeof props.scrollbar === 'boolean' ? { enabled: props.scrollbar } : props.scrollbar),
+}));
+
 const rowKeyGenCache = new WeakMap();
 
 const { isSRBRActive } = useScrollRowByRow({ props, tableContainerRef });
@@ -776,10 +786,16 @@ const {
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
-} = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan });
+} = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, scrollbarOptions });
 
-const { scrollbarOptions, scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } =
-    useScrollbar({ props, containerRef: tableContainerRef, virtualScroll, virtualScrollX, updateVirtualScrollY });
+const { scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } = useScrollbar({
+    props,
+    containerRef: tableContainerRef,
+    virtualScroll,
+    virtualScrollX,
+    updateVirtualScrollY,
+    scrollbarOptions,
+});
 
 const {
     hiddenCellMap, //

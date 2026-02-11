@@ -1,4 +1,4 @@
-import { computed, nextTick, onMounted, onUnmounted, ref, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, Ref } from 'vue';
 import type { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { throttle } from './utils/index';
 
@@ -22,6 +22,7 @@ type Params = {
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
     updateVirtualScrollY: (sTop?: number) => void;
+    scrollbarOptions: Ref<Required<ScrollbarOptions>>;
 };
 
 /**
@@ -30,28 +31,7 @@ type Params = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX, updateVirtualScrollY }: Params) {
-    const defaultOptions = ref<Required<ScrollbarOptions>>({
-        enabled: true,
-        experimentalScrollY: false,
-        minHeight: 20,
-        minWidth: 20,
-        width: 8,
-        height: 8,
-    });
-
-    const mergedOptions = computed(() => {
-        const res = {
-            ...defaultOptions.value,
-            ...(typeof props.scrollbar === 'boolean' ? { enabled: props.scrollbar } : props.scrollbar),
-        };
-        if (!props.virtual) {
-            res.enabled = false;
-            console.warn('[StkTable] scrollbar only works in virtual mode');
-        }
-        return res;
-    });
-
+export function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX, updateVirtualScrollY, scrollbarOptions }: Params) {
     const showScrollbar = ref({ x: false, y: false });
 
     const scrollbar = ref({ h: 0, w: 0, t: 0, l: 0 });
@@ -70,7 +50,7 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
     }, 200);
 
     onMounted(() => {
-        if (mergedOptions.value.enabled) {
+        if (scrollbarOptions.value.enabled) {
             resizeObserver = new ResizeObserver(throttledUpdateScrollbar);
             resizeObserver.observe(containerRef.value!);
         }
@@ -88,7 +68,7 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
     });
 
     function updateCustomScrollbar() {
-        if (!mergedOptions.value.enabled) return;
+        if (!scrollbarOptions.value.enabled) return;
         const { scrollHeight, scrollTop, containerHeight } = virtualScroll.value;
         const { scrollWidth, scrollLeft, containerWidth } = virtualScrollX.value;
 
@@ -98,13 +78,13 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
 
         if (needVertical) {
             const ratio = containerHeight / scrollHeight;
-            scrollbar.value.h = Math.max(mergedOptions.value.minHeight, ratio * containerHeight);
+            scrollbar.value.h = Math.max(scrollbarOptions.value.minHeight, ratio * containerHeight);
             scrollbar.value.t = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
         }
 
         if (needHorizontal) {
             const ratio = containerWidth / scrollWidth;
-            scrollbar.value.w = Math.max(mergedOptions.value.minWidth, ratio * containerWidth);
+            scrollbar.value.w = Math.max(scrollbarOptions.value.minWidth, ratio * containerWidth);
             scrollbar.value.l = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
         }
     }
@@ -153,12 +133,12 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
 
-        if (mergedOptions.value.experimentalScrollY) {
+        if (scrollbarOptions.value.experimentalScrollY) {
             const ratio = containerHeight / scrollHeight;
             const top = Math.round((dragStartTop + scrollDelta) * ratio);
             const maxTop = containerHeight - scrollbar.value.h;
 
-            scrollbar.value.top = top < 0 ? 0 : top > maxTop ? maxTop : top;
+            scrollbar.value.t = top < 0 ? 0 : top > maxTop ? maxTop : top;
             updateVirtualScrollY(dragStartTop + scrollDelta);
         } else {
             containerRef.value!.scrollTop = dragStartTop + scrollDelta;
@@ -200,7 +180,6 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
     }
 
     return {
-        scrollbarOptions: mergedOptions,
         scrollbar,
         showScrollbar,
         onVerticalScrollbarMouseDown,

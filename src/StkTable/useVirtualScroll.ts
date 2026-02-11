@@ -2,6 +2,7 @@ import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { getCalculatedColWidth } from './utils/constRefUtils';
+import { ScrollbarOptions } from './useScrollbar';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
@@ -12,6 +13,7 @@ type Option<DT extends Record<string, any>> = {
     tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>;
     rowKeyGen: RowKeyGen;
     maxRowSpan: Map<UniqKey, number>;
+    scrollbarOptions: Ref<Required<ScrollbarOptions>>;
 };
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -67,6 +69,7 @@ export function useVirtualScroll<DT extends Record<string, any>>({
     tableHeaders,
     rowKeyGen,
     maxRowSpan,
+    scrollbarOptions,
 }: Option<DT>) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
@@ -279,17 +282,21 @@ export function useVirtualScroll<DT extends Record<string, any>>({
 
         const dataSourceCopyTemp = dataSourceCopy.value;
         const dataLength = dataSourceCopyTemp.length;
-
         const rowHeight = getRowHeightFn.value();
-        const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
-        let maxTop: number;
-        sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
 
-        Object.assign(virtualScroll.value, {
-            scrollTop: sTop,
-            scrollHeight,
-            translateY: -(sTop % rowHeight),
-        });
+        const vsValue: any = { scrollTop: sTop };
+        const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
+        const { enabled: scrollbarEnable, experimentalScrollY } = scrollbarOptions.value;
+        if (scrollbarEnable) {
+            vsValue.scrollHeight = scrollHeight;
+            if (experimentalScrollY) {
+                let maxTop: number;
+                sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
+                vsValue.translateY = -(sTop % rowHeight);
+            }
+        }
+
+        Object.assign(virtualScroll.value, vsValue);
 
         if (!virtual_on.value) {
             return;
