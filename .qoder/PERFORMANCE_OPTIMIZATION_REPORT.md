@@ -81,7 +81,7 @@ This document outlines performance optimizations applied to StkTableVue and addi
 ---
 
 ### 7. Cell Selection Optimization (Already Completed)
-**File:** `src/StkTable/useCellSelection.ts`
+**File:** `src/StkTable/useAreaSelection.ts`
 
 **Changes:**
 - ✅ Pre-sized Map and Set initialization

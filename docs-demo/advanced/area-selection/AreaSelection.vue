@@ -6,8 +6,8 @@
             :row-active="false"
             :data-source="rows"
             :columns="cols"
-            :cell-selection="{ formatCellForClipboard: formatCell }"
-            @cell-selection-change="onSelectionChange"
+            :area-selection="{ formatCellForClipboard: formatCell }"
+            @area-selection-change="onSelectionChange"
         />
         <div style="margin-top: 12px">
             <pre style="white-space: pre-wrap">{{ JSON.stringify(currentRange, null, 2) }}</pre>

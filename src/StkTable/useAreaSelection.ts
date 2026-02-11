@@ -1,5 +1,5 @@
 import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { CellSelectionRange, CellKeyGen, ColKeyGen, RowKeyGen, StkTableColumn, UniqKey } from './types';
+import { AreaSelectionRange, CellKeyGen, ColKeyGen, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { getClosestColKey, getClosestTrIndex } from './utils';
 
 type Params<DT extends Record<string, any>> = {
@@ -14,7 +14,7 @@ type Params<DT extends Record<string, any>> = {
 };
 
 /** 获取归一化（min/max）后的选区范围 */
-function normalizeRange(range: CellSelectionRange) {
+function normalizeRange(range: AreaSelectionRange) {
     return {
         minRow: Math.min(range.startRowIndex, range.endRowIndex),
         maxRow: Math.max(range.startRowIndex, range.endRowIndex),
@@ -39,7 +39,7 @@ const POINT_EDGE_OFFSET = 2;
 /**
  * 单元格拖拽选区
  */
-export function useCellSelection<DT extends Record<string, any>>({
+export function useAreaSelection<DT extends Record<string, any>>({
     props,
     emits,
     tableContainerRef,
@@ -50,7 +50,7 @@ export function useCellSelection<DT extends Record<string, any>>({
     cellKeyGen,
 }: Params<DT>) {
     /** 当前选区范围 */
-    const selectionRange = ref<CellSelectionRange | null>(null) as Ref<CellSelectionRange | null>;
+    const selectionRange = ref<AreaSelectionRange | null>(null) as Ref<AreaSelectionRange | null>;
     /** 是否正在拖选 */
     const isSelecting = ref(false);
     /** 锚点（拖选起点 / Shift扩选起点） */
@@ -135,7 +135,7 @@ export function useCellSelection<DT extends Record<string, any>>({
 
     /** mousedown 处理：设置锚点，开始拖选 */
     function onSelectionMouseDown(e: MouseEvent) {
-        if (!props.cellSelection || e.button !== 0) return;
+        if (!props.areaSelection || e.button !== 0) return;
 
         const rowIndex = getClosestTrIndex(e.target as HTMLElement);
         const colKey = getClosestColKey(e.target as HTMLElement);
@@ -329,11 +329,11 @@ export function useCellSelection<DT extends Record<string, any>>({
         emitSelectionChange();
     }
 
-    /** 发出 cell-selection-change 事件 */
+    /** 发出 area-selection-change 事件 */
     function emitSelectionChange() {
         const range = selectionRange.value;
         if (!range) {
-            emits('cell-selection-change', null, { rows: [], cols: [] });
+            emits('area-selection-change', null, { rows: [], cols: [] });
             return;
         }
         const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
@@ -341,12 +341,12 @@ export function useCellSelection<DT extends Record<string, any>>({
         const cols = tableHeaderLast.value;
         const rows = data.slice(minRow, maxRow + 1);
         const selectedCols = cols.slice(minCol, maxCol + 1);
-        emits('cell-selection-change', range, { rows, cols: selectedCols });
+        emits('area-selection-change', range, { rows, cols: selectedCols });
     }
 
-    /** 获取 cellSelection 配置中的格式化回调 */
+    /** 获取 areaSelection 配置中的格式化回调 */
     function getFormatCellFn() {
-        const cfg = props.cellSelection;
+        const cfg = props.areaSelection;
         return cfg && typeof cfg === 'object' && typeof cfg.formatCellForClipboard === 'function' ? cfg.formatCellForClipboard : null;
     }
 
@@ -355,11 +355,11 @@ export function useCellSelection<DT extends Record<string, any>>({
      * Esc 取消选区
      **/
     function onKeydown(e: KeyboardEvent) {
-        if (!props.cellSelection || !selectionRange.value) return;
+        if (!props.areaSelection || !selectionRange.value) return;
 
         // Esc 键：取消当前选区
         if (e.key === 'Escape' || e.key === 'Esc') {
-            clearSelectedCells();
+            clearSelectedArea();
             emitSelectionChange();
             e.preventDefault();
             return;
@@ -406,7 +406,7 @@ export function useCellSelection<DT extends Record<string, any>>({
      * @param absoluteRowIndex 行在 dataSourceCopy 中的绝对索引
      * @param colKey 列唯一键
      */
-    function getCellSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
+    function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
         const nr = normalizedRange.value;
         if (!nr || !selectedCellKeys.value.has(cellKey)) return [];
 
@@ -424,7 +424,7 @@ export function useCellSelection<DT extends Record<string, any>>({
     // 暴露方法
 
     /** 获取选中的单元格信息 */
-    function getSelectedCells() {
+    function getSelectedArea() {
         const range = selectionRange.value;
         if (!range) return { rows: [] as DT[], cols: [] as StkTableColumn<DT>[], range: null };
         const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
@@ -438,7 +438,7 @@ export function useCellSelection<DT extends Record<string, any>>({
     }
 
     /** 清空选区 */
-    function clearSelectedCells() {
+    function clearSelectedArea() {
         selectionRange.value = null;
         isSelecting.value = false;
     }
@@ -449,8 +449,8 @@ export function useCellSelection<DT extends Record<string, any>>({
         selectedCellKeys,
         normalizedRange,
         onSelectionMouseDown,
-        getCellSelectionClasses,
-        getSelectedCells,
-        clearSelectedCells,
+        getAreaSelectionClasses,
+        getSelectedArea,
+        clearSelectedArea,
     };
 }

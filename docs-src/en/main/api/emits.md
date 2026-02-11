@@ -135,11 +135,11 @@
      */
     (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
      /**
-     * Cell selection change event
+     * Area selection change event
      *
-     * ```(range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     * ```(range: AreaSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
      */
-    (e: 'cell-selection-change', range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] }): void;
+    (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] }): void;
     /**
      * Update width when v-model:columns col is resized
      */

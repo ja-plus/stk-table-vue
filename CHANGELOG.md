@@ -1,10 +1,10 @@
 
 ## 0.10.0
 * Feature
-  - Add: `cellSelection` prop to enable cell drag selection.
-    - Add: `getSelectedCells` method to get selected cells information.
-    - Add: `clearSelectedCells` method to clear selected cells.
-    - Add: emit `selected-cells-change` event when selected cells changed.
+  - Add: `areaSelection` prop to enable cell drag selection.
+    - Add: `getSelectedArea` method to get selected cells information.
+    - Add: `clearSelectedArea` method to clear selected cells.
+    - Add: emit `area-selection-change` event when selected cells changed.
 * Optimize
   - Use Qoder to optimize code.
 * Bugfix

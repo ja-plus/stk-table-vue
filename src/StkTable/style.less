@@ -108,6 +108,10 @@
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
+
+        .cell-range-selected{
+            background-blend-mode: normal;
+        }
     }
 
     &.scrollbar-on {
@@ -436,7 +440,7 @@
 
     /* 单元格选区 - 使用 inset box-shadow 实现边框，不占用内部空间 */
     .cell-range-selected {
-        background-blend-mode: overlay;
+        background-blend-mode: multiply;
         background-color: var(--cs-bgc);
         box-shadow:
             inset 0 var(--cs-t, 0) 0 0 var(--cs-bc),

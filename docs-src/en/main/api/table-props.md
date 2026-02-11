@@ -82,7 +82,7 @@ export type StkProps = {
   /** Whether clicking the cell again can deselect it (cellActive=true) */
   selectedCellRevokable?: boolean;
   /** Whether to enable cell range selection (drag selection) */
-  cellSelection?: boolean | {
+  areaSelection?: boolean | {
     /**
      * Custom cell text formatter for clipboard copy.
      * If you use customCell to render cells, you should provide this callback to ensure the copied text matches the displayed content.

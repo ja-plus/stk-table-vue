@@ -296,7 +296,7 @@ export type RowActiveOption<DT> = {
 };
 
 /** 单元格选区范围 */
-export type CellSelectionRange = {
+export type AreaSelectionRange = {
     startRowIndex: number;
     startColIndex: number;
     endRowIndex: number;
@@ -304,7 +304,7 @@ export type CellSelectionRange = {
 };
 
 /** 单元格选区配置 */
-export type CellSelectionConfig<T extends Record<string, any> = any> = {
+export type AreaSelectionConfig<T extends Record<string, any> = any> = {
     /**
      * 复制时的单元格文本格式化回调。
      * 如果你使用了 customCell 自定义渲染，应该提供此回调以确保复制内容与展示内容一致。

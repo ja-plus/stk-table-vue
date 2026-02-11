@@ -27,7 +27,7 @@
             'scrollbar-on': scrollbarOptions.enabled,
             'is-cell-selecting': isCellSelecting,
         }"
-        :tabindex="props.cellSelection ? 0 : void 0"
+        :tabindex="props.areaSelection ? 0 : void 0"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
@@ -225,8 +225,8 @@ import {
 } from './const';
 import {
     AutoRowHeightConfig,
-    CellSelectionConfig,
-    CellSelectionRange,
+    AreaSelectionConfig,
+    AreaSelectionRange,
     ColResizableConfig,
     DragRowConfig,
     ExpandConfig,
@@ -246,7 +246,7 @@ import {
     UniqKeyProp,
 } from './types/index';
 import { useAutoResize } from './useAutoResize';
-import { useCellSelection } from './useCellSelection';
+import { useAreaSelection } from './useAreaSelection';
 import { useColResize } from './useColResize';
 import { useFixedCol } from './useFixedCol';
 import { useFixedStyle } from './useFixedStyle';
@@ -258,13 +258,14 @@ import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
 import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
 import { useScrollRowByRow } from './useScrollRowByRow';
+import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
-import { createStkTableId, getCalculatedColWidth, getColWidth } from './utils/constRefUtils';
-import { getClosestColKey, getClosestTr, getClosestTrIndex, howDeepTheHeader, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
+import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -344,7 +345,7 @@ const props = withDefaults(
         /** 单元格再次点击否可以取消选中 (cellActive=true)*/
         selectedCellRevokable?: boolean;
         /** 是否启用单元格范围选中（拖拽选区） */
-        cellSelection?: boolean | CellSelectionConfig;
+        areaSelection?: boolean | AreaSelectionConfig;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | HeaderDragConfig<DT>;
         /**
@@ -452,7 +453,7 @@ const props = withDefaults(
         cellHover: false,
         cellActive: false,
         selectedCellRevokable: true,
-        cellSelection: false,
+        areaSelection: false,
         headerDrag: () => false,
         rowClassName: () => '',
         colResizable: () => false,
@@ -611,9 +612,9 @@ const emits = defineEmits<{
     /**
      * 单元格选区变更事件
      *
-     * ```(range: CellSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     * ```(range: AreaSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
      */
-    (e: 'cell-selection-change', range: CellSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+    (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
     /**
      * v-model:columns col resize 时更新宽度
      */
@@ -661,38 +662,10 @@ let sortOrderIndex = ref(0);
 /** 排序切换顺序 */
 const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
-/**
- * 表头.内容是 props.columns 的引用集合
- * @eg
- * ```js
- * [
- *      [{dataIndex:'id',...}], // 第0行列配置
- *      [], // 第一行列配置
- *      //...
- * ]
- * ```
- */
-const tableHeaders = shallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>([]);
-
-/**
- * 用于计算多级表头的tableHeaders。模拟rowSpan 位置的辅助数组。用于计算固定列。
- * @eg
- * ```
- * |             colspan3               |
- * | rowspan2 |       colspan2          |
- * | rowspan2 |  colspan1 |  colspan1   |
- * ```
- * ---
- * expect arr:
- * ```
- * const arr = [
- *  [col],
- *  [col2, col3],
- *  [col2, col4, col5],
- * ]
- * ```
- */
-const tableHeadersForCalc = shallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>([]);
+const { tableHeaders, tableHeadersForCalc, dealColumns } = useTableColumns<DT>({
+    virtualX: props.virtualX,
+    isRelativeMode,
+});
 
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
@@ -854,15 +827,15 @@ const { toggleTreeNode, setTreeExpand, flatTreeData } = useTree({ props, dataSou
 const {
     isSelecting: isCellSelecting,
     onSelectionMouseDown,
-    getCellSelectionClasses,
-    getSelectedCells,
-    clearSelectedCells,
-} = useCellSelection({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen, cellKeyGen });
+    getAreaSelectionClasses,
+    getSelectedArea,
+    clearSelectedArea,
+} = useAreaSelection({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen, cellKeyGen });
 
 watch(
     () => props.columns,
     () => {
-        dealColumns();
+        handleDealColumns();
         updateMaxRowSpan();
         // nextTick: initVirtualScrollX need get container width。
         nextTick(() => {
@@ -884,7 +857,7 @@ watch(() => props.rowHeight, initVirtualScrollY);
 watch(
     () => props.virtualX,
     () => {
-        dealColumns();
+        handleDealColumns();
         // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
         nextTick(() => {
             initVirtualScrollX();
@@ -911,7 +884,7 @@ watch(
     () => updateFixedShadow(),
 );
 
-dealColumns();
+handleDealColumns();
 initDataSource();
 updateMaxRowSpan();
 
@@ -937,99 +910,10 @@ function dealDefaultSorter() {
 }
 
 /**
- *  deal multi-level header
+ * Wrapper for dealColumns to pass props.columns
  */
-function dealColumns() {
-    // reset
-    const tableHeadersTemp: StkTableColumn<PrivateRowDT>[][] = [];
-    const tableHeadersForCalcTemp: StkTableColumn<PrivateRowDT>[][] = [];
-    let copyColumn: StkTableColumn<PrivateRowDT>[] = props.columns; // do not deep clone
-    // relative 模式下不支持sticky列。因此就放在左右两侧。
-    if (isRelativeMode.value) {
-        let leftCol: StkTableColumn<PrivateRowDT>[] = [];
-        let centerCol: StkTableColumn<PrivateRowDT>[] = [];
-        let rightCol: StkTableColumn<PrivateRowDT>[] = [];
-        copyColumn.forEach(col => {
-            if (col.fixed === 'left') {
-                leftCol.push(col);
-            } else if (col.fixed === 'right') {
-                rightCol.push(col);
-            } else {
-                centerCol.push(col);
-            }
-        });
-        copyColumn = leftCol.concat(centerCol).concat(rightCol);
-    }
-    const maxDeep = howDeepTheHeader(copyColumn);
-
-    if (maxDeep > 0 && props.virtualX) {
-        console.error('StkTableVue:多级表头不支持横向虚拟滚动!');
-    }
-
-    for (let i = 0; i <= maxDeep; i++) {
-        tableHeadersTemp[i] = [];
-        tableHeadersForCalcTemp[i] = [];
-    }
-
-    /**
-     * flat columns
-     * @param arr
-     * @param depth 深度
-     * @param parent 父节点引用，用于构建双向链表。
-     * @param parentFixed 父节点固定列继承。
-     */
-    function flat(
-        arr: PrivateStkTableColumn<PrivateRowDT>[],
-        parent: PrivateStkTableColumn<PrivateRowDT> | null,
-        depth = 0 /* , parentFixed: 'left' | 'right' | null = null */,
-    ) {
-        /** 所有子节点数量 */
-        let allChildrenLen = 0;
-        let allChildrenWidthSum = 0;
-        arr.forEach(col => {
-            // TODO: 继承父节点固定列配置
-            // if (parentFixed) {
-            //     col.fixed = parentFixed;
-            // }
-            col.__PARENT__ = parent;
-            /** 一列中的子节点数量 */
-            let colChildrenLen = 1;
-            /** 多级表头的父节点宽度，通过叶子节点宽度计算得到 */
-            let colWidth = 0;
-            if (col.children) {
-                // DFS
-                const [len, widthSum] = flat(col.children, col, depth + 1 /* , col.fixed */);
-                colChildrenLen = len;
-                colWidth = widthSum;
-                tableHeadersForCalcTemp[depth].push(col);
-            } else {
-                colWidth = getColWidth(col);
-                for (let i = depth; i <= maxDeep; i++) {
-                    // 如有rowSpan 向下复制一个表头col，用于计算固定列
-                    tableHeadersForCalcTemp[i].push(col);
-                }
-            }
-            // 回溯
-            col.__WIDTH__ = colWidth; //记录计算的列宽
-            tableHeadersTemp[depth].push(col);
-            const rowSpan = col.children ? 1 : maxDeep - depth + 1;
-            const colSpan = colChildrenLen;
-            if (rowSpan > 1) {
-                col.__R_SP__ = rowSpan;
-            }
-            if (colSpan > 1) {
-                col.__C_SP__ = colSpan;
-            }
-
-            allChildrenLen += colChildrenLen;
-            allChildrenWidthSum += colWidth;
-        });
-        return [allChildrenLen, allChildrenWidthSum];
-    }
-
-    flat(copyColumn, null);
-    tableHeaders.value = tableHeadersTemp;
-    tableHeadersForCalc.value = tableHeadersForCalcTemp;
+function handleDealColumns() {
+    dealColumns(props.columns);
 }
 
 function updateDataSource(val: DT[]) {
@@ -1205,9 +1089,9 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     // 单元格拖选选区样式
-    if (props.cellSelection) {
+    if (props.areaSelection) {
         const absRowIndex = getRowIndex(rowIndex);
-        classList.push(...getCellSelectionClasses(cellKey, absRowIndex, colKey));
+        classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
     }
 
     if (col.type === 'seq') {
@@ -1398,7 +1282,7 @@ function onCellMouseDown(e: MouseEvent) {
     const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
     // 单元格拖选
-    if (props.cellSelection) {
+    if (props.areaSelection) {
         onSelectionMouseDown(e);
     }
 }
@@ -1767,16 +1651,16 @@ defineExpose({
     /**
      * 获取拖选选中的单元格信息
      *
-     * en: Get selected cells info (cellSelection=true)
-     * @see {@link getSelectedCells}
+     * en: Get selected cells info (areaSelection=true)
+     * @see {@link getSelectedArea}
      */
-    getSelectedCells,
+    getSelectedArea,
     /**
      * 清空拖选选区
      *
-     * en: Clear cell selection range (cellSelection=true)
-     * @see {@link clearSelectedCells}
+     * en: Clear cell selection range (areaSelection=true)
+     * @see {@link clearSelectedArea}
      */
-    clearSelectedCells,
+    clearSelectedArea,
 });
 </script>

@@ -82,7 +82,7 @@ export type StkProps = {
   /** 单元格再次点击否可以取消选中 (cellActive=true)*/
   selectedCellRevokable?: boolean;
   /** 是否启用单元格范围选中（拖拽选区） */
-  cellSelection?: boolean | {
+  areaSelection?: boolean | {
     /**
      * 复制时的单元格文本格式化回调。
      * 如果你使用了 customCell 自定义渲染，应该提供此回调以确保复制内容与展示内容一致。
