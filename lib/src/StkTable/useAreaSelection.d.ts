@@ -1,5 +1,5 @@
 import { Ref, ShallowRef } from 'vue';
-import { CellSelectionRange, CellKeyGen, ColKeyGen, RowKeyGen, StkTableColumn, UniqKey } from './types';
+import { AreaSelectionRange, CellKeyGen, ColKeyGen, RowKeyGen, StkTableColumn, UniqKey } from './types';
 
 type Params<DT extends Record<string, any>> = {
     props: any;
@@ -14,8 +14,8 @@ type Params<DT extends Record<string, any>> = {
 /**
  * 单元格拖拽选区
  */
-export declare function useCellSelection<DT extends Record<string, any>>({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, colKeyGen, cellKeyGen, }: Params<DT>): {
-    selectionRange: Ref<CellSelectionRange | null, CellSelectionRange | null>;
+export declare function useAreaSelection<DT extends Record<string, any>>({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, colKeyGen, cellKeyGen, }: Params<DT>): {
+    selectionRange: Ref<AreaSelectionRange | null, AreaSelectionRange | null>;
     isSelecting: Ref<boolean, boolean>;
     selectedCellKeys: import('vue').ComputedRef<Set<string>>;
     normalizedRange: import('vue').ComputedRef<{
@@ -25,8 +25,8 @@ export declare function useCellSelection<DT extends Record<string, any>>({ props
         maxCol: number;
     } | null>;
     onSelectionMouseDown: (e: MouseEvent) => void;
-    getCellSelectionClasses: (cellKey: string, absoluteRowIndex: number, colKey: UniqKey) => string[];
-    getSelectedCells: () => {
+    getAreaSelectionClasses: (cellKey: string, absoluteRowIndex: number, colKey: UniqKey) => string[];
+    getSelectedArea: () => {
         rows: DT[];
         cols: StkTableColumn<DT>[];
         range: null;
@@ -40,6 +40,6 @@ export declare function useCellSelection<DT extends Record<string, any>>({ props
             endColIndex: number;
         };
     };
-    clearSelectedCells: () => void;
+    clearSelectedArea: () => void;
 };
 export {};

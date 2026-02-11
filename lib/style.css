@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.10.0-beta.1
+ * version: v0.10.0-beta.3
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -20,12 +20,12 @@
   --border-color:#e8e8f4;
   --border-width:1px;
   --td-bgc:#fff;
-  --td-hover-color:#71a2fd;
-  --td-active-color:#386ccc;
+  --td-hover-color:hsl(207, 90%, 70%);
+  --td-active-color:hsl(207, 90%, 54%);
   --th-bgc:#f1f1f9;
   --th-color:#272841;
   --tr-active-bgc:#e6f7ff;
-  --tr-hover-bgc:rgba(230, 247, 255, 0.7);
+  --tr-hover-bgc:#e6f7ff;
   --bg-border-top:linear-gradient(180deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --bg-border-right:linear-gradient(270deg, var(--border-color) var(--border-width), transparent var(--border-width));
   --bg-border-bottom:linear-gradient(0deg, var(--border-color) var(--border-width), transparent var(--border-width));
@@ -46,13 +46,14 @@
   --drag-handle-hover-color:#d0d1e0;
   --sb-thumb-color:#c1c1d7;
   --sb-thumb-hover-color:#a8a8c1;
-  --cell-selection-bgc:rgba(33, 133, 208, 0.15);
-  --cell-selection-border-color:#2185d0;
+  --cs-bgc:#d3eafd;
+  --cs-bc:#2196f3;
   position:relative;
   overflow:auto;
   display:flex;
   flex-direction:column;
   box-sizing:border-box;
+  outline:none;
 }
 .stk-table:hover .stk-sb-thumb{
   opacity:0.7;
@@ -61,8 +62,8 @@
   --th-bgc:#202029;
   --th-color:#c0c0d1;
   --td-bgc:#1b1b24;
-  --td-hover-color:#70a6ff;
-  --td-active-color:#386ccc;
+  --td-hover-color:hsl(219, 59%, 60%);
+  --td-active-color:hsl(219, 59%, 51%);
   --border-color:#292933;
   --tr-active-bgc:#283f63;
   --tr-hover-bgc:#1a2b46;
@@ -81,9 +82,12 @@
   --drag-handle-hover-color:#5d6064;
   --sb-thumb-color:rgba(93, 96, 100, 0.9);
   --sb-thumb-hover-color:#727782;
-  --cell-selection-bgc:rgba(33, 133, 208, 0.25);
-  --cell-selection-border-color:#4a9fe5;
+  --cs-bgc:#2a3f6b;
+  --cs-bc:#386ccc;
   color:#d1d1e0;
+}
+.stk-table.dark .cell-range-selected{
+  background-blend-mode:normal;
 }
 .stk-table.scrollbar-on{
   overflow:hidden;
@@ -156,27 +160,6 @@
   -webkit-user-select:none;
      -moz-user-select:none;
           user-select:none;
-}
-.stk-table td.cell-range-selected{
-  --cs-top:0;
-  --cs-bottom:0;
-  --cs-left:0;
-  --cs-right:0;
-  background-color:var(--cell-selection-bgc);
-  box-shadow:inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color), inset 0 0 0 0 var(--cell-selection-border-color);
-  box-shadow:inset 0 var(--cs-top) 0 0 var(--cell-selection-border-color), inset 0 var(--cs-bottom) 0 0 var(--cell-selection-border-color), inset var(--cs-left) 0 0 0 var(--cell-selection-border-color), inset var(--cs-right) 0 0 0 var(--cell-selection-border-color);
-}
-.stk-table td.cell-range-t{
-  --cs-top:2px;
-}
-.stk-table td.cell-range-b{
-  --cs-bottom:-2px;
-}
-.stk-table td.cell-range-l{
-  --cs-left:2px;
-}
-.stk-table td.cell-range-r{
-  --cs-right:-2px;
 }
 .stk-table.text-overflow .table-cell-wrapper{
   white-space:nowrap;
@@ -325,6 +308,24 @@
 }
 .stk-table .fixed-cell{
   background-color:inherit;
+}
+.stk-table .cell-range-selected{
+  background-blend-mode:multiply;
+  background-color:var(--cs-bgc);
+  box-shadow:inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc);
+  box-shadow:inset 0 var(--cs-t, 0) 0 0 var(--cs-bc), inset 0 var(--cs-b, 0) 0 0 var(--cs-bc), inset var(--cs-l, 0) 0 0 0 var(--cs-bc), inset var(--cs-r, 0) 0 0 0 var(--cs-bc);
+}
+.stk-table .cell-range-t{
+  --cs-t:2px;
+}
+.stk-table .cell-range-b{
+  --cs-b:-2px;
+}
+.stk-table .cell-range-l{
+  --cs-l:2px;
+}
+.stk-table .cell-range-r{
+  --cs-r:-2px;
 }
 .stk-table .highlight-cell{
   animation-name:stk-table-dim;

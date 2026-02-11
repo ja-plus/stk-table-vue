@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, CellSelectionConfig, CellSelectionRange, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, AreaSelectionConfig, AreaSelectionRange, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
@@ -139,7 +139,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean;
     /** 是否启用单元格范围选中（拖拽选区） */
-    cellSelection?: boolean | CellSelectionConfig;
+    areaSelection?: boolean | AreaSelectionConfig;
     /** 表头是否可拖动。支持回调函数。 */
     headerDrag?: boolean | HeaderDragConfig<DT>;
     /**
@@ -246,7 +246,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellHover: boolean;
     cellActive: boolean;
     selectedCellRevokable: boolean;
-    cellSelection: boolean;
+    areaSelection: boolean;
     headerDrag: () => false;
     rowClassName: () => "";
     colResizable: () => false;
@@ -401,10 +401,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /**
      * 获取拖选选中的单元格信息
      *
-     * en: Get selected cells info (cellSelection=true)
-     * @see {@link getSelectedCells}
+     * en: Get selected cells info (areaSelection=true)
+     * @see {@link getSelectedArea}
      */
-    getSelectedCells: () => {
+    getSelectedArea: () => {
         rows: PrivateRowDT[];
         cols: StkTableColumn<PrivateRowDT>[];
         range: null;
@@ -421,10 +421,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /**
      * 清空拖选选区
      *
-     * en: Clear cell selection range (cellSelection=true)
-     * @see {@link clearSelectedCells}
+     * en: Clear cell selection range (areaSelection=true)
+     * @see {@link clearSelectedArea}
      */
-    clearSelectedCells: () => void;
+    clearSelectedArea: () => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any, data: {
@@ -475,7 +475,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT;
         col: StkTableColumn<DT> | null;
     }) => void;
-    "cell-selection-change": (range: CellSelectionRange | null, data: {
+    "area-selection-change": (range: AreaSelectionRange | null, data: {
         rows: DT[];
         cols: StkTableColumn<DT>[];
     }) => void;
@@ -551,7 +551,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 单元格再次点击否可以取消选中 (cellActive=true)*/
     selectedCellRevokable?: boolean;
     /** 是否启用单元格范围选中（拖拽选区） */
-    cellSelection?: boolean | CellSelectionConfig;
+    areaSelection?: boolean | AreaSelectionConfig;
     /** 表头是否可拖动。支持回调函数。 */
     headerDrag?: boolean | HeaderDragConfig<DT>;
     /**
@@ -658,7 +658,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellHover: boolean;
     cellActive: boolean;
     selectedCellRevokable: boolean;
-    cellSelection: boolean;
+    areaSelection: boolean;
     headerDrag: () => false;
     rowClassName: () => "";
     colResizable: () => false;
@@ -687,6 +687,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         startIndex: number;
         endIndex: number;
     }) => any) | undefined;
+    "onArea-selection-change"?: ((range: AreaSelectionRange | null, data: {
+        rows: DT[];
+        cols: StkTableColumn<DT>[];
+    }) => any) | undefined;
     "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
     "onCol-resize"?: ((col: StkTableColumn<any>) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
@@ -702,10 +706,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         expanded: boolean;
         row: DT;
         col: StkTableColumn<DT> | null;
-    }) => any) | undefined;
-    "onCell-selection-change"?: ((range: CellSelectionRange | null, data: {
-        rows: DT[];
-        cols: StkTableColumn<DT>[];
     }) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any, data: {
@@ -751,13 +751,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowKey: UniqKeyProp;
     headerRowHeight: number | string | null;
     scrollbar: boolean | ScrollbarOptions;
+    virtualX: boolean;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
     rowActive: boolean | RowActiveOption<DT>;
     rowCurrentRevokable: boolean;
     virtual: boolean;
-    virtualX: boolean;
     columns: StkTableColumn<DT>[];
     dataSource: DT[];
     emptyCellText: string | ((option: {
@@ -773,7 +773,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellHover: boolean;
     cellActive: boolean;
     selectedCellRevokable: boolean;
-    cellSelection: boolean | CellSelectionConfig;
+    areaSelection: boolean | AreaSelectionConfig;
     headerDrag: boolean | HeaderDragConfig<DT>;
     rowClassName: (row: DT, i: number) => string | undefined;
     colResizable: boolean | ColResizableConfig<DT>;

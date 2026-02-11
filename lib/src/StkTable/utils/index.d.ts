@@ -51,9 +51,9 @@ export declare function howDeepTheHeader(arr: StkTableColumn<any>[], level?: num
 export declare function transformWidthToStr(width?: string | number): string | undefined;
 export declare function getBrowsersVersion(browserName: string): number;
 export declare function pureCellKeyGen(rowKey: UniqKey, colKey: UniqKey): string;
-export declare function getClosestTr(e: MouseEvent): HTMLTableRowElement | null;
-export declare function getClosestTrIndex(e: MouseEvent): number;
-export declare function getClosestColKey(e: MouseEvent): string | undefined;
+export declare function getClosestTr(target: HTMLElement): HTMLTableRowElement | null;
+export declare function getClosestTrIndex(target: HTMLElement): number;
+export declare function getClosestColKey(target: HTMLElement): string | undefined;
 /**
  * 改进的节流函数，确保最后一个调用不会被丢弃
  * @param fn 要执行的函数
