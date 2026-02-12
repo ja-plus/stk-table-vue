@@ -108,18 +108,16 @@
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
                 >
-                    <template v-if="!experimental?.scrollY">
-                        <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
-                            <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
-                            <template v-if="fixedMode && headless">
-                                <td
-                                    v-for="col in virtualX_columnPart"
-                                    :key="colKeyGen(col)"
-                                    :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"
-                                ></td>
-                            </template>
-                        </tr>
-                    </template>
+                    <tr
+                        v-if="!experimental?.scrollY && virtual_on && !isSRBRActive"
+                        :style="`height:${virtualScroll.offsetTop}px`"
+                        class="padding-top-tr"
+                    >
+                        <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
+                        <template v-if="fixedMode && headless">
+                            <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
+                        </template>
+                    </tr>
                     <tr
                         v-for="(row, rowIndex) in virtual_dataSourcePart"
                         ref="trRef"
