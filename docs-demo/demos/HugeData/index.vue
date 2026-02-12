@@ -287,7 +287,8 @@ function handleColSpan(v: boolean) {
         col-resizable
         sort-remote
         :area-selection="areaSelection"
-        :scrollbar="experimentalScrollY ? { experimentalScrollY: true } : scrollbar"
+        :scrollbar="scrollbar"
+        :experimental="{ scrollY: experimentalScrollY }"
         :scroll-row-by-row="rowByRow || optimizeDragScroll"
         :sort-config="sortConfig"
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"

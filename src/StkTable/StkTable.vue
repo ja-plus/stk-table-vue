@@ -26,6 +26,7 @@
             'scroll-row-by-row': isSRBRActive,
             'scrollbar-on': scrollbarOptions.enabled,
             'is-cell-selecting': isCellSelecting,
+            'exp-scroll-y': experimental?.scrollY,
         }"
         :tabindex="props.areaSelection ? 0 : void 0"
         :style="{
@@ -39,11 +40,7 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <div
-            v-if="!scrollbarOptions.experimentalScrollY && SRBRTotalHeight"
-            class="row-by-row-table-height"
-            :style="`height: ${SRBRTotalHeight}px`"
-        ></div>
+        <div v-if="!experimental?.scrollY && SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
@@ -111,7 +108,7 @@
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
                 >
-                    <template v-if="!scrollbarOptions.experimentalScrollY">
+                    <template v-if="!experimental?.scrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="`height:${virtualScroll.offsetTop}px`" class="padding-top-tr">
                             <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                             <template v-if="fixedMode && headless">
@@ -190,7 +187,7 @@
                         </template>
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
-                    <template v-if="!scrollbarOptions.experimentalScrollY">
+                    <template v-if="!experimental?.scrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
                         <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
                     </template>
@@ -248,6 +245,7 @@ import {
     ColResizableConfig,
     DragRowConfig,
     ExpandConfig,
+    ExperimentalConfig,
     HeaderDragConfig,
     HighlightConfig,
     Order,
@@ -440,6 +438,10 @@ const props = withDefaults(
          * - ScrollbarOptions: 启用并配置自定义滚动条
          */
         scrollbar?: boolean | ScrollbarOptions;
+        /**
+         * 实验性功能配置
+         */
+        experimental?: ExperimentalConfig;
     }>(),
     {
         width: '',
@@ -491,6 +493,7 @@ const props = withDefaults(
         smoothScroll: DEFAULT_SMOOTH_SCROLL,
         scrollRowByRow: false,
         scrollbar: false,
+        experimental: () => ({}),
     },
 );
 
@@ -751,7 +754,6 @@ const SRBRBottomHeight = computed(() => {
 
 const scrollbarOptions = computed(() => ({
     enabled: true,
-    experimentalScrollY: false,
     minHeight: 20,
     minWidth: 20,
     width: 8,
@@ -1353,7 +1355,7 @@ function onTableWheel(e: WheelEvent) {
         if (isWheeling()) {
             e.preventDefault();
         }
-        if (scrollbarOptions.value.experimentalScrollY) {
+        if (props.experimental?.scrollY) {
             updateVirtualScrollY(scrollTop + deltaY);
             updateCustomScrollbar();
         } else {

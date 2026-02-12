@@ -5,8 +5,11 @@
     - Add: `getSelectedArea` method to get selected cells information.
     - Add: `clearSelectedArea` method to clear selected cells.
     - Add: emit `area-selection-change` event when selected cells changed.
+  - Add: `experimental` prop to group experimental features.
+    - Add: `experimental.scrollY` to enable transform-based scrolling.
 * Optimize
   - Use Qoder to optimize code.
+  - Refactor: Extract column processing logic into `useTableColumns` hook.
 * Bugfix
   - `props.scrollbar` not work correctly common mode(not in virtual mode) .Now change to: `props.scrollbar` only take effect in `virtual` mode.
   - row hover background-color change to opaque color

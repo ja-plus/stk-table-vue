@@ -109,7 +109,7 @@
         /* ⭐这里加background-color会导致表格出滚动白屏*/
         color: #d1d1e0;
 
-        .cell-range-selected{
+        .cell-range-selected {
             background-blend-mode: normal;
         }
     }
@@ -314,6 +314,12 @@
         .stk-table-scroll-container {
             position: sticky;
             top: 0;
+        }
+    }
+
+    &.exp-scroll-y {
+        .stk-tbody-main {
+            will-change: transform;
         }
     }
 
@@ -667,6 +673,7 @@
         user-select: none;
         opacity: 0;
         flex-shrink: 0;
+        will-change: transform;
 
         &:hover {
             background-color: var(--sb-thumb-hover-color);

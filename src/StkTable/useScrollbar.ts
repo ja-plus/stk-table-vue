@@ -4,8 +4,6 @@ import { throttle } from './utils/index';
 
 export type ScrollbarOptions = {
     enabled?: boolean;
-    /** use transform to simulate scroll */
-    experimentalScrollY?: boolean;
     /** scroll-y width */
     width?: number;
     /** scroll-x height */
@@ -133,7 +131,7 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
 
-        if (scrollbarOptions.value.experimentalScrollY) {
+        if (props.experimental?.scrollY) {
             const ratio = containerHeight / scrollHeight;
             const top = Math.round((dragStartTop + scrollDelta) * ratio);
             const maxTop = containerHeight - scrollbar.value.h;
