@@ -1,4 +1,4 @@
-import { AutoRowHeightConfig, AreaSelectionConfig, AreaSelectionRange, ColResizableConfig, DragRowConfig, ExpandConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AutoRowHeightConfig, AreaSelectionConfig, AreaSelectionRange, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
@@ -216,6 +216,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - ScrollbarOptions: 启用并配置自定义滚动条
      */
     scrollbar?: boolean | ScrollbarOptions;
+    /**
+     * 实验性功能配置
+     */
+    experimental?: ExperimentalConfig;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -270,6 +274,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     smoothScroll: boolean;
     scrollRowByRow: boolean;
     scrollbar: boolean;
+    experimental: () => {};
 }>>, {
     /**
      * 重新计算虚拟列表宽高
@@ -425,6 +430,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * @see {@link clearSelectedArea}
      */
     clearSelectedArea: () => void;
+    /**
+     * 复制选区内容到剪贴板
+     *
+     * en: Copy selected area to clipboard (areaSelection=true)
+     * @see {@link copySelectedArea}
+     */
+    copySelectedArea: () => string;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any, data: {
@@ -628,6 +640,10 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * - ScrollbarOptions: 启用并配置自定义滚动条
      */
     scrollbar?: boolean | ScrollbarOptions;
+    /**
+     * 实验性功能配置
+     */
+    experimental?: ExperimentalConfig;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -682,6 +698,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     smoothScroll: boolean;
     scrollRowByRow: boolean;
     scrollbar: boolean;
+    experimental: () => {};
 }>>> & Readonly<{
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -790,6 +807,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellFixedMode: "sticky" | "relative";
     smoothScroll: boolean;
     scrollRowByRow: boolean | "scrollbar";
+    experimental: ExperimentalConfig;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;

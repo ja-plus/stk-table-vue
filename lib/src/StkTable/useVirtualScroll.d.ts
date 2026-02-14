@@ -1,5 +1,6 @@
 import { Ref, ShallowRef } from 'vue';
 import { PrivateRowDT, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { ScrollbarOptions } from './useScrollbar';
 
 type Option<DT extends Record<string, any>> = {
     props: any;
@@ -10,6 +11,7 @@ type Option<DT extends Record<string, any>> = {
     tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>;
     rowKeyGen: RowKeyGen;
     maxRowSpan: Map<UniqKey, number>;
+    scrollbarOptions: Ref<Required<ScrollbarOptions>>;
 };
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -29,6 +31,7 @@ export type VirtualScrollStore = {
     scrollTop: number;
     /** 总滚动高度 */
     scrollHeight: number;
+    translateY: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -50,7 +53,7 @@ export type VirtualScrollXStore = {
  * @param param0
  * @returns
  */
-export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, }: Option<DT>): {
+export declare function useVirtualScroll<DT extends Record<string, any>>({ props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, scrollbarOptions, }: Option<DT>): {
     virtualScroll: Ref<{
         containerHeight: number;
         pageSize: number;
@@ -60,6 +63,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         offsetTop: number;
         scrollTop: number;
         scrollHeight: number;
+        translateY: number;
     }, VirtualScrollStore | {
         containerHeight: number;
         pageSize: number;
@@ -69,6 +73,7 @@ export declare function useVirtualScroll<DT extends Record<string, any>>({ props
         offsetTop: number;
         scrollTop: number;
         scrollHeight: number;
+        translateY: number;
     }>;
     virtualScrollX: Ref<{
         containerWidth: number;

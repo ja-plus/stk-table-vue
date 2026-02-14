@@ -217,6 +217,9 @@
   position:sticky;
   top:0;
 }
+.stk-table.exp-scroll-y .stk-tbody-main{
+  will-change:transform;
+}
 .stk-table .row-by-row-table-height{
   width:1px;
   flex-shrink:0;
@@ -487,6 +490,7 @@
           user-select:none;
   opacity:0;
   flex-shrink:0;
+  will-change:transform;
 }
 .stk-table .stk-sb-thumb:hover{
   background-color:var(--sb-thumb-hover-color);

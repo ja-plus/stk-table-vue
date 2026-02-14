@@ -289,4 +289,9 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
      */
     formatCellForClipboard?: (row: T, col: StkTableColumn<T>, rawValue: any) => string;
 };
+/** 实验性功能配置 */
+export type ExperimentalConfig = {
+    /** use transform to simulate scroll */
+    scrollY?: boolean;
+};
 export {};

@@ -61,3 +61,10 @@ export declare function getClosestColKey(target: HTMLElement): string | undefine
  * @returns 节流处理后的函数
  */
 export declare function throttle<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void;
+/**
+ * Creates a requestAnimationFrame-based throttled function for smooth scrolling performance.
+ * Multiple calls within a single frame are coalesced - only the last call is executed.
+ * @param fn The function to throttle
+ * @returns A throttled function that executes on the next animation frame
+ */
+export declare function rafThrottle<T extends (...args: any[]) => any>(fn: T): (...args: Parameters<T>) => void;

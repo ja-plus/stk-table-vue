@@ -17,6 +17,8 @@ type Params = {
     containerRef: Ref<HTMLDivElement | undefined>;
     virtualScroll: Ref<VirtualScrollStore>;
     virtualScrollX: Ref<VirtualScrollXStore>;
+    updateVirtualScrollY: (sTop?: number) => void;
+    scrollbarOptions: Ref<Required<ScrollbarOptions>>;
 };
 /**
  * 自定义滚动条hooks
@@ -24,8 +26,7 @@ type Params = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export declare function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX }: Params): {
-    scrollbarOptions: import('vue').ComputedRef<any>;
+export declare function useScrollbar({ props, containerRef, virtualScroll, virtualScrollX, updateVirtualScrollY, scrollbarOptions }: Params): {
     scrollbar: Ref<{
         h: number;
         w: number;

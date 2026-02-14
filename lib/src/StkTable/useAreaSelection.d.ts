@@ -41,5 +41,6 @@ export declare function useAreaSelection<DT extends Record<string, any>>({ props
         };
     };
     clearSelectedArea: () => void;
+    copySelectedArea: () => string;
 };
 export {};
