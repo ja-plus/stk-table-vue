@@ -284,17 +284,18 @@ export function useVirtualScroll<DT extends Record<string, any>>({
         const dataLength = dataSourceCopyTemp.length;
         const rowHeight = getRowHeightFn.value();
 
-        const vsValue: any = { scrollTop: sTop };
+        const vsValue: any = {};
         const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
         const { enabled: scrollbarEnable } = scrollbarOptions.value;
         if (scrollbarEnable) {
             vsValue.scrollHeight = scrollHeight;
-            if (props.experimental?.scrollY && !props.scrollRowByRow) {
+            if (props.experimental?.scrollY) {
                 let maxTop: number;
                 sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
-                vsValue.translateY = -(sTop % rowHeight);
+                vsValue.translateY = props.scrollRowByRow ? 0 : -(sTop % rowHeight);
             }
         }
+        vsValue.scrollTop = sTop;
 
         Object.assign(virtualScroll.value, vsValue);
 

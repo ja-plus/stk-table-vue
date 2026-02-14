@@ -284,3 +284,31 @@ export function throttle<T extends (...args: any[]) => any>(fn: T, delay: number
         }
     };
 }
+
+/**
+ * Creates a requestAnimationFrame-based throttled function for smooth scrolling performance.
+ * Multiple calls within a single frame are coalesced - only the last call is executed.
+ * @param fn The function to throttle
+ * @returns A throttled function that executes on the next animation frame
+ */
+export function rafThrottle<T extends (...args: any[]) => any>(fn: T): (...args: Parameters<T>) => void {
+    let rafId: number | null = null;
+    let lastArgs: Parameters<T> | null = null;
+
+    const callFn = function () {
+        if (lastArgs) {
+            fn(...lastArgs);
+            lastArgs = null;
+        }
+    };
+
+    return function (...args: Parameters<T>) {
+        lastArgs = args;
+        if (rafId === null) {
+            rafId = requestAnimationFrame(() => {
+                callFn();
+                rafId = null;
+            });
+        }
+    };
+}

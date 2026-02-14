@@ -279,7 +279,7 @@ import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
-import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, tableSort, transformWidthToStr } from './utils/index';
+import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, rafThrottle, tableSort, transformWidthToStr } from './utils/index';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -787,6 +787,11 @@ const {
     setAutoHeight,
     clearAllAutoHeight,
 } = useVirtualScroll({ tableContainerRef, trRef, props, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, scrollbarOptions });
+
+/** requestAnimationFrame throttled version of updateVirtualScrollY for smoother wheel scrolling */
+const rafUpdateVirtualScrollYForWheel = rafThrottle((scrollTop: number) => {
+    updateVirtualScrollY(scrollTop);
+});
 
 const { scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar } = useScrollbar({
     props,
@@ -1355,7 +1360,7 @@ function onTableWheel(e: WheelEvent) {
             e.preventDefault();
         }
         if (props.experimental?.scrollY) {
-            updateVirtualScrollY(scrollTop + deltaY);
+            rafUpdateVirtualScrollYForWheel(scrollTop + deltaY);
             updateCustomScrollbar();
         } else {
             dom.scrollTop += deltaY;

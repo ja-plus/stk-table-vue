@@ -1,6 +1,6 @@
 import { nextTick, onMounted, onUnmounted, ref, Ref } from 'vue';
 import type { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
-import { throttle } from './utils/index';
+import { rafThrottle, throttle } from './utils/index';
 
 export type ScrollbarOptions = {
     enabled?: boolean;
@@ -46,6 +46,11 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
     const throttledUpdateScrollbar = throttle(() => {
         updateCustomScrollbar();
     }, 200);
+
+    // Use requestAnimationFrame for smoother scrollbar dragging performance
+    const rafUpdateVirtualScrollY = rafThrottle((scrollTop: number) => {
+        updateVirtualScrollY(scrollTop);
+    });
 
     onMounted(() => {
         if (scrollbarOptions.value.enabled) {
@@ -137,7 +142,7 @@ export function useScrollbar({ props, containerRef, virtualScroll, virtualScroll
             const maxTop = containerHeight - scrollbar.value.h;
 
             scrollbar.value.t = top < 0 ? 0 : top > maxTop ? maxTop : top;
-            updateVirtualScrollY(dragStartTop + scrollDelta);
+            rafUpdateVirtualScrollY(dragStartTop + scrollDelta);
         } else {
             containerRef.value!.scrollTop = dragStartTop + scrollDelta;
         }
