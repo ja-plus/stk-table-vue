@@ -197,3 +197,10 @@ function getSelectedArea(): {
 
 ### clearSelectedArea
 Clear selected cells
+
+### copySelectedArea
+Copy selected area content to clipboard. Returns the copied text content (TSV format).
+
+```ts
+function copySelectedArea(): string
+```

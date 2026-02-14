@@ -196,3 +196,10 @@ function getSelectedArea(): {
 
 ### clearSelectedArea
 清除选中的单元格
+
+### copySelectedArea
+复制选区内容到剪贴板。返回复制的文本内容（TSV 格式）。
+
+```ts
+function copySelectedArea(): string
+```

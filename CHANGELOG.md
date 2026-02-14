@@ -4,6 +4,7 @@
   - Add: `areaSelection` prop to enable cell drag selection.
     - Add: `getSelectedArea` method to get selected cells information.
     - Add: `clearSelectedArea` method to clear selected cells.
+    - Add: `copySelectedArea` method to copy selected cells.
     - Add: emit `area-selection-change` event when selected cells changed.
   - Add: `experimental` prop to group experimental features.
     - Add: `experimental.scrollY` to enable transform-based scrolling.

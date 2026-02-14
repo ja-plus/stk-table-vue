@@ -13,5 +13,10 @@ Enable cell drag selection in the table via `props.areaSelection`.
 
 <demo vue="advanced/area-selection/AreaSelection.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/area-selection/AreaSelection.vue"></demo>
 
-# Emit
+## Emit
 - [area-selection-change](/en/main/api/emits.html#area-selection-change)
+
+## Exposed
+- [getSelectedArea](/en/main/api/expose.html#getselectedarea)
+- [clearSelectedArea](/en/main/api/expose.html#clearselectedarea)
+- [copySelectedArea](/en/main/api/expose.html#copyselectedarea)

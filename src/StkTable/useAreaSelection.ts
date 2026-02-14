@@ -351,22 +351,11 @@ export function useAreaSelection<DT extends Record<string, any>>({
     }
 
     /**
-     * Ctrl+C / Cmd+C 复制选区内容
-     * Esc 取消选区
-     **/
-    function onKeydown(e: KeyboardEvent) {
-        if (!props.areaSelection || !selectionRange.value) return;
-
-        // Esc 键：取消当前选区
-        if (e.key === 'Escape' || e.key === 'Esc') {
-            clearSelectedArea();
-            emitSelectionChange();
-            e.preventDefault();
-            return;
-        }
-
-        // Ctrl/Cmd+C 复制选区
-        if (!((e.ctrlKey || e.metaKey) && e.key === 'c')) return;
+     * 复制选区内容到剪贴板
+     * @returns 复制的文本内容
+     */
+    function copySelectedArea(): string {
+        if (!selectionRange.value) return '';
 
         const range = selectionRange.value;
         const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
@@ -397,6 +386,28 @@ export function useAreaSelection<DT extends Record<string, any>>({
             console.warn('Failed to copy to clipboard');
         });
 
+        return text;
+    }
+
+    /**
+     * Ctrl+C / Cmd+C 复制选区内容
+     * Esc 取消选区
+     **/
+    function onKeydown(e: KeyboardEvent) {
+        if (!props.areaSelection || !selectionRange.value) return;
+
+        // Esc 键：取消当前选区
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            clearSelectedArea();
+            emitSelectionChange();
+            e.preventDefault();
+            return;
+        }
+
+        // Ctrl/Cmd+C 复制选区
+        if (!((e.ctrlKey || e.metaKey) && e.key === 'c')) return;
+
+        copySelectedArea();
         e.preventDefault();
     }
 
@@ -452,5 +463,6 @@ export function useAreaSelection<DT extends Record<string, any>>({
         getAreaSelectionClasses,
         getSelectedArea,
         clearSelectedArea,
+        copySelectedArea,
     };
 }

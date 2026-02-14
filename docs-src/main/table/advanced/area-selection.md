@@ -13,7 +13,10 @@
 
 <demo vue="advanced/area-selection/AreaSelection.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/area-selection/AreaSelection.vue"></demo>
 
-# Emit
+## Emit
 - [area-selection-change 区域变更触发](/main/api/emits.html#area-selection-change) 
 
-
+## Exposed
+- [getSelectedArea](/main/api/expose.md#getselectedarea)
+- [clearSelectedArea](/main/api/expose.md#clearselectedarea)
+- [copySelectedArea](/main/api/expose.md#copyselectedarea)

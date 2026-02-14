@@ -864,6 +864,7 @@ const {
     getAreaSelectionClasses,
     getSelectedArea,
     clearSelectedArea,
+    copySelectedArea,
 } = useAreaSelection({ props, emits, tableContainerRef, dataSourceCopy, tableHeaderLast, rowKeyGen, colKeyGen, cellKeyGen });
 
 watch(
@@ -1703,5 +1704,12 @@ defineExpose({
      * @see {@link clearSelectedArea}
      */
     clearSelectedArea,
+    /**
+     * 复制选区内容到剪贴板
+     *
+     * en: Copy selected area to clipboard (areaSelection=true)
+     * @see {@link copySelectedArea}
+     */
+    copySelectedArea,
 });
 </script>
