@@ -26,9 +26,22 @@ function extractFilterOptions(dataSource: any[], columnKey: string): FilterOptio
 }
 
 /**
+ * 查找最近的StkTable组件实例
+ * @param instance 当前组件实例
+ * @returns StkTable组件实例
+ */
+function findStkTableInstance(instance: any) {
+    let current = instance;
+    while ((current = current.parent)) {
+        if (current.type?.name === 'StkTable') {
+            return current;
+        }
+    }
+    return null;
+}
+
+/**
  * 表格筛选功能Hook
- * @param stkTableRef StkTable组件实例引用
- * @param options 筛选选项
  * @returns
  */
 export function useFilter() {
@@ -41,16 +54,16 @@ export function useFilter() {
                 props: ['col', 'colIndex'],
                 setup(props: CustomHeaderCellProps<any>) {
                     const colKey = props.col.dataIndex;
-                    console.log('🚀 ~ FilterComponent ~ colKey:', colKey);
-                    const parent = getCurrentInstance()?.parent;
+                    const currentInstance = getCurrentInstance();
+                    const stkTableInstance = findStkTableInstance(currentInstance);
                     const filterNumber = computed(() => {
-                        return filterStatus.value[colKey]?.value.length || 0; // TODO ColKeyGen
+                        return filterStatus.value[colKey]?.value.length || 0;
                     });
 
                     function handleUpdateFilterStatus(value: FilterOption['value'][]) {
-                        console.log('🚀 ~ FilterComponent ~ value:', colKey);
                         filterStatus.value[colKey] = { value };
-                        parent?.exposed?.setFilter(filterStatus.value);
+                        // 向上查找到最近的StkTable组件实例并调用其setFilter方法
+                        stkTableInstance?.exposed?.setFilter(filterStatus.value);
                     }
                     return () =>
                         h(Filter, {

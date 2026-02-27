@@ -48,6 +48,7 @@ function hide() {
     visible.value = false;
     options.value = [];
     checkedTempValue.value.clear();
+    confirm();
 }
 
 async function handleClickOutside(e: MouseEvent) {

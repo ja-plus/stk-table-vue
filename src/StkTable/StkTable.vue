@@ -225,7 +225,7 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
-import { FilterStatus } from './components/Filter';
+import type { FilterStatus } from './components/Filter/types';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -289,6 +289,7 @@ type DT = any & PrivateRowDT;
 /** generate table instance id */
 const stkTableId = createStkTableId();
 
+defineOptions({ name: 'StkTable' });
 /**
  * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
  */
