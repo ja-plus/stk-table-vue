@@ -236,7 +236,6 @@ import {
     DEFAULT_SORT_CONFIG,
     IS_LEGACY_MODE,
 } from './const';
-import { useAreaSelectionFnName } from './features';
 import { ON_DEMAND_FEATURE } from './registerFeature';
 import {
     AreaSelectionConfig,
@@ -281,6 +280,7 @@ import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, rafThrottle, tableSort, transformWidthToStr } from './utils/index';
+import { useAreaSelection } from './features';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -852,7 +852,7 @@ const {
     get: getSelectedArea,
     clear: clearSelectedArea,
     copy: copySelectedArea,
-} = ON_DEMAND_FEATURE[useAreaSelectionFnName](
+} = ON_DEMAND_FEATURE[useAreaSelection.name](
     props,
     emits,
     tableContainerRef,
