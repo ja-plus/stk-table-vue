@@ -16,7 +16,7 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
                 onChange: e => handleSelectChange(e, row),
             }),
     },
-    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label, row.selected ? '（已选）' : '']) },
+    { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
 ]);
 
 const visible = ref(false);

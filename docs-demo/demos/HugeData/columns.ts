@@ -81,7 +81,6 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
                 options: [
                     { label: '5000', value: 5000 },
                     { label: '4000', value: 4000 },
-                    { label: '2000', value: 2000 },
                 ],
             }),
         },

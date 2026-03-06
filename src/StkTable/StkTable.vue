@@ -282,6 +282,7 @@ import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, rafThrottle, tableSort, transformWidthToStr } from './utils/index';
 import { useAreaSelection } from './features';
+import { emit } from 'process';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -638,6 +639,12 @@ const emits = defineEmits<{
      */
     (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
     /**
+     * 筛选变更触发(Beta)
+     *
+     * ```(status: Record<UniqKey, FilterStatus>)```
+     */
+    (e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+    /**
      * v-model:columns col resize 时更新宽度
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
@@ -944,6 +951,7 @@ function initDataSource(v = props.dataSource) {
 function setFilter(status: Record<UniqKey, FilterStatus>) {
     filterStatus.value = status;
     initDataSource();
+    emits('filter-change', status);
 }
 
 function filterDataSource(dataSource: DT[]) {
