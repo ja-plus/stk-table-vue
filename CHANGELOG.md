@@ -2,6 +2,7 @@
 ## 0.11.0
 * Feature
   - Add: `areaSelection['keyboard']` to allow keyboard to select cell.
+  - Add: export `useFilter` (Beta)
 * BreakChange
   - Before use `areaSelection`, need register this feature.
     - Add: export `registerFeature` & `useAreaSelection` from 'stk-table-vue'
