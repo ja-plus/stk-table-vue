@@ -44,8 +44,7 @@ function show(pos: { x: number; y: number }, opt?: FilterOption[]) {
     options.value = opt || [];
     initChecked();
 }
-function hide() {
-    visible.value = false;
+function clear() {
     options.value = [];
     checkedTempValue.value.clear();
     confirm();
@@ -74,8 +73,11 @@ function confirm() {
     emit('confirm', Array.from(checkedTempValue.value));
     hide();
 }
+function hide() {
+    visible.value = false;
+}
 
-defineExpose({ visible, show, hide });
+defineExpose({ visible, show, clear, hide });
 </script>
 <template>
     <div
@@ -98,7 +100,7 @@ defineExpose({ visible, show, hide });
         >
         </StkTable>
         <footer>
-            <button @click="hide">❌</button>
+            <button @click="clear">❌</button>
             <button @click="confirm">✔️</button>
         </footer>
     </div>
