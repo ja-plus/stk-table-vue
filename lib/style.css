@@ -1,11 +1,73 @@
 /**
  * name: stk-table-vue
- * version: v0.11.0-beta.1
+ * version: v0.11.0-beta.2
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
  * license: MIT
  */
+.stk-filter{
+  display:inline-flex;
+  align-items:center;
+}
+.stk-filter.stk-filter--active .icon-filter{
+  color:#1b63d9;
+}
+.stk-filter .stk-filter-icon{
+  display:inline-flex;
+  width:16px;
+  height:16px;
+  cursor:pointer;
+}
+.stk-filter .stk-filter-icon:hover{
+  color:#409eff;
+}
+.stk-filter-dropdown{
+  --border-color:#303439;
+  --btn-hover-color:#2a2f34;
+  --bg-color:#181c21;
+  position:absolute;
+  width:120px;
+  max-height:200px;
+  background-color:#181c21;
+  background-color:var(--bg-color);
+  border:1px solid #303439;
+  border:1px solid var(--border-color);
+  border-radius:4px;
+  box-shadow:0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index:1000;
+  display:flex;
+  flex-direction:column;
+}
+.stk-filter-dropdown > .stk-table{
+  --cell-padding-x:4px;
+  padding:8px 0;
+  flex:1;
+  min-height:0;
+}
+.stk-filter-dropdown > .stk-table tr{
+  cursor:pointer;
+}
+.stk-filter-dropdown .stk-filter-dropdown-checkbox{
+  text-align:center;
+}
+.stk-filter-dropdown .stk-filter-dropdown-checkbox > [type="checkbox"]{
+  vertical-align:middle;
+}
+.stk-filter-dropdown footer{
+  display:flex;
+  border-top:1px solid var(--border-color);
+}
+.stk-filter-dropdown footer button{
+  flex:1;
+  cursor:pointer;
+}
+.stk-filter-dropdown footer button:first-child{
+  border-right:1px solid var(--border-color);
+}
+.stk-filter-dropdown footer button:hover{
+  background-color:var(--btn-hover-color);
+}
 @keyframes stk-table-dim{
   from{
     background-color:var(--highlight-color);

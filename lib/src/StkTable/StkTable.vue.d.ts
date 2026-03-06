@@ -1,8 +1,10 @@
+import { FilterStatus } from './components/Filter/types';
 import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
+declare function setFilter(status: Record<UniqKey, FilterStatus>): void;
 /**
  * 选中一行
  *
@@ -437,6 +439,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * @see {@link copySelectedArea}
      */
     copySelectedArea: () => string;
+    setFilter: typeof setFilter;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any, data: {
@@ -491,6 +494,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         rows: DT[];
         cols: StkTableColumn<DT>[];
     }) => void;
+    "filter-change": (status: Record<UniqKey, FilterStatus>) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     /** 表格宽度*/
@@ -754,6 +758,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => any) | undefined;
     "onHeader-cell-click"?: ((ev: MouseEvent, col: StkTableColumn<any>) => any) | undefined;
     "onScroll-x"?: ((ev: Event) => any) | undefined;
+    "onFilter-change"?: ((status: Record<UniqKey, FilterStatus>) => any) | undefined;
 }>, {
     width: string;
     minWidth: string;
