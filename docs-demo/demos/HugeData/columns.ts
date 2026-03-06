@@ -1,10 +1,12 @@
 import { StkTableColumn } from '@/StkTable';
+import { useFilter } from '../../../src/StkTable/index';
 import { h } from 'vue';
 import ExpandCell from './custom-cells/ExpandCell.vue';
 import SourceCell from './custom-cells/SourceCell.vue';
 import { DataType } from './types';
 import { useI18n } from '../../hooks/useI18n/index';
 
+const { Filter } = useFilter();
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
@@ -42,6 +44,13 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             align: 'right',
             headerAlign: 'right',
             sorter: true,
+            customHeaderCell: Filter({
+                options: [
+                    { label: '3000', value: 3000 },
+                    { label: '4000', value: 4000 },
+                    { label: '2000', value: 2000 },
+                ],
+            }),
         },
         {
             dataIndex: 'bestBuyPrice',
@@ -68,6 +77,12 @@ export const columns: () => StkTableColumn<DataType>[] = () => {
             align: 'right',
             headerAlign: 'right',
             sorter: true,
+            customHeaderCell: Filter({
+                options: [
+                    { label: '5000', value: 5000 },
+                    { label: '4000', value: 4000 },
+                ],
+            }),
         },
         {
             dataIndex: 'lastPrice',

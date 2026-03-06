@@ -225,6 +225,7 @@
  */
 import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
+import type { FilterStatus } from './components/Filter/types';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
 import TriangleIcon from './components/TriangleIcon.vue';
@@ -281,6 +282,7 @@ import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, rafThrottle, tableSort, transformWidthToStr } from './utils/index';
 import { useAreaSelection } from './features';
+import { emit } from 'process';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -288,6 +290,7 @@ type DT = any & PrivateRowDT;
 /** generate table instance id */
 const stkTableId = createStkTableId();
 
+defineOptions({ name: 'StkTable' });
 /**
  * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
  */
@@ -636,6 +639,12 @@ const emits = defineEmits<{
      */
     (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
     /**
+     * 筛选变更触发(Beta)
+     *
+     * ```(status: Record<UniqKey, FilterStatus>)```
+     */
+    (e: 'filter-change', status: Record<UniqKey, FilterStatus>): void;
+    /**
      * v-model:columns col resize 时更新宽度
      */
     (e: 'update:columns', cols: StkTableColumn<DT>[]): void;
@@ -683,6 +692,8 @@ let sortOrderIndex = ref(0);
 const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
 
 const [tableHeaders, tableHeadersForCalc, dealColumns] = useTableColumns<DT>(props.virtualX, isRelativeMode);
+
+const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
 /** 最后一行的tableHeaders.内容是 props.columns 的引用集合  */
 const tableHeaderLast = computed(() => tableHeadersForCalc.value.slice(-1)[0] || []);
@@ -933,7 +944,26 @@ function initDataSource(v = props.dataSource) {
         // only tree data need flat
         dataSourceTemp = flatTreeData(dataSourceTemp);
     }
+    dataSourceTemp = filterDataSource(dataSourceTemp);
     dataSourceCopy.value = dataSourceTemp;
+}
+
+function setFilter(status: Record<UniqKey, FilterStatus>) {
+    filterStatus.value = status;
+    initDataSource();
+    emits('filter-change', status);
+}
+
+function filterDataSource(dataSource: DT[]) {
+    const filterKeys = Object.keys(filterStatus.value);
+    if (!filterKeys?.length) return dataSource;
+    return dataSource.filter(row => {
+        return filterKeys.every(key => {
+            const { value } = filterStatus.value[key];
+            if (!value?.length) return true;
+            return value.some(v => row[key] == v);
+        });
+    });
 }
 
 function dealDefaultSorter() {
@@ -1709,5 +1739,12 @@ defineExpose({
      * @see {@link copySelectedArea}
      */
     copySelectedArea,
+    /*
+     * 设置筛选状态
+     *
+     * en: Set filter status
+     * @see {@link setFilter}
+     */
+    setFilter,
 });
 </script>
