@@ -57,6 +57,8 @@ export function useFilter() {
                     const colKey = props.col.dataIndex;
                     const currentInstance = getCurrentInstance();
                     const stkTableInstance = findStkTableInstance(currentInstance);
+                    // 从 StkTable 实例获取 theme
+                    const theme = computed(() => stkTableInstance?.props?.theme || 'light');
                     const filterNumber = computed(() => {
                         return filterStatus.value[colKey]?.value.length || 0;
                     });
@@ -71,11 +73,12 @@ export function useFilter() {
                             Filter,
                             {
                                 ...props,
+                                theme: theme.value,
                                 active: filterNumber.value > 0,
                                 options: config?.options || [],
                                 'onUpdate:filterStatus': handleUpdateFilterStatus,
                             },
-                            [component],
+                            [component ? h(component, props) : null],
                         );
                 },
             }),

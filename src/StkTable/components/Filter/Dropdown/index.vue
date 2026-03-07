@@ -4,6 +4,8 @@ import { h, onMounted, onUnmounted, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
 import type { FilterOption } from '../types';
 
+const theme = ref<'light' | 'dark'>('light');
+
 const columns = ref<StkTableColumn<FilterOption>[]>([
     {
         title: '',
@@ -77,21 +79,26 @@ function hide() {
     visible.value = false;
 }
 
-defineExpose({ visible, show, clear, hide });
+function setTheme(t: 'light' | 'dark') {
+    theme.value = t;
+}
+
+defineExpose({ visible, show, clear, hide, setTheme });
 </script>
 <template>
     <div
         ref="dropdownEl"
         class="stk-filter-dropdown"
+        :class="[`stk-filter-dropdown--${theme}`]"
         :style="{ top: position.y + 'px', left: position.x + 'px', display: visible ? void 0 : 'none' }"
         @click.stop
     >
         <StkTable
             row-key="id"
-            theme="dark"
             headless
             virtual
             no-data-full
+            :theme="theme"
             :row-active="false"
             :row-height="20"
             :bordered="false"
@@ -100,8 +107,8 @@ defineExpose({ visible, show, clear, hide });
         >
         </StkTable>
         <footer>
-            <button @click="clear">❌</button>
-            <button @click="confirm">✔️</button>
+            <button @click="clear">✗</button>
+            <button @click="confirm">✓</button>
         </footer>
     </div>
 </template>
