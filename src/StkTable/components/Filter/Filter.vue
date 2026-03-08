@@ -41,7 +41,7 @@ function handleConfirm(value: FilterOption['value'][]) {
 <template>
     <div class="stk-filter" :class="[{ 'stk-filter--active': props.active }, `stk-filter--${theme}`]">
         <slot>{{ props.col.title }}</slot>
-        <svg class="stk-filter-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 1024 1024" @click="handleIconClick">
+        <svg class="stk-filter-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" @click="handleIconClick">
             <path fill="currentColor" d="M609.508 463.246H414.492l-243.825-292.58h682.666zm0 48.754v212.878L414.492 853.333V512z" />
         </svg>
     </div>

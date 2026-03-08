@@ -5,6 +5,7 @@ import StkTable from '../../../StkTable.vue';
 import type { FilterOption } from '../types';
 
 const theme = ref<'light' | 'dark'>('light');
+const checkedTempValue = ref<Set<FilterOption['value']>>(new Set());
 
 const columns = ref<StkTableColumn<FilterOption>[]>([
     {
@@ -14,8 +15,8 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
         customCell: ({ row }) =>
             h('input', {
                 type: 'checkbox',
-                checked: row.selected,
-                onChange: e => handleSelectChange(e, row),
+                checked: checkedTempValue.value.has(row.value),
+                onClick: e => e.preventDefault(),
             }),
     },
     { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
@@ -26,7 +27,6 @@ const position = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 const options = ref<FilterOption[]>([]);
 
 const dropdownEl = ref<HTMLDivElement>();
-const checkedTempValue = ref<Set<FilterOption['value']>>(new Set());
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
@@ -60,9 +60,8 @@ function initChecked() {
     checkedTempValue.value = new Set(options.value.filter(opt => opt.selected).map(opt => opt.value));
 }
 
-function handleSelectChange(e: Event, row: FilterOption) {
-    const target = e.target as HTMLInputElement;
-    if (target.checked) {
+function updateChecked(checked: boolean, row: FilterOption) {
+    if (checked) {
         checkedTempValue.value.add(row.value);
     } else {
         checkedTempValue.value.delete(row.value);
@@ -76,6 +75,10 @@ function confirm() {
 }
 function hide() {
     visible.value = false;
+}
+function handleRowClick(e: MouseEvent, row: FilterOption) {
+    const selected = checkedTempValue.value.has(row.value);
+    updateChecked(!selected, row);
 }
 
 function setTheme(t: 'light' | 'dark') {
@@ -103,6 +106,7 @@ defineExpose({ visible, show, clear, hide, setTheme });
             :bordered="false"
             :columns="columns"
             :data-source="options"
+            @row-click="handleRowClick"
         >
         </StkTable>
         <footer>
