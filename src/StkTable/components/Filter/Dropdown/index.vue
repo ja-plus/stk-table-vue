@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { StkTableColumn } from '@/StkTable/types';
-import { h, onMounted, onUnmounted, ref } from 'vue';
+import { h, onMounted, onUnmounted, reactive, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
 import type { FilterOption } from '../types';
 
 const theme = ref<'light' | 'dark'>('light');
-const checkedTempValue = ref<Set<FilterOption['value']>>(new Set());
+const checkedTempValueSet = reactive<Set<FilterOption['value']>>(new Set());
 
 const columns = ref<StkTableColumn<FilterOption>[]>([
     {
         title: '',
         dataIndex: 'value',
+        width: 30,
         className: 'stk-filter-dropdown-checkbox',
         customCell: ({ row }) =>
             h('input', {
                 type: 'checkbox',
-                checked: checkedTempValue.value.has(row.value),
+                checked: checkedTempValueSet.has(row.value),
                 onClick: e => e.preventDefault(),
             }),
     },
@@ -45,11 +46,6 @@ function show(pos: { x: number; y: number }, opt: FilterOption[], onConfirm: (va
     initChecked();
     onConfirmFn = onConfirm;
 }
-function clear() {
-    options.value = [];
-    checkedTempValue.value.clear();
-    confirm();
-}
 
 async function handleClickOutside(e: MouseEvent) {
     if (!visible.value || dropdownEl.value?.contains(e.target as Node)) return;
@@ -57,27 +53,33 @@ async function handleClickOutside(e: MouseEvent) {
 }
 
 function initChecked() {
-    checkedTempValue.value = new Set(options.value.filter(opt => opt.selected).map(opt => opt.value));
+    options.value.forEach(opt => {
+        if (opt.selected) {
+            checkedTempValueSet.add(opt.value);
+        }
+    });
 }
 
 function updateChecked(checked: boolean, row: FilterOption) {
     if (checked) {
-        checkedTempValue.value.add(row.value);
+        checkedTempValueSet.add(row.value);
     } else {
-        checkedTempValue.value.delete(row.value);
+        checkedTempValueSet.delete(row.value);
     }
 }
 
 function confirm() {
-    options.value.forEach(opt => (opt.selected = checkedTempValue.value.has(opt.value)));
-    onConfirmFn(Array.from(checkedTempValue.value));
+    options.value.forEach(opt => (opt.selected = checkedTempValueSet.has(opt.value)));
+    onConfirmFn(Array.from(checkedTempValueSet));
     hide();
 }
 function hide() {
     visible.value = false;
+    options.value = [];
+    checkedTempValueSet.clear();
 }
 function handleRowClick(e: MouseEvent, row: FilterOption) {
-    const selected = checkedTempValue.value.has(row.value);
+    const selected = checkedTempValueSet.has(row.value);
     updateChecked(!selected, row);
 }
 
@@ -85,7 +87,11 @@ function setTheme(t: 'light' | 'dark') {
     theme.value = t;
 }
 
-defineExpose({ visible, show, clear, hide, setTheme });
+function handleClear() {
+    checkedTempValueSet.clear();
+}
+
+defineExpose({ visible, show, hide, setTheme });
 </script>
 <template>
     <div
@@ -95,6 +101,7 @@ defineExpose({ visible, show, clear, hide, setTheme });
         :style="{ top: position.y + 'px', left: position.x + 'px', display: visible ? void 0 : 'none' }"
         @click.stop
     >
+        <div style="padding: 4px">Filter (Beta)</div>
         <StkTable
             row-key="id"
             headless
@@ -107,10 +114,9 @@ defineExpose({ visible, show, clear, hide, setTheme });
             :columns="columns"
             :data-source="options"
             @row-click="handleRowClick"
-        >
-        </StkTable>
+        />
         <footer>
-            <button @click="clear">✗</button>
+            <button @click="handleClear">↺</button>
             <button @click="confirm">✓</button>
         </footer>
     </div>
