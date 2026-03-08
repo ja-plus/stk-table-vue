@@ -223,7 +223,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, ref, shallowRef, toRaw, watch } from 'vue';
+import { CSSProperties, computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import type { FilterStatus } from './components/Filter/types';
 import SortIcon from './components/SortIcon.vue';
@@ -282,7 +282,6 @@ import { useWheeling } from './useWheeling';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, isEmptyValue, rafThrottle, tableSort, transformWidthToStr } from './utils/index';
 import { useAreaSelection } from './features';
-import { emit } from 'process';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -498,6 +497,8 @@ const props = withDefaults(
         experimental: () => ({}),
     },
 );
+
+provide('stkTheme', toRef(props, 'theme'));
 
 const emits = defineEmits<{
     /**

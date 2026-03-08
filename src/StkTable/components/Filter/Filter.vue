@@ -8,7 +8,7 @@ const props = defineProps<
     CustomHeaderCellProps<any> & {
         theme?: 'light' | 'dark';
         active?: boolean; // 是否激活筛选
-        options?: FilterOption[]; // 自定义筛选选项
+        options: FilterOption[]; // 自定义筛选选项
     }
 >();
 
@@ -16,25 +16,25 @@ const props = defineProps<
 const theme = computed(() => props.theme || 'light');
 
 const emit = defineEmits<{
-    (e: 'update:filterStatus', value: FilterOption['value'][]): void;
+    (e: 'change', value: FilterOption['value'][]): void;
 }>();
 
 function handleIconClick(e: MouseEvent) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
     const pos = target.getBoundingClientRect();
-    getDropdownIns(handleConfirm).then(ins => {
+    getDropdownIns().then(ins => {
         ins.setTheme(theme.value);
         if (ins.visible) {
             ins.hide();
             return;
         }
-        ins.show({ x: pos.left, y: pos.bottom }, props.options);
+        ins.show({ x: pos.left, y: pos.bottom }, props.options, handleConfirm);
     });
 }
 
 function handleConfirm(value: FilterOption['value'][]) {
-    emit('update:filterStatus', value);
+    emit('change', value);
 }
 </script>
 

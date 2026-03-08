@@ -28,10 +28,6 @@ const options = ref<FilterOption[]>([]);
 const dropdownEl = ref<HTMLDivElement>();
 const checkedTempValue = ref<Set<FilterOption['value']>>(new Set());
 
-const emit = defineEmits<{
-    (e: 'confirm', options: FilterOption[]): void;
-}>();
-
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
 });
@@ -40,11 +36,14 @@ onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
 
-function show(pos: { x: number; y: number }, opt?: FilterOption[]) {
+let onConfirmFn: (values: FilterOption['value'][]) => void;
+
+function show(pos: { x: number; y: number }, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void) {
     visible.value = true;
     position.value = pos;
     options.value = opt || [];
     initChecked();
+    onConfirmFn = onConfirm;
 }
 function clear() {
     options.value = [];
@@ -72,7 +71,7 @@ function handleSelectChange(e: Event, row: FilterOption) {
 
 function confirm() {
     options.value.forEach(opt => (opt.selected = checkedTempValue.value.has(opt.value)));
-    emit('confirm', Array.from(checkedTempValue.value));
+    onConfirmFn(Array.from(checkedTempValue.value));
     hide();
 }
 function hide() {

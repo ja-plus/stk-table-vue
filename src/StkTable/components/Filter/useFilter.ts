@@ -26,21 +26,6 @@ import type { FilterOption, FilterStatus } from './types';
 // }
 
 /**
- * 查找最近的StkTable组件实例
- * @param instance 当前组件实例
- * @returns StkTable组件实例
- */
-function findStkTableInstance(instance: any) {
-    let current = instance;
-    while ((current = current.parent)) {
-        if (current.type?.name === 'StkTable') {
-            return current;
-        }
-    }
-    return null;
-}
-
-/**
  * 表格筛选功能Hook (BETA)
  * @beta
  * @returns
@@ -55,7 +40,21 @@ export function useFilter() {
                 props: ['col', 'colIndex'],
                 setup(props: CustomHeaderCellProps<any>) {
                     const colKey = props.col.dataIndex;
+
                     const currentInstance = getCurrentInstance();
+                    /**
+                     * 查找最近的StkTable组件实例
+                     * @returns
+                     */
+                    function findStkTableInstance(curIns: any) {
+                        let current = curIns;
+                        while ((current = current.parent)) {
+                            if (current.type?.name === 'StkTable') {
+                                return current;
+                            }
+                        }
+                        return null;
+                    }
                     const stkTableInstance = findStkTableInstance(currentInstance);
                     // 从 StkTable 实例获取 theme
                     const theme = computed(() => stkTableInstance?.props?.theme || 'light');
@@ -63,9 +62,8 @@ export function useFilter() {
                         return filterStatus.value[colKey]?.value.length || 0;
                     });
 
-                    function handleUpdateFilterStatus(value: FilterOption['value'][]) {
+                    function handleChange(value: FilterOption['value'][]) {
                         filterStatus.value[colKey] = { value };
-                        // 向上查找到最近的StkTable组件实例并调用其setFilter方法
                         stkTableInstance?.exposed?.setFilter(filterStatus.value);
                     }
                     return () =>
@@ -76,7 +74,7 @@ export function useFilter() {
                                 theme: theme.value,
                                 active: filterNumber.value > 0,
                                 options: config?.options || [],
-                                'onUpdate:filterStatus': handleUpdateFilterStatus,
+                                onChange: handleChange,
                             },
                             [component ? h(component, props) : null],
                         );
