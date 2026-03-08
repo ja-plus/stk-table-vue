@@ -949,9 +949,17 @@ function initDataSource(v = props.dataSource) {
     dataSourceCopy.value = dataSourceTemp;
 }
 
-function setFilter(status: Record<UniqKey, FilterStatus>) {
+function setFilter(
+    status: Record<UniqKey, FilterStatus> | null,
+    option?: {
+        remote?: boolean;
+    },
+) {
+    status = status || {};
     filterStatus.value = status;
-    initDataSource();
+    if (!option?.remote) {
+        initDataSource();
+    }
     emits('filter-change', status);
 }
 

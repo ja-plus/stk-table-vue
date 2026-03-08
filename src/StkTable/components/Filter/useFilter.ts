@@ -30,7 +30,7 @@ import type { FilterOption, FilterStatus } from './types';
  * @beta
  * @returns
  */
-export function useFilter() {
+export function useFilter(option?: { remote?: boolean }) {
     const filterStatus = ref<Record<UniqKey, FilterStatus>>({});
 
     function FilterComponent(config?: { options?: FilterOption[] }, component?: VNode) {
@@ -64,7 +64,7 @@ export function useFilter() {
 
                     function handleChange(value: FilterOption['value'][]) {
                         filterStatus.value[colKey] = { value };
-                        stkTableInstance?.exposed?.setFilter(filterStatus.value);
+                        stkTableInstance?.exposed?.setFilter(filterStatus.value, option);
                     }
                     return () =>
                         h(
