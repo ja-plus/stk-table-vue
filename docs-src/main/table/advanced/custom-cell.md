@@ -125,6 +125,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     /** row[col.dataIndex] 的值 */
     cellValue: any;
     rowIndex: number;
+    /** 
+     * 列索引(从0开始)。
+     * 
+     * 注意：
+     * 在virtual-x 下，否则表示虚拟列表中的列索引
+     */
     colIndex: number;
     /**
      * 当前行是否展开
@@ -139,6 +145,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
     rowIndex: number;
+    /** 
+     * 列索引(从0开始)。
+     * 
+     * 注意：
+     * 在virtual-x 下，否则表示虚拟列表中的列索引
+     */
     colIndex: number;
 };
 

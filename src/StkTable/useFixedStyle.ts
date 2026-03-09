@@ -30,7 +30,7 @@ export function useFixedStyle<DT extends Record<string, any>>(
      */
     function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties | null {
         const { fixed } = col;
-        if (tagType === TagType.TD && !fixed) return null;
+        if ((tagType === TagType.TD || tagType === TagType.TF) && !fixed) return null;
 
         const style: CSSProperties = {};
         const { headerRowHeight, rowHeight } = props;

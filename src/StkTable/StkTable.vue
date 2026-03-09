@@ -100,17 +100,32 @@
                         <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                     </tr>
                 </thead>
-                <tfoot style="position: sticky; bottom: 0; left: 0; z-index: 1">
-                    <tr>
+
+                <tfoot v-if="footData && footData.length > 0" style="position: sticky; bottom: 0; left: 0; z-index: 1">
+                    <tr v-for="(footRow, footRowIndex) in footData" :key="footRowIndex">
                         <td v-if="virtualX_on" class="vt-x-left"></td>
-                        <td
-                            v-for="col in virtualX_columnPart"
-                            :key="colKeyGen(col)"
-                            style="position: sticky"
-                            :style="cellStyleMap[TagType.TF].get(colKeyGen(col))"
-                        >
-                            1
+                        <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
+                            <component
+                                :is="col.customCell"
+                                v-if="col.customCell"
+                                class="table-cell-wrapper"
+                                :col="col"
+                                :row="footRow"
+                                :rowIndex="-1 - footRowIndex"
+                                :colIndex="colIndex"
+                                :cellValue="footRow[col.dataIndex]"
+                            />
+                            <div v-else-if="!col.type" class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
+                                {{ footRow[col.dataIndex] ?? getEmptyCellText(col, footRow) }}
+                            </div>
+                            <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
+                                {{ footRow[col.dataIndex] ?? '' }}
+                            </div>
+                            <div v-else class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
+                                <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
+                            </div>
                         </td>
+                        <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
                 </tfoot>
 
@@ -456,6 +471,8 @@ const props = withDefaults(
          * 实验性功能配置
          */
         experimental?: ExperimentalConfig;
+        /** 表格底部合计行数据 */
+        footData?: DT[];
     }>(),
     {
         width: '',
@@ -467,6 +484,7 @@ const props = withDefaults(
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
         autoRowHeight: () => false,
+        footData: () => [],
         rowHover: true,
         rowActive: () => DEFAULT_ROW_ACTIVE_CONFIG,
         rowCurrentRevokable: true,
@@ -1083,7 +1101,7 @@ const cellStyleMap = computed(() => {
     return {
         [TagType.TH]: thMap,
         [TagType.TD]: tdMap,
-        [TagType.TF]: tdMap,
+        [TagType.TF]: tfMap,
     };
 });
 
@@ -1142,8 +1160,18 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
             colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
-            col.headerAlign && (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : null),
+            col.headerAlign &&
+                (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : col.headerAlign === 'center' ? 'text-c' : null),
         ],
+    };
+}
+
+function getTFProps(col: StkTableColumn<DT>) {
+    const colKey = colKeyGen.value(col);
+    return {
+        'data-col-key': colKey,
+        style: cellStyleMap.value[TagType.TF].get(colKey),
+        class: [col.className, fixedColClassMap.value.get(colKey), col.align === 'center' ? 'text-c' : col.align === 'right' ? 'text-r' : ''],
     };
 }
 

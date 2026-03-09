@@ -65,7 +65,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.col 列配置
      * @param props.cellValue row[col.dataIndex] 的值
      * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * @param props.colIndex 列索引 (从0开始) 在virtual-x下 表示虚拟列表中的列索引
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
@@ -74,7 +74,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * 组件prop入参:
      * @param props.col 列配置
      * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * @param props.colIndex 列索引 (从0开始) 在virtual-x下 表示虚拟列表中的列索引
      */
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** 二级表头 */

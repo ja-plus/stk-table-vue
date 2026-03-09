@@ -65,7 +65,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.col Column configuration
      * @param props.cellValue The value of row[col.dataIndex]
      * @param props.rowIndex Row index
-     * @param props.colIndex Column index
+     * @param props.colIndex Column index (from 0) In virtual-x, otherwise it represents the index in the virtual list
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
@@ -74,7 +74,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * Component props:
      * @param props.col Column configuration
      * @param props.rowIndex Row index
-     * @param props.colIndex Column index
+     * @param props.colIndex Column index (from 0) In virtual-x, otherwise it represents the index in the virtual list
      */
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
     /** Nested header */
