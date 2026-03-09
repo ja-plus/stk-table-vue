@@ -53,6 +53,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortType?: 'number' | 'string';
     /** Fixed column */
     fixed?: 'left' | 'right' | null;
+    /** Whether to hide the column */
+    hidden?: boolean;
     /** private */ rowSpan?: number;
     /** private */ colSpan?: number;
     /**

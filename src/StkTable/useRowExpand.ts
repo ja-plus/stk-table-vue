@@ -40,7 +40,7 @@ export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKe
         // delete other expanded row below the target row
         for (let i = index + 1; i < tempData.length; i++) {
             const item: PrivateRowDT = tempData[i];
-            const rowKey = item.__ROW_K__;
+            const rowKey = item.__R_K__;
             if (rowKey?.startsWith(EXPANDED_ROW_KEY_PREFIX)) {
                 tempData.splice(i, 1);
                 i--;
@@ -59,7 +59,7 @@ export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKe
         if (expand) {
             // insert new expanded row
             const newExpandRow: PrivateRowDT = {
-                __ROW_K__: EXPANDED_ROW_KEY_PREFIX + rowKey,
+                __R_K__: EXPANDED_ROW_KEY_PREFIX + rowKey,
                 __EXP_R__: row,
                 __EXP_C__: col,
             };

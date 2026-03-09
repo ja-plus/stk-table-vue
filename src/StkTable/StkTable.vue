@@ -1022,7 +1022,7 @@ function rowKeyGen(row: DT | null | undefined) {
     if (key !== undefined) return key;
 
     // Check for cached key in row object
-    const cachedRowKey = (row as PrivateRowDT).__ROW_K__;
+    const cachedRowKey = (row as PrivateRowDT).__R_K__;
     if (cachedRowKey !== undefined) {
         rowKeyGenCache.set(row, cachedRowKey);
         return cachedRowKey;

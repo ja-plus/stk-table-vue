@@ -79,7 +79,8 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
 
             for (let i = 0, len = arr.length; i < len; i++) {
                 const col = arr[i];
-                col.__PARENT__ = parent;
+                if (col.hidden) continue;
+                col.__P__ = parent;
 
                 /** 一列中的子节点数量 */
                 let colChildrenLen = 1;
@@ -101,7 +102,7 @@ export function useTableColumns<DT extends Record<string, any>>(virtualX: boolea
                 }
 
                 // 回溯
-                col.__WIDTH__ = colWidth; //记录计算的列宽
+                col.__W__ = colWidth;
                 tableHeadersTemp[depth].push(col);
                 const rowSpan = col.children ? 1 : maxDeep - depth + 1;
                 const colSpan = colChildrenLen;
