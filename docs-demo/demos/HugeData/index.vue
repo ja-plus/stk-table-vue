@@ -208,7 +208,7 @@ function calculateFootData() {
     });
 
     // 设置文本字段
-    totals.bondAbbreviation = '总计';
+    totals.seq = '总计';
     totals.bestTime = `共 ${dataSource.value.length} 条`;
 
     footData.value = [totals];

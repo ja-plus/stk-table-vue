@@ -28,6 +28,14 @@ export type CustomHeaderCellProps<T extends Record<string, any>> = {
     colIndex: number;
 };
 
+export type CustomFooterCellProps<T extends Record<string, any>> = {
+    col: StkTableColumn<T>;
+    row: T;
+    cellValue: any;
+    rowIndex: number;
+    colIndex: number;
+};
+
 export type MergeCellsParam<T extends Record<string, any>> = {
     row: T;
     col: StkTableColumn<T>;
@@ -115,6 +123,17 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.colIndex 列索引
      */
     customHeaderCell?: CustomCell<CustomHeaderCellProps<T>, T>;
+    /**
+     * 自定义 tfoot td 渲染内容
+     *
+     * 组件prop入参:
+     * @param props.row tfoot行的记录。
+     * @param props.col 列配置
+     * @param props.cellValue row[col.dataIndex] 的值
+     * @param props.rowIndex tfoot行索引（从0开始）
+     * @param props.colIndex 列索引
+     */
+    customFooterCell?: CustomCell<CustomFooterCellProps<T>, T>;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
     /** 单元格合并 */

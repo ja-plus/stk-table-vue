@@ -106,12 +106,12 @@
                         <td v-if="virtualX_on" class="vt-x-left"></td>
                         <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
                             <component
-                                :is="col.customCell"
-                                v-if="col.customCell"
+                                :is="col.customFooterCell"
+                                v-if="col.customFooterCell"
                                 class="table-cell-wrapper"
                                 :col="col"
                                 :row="footRow"
-                                :rowIndex="-1 - footRowIndex"
+                                :rowIndex="footRowIndex"
                                 :colIndex="colIndex"
                                 :cellValue="footRow[col.dataIndex]"
                             />
