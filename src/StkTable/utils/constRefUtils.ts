@@ -16,7 +16,7 @@ export function getColWidth(col: StkTableColumn<any>): number {
 
 /** 获取计算后的宽度 */
 export function getCalculatedColWidth(col: PrivateStkTableColumn<any> | null) {
-    return col?.__WIDTH__ || DEFAULT_COL_WIDTH;
+    return col?.__W__ || DEFAULT_COL_WIDTH;
 }
 
 /** 创建组件唯一标识 */

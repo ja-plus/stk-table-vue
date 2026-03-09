@@ -93,6 +93,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /** 固定列 */
     fixed?: 'left' | 'right' | null;
+    /** 是否隐藏列 */
+    hidden?: boolean;
     /**
      * 自定义 td 渲染内容。
      *
@@ -129,22 +131,22 @@ export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColum
      * parent not ref
      * @private
      */
-    __PARENT__?: StkTableColumn<T> | null;
+    __P__?: StkTableColumn<T> | null;
     /**
      * Save the calculated width. Used for horizontal virtual scrolling.
      * @private
      */
-    __WIDTH__?: number;
+    __W__?: number;
 };
 /** private row keys */
 export type PrivateRowDT = {
     /**
      * Only expanded row will add this key
      *
-     * If user define the `__ROW_K__` in table data, this value will be used as the row key
+     * If user define the `__R_K__` in table data, this value will be used as the row key
      * @private
      */
-    __ROW_K__?: string;
+    __R_K__?: string;
     /**
      * if row expanded
      * @private
@@ -185,8 +187,8 @@ export type UniqKeyProp = UniqKey | UniqKeyFun;
 export type SortConfig<T extends Record<string, any>> = {
     /**
      * TODO: Sort icon display strategy
-     * - only-sort[default]: Only show sort icon in sorted column 
-     * - always 
+     * - only-sort[default]: Only show sort icon in sorted column
+     * - always
      * - none
      */
     // showIcon?: "always" | 'only-sort' | 'none';
