@@ -100,6 +100,19 @@
                         <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                     </tr>
                 </thead>
+                <tfoot style="position: sticky; bottom: 0; left: 0; z-index: 1">
+                    <tr>
+                        <td v-if="virtualX_on" class="vt-x-left"></td>
+                        <td
+                            v-for="col in virtualX_columnPart"
+                            :key="colKeyGen(col)"
+                            style="position: sticky"
+                            :style="cellStyleMap[TagType.TF].get(colKeyGen(col))"
+                        >
+                            1
+                        </td>
+                    </tr>
+                </tfoot>
 
                 <tbody
                     class="stk-tbody-main"
@@ -1046,6 +1059,7 @@ function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
+    const tfMap = new Map();
     const { virtualX } = props;
     const headers = tableHeaders.value;
     const colKeyGenValue = colKeyGen.value;
@@ -1063,11 +1077,13 @@ const cellStyleMap = computed(() => {
             const colKey = colKeyGenValue(col);
             thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
             tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
+            tfMap.set(colKey, Object.assign({ position: 'sticky' }, style, getFixedStyle(TagType.TF, col, depth)));
         }
     }
     return {
         [TagType.TH]: thMap,
         [TagType.TD]: tdMap,
+        [TagType.TF]: tdMap,
     };
 });
 

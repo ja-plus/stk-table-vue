@@ -232,6 +232,8 @@ export type SortConfig<T extends Record<string, any>> = {
 export const enum TagType {
     TH,
     TD,
+    /** tfoot */
+    TF,
 }
 
 export type HighlightConfig = {
