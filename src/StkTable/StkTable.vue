@@ -32,6 +32,7 @@
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
+            '--footer-row-height': props.footerRowHeight + 'px',
             '--highlight-duration': props.highlightConfig.duration && props.highlightConfig.duration + 's',
             '--highlight-timing-function': highlightSteps ? `steps(${highlightSteps})` : void 0,
             '--sb-width': `${scrollbarOptions.width}px`,
@@ -100,6 +101,28 @@
                         <th v-if="virtualX_on" class="vt-x-right" :style="`min-width:${virtualX_offsetRight}px;width:${virtualX_offsetRight}px`"></th>
                     </tr>
                 </thead>
+
+                <tfoot v-if="footerData && footerData.length > 0">
+                    <tr v-for="(footRow, footRowIndex) in footerData" :key="footRowIndex">
+                        <td v-if="virtualX_on" class="vt-x-left"></td>
+                        <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
+                            <component
+                                :is="col.customFooterCell"
+                                v-if="col.customFooterCell"
+                                class="table-cell-wrapper"
+                                :col="col"
+                                :row="footRow"
+                                :rowIndex="footRowIndex"
+                                :colIndex="colIndex"
+                                :cellValue="footRow[col.dataIndex]"
+                            />
+                            <div class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
+                                <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
+                            </div>
+                        </td>
+                        <td v-if="virtualX_on" class="vt-x-right"></td>
+                    </tr>
+                </tfoot>
 
                 <tbody
                     class="stk-tbody-main"
@@ -329,6 +352,8 @@ const props = withDefaults(
         rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
         headerRowHeight?: number | string | null;
+        /** 表尾行高。default = rowHeight */
+        footerRowHeight?: number | string | null;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动(必须设置列宽)*/
@@ -443,6 +468,8 @@ const props = withDefaults(
          * 实验性功能配置
          */
         experimental?: ExperimentalConfig;
+        /** 表格底部合计行数据 */
+        footerData?: DT[];
     }>(),
     {
         width: '',
@@ -454,10 +481,12 @@ const props = withDefaults(
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
         autoRowHeight: () => false,
+        footerData: () => [],
         rowHover: true,
         rowActive: () => DEFAULT_ROW_ACTIVE_CONFIG,
         rowCurrentRevokable: true,
         headerRowHeight: DEFAULT_ROW_HEIGHT,
+        footerRowHeight: DEFAULT_ROW_HEIGHT,
         virtual: false,
         virtualX: false,
         columns: () => [],
@@ -1046,6 +1075,7 @@ function cellKeyGen(row: DT | null | undefined, col: StkTableColumn<DT>) {
 const cellStyleMap = computed(() => {
     const thMap = new Map();
     const tdMap = new Map();
+    const tfMap = new Map();
     const { virtualX } = props;
     const headers = tableHeaders.value;
     const colKeyGenValue = colKeyGen.value;
@@ -1063,11 +1093,13 @@ const cellStyleMap = computed(() => {
             const colKey = colKeyGenValue(col);
             thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
             tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
+            tfMap.set(colKey, Object.assign({ position: 'sticky' }, style, getFixedStyle(TagType.TF, col, depth)));
         }
     }
     return {
         [TagType.TH]: thMap,
         [TagType.TD]: tdMap,
+        [TagType.TF]: tfMap,
     };
 });
 
@@ -1126,7 +1158,22 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
             colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
-            col.headerAlign && (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : null),
+            col.headerAlign &&
+                (col.headerAlign === 'left' ? 'text-l' : col.headerAlign === 'right' ? 'text-r' : col.headerAlign === 'center' ? 'text-c' : null),
+        ],
+    };
+}
+
+function getTFProps(col: StkTableColumn<DT>) {
+    const colKey = colKeyGen.value(col);
+    return {
+        'data-col-key': colKey,
+        style: cellStyleMap.value[TagType.TF].get(colKey),
+        class: [
+            col.className,
+            fixedColClassMap.value.get(colKey),
+            col.type === 'seq' ? 'seq-column' : '',
+            col.align === 'center' ? 'text-c' : col.align === 'right' ? 'text-r' : '',
         ],
     };
 }

@@ -8,6 +8,7 @@
 .stk-table {
     --row-height: 28px;
     --header-row-height: var(--row-height);
+    --footer-row-height: var(--row-height);
     --cell-padding-y: 0;
     --cell-padding-x: 8px;
     --resize-handle-width: 4px;
@@ -17,6 +18,7 @@
     --td-hover-color: hsl(207, 90%, 70%);
     --td-active-color: hsl(207, 90%, 54%);
     --th-bgc: #f1f1f9;
+    --tf-bgc: #f1f1f9;
     --th-color: #272841;
     --tr-active-bgc: rgb(230, 247, 255);
     --tr-hover-bgc: #e6f7ff;
@@ -71,6 +73,7 @@
     /**深色模式 */
     &.dark {
         --th-bgc: #202029;
+        --tf-bgc: #202029;
         --th-color: #c0c0d1;
         --td-bgc: #1b1b24;
         --td-hover-color: hsl(219, 59%, 60%);
@@ -396,6 +399,19 @@
         height: var(--header-row-height);
     }
 
+    tfoot{
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+        tr {
+            background-color: var(--tf-bgc);
+            height: var(--footer-row-height);
+            td {
+                background-color: inherit;
+            }
+        }
+    }
+
     tbody tr {
         background-color: var(--td-bgc);
         height: var(--row-height);
@@ -558,6 +574,10 @@
 
     td.fixed-cell--active {
         z-index: 1;
+    }
+
+    tfoot td.fixed-cell--active {
+        z-index: 2;
     }
 
     .table-header-cell-wrapper {

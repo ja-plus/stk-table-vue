@@ -125,6 +125,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     /** Value of row[col.dataIndex] */
     cellValue: any;
     rowIndex: number;
+    /** 
+     * Column index (starting from 0)
+     * 
+     * Note:
+     * - In virtual-x, otherwise it represents the index in the virtual list
+     */
     colIndex: number;
     /**
      * Whether the current row is expanded
@@ -139,6 +145,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
     col: StkTableColumn<T>;
     rowIndex: number;
+    /** 
+     * Column index (starting from 0)
+     * 
+     * Note:
+     * - In virtual-x, otherwise it represents the index in the virtual list
+     */
     colIndex: number;
 };
 

@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.11.0-beta.2
+ * version: v0.11.0-beta.4
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -9,23 +9,42 @@
 .stk-filter{
   display:inline-flex;
   align-items:center;
+  gap:4px;
+  cursor:pointer;
 }
-.stk-filter.stk-filter--active .icon-filter{
+.stk-filter.stk-filter--active .stk-filter-icon{
   color:#1b63d9;
 }
 .stk-filter .stk-filter-icon{
   display:inline-flex;
-  width:16px;
-  height:16px;
+  width:20px;
+  height:20px;
   cursor:pointer;
+  opacity:0.6;
+  transition:opacity 0.2s;
 }
 .stk-filter .stk-filter-icon:hover{
+  opacity:1;
   color:#409eff;
+}
+.stk-filter--light .stk-filter-icon:hover{
+  color:#1890ff;
+}
+.stk-filter--light.stk-filter--active .stk-filter-icon{
+  color:#1890ff;
+}
+.stk-filter--dark .stk-filter-icon:hover{
+  color:#40a9ff;
+}
+.stk-filter--dark.stk-filter--active .stk-filter-icon{
+  color:#40a9ff;
 }
 .stk-filter-dropdown{
   --border-color:#303439;
   --btn-hover-color:#2a2f34;
   --bg-color:#181c21;
+  --text-color:rgba(255, 255, 255, 0.85);
+  --cell-hover-color:#2a2f34;
   position:absolute;
   width:120px;
   max-height:200px;
@@ -38,6 +57,16 @@
   z-index:1000;
   display:flex;
   flex-direction:column;
+  color:rgba(255, 255, 255, 0.85);
+  color:var(--text-color);
+}
+.stk-filter-dropdown--light{
+  --border-color:#e8e8e8;
+  --btn-hover-color:#f5f5f5;
+  --bg-color:#ffffff;
+  --text-color:rgba(0, 0, 0, 0.85);
+  --cell-hover-color:#fafafa;
+  box-shadow:0 2px 8px rgba(0, 0, 0, 0.15);
 }
 .stk-filter-dropdown > .stk-table{
   --cell-padding-x:4px;
@@ -61,6 +90,9 @@
 .stk-filter-dropdown footer button{
   flex:1;
   cursor:pointer;
+  background:transparent;
+  border:none;
+  color:var(--text-color);
 }
 .stk-filter-dropdown footer button:first-child{
   border-right:1px solid var(--border-color);

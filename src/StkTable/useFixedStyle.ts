@@ -20,7 +20,7 @@ export function useFixedStyle<DT extends Record<string, any>>(
     virtualScroll: Ref<VirtualScrollStore>,
     virtualScrollX: Ref<VirtualScrollXStore>,
     virtualX_on: Ref<boolean>,
-    virtualX_offsetRight: Ref<number>
+    virtualX_offsetRight: Ref<number>,
 ) {
     /**
      * 固定列的style
@@ -30,7 +30,7 @@ export function useFixedStyle<DT extends Record<string, any>>(
      */
     function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties | null {
         const { fixed } = col;
-        if (tagType === TagType.TD && !fixed) return null;
+        if ((tagType === TagType.TD || tagType === TagType.TF) && !fixed) return null;
 
         const style: CSSProperties = {};
         const { headerRowHeight, rowHeight } = props;
@@ -40,17 +40,19 @@ export function useFixedStyle<DT extends Record<string, any>>(
 
         if (tagType === TagType.TH) {
             if (!isRelativeMode.value) {
-                if(depth){
-                    style.top = depth  * (headerRowHeight ?? rowHeight) + 'px';
+                if (depth) {
+                    style.top = depth * (headerRowHeight ?? rowHeight) + 'px';
                 }
             } else {
                 style.top = virtualScroll.value.scrollTop + 'px';
             }
+        } else if (tagType === TagType.TF) {
+            style.bottom = '0px';
         }
 
         if (fixed) {
             if (!isRelativeMode.value) {
-                 const lr = getFixedColPosition.value(col) + 'px';
+                const lr = getFixedColPosition.value(col) + 'px';
                 if (isFixedLeft) {
                     style.left = lr;
                 } else {

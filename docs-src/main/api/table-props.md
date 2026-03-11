@@ -114,6 +114,14 @@ rowActive?: boolean | {
 headerRowHeight?: number | null;
 ```
 
+### footerRowHeight
+
+表尾行高。default = rowHeight
+
+```ts
+footerRowHeight?: number | string | null;
+```
+
 ### virtual
 
 虚拟滚动
@@ -261,6 +269,13 @@ areaSelection?: boolean | {
    * @returns 复制到剪贴板的文本
    */
   formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
+  /**
+   * 是否启用键盘控制选区移动。
+   * 启用后，方向键/Tab/Shift+Tab 可控制选区移动，类似 Excel 行为。
+   * 启用此功能后，原有的键盘滚动行为将失效。
+   * @default false
+   */
+  keyboard?: boolean;
 };
 ```
 
@@ -300,7 +315,10 @@ rowClassName?: (row: any, i: number) => string;
 - 会自动更新props.columns中的with属性
 
 ```ts
-colResizable?: boolean;
+colResizable?: boolean | {
+  /** 禁用拖动的列 */
+  disabled?: (col: StkTableColumn<DT>) => boolean;
+};
 ```
 
 ### colMinWidth
@@ -318,9 +336,10 @@ colMinWidth?: number;
 "h" - 仅展示横线
 "v" - 仅展示竖线
 "body-v" - 仅表体展示竖线
+"body-h" - 仅表体展示横线
 
 ```ts
-bordered?: boolean | 'h' | 'v' | 'body-v';
+bordered?: boolean | 'h' | 'v' | 'body-v' | 'body-h';
 ```
 
 ### autoResize
@@ -476,4 +495,38 @@ scrollbar?: boolean | {
   /** 滚动条滑块最小高度 default: 20 */
   minHeight?: number;
 };
+```
+
+### treeConfig
+
+树形配置
+
+```ts
+treeConfig?: {
+  /** 默认展开所有树节点 */
+  defaultExpandAll?: boolean;
+  /** 默认展开的节点key */
+  defaultExpandKeys?: UniqKey[];
+  /** 默认展开到第几层 */
+  defaultExpandLevel?: number;
+};
+```
+
+### experimental
+
+实验性功能配置
+
+```ts
+experimental?: {
+  /** 使用 transform 模拟滚动 */
+  scrollY?: boolean;
+};
+```
+
+### footerData
+
+表格底部合计行数据
+
+```ts
+footerData?: DT[];
 ```

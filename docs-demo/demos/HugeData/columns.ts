@@ -10,7 +10,7 @@ const { Filter } = useFilter();
 export const columns: () => StkTableColumn<DataType>[] = () => {
     const { t } = useI18n();
     return [
-        { type: 'seq', dataIndex: '' as any, title: t('seq'), fixed: 'left', width: 70 },
+        { type: 'seq', dataIndex: 'seq' as any, title: t('seq'), fixed: 'left', width: 70 },
         {
             dataIndex: 'source',
             title: t('source'),

@@ -4,7 +4,9 @@ import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
-declare function setFilter(status: Record<UniqKey, FilterStatus>): void;
+declare function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: {
+    remote?: boolean;
+}): void;
 /**
  * 选中一行
  *

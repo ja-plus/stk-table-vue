@@ -32,7 +32,7 @@ const currentSort: SortState<DataType> = {
 };
 const stkTableRef = useTemplateRef('stkTableRef');
 
-const dataSize = ref(50000);
+const dataSize = ref(500);
 const rowByRow = ref(false);
 const optimizeDragScroll = ref<'scrollbar'>();
 const translateZ = ref(false);
@@ -43,6 +43,8 @@ const experimentalScrollY = ref(false);
 
 const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
+const footerData = ref<Record<string, any>[]>([]);
+
 const CODE_BASE = 10_000_000;
 const createData = (i: number) => {
     return {
@@ -59,7 +61,7 @@ const createData = (i: number) => {
 
 onMounted(() => {
     initDataSource();
-    simulateUpdateData();
+    // simulateUpdateData();
 });
 
 const mockDataResult = mockData(isZH.value);
@@ -87,6 +89,8 @@ function initDataSource() {
         dataSourceTemp,
         sortConfig,
     );
+
+    calculateFootData();
 }
 
 function handleToggleExpand(row: DataType) {
@@ -117,6 +121,7 @@ function handleToggleExpand(row: DataType) {
     dataSource.value[rowIndex]._isExpand = expand;
     dataSource.value[rowIndex] = { ...dataSource.value[rowIndex] }; // trigger  row update
     dataSource.value = dataSource.value.slice(); // trigger table update
+    calculateFootData();
 }
 
 const timeout = ref(0);
@@ -146,6 +151,7 @@ function simulateUpdateData() {
         // 二分插入
         dataSource.value = insertToOrderedArray(currentSort, newData, dataSource.value);
         highlightRow(newData);
+        calculateFootData();
     }, updateFreq.value);
 }
 
@@ -173,6 +179,40 @@ function handleSortChange(
     currentSort.order = order;
     currentSort.sortType = col.sortType;
     dataSource.value = tableSort(col, order, data, sortConfig);
+    calculateFootData();
+}
+
+function calculateFootData() {
+    if (dataSource.value.length === 0) {
+        footerData.value = [];
+        return;
+    }
+
+    const totals: Record<string, any> = {};
+    const numericFields = [
+        'bestBuyVol',
+        'bestSellVol',
+        'lastPrice',
+        'cbOfrBp',
+        'bestBuyPrice',
+        'bestSellPrice',
+    ];
+
+    // 计算数值字段的总和
+    numericFields.forEach(field => {
+        const sum = dataSource.value.reduce((acc, row) => {
+            const value = parseFloat(row[field as keyof DataType] as string) || 0;
+            return acc + value;
+        }, 0);
+        totals[field] = sum.toFixed(2);
+    });
+
+    // 设置文本字段
+    totals.seq = '总计';
+    totals.bestTime = `共 ${dataSource.value.length} 条`;
+
+    footerData.value = [totals];
+    console.log('FootData calculated:', footerData.value);
 }
 function handleDataSizeChange(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -297,6 +337,7 @@ function handleColSpan(v: boolean) {
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"
         :data-source="dataSource"
+        :footer-data="footerData"
         @sort-change="handleSortChange"
         @scroll="handleScroll"
     ></StkTable>

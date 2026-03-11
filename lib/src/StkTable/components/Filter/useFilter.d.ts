@@ -3,11 +3,19 @@ import { VNode } from 'vue';
 import { FilterOption, FilterStatus } from './types';
 
 /**
+ * 从数据源提取筛选选项
+ * @param dataSource 数据源
+ * @param columnKey 列名
+ * @returns 筛选选项数组
+//  */
+/**
  * 表格筛选功能Hook (BETA)
  * @beta
  * @returns
  */
-export declare function useFilter(): {
+export declare function useFilter(option?: {
+    remote?: boolean;
+}): {
     Filter: (config?: {
         options?: FilterOption[];
     }, component?: VNode) => import('vue').Raw<import('vue').DefineComponent<{

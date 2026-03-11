@@ -25,8 +25,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - seq 序号列
      * - expand 展开列
      * - dragRow 拖拽列(使用sktTableRef.getTableData 获取改变后的顺序)
+     * - tree-node 树节点列，这一列前面有展开收起箭头
      */
-    type?: 'seq' | 'expand' | 'dragRow';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node';
     /** 取值id */
     dataIndex: keyof T & string;
     /** 表头文字 */
@@ -55,8 +56,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     fixed?: 'left' | 'right' | null;
     /** 是否隐藏列 */
     hidden?: boolean;
-    /** private */ rowSpan?: number;
-    /** private */ colSpan?: number;
+    /** 配置当前列的排序规则 */
+    sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /**
      * 自定义 td 渲染内容。
      *
@@ -65,7 +66,7 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.col 列配置
      * @param props.cellValue row[col.dataIndex] 的值
      * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * @param props.colIndex 列索引 (从0开始) 在virtual-x下 表示虚拟列表中的列索引
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
@@ -74,9 +75,20 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * 组件prop入参:
      * @param props.col 列配置
      * @param props.rowIndex 行索引
-     * @param props.colIndex 列索引
+     * @param props.colIndex 列索引 (从0开始) 在virtual-x下 表示虚拟列表中的列索引
      */
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
+    /**
+     * 自定义 tfoot td 渲染内容
+     *
+     * 组件prop入参:
+     * @param props.row tfoot行的记录。
+     * @param props.col 列配置
+     * @param props.cellValue row[col.dataIndex] 的值
+     * @param props.rowIndex tfoot行索引（从0开始）
+     * @param props.colIndex 列索引
+     */
+    customFooterCell?: Component<CustomFooterCellProps<T>> | string;
     /** 二级表头 */
     children?: StkTableColumn<T>[];
      /** 单元格合并 */

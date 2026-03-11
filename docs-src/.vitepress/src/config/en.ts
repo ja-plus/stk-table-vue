@@ -61,6 +61,7 @@ export const enConfig = defineConfig({
                                     { text: 'Scrollbar', link: '/table/basic/scrollbar' },
                                     { text: 'Table-layout: fixed', link: '/table/basic/fixed-mode' },
                                     { text: 'Row-by-Row Scrolling', link: '/table/basic/scroll-row-by-row' },
+                                    { text: 'Footer(✨NEW)', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -70,7 +71,7 @@ export const enConfig = defineConfig({
                                     { text: 'Highlight Rows & Cells', link: '/table/advanced/highlight' },
                                     { text: 'Virtual List (Large Data)', link: '/table/advanced/virtual' },
                                     { text: 'Variable Row Height Virtual List', link: '/table/advanced/auto-height-virtual' },
-                                    { text: 'Area Selection(✨NEW)', link: '/table/advanced/area-selection' },
+                                    { text: 'Area Selection', link: '/table/advanced/area-selection' },
                                     { text: 'Column Resize', link: '/table/advanced/column-resize' },
                                     { text: 'Column Drag Reorder', link: '/table/advanced/header-drag' },
                                     { text: 'Row Drag Reorder', link: '/table/advanced/row-drag' },
