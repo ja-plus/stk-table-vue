@@ -8,7 +8,7 @@
 .stk-table {
     --row-height: 28px;
     --header-row-height: var(--row-height);
-    --foot-row-height: var(--row-height);
+    --footer-row-height: var(--row-height);
     --cell-padding-y: 0;
     --cell-padding-x: 8px;
     --resize-handle-width: 4px;
@@ -399,11 +399,16 @@
         height: var(--header-row-height);
     }
 
-    tfoot tr {
-        background-color: var(--tf-bgc);
-        height: var(--foot-row-height);
-        td {
-            background-color: inherit;
+    tfoot{
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+        tr {
+            background-color: var(--tf-bgc);
+            height: var(--footer-row-height);
+            td {
+                background-color: inherit;
+            }
         }
     }
 

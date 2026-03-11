@@ -4,6 +4,9 @@
   - Add: `areaSelection['keyboard']` to allow keyboard to select cell.
   - Add: export `useFilter` (Beta)
   - Add: `StkTableColumn['hidden']` to hide column.
+  - Add: `props.footerData`
+    - Add: `StkTableColumn['customFooterCell']` to custom footer cell.
+    - Add: `StkTableColumn['footerRowHeight']` to custom footer row height.
 * BreakChange
   - Before use `areaSelection`, need register this feature.
     - Add: export `registerFeature` & `useAreaSelection` from 'stk-table-vue'
