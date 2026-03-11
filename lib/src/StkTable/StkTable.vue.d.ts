@@ -107,6 +107,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | string | null;
+    /** 表尾行高。default = rowHeight */
+    footerRowHeight?: number | string | null;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
@@ -224,6 +226,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * 实验性功能配置
      */
     experimental?: ExperimentalConfig;
+    /** 表格底部合计行数据 */
+    footerData?: DT[];
 }>, {
     width: string;
     fixedMode: boolean;
@@ -234,10 +238,12 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     theme: string;
     rowHeight: number;
     autoRowHeight: () => false;
+    footerData: () => never[];
     rowHover: boolean;
     rowActive: () => Required<RowActiveOption<any>>;
     rowCurrentRevokable: boolean;
     headerRowHeight: number;
+    footerRowHeight: number;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -533,6 +539,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
     headerRowHeight?: number | string | null;
+    /** 表尾行高。default = rowHeight */
+    footerRowHeight?: number | string | null;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
@@ -650,6 +658,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * 实验性功能配置
      */
     experimental?: ExperimentalConfig;
+    /** 表格底部合计行数据 */
+    footerData?: DT[];
 }>, {
     width: string;
     fixedMode: boolean;
@@ -660,10 +670,12 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     theme: string;
     rowHeight: number;
     autoRowHeight: () => false;
+    footerData: () => never[];
     rowHover: boolean;
     rowActive: () => Required<RowActiveOption<any>>;
     rowCurrentRevokable: boolean;
     headerRowHeight: number;
+    footerRowHeight: number;
     virtual: boolean;
     virtualX: boolean;
     columns: () => never[];
@@ -780,6 +792,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     rowHover: boolean;
     rowActive: boolean | RowActiveOption<DT>;
     rowCurrentRevokable: boolean;
+    footerRowHeight: number | string | null;
     virtual: boolean;
     virtualX: boolean;
     columns: StkTableColumn<DT>[];
@@ -815,6 +828,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     smoothScroll: boolean;
     scrollRowByRow: boolean | "scrollbar";
     experimental: ExperimentalConfig;
+    footerData: DT[];
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;
