@@ -2,6 +2,7 @@
 
 * `props.rowHeight` sets the body row height, default is `28px`.
 * `props.headerRowHeight` sets the header row height, default is `28px`.
+* `props.footerRowHeight` sets the footer row height, default is `28px`.
 
 ## Example
 The following sets the header row height to `50px` and the body row height to `40px`.

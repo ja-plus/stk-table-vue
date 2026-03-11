@@ -2,6 +2,7 @@
 
 * `props.rowHeight` 设置表体行高，默认为 `28px`。
 * `props.headerRowHeight` 设置表头行高，默认为 `28px`。
+* `props.footerRowHeight` 设置表尾行高，默认为 `28px`。
 
 ## 示例
 如下设置了表头行高为 `50px`，表体行高为 `40px`。
