@@ -87,6 +87,7 @@ export const zhConfig = defineConfig({
                                     { text: '滚动条', link: '/table/basic/scrollbar', },
                                     { text: 'table-layout:fix', link: '/table/basic/fixed-mode', },
                                     { text: '按行滚动', link: '/table/basic/scroll-row-by-row', },
+                                    { text: '表尾数据(✨NEW)', link: '/table/basic/footer' },
                                 ]
                             },
                             {
@@ -96,7 +97,7 @@ export const zhConfig = defineConfig({
                                     { text: '高亮行、单元格', link: '/table/advanced/highlight', },
                                     { text: '虚拟列表(大量数据)', link: '/table/advanced/virtual', },
                                     { text: '不定行高虚拟列表', link: '/table/advanced/auto-height-virtual', },
-                                    { text: '区域选取(✨NEW)', link: '/table/advanced/area-selection' },
+                                    { text: '区域选取', link: '/table/advanced/area-selection' },
                                     { text: '列宽调整', link: '/table/advanced/column-resize', },
                                     { text: '列拖动更换顺序', link: '/table/advanced/header-drag', },
                                     { text: '行拖动更换顺序', link: '/table/advanced/row-drag', },

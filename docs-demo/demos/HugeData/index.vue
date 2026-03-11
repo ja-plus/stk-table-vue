@@ -43,7 +43,7 @@ const experimentalScrollY = ref(false);
 
 const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
-const footData = ref<Record<string, any>[]>([]);
+const footerData = ref<Record<string, any>[]>([]);
 
 const CODE_BASE = 10_000_000;
 const createData = (i: number) => {
@@ -184,7 +184,7 @@ function handleSortChange(
 
 function calculateFootData() {
     if (dataSource.value.length === 0) {
-        footData.value = [];
+        footerData.value = [];
         return;
     }
 
@@ -211,8 +211,8 @@ function calculateFootData() {
     totals.seq = '总计';
     totals.bestTime = `共 ${dataSource.value.length} 条`;
 
-    footData.value = [totals];
-    console.log('FootData calculated:', footData.value);
+    footerData.value = [totals];
+    console.log('FootData calculated:', footerData.value);
 }
 function handleDataSizeChange(e: Event) {
     const input = e.target as HTMLInputElement;
@@ -337,7 +337,7 @@ function handleColSpan(v: boolean) {
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"
         :data-source="dataSource"
-        :foot-data="footData"
+        :footer-data="footerData"
         @sort-change="handleSortChange"
         @scroll="handleScroll"
     ></StkTable>

@@ -25,8 +25,9 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * - seq: Sequence column
      * - expand: Expandable column
      * - dragRow: Draggable row column (use sktTableRef.getTableData to get the changed order)
+     * - tree-node: Tree node column, with expand/collapse arrow in front
      */
-    type?: 'seq' | 'expand' | 'dragRow';
+    type?: 'seq' | 'expand' | 'dragRow' | 'tree-node';
     /** Data index */
     dataIndex: keyof T & string;
     /** Header text */
@@ -55,8 +56,8 @@ export type StkTableColumn<T extends Record<string, any>> = {
     fixed?: 'left' | 'right' | null;
     /** Whether to hide the column */
     hidden?: boolean;
-    /** private */ rowSpan?: number;
-    /** private */ colSpan?: number;
+    /** Sort configuration for current column */
+    sortConfig?: Omit<SortConfig<T>, 'defaultSort'>;
     /**
      * Custom td rendering content.
      *
@@ -77,6 +78,17 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.colIndex Column index (from 0) In virtual-x, otherwise it represents the index in the virtual list
      */
     customHeaderCell?: Component<CustomHeaderCellProps<T>> | string;
+    /**
+     * Custom tfoot td rendering content
+     *
+     * Component props:
+     * @param props.row The record of tfoot row.
+     * @param props.col Column configuration
+     * @param props.cellValue row[col.dataIndex] value
+     * @param props.rowIndex Tfoot row index (starting from 0)
+     * @param props.colIndex Column index
+     */
+    customFooterCell?: Component<CustomFooterCellProps<T>> | string;
     /** Nested header */
     children?: StkTableColumn<T>[];
      /** Cell merging */

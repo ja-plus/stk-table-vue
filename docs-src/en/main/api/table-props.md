@@ -41,6 +41,8 @@ export type StkProps = {
   };
   /** Header row height. default = rowHeight */
   headerRowHeight?: number | null;
+  /** Footer row height. default = rowHeight */
+  footerRowHeight?: number | null;
   /** Virtual scrolling */
   virtual?: boolean;
   /** Horizontal virtual scrolling (must set column width) */
@@ -92,6 +94,13 @@ export type StkProps = {
      * @returns Text to be copied to clipboard
      */
     formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
+    /**
+     * Whether to enable keyboard control for selection area.
+     * When enabled, arrow keys / Tab / Shift+Tab can control selection area movement, similar to Excel behavior.
+     * When this feature is enabled, the original keyboard scrolling behavior will be disabled.
+     * @default false
+     */
+    keyboard?: boolean;
   };
   /** Whether header can be dragged. Supports callback function. */
   headerDrag?:
@@ -118,7 +127,10 @@ export type StkProps = {
    * When resizing column width, each column must have a width, and minWidth/maxWidth will not take effect. Table width will become "fit-content".
    * - Will automatically update the width property in props.columns
    */
-  colResizable?: boolean;
+  colResizable?: boolean | {
+    /** Columns that are disabled from resizing */
+    disabled?: (col: StkTableColumn<DT>) => boolean;
+  };
   /** Minimum column width when resizing */
   colMinWidth?: number;
   /**
@@ -127,8 +139,9 @@ export type StkProps = {
    * "h" - Only show horizontal lines
    * "v" - Only show vertical lines
    * "body-v" - Only show vertical lines in body
+   * "body-h" - Only show horizontal lines in body
    */
-  bordered?: boolean | 'h' | 'v' | 'body-v';
+  bordered?: boolean | 'h' | 'v' | 'body-v' | 'body-h';
   /**
    * Automatically recalculate virtual scroll height and width. Default true
    * [Non-reactive]
@@ -176,6 +189,22 @@ export type StkProps = {
   dragRowConfig?: {
     mode?: 'none' | 'insert' | 'swap';
   };
+  /** Tree configuration */
+  treeConfig?: {
+    /** Whether to expand all tree nodes by default */
+    defaultExpandAll?: boolean;
+    /** Keys of nodes to expand by default */
+    defaultExpandKeys?: UniqKey[];
+    /** Level to expand to by default */
+    defaultExpandLevel?: number;
+  };
+  /** Experimental configuration */
+  experimental?: {
+    /** Use transform to simulate scroll */
+    scrollY?: boolean;
+  };
+  /** Footer summary row data */
+  footerData?: DT[];
   /**
    * Fixed header and column implementation method.
    * [Non-reactive]

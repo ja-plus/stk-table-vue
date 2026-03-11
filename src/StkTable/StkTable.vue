@@ -102,8 +102,8 @@
                     </tr>
                 </thead>
 
-                <tfoot v-if="footData && footData.length > 0">
-                    <tr v-for="(footRow, footRowIndex) in footData" :key="footRowIndex">
+                <tfoot v-if="footerData && footerData.length > 0">
+                    <tr v-for="(footRow, footRowIndex) in footerData" :key="footRowIndex">
                         <td v-if="virtualX_on" class="vt-x-left"></td>
                         <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
                             <component
@@ -116,13 +116,7 @@
                                 :colIndex="colIndex"
                                 :cellValue="footRow[col.dataIndex]"
                             />
-                            <div v-else-if="!col.type" class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
-                                {{ footRow[col.dataIndex] ?? getEmptyCellText(col, footRow) }}
-                            </div>
-                            <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
-                                {{ footRow[col.dataIndex] ?? 'Total' }}
-                            </div>
-                            <div v-else class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
+                            <div class="table-cell-wrapper" :title="footRow[col.dataIndex] || ''">
                                 <span v-if="footRow[col.dataIndex] != null">{{ footRow[col.dataIndex] }}</span>
                             </div>
                         </td>
@@ -475,7 +469,7 @@ const props = withDefaults(
          */
         experimental?: ExperimentalConfig;
         /** 表格底部合计行数据 */
-        footData?: DT[];
+        footerData?: DT[];
     }>(),
     {
         width: '',
@@ -487,7 +481,7 @@ const props = withDefaults(
         theme: 'light',
         rowHeight: DEFAULT_ROW_HEIGHT,
         autoRowHeight: () => false,
-        footData: () => [],
+        footerData: () => [],
         rowHover: true,
         rowActive: () => DEFAULT_ROW_ACTIVE_CONFIG,
         rowCurrentRevokable: true,
