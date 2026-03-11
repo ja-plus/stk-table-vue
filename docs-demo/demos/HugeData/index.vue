@@ -61,7 +61,7 @@ const createData = (i: number) => {
 
 onMounted(() => {
     initDataSource();
-    // simulateUpdateData();
+    simulateUpdateData();
 });
 
 const mockDataResult = mockData(isZH.value);
