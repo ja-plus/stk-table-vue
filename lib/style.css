@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.11.0-beta.4
+ * version: v0.11.1
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/

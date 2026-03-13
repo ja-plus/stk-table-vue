@@ -1,4 +1,8 @@
 
+## 0.11.1
+* Bugfix
+  - fix: areaSelection keyboard not work correctly when `props.footerData` is set.
+
 ## 0.11.0
 * Feature
   - Add: `areaSelection['keyboard']` to allow keyboard to select cell.
