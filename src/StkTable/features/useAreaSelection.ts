@@ -5,8 +5,9 @@ import { getClosestColKey, getClosestTrIndex } from '../utils';
 import { getCalculatedColWidth } from '../utils/constRefUtils';
 
 /**
- * 单元格拖拽选区
- * en: Cell drag selection
+ * 单元格区域选择功能
+ * 支持鼠标拖拽选择、键盘导航、复制粘贴等功能
+ * en: Cell area selection feature with mouse drag, keyboard navigation, copy-paste, etc.
  */
 export function useAreaSelection<DT extends Record<string, any>>(
     props: any,
@@ -30,8 +31,23 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * en: Maximum scroll pixels per frame
      */
     const SCROLL_SPEED_MAX = 15;
-
     const POINT_EDGE_OFFSET = 2;
+
+    const KEY_ARROW_UP = 'ArrowUp';
+    const KEY_ARROW_DOWN = 'ArrowDown';
+    const KEY_ARROW_LEFT = 'ArrowLeft';
+    const KEY_ARROW_RIGHT = 'ArrowRight';
+    const KEY_TAB = 'Tab';
+    const KEY_ESCAPE = 'Escape';
+    const KEY_ESC = 'Esc';
+    const KEY_C = 'c';
+
+    // CSS
+    const CELL_RANGE_SELECTED = 'cell-range-selected';
+    const CELL_RANGE_TOP = 'cell-range-t';
+    const CELL_RANGE_BOTTOM = 'cell-range-b';
+    const CELL_RANGE_LEFT = 'cell-range-l';
+    const CELL_RANGE_RIGHT = 'cell-range-r';
 
     /** 当前选区范围 */
     const selectionRange = ref<AreaSelectionRange | null>(null) as Ref<AreaSelectionRange | null>;
@@ -126,6 +142,98 @@ export function useAreaSelection<DT extends Record<string, any>>(
     function getColIndexByKey(colKey: string | undefined): number {
         if (!colKey) return -1;
         return colKeyToIndexMap.value.get(colKey) ?? -1;
+    }
+
+    /** 获取列的左边距和宽度 */
+    function getColPosition(colIndex: number): { l: number; w: number } {
+        let l = 0;
+        let w = 0;
+        const cols = tableHeaderLast.value;
+        for (let i = 0; i < cols.length; i++) {
+            const colWidth = getCalculatedColWidth(cols[i]);
+            if (i < colIndex) {
+                l += colWidth;
+            } else if (i === colIndex) {
+                w = colWidth;
+                break;
+            }
+        }
+        return { l, w };
+    }
+
+    /** 根据按键计算移动方向 */
+    function getMovementDelta(key: string, shiftKey: boolean): [number, number] {
+        let rowDelta = 0;
+        let colDelta = 0;
+
+        switch (key) {
+            case KEY_ARROW_UP:
+                rowDelta = -1;
+                break;
+            case KEY_ARROW_DOWN:
+                rowDelta = 1;
+                break;
+            case KEY_ARROW_LEFT:
+                colDelta = -1;
+                break;
+            case KEY_ARROW_RIGHT:
+                colDelta = 1;
+                break;
+            case KEY_TAB:
+                // Tab: 向右移动；Shift+Tab: 向左移动
+                colDelta = shiftKey ? -1 : 1;
+                break;
+        }
+
+        return [rowDelta, colDelta];
+    }
+
+    /** 钳制值到指定范围内 */
+    function clamp(value: number, min: number, max: number): number {
+        return Math.max(min, Math.min(value, max));
+    }
+
+    /** 处理Tab键的换行逻辑 */
+    function handleTabWrap(row: number, col: number, rawCol: number, rowCount: number, colCount: number): [number, number] {
+        let newRow = row;
+        let newCol = col;
+
+        if (rawCol >= colCount) {
+            newCol = 0;
+            newRow = Math.min(row + 1, rowCount - 1);
+        } else if (rawCol < 0) {
+            newCol = colCount - 1;
+            newRow = Math.max(row - 1, 0);
+        }
+
+        return [newRow, newCol];
+    }
+
+    /** 计算自动滚动的增量 */
+    function calculateAutoScrollDelta(mouseX: number, mouseY: number, rect: DOMRect): { deltaX: number; deltaY: number } {
+        const { top, bottom, left, right } = rect;
+        let deltaX = 0;
+        let deltaY = 0;
+
+        // Y方向
+        if (mouseY < top + EDGE_ZONE) {
+            const dist = Math.max(0, top + EDGE_ZONE - mouseY);
+            deltaY = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
+        } else if (mouseY > bottom - EDGE_ZONE) {
+            const dist = Math.max(0, mouseY - (bottom - EDGE_ZONE));
+            deltaY = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
+        }
+
+        // X方向
+        if (mouseX < left + EDGE_ZONE) {
+            const dist = Math.max(0, left + EDGE_ZONE - mouseX);
+            deltaX = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
+        } else if (mouseX > right - EDGE_ZONE) {
+            const dist = Math.max(0, mouseX - (right - EDGE_ZONE));
+            deltaX = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
+        }
+
+        return { deltaX, deltaY };
     }
 
     /** mousedown 处理：设置锚点，开始拖选 */
@@ -238,27 +346,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         }
 
         const rect = container.getBoundingClientRect();
-        const { top, bottom, left, right } = rect;
-        let deltaX = 0;
-        let deltaY = 0;
-
-        // Y方向
-        if (lastMouseClientY < top + EDGE_ZONE) {
-            const dist = Math.max(0, top + EDGE_ZONE - lastMouseClientY);
-            deltaY = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        } else if (lastMouseClientY > bottom - EDGE_ZONE) {
-            const dist = Math.max(0, lastMouseClientY - (bottom - EDGE_ZONE));
-            deltaY = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        }
-
-        // X方向
-        if (lastMouseClientX < left + EDGE_ZONE) {
-            const dist = Math.max(0, left + EDGE_ZONE - lastMouseClientX);
-            deltaX = -Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        } else if (lastMouseClientX > right - EDGE_ZONE) {
-            const dist = Math.max(0, lastMouseClientX - (right - EDGE_ZONE));
-            deltaX = Math.ceil((dist / EDGE_ZONE) * SCROLL_SPEED_MAX);
-        }
+        const { deltaX, deltaY } = calculateAutoScrollDelta(lastMouseClientX, lastMouseClientY, rect);
 
         if (deltaX !== 0 || deltaY !== 0) {
             container.scrollTop += deltaY;
@@ -401,7 +489,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const key = e.key;
 
         // Esc 键：取消当前选区
-        if (key === 'Escape' || key === 'Esc') {
+        if (key === KEY_ESCAPE || key === KEY_ESC) {
             if (selectionRange.value) {
                 clearSelectedArea();
                 emitSelectionChange();
@@ -411,7 +499,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         }
 
         // Ctrl/Cmd+C 复制选区
-        if ((e.ctrlKey || e.metaKey) && key === 'c' && selectionRange.value) {
+        if ((e.ctrlKey || e.metaKey) && key === KEY_C && selectionRange.value) {
             copySelectedArea();
             e.preventDefault();
             return;
@@ -420,8 +508,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
         // 键盘导航（需要启用 keyboard 选项）
         if (!keyboardEnabled.value) return;
 
-        const isArrowKey = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key);
-        const isTabKey = key === 'Tab';
+        const isArrowKey = [KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT].includes(key);
+        const isTabKey = key === KEY_TAB;
         const isNavigationKey = isArrowKey || isTabKey;
 
         if (!isNavigationKey) return;
@@ -447,21 +535,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         }
 
         // 计算移动方向
-        let rowDelta = 0;
-        let colDelta = 0;
-
-        if (key === 'ArrowUp') {
-            rowDelta = -1;
-        } else if (key === 'ArrowDown') {
-            rowDelta = 1;
-        } else if (key === 'ArrowLeft') {
-            colDelta = -1;
-        } else if (key === 'ArrowRight') {
-            colDelta = 1;
-        } else if (key === 'Tab') {
-            // Tab: 向右移动；Shift+Tab: 向左移动
-            colDelta = e.shiftKey ? -1 : 1;
-        }
+        const [rowDelta, colDelta] = getMovementDelta(key, e.shiftKey);
 
         // Shift 扩展选区，否则移动单格选区
         if (e.shiftKey && isArrowKey) {
@@ -471,8 +545,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
             let newEndCol = range.endColIndex + colDelta;
 
             // 边界检查
-            newEndRow = Math.max(0, Math.min(newEndRow, rowCount - 1));
-            newEndCol = Math.max(0, Math.min(newEndCol, colCount - 1));
+            newEndRow = clamp(newEndRow, 0, rowCount - 1);
+            newEndCol = clamp(newEndCol, 0, colCount - 1);
 
             selectionRange.value = {
                 ...range,
@@ -490,20 +564,16 @@ export function useAreaSelection<DT extends Record<string, any>>(
             let newCol = minCol + colDelta;
 
             // 边界检查（先检查，避免越界）
-            newRow = Math.max(0, Math.min(newRow, rowCount - 1));
-            newCol = Math.max(0, Math.min(newCol, colCount - 1));
+            newRow = clamp(newRow, 0, rowCount - 1);
+            newCol = clamp(newCol, 0, colCount - 1);
 
             // Tab 换行逻辑：如果到达行尾/行首，换行
             if (isTabKey) {
                 // 计算原始未 clamp 的值
                 const rawCol = minCol + colDelta;
-                if (rawCol >= colCount) {
-                    newCol = 0;
-                    newRow = Math.min(minRow + 1, rowCount - 1);
-                } else if (rawCol < 0) {
-                    newCol = colCount - 1;
-                    newRow = Math.max(minRow - 1, 0);
-                }
+                const [tabRow, tabCol] = handleTabWrap(minRow, newCol, rawCol, rowCount, colCount);
+                newRow = tabRow;
+                newCol = tabCol;
             }
 
             // 更新锚点和选区
@@ -523,6 +593,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /**
      * 滚动到指定单元格，确保其在可视区域内
+     * @param rowIndex 行索引
+     * @param colIndex 列索引
      */
     function scrollToCell(rowIndex: number, colIndex: number) {
         const container = tableContainerRef.value;
@@ -532,9 +604,10 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const col = tableHeaderLast.value[colIndex];
         if (!row || !col) return;
 
-        // 获取表头高度
         const thead = container.querySelector('thead');
         const headerHeight = thead ? thead.offsetHeight : 0;
+        const tfoot = container.querySelector('tfoot');
+        const footerHeight = tfoot ? tfoot.offsetHeight : 0;
 
         const vs = virtualScroll.value;
         const vsx = virtualScrollX.value;
@@ -546,7 +619,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         // 计算可视区域
         const visibleTop = container.scrollTop;
-        const visibleBottom = visibleTop + vs.containerHeight - headerHeight;
+        const visibleBottom = visibleTop + vs.containerHeight - headerHeight - footerHeight;
 
         // 计算需要的垂直滚动位置
         let newScrollTop: number | null = null;
@@ -555,22 +628,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
             newScrollTop = targetRowTop;
         } else if (targetRowBottom > visibleBottom) {
             // 目标行在可视区域下方，滚动到使目标行位于底部
-            newScrollTop = targetRowBottom - (vs.containerHeight - headerHeight);
+            newScrollTop = targetRowBottom - (vs.containerHeight - headerHeight - footerHeight);
         }
 
         // 计算目标列的位置
-        let targetColLeft = 0;
-        let targetColWidth = 0;
-        const cols = tableHeaderLast.value;
-        for (let i = 0; i < cols.length; i++) {
-            const colWidth = getCalculatedColWidth(cols[i]) || 100; // 默认100px
-            if (i < colIndex) {
-                targetColLeft += colWidth;
-            } else if (i === colIndex) {
-                targetColWidth = colWidth;
-                break;
-            }
-        }
+        const { l: targetColLeft, w: targetColWidth } = getColPosition(colIndex);
         const targetColRight = targetColLeft + targetColWidth;
 
         // 计算可视区域（水平）
@@ -594,10 +656,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
     }
 
     /**
-     * 判断一个单元格的选区 class
+     * 判断一个单元格的选区样式类名
      * @param cellKey 单元格唯一键
      * @param absoluteRowIndex 行在 dataSourceCopy 中的绝对索引
      * @param colKey 列唯一键
+     * @returns 样式类名数组
      */
     function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
         const nr = normalizedRange.value;
@@ -606,11 +669,11 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const colIndex = colKeyToIndexMap.value.get(colKey);
         if (colIndex === void 0 || colIndex < 0) return [];
 
-        const classes: string[] = ['cell-range-selected'];
-        if (absoluteRowIndex === nr.minRow) classes.push('cell-range-t');
-        if (absoluteRowIndex === nr.maxRow) classes.push('cell-range-b');
-        if (colIndex === nr.minCol) classes.push('cell-range-l');
-        if (colIndex === nr.maxCol) classes.push('cell-range-r');
+        const classes: string[] = [CELL_RANGE_SELECTED];
+        if (absoluteRowIndex === nr.minRow) classes.push(CELL_RANGE_TOP);
+        if (absoluteRowIndex === nr.maxRow) classes.push(CELL_RANGE_BOTTOM);
+        if (colIndex === nr.minCol) classes.push(CELL_RANGE_LEFT);
+        if (colIndex === nr.maxCol) classes.push(CELL_RANGE_RIGHT);
         return classes;
     }
 

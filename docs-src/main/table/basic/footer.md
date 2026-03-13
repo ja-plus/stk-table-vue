@@ -1,4 +1,4 @@
-# 表尾数据 <Badge type="info" text="^0.11.0" />
+# 表尾数据 <Badge type="tip" text="^0.11.0" />
 
 * `props.footerData` 配置表格底部合计行数据。
 
