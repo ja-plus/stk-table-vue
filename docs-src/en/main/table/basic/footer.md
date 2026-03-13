@@ -1,4 +1,4 @@
-# Footer Summary Row <Badge type="info" text="^0.11.0" />
+# Footer Summary Row <Badge type="tip" text="^0.11.0" />
 
 * `props.footerData` Configure footer summary row data.
 

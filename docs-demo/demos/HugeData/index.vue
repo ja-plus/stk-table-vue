@@ -32,7 +32,7 @@ const currentSort: SortState<DataType> = {
 };
 const stkTableRef = useTemplateRef('stkTableRef');
 
-const dataSize = ref(500);
+const dataSize = ref(50000);
 const rowByRow = ref(false);
 const optimizeDragScroll = ref<'scrollbar'>();
 const translateZ = ref(false);
