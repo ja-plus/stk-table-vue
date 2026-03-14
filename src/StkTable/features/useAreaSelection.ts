@@ -72,6 +72,60 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return map;
     });
 
+    /**
+     * 获取固定列宽度的函数
+     * 缓存每个固定列位置的累计宽度，查询时直接返回
+     * @param colIndex 目标列索引
+     * @returns [leftFixedWidth, rightFixedWidth]
+     */
+    const getFixedColWidths = computed(() => {
+        const cols = tableHeaderLast.value;
+        type FixedColWidth = { i: number; /** accumulated width */ w: number };
+        // 保存每个固定列位置的累计宽度（包含当前列）
+        const leftAccumulated: FixedColWidth[] = [];
+        const rightAccumulated: FixedColWidth[] = [];
+
+        let leftSum = 0;
+        let rightSum = 0;
+
+        for (let i = 0, j = cols.length - 1; i < cols.length; i++, j--) {
+            const leftCol = cols[i];
+            const rightCol = cols[j];
+
+            if (leftCol?.fixed === 'left') {
+                leftSum += getCalculatedColWidth(leftCol);
+                leftAccumulated.push({ i, w: leftSum });
+            }
+
+            if (rightCol?.fixed === 'right') {
+                rightSum += getCalculatedColWidth(rightCol);
+                rightAccumulated.unshift({ i: j, w: rightSum });
+            }
+        }
+
+        return (colIndex: number) => {
+            // 查找目标列左侧最近的固定列的累计宽度
+            let leftFixedWidth = 0;
+            for (let i = leftAccumulated.length - 1; i >= 0; i--) {
+                if (leftAccumulated[i].i < colIndex) {
+                    leftFixedWidth = leftAccumulated[i].w;
+                    break;
+                }
+            }
+
+            // 查找目标列右侧最近的固定列的累计宽度
+            let rightFixedWidth = 0;
+            for (let i = rightAccumulated.length - 1; i >= 0; i--) {
+                if (rightAccumulated[i].i > colIndex) {
+                    rightFixedWidth = rightAccumulated[i].w;
+                    break;
+                }
+            }
+
+            return [leftFixedWidth, rightFixedWidth] as const;
+        };
+    });
+
     /** 根据 selectionRange 计算选区内所有 cellKey 的集合 */
     const selectedCellKeys = computed<Set<string>>(() => {
         const range = selectionRange.value;
@@ -639,14 +693,15 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const visibleLeft = container.scrollLeft;
         const visibleRight = visibleLeft + vsx.containerWidth;
 
-        // 计算需要的水平滚动位置
+        // 计算固定列的宽度（用于检测遮挡）
+        const [leftFixedWidth, rightFixedWidth] = getFixedColWidths.value(colIndex);
         let newScrollLeft: number | null = null;
-        if (targetColLeft < visibleLeft) {
-            // 目标列在可视区域左侧
-            newScrollLeft = targetColLeft;
-        } else if (targetColRight > visibleRight) {
-            // 目标列在可视区域右侧
-            newScrollLeft = targetColRight - vsx.containerWidth;
+        if (targetColLeft < visibleLeft + leftFixedWidth) {
+            // 目标列在左侧固定列遮挡区域内，需要向左滚动
+            newScrollLeft = targetColLeft - leftFixedWidth;
+        } else if (targetColRight > visibleRight - rightFixedWidth) {
+            // 目标列在右侧固定列遮挡区域内，需要向右滚动
+            newScrollLeft = targetColRight - vsx.containerWidth + rightFixedWidth;
         }
 
         // 执行滚动
