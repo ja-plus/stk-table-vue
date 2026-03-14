@@ -208,8 +208,8 @@ function calculateFootData() {
     });
 
     // 设置文本字段
-    totals.seq = '总计';
-    totals.bestTime = `共 ${dataSource.value.length} 条`;
+    totals.seq = t('Summary');
+    totals.bestTime = `${t('Total')} ${dataSource.value.length} ${t('records')}`;
 
     footerData.value = [totals];
     console.log('FootData calculated:', footerData.value);

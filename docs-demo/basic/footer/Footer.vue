@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import StkTable from '../../StkTable.vue';
+import { useI18n } from '../../hooks/useI18n';
 
 type Data = {
     seq?: string;
@@ -10,9 +11,10 @@ type Data = {
     salary: number;
     bonus: number;
 };
+const { t } = useI18n();
 
 const columns: StkTableColumn<Data>[] = [
-    { type: 'seq', title: 'No.', dataIndex: 'seq' as any, width: 50 },
+    { type: 'seq', title: 'No.', dataIndex: 'seq' as any, width: 70 },
     { title: 'Name', dataIndex: 'name' },
     { title: 'Age', dataIndex: 'age', align: 'right' },
     { title: 'Salary', dataIndex: 'salary', align: 'right' },
@@ -42,7 +44,7 @@ function calculateFootData() {
     }
 
     const totals: Data = {
-        seq: '总计',
+        seq: t('Total'),
         name: '',
         age: 0,
         salary: 0,
@@ -59,7 +61,7 @@ function calculateFootData() {
     footerData.value = [
         totals,
         {
-            seq: '平均',
+            seq: t('Average'),
             name: '',
             age: parseFloat((totals.age / dataSource.value.length).toFixed(2)),
             salary: parseFloat((totals.salary / dataSource.value.length).toFixed(2)),

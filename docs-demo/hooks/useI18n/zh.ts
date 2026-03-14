@@ -137,4 +137,8 @@ export const zh = {
     Position: '职位',
     Salary: '薪资',
     keyboardSelect: '键盘选择',
+    Total: '合计',
+    Average: '平均',
+    Summary: '总计',
+    records: '条',
 };
