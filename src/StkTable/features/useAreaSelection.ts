@@ -72,6 +72,50 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return map;
     });
 
+    /**
+     * 获取固定列宽度的函数
+     * @param colIndex 目标列索引
+     * @returns [leftFixedWidth, rightFixedWidth]
+     */
+    const getFixedColWidths = computed(() => {
+        const cols = tableHeaderLast.value;
+        const leftFixed: { index: number; width: number }[] = [];
+        const rightFixed: { index: number; width: number }[] = [];
+
+        for (let i = 0; i < cols.length; i++) {
+            const col = cols[i];
+            if (col?.fixed === 'left') {
+                leftFixed.push({ index: i, width: getCalculatedColWidth(col) });
+            } else if (col?.fixed === 'right') {
+                rightFixed.push({ index: i, width: getCalculatedColWidth(col) });
+            }
+        }
+
+        return (colIndex: number): [number, number] => {
+            // 计算目标列左侧的固定列总宽度
+            let leftFixedWidth = 0;
+            for (const col of leftFixed) {
+                if (col.index < colIndex) {
+                    leftFixedWidth += col.width;
+                } else {
+                    break;
+                }
+            }
+
+            // 计算目标列右侧的固定列总宽度
+            let rightFixedWidth = 0;
+            for (let i = rightFixed.length - 1; i >= 0; i--) {
+                if (rightFixed[i].index > colIndex) {
+                    rightFixedWidth += rightFixed[i].width;
+                } else {
+                    break;
+                }
+            }
+
+            return [leftFixedWidth, rightFixedWidth];
+        };
+    });
+
     /** 根据 selectionRange 计算选区内所有 cellKey 的集合 */
     const selectedCellKeys = computed<Set<string>>(() => {
         const range = selectionRange.value;
@@ -639,14 +683,15 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const visibleLeft = container.scrollLeft;
         const visibleRight = visibleLeft + vsx.containerWidth;
 
-        // 计算需要的水平滚动位置
+        // 计算固定列的宽度（用于检测遮挡）
+        const [leftFixedWidth, rightFixedWidth] = getFixedColWidths.value(colIndex);
         let newScrollLeft: number | null = null;
-        if (targetColLeft < visibleLeft) {
-            // 目标列在可视区域左侧
-            newScrollLeft = targetColLeft;
-        } else if (targetColRight > visibleRight) {
-            // 目标列在可视区域右侧
-            newScrollLeft = targetColRight - vsx.containerWidth;
+        if (targetColLeft < visibleLeft + leftFixedWidth) {
+            // 目标列在左侧固定列遮挡区域内，需要向左滚动
+            newScrollLeft = targetColLeft - leftFixedWidth;
+        } else if (targetColRight > visibleRight - rightFixedWidth) {
+            // 目标列在右侧固定列遮挡区域内，需要向右滚动
+            newScrollLeft = targetColRight - vsx.containerWidth + rightFixedWidth;
         }
 
         // 执行滚动
