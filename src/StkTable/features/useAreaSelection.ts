@@ -74,45 +74,55 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /**
      * 获取固定列宽度的函数
+     * 缓存每个固定列位置的累计宽度，查询时直接返回
      * @param colIndex 目标列索引
      * @returns [leftFixedWidth, rightFixedWidth]
      */
     const getFixedColWidths = computed(() => {
         const cols = tableHeaderLast.value;
-        const leftFixed: { index: number; width: number }[] = [];
-        const rightFixed: { index: number; width: number }[] = [];
+        type FixedColWidth = { i: number; /** accumulated width */ w: number };
+        // 保存每个固定列位置的累计宽度（包含当前列）
+        const leftAccumulated: FixedColWidth[] = [];
+        const rightAccumulated: FixedColWidth[] = [];
 
-        for (let i = 0; i < cols.length; i++) {
-            const col = cols[i];
-            if (col?.fixed === 'left') {
-                leftFixed.push({ index: i, width: getCalculatedColWidth(col) });
-            } else if (col?.fixed === 'right') {
-                rightFixed.push({ index: i, width: getCalculatedColWidth(col) });
+        let leftSum = 0;
+        let rightSum = 0;
+
+        for (let i = 0, j = cols.length - 1; i < cols.length; i++, j--) {
+            const leftCol = cols[i];
+            const rightCol = cols[j];
+
+            if (leftCol?.fixed === 'left') {
+                leftSum += getCalculatedColWidth(leftCol);
+                leftAccumulated.push({ i, w: leftSum });
+            }
+
+            if (rightCol?.fixed === 'right') {
+                rightSum += getCalculatedColWidth(rightCol);
+                rightAccumulated.unshift({ i: j, w: rightSum });
             }
         }
 
-        return (colIndex: number): [number, number] => {
-            // 计算目标列左侧的固定列总宽度
+        return (colIndex: number) => {
+            // 查找目标列左侧最近的固定列的累计宽度
             let leftFixedWidth = 0;
-            for (const col of leftFixed) {
-                if (col.index < colIndex) {
-                    leftFixedWidth += col.width;
-                } else {
+            for (let i = leftAccumulated.length - 1; i >= 0; i--) {
+                if (leftAccumulated[i].i < colIndex) {
+                    leftFixedWidth = leftAccumulated[i].w;
                     break;
                 }
             }
 
-            // 计算目标列右侧的固定列总宽度
+            // 查找目标列右侧最近的固定列的累计宽度
             let rightFixedWidth = 0;
-            for (let i = rightFixed.length - 1; i >= 0; i--) {
-                if (rightFixed[i].index > colIndex) {
-                    rightFixedWidth += rightFixed[i].width;
-                } else {
+            for (let i = rightAccumulated.length - 1; i >= 0; i--) {
+                if (rightAccumulated[i].i > colIndex) {
+                    rightFixedWidth = rightAccumulated[i].w;
                     break;
                 }
             }
 
-            return [leftFixedWidth, rightFixedWidth];
+            return [leftFixedWidth, rightFixedWidth] as const;
         };
     });
 
