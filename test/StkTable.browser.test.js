@@ -39,9 +39,7 @@ describe('StkTable.vue', () => {
             const th = ths[i];
             expect(th.attributes()['data-col-key']).toEqual(col.dataIndex);
             const style = th.attributes().style;
-            expect(style).toContain(`width: ${col.width};`);
-            expect(style).toContain(`min-width: ${col.width};`);
-            expect(style).toContain(`max-width: ${col.width};`);
+            expect(style).toContain(`--cw: ${col.width};`);
         }
 
         // expect(ths[0].attributes()['data-col-key']).toEqual('id')

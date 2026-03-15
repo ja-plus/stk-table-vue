@@ -18,11 +18,11 @@ const columns: StkTableColumn<DataType>[] = [
 ];
 
 const dataSource = ref<DataType[]>([
-    { key: '1', name: 'John Brown', age: 365 },
-    { key: '2', name: 'Tom', age: 60 },
-    { key: '3', name: 'Jerry', age: 90 },
-    { key: '4', name: 'Nicolas', age: null },
-    { key: '5', name: 'Kitty', age: 730 },
+    { key: '1', name: '1-John Brown', age: 365 },
+    { key: '2', name: '2-Tom', age: 60 },
+    { key: '3', name: '3-Jerry', age: 90 },
+    { key: '4', name: '4-Nicolas', age: null },
+    { key: '5', name: '5-Kitty', age: 730 },
 ]);
 </script>
 <template>

@@ -64,9 +64,73 @@
 <demo vue="basic/sort/SortRemote.vue"></demo>
 
 ## 树节点深度排序
-配置 `props.sortConfig.sortChildren = true` 后，点击表头排序时，会对`children`子节点也进行排序。
+配置 `props.sortConfig.sortChildren = true` 后，点击表头排序时，会对 `children` 子节点也进行排序。
 
 <demo vue="basic/sort/SortChildren.vue"></demo>
+
+## 多列排序
+
+::: tip
+多列排序功能从 v0.12.0 开始支持
+:::
+
+配置 `props.sortConfig.multiSort = true` 即可开启多列排序模式。
+
+在多列排序模式下：
+- 点击不同的列会同时保持多个排序条件
+- 先点击的列优先级更高（排序时先按该列排序）
+- 再次点击同一列切换排序方向（desc → asc → null）
+- 第三次点击取消该列排序
+- 可通过 `multiSortLimit` 限制最大排序列数（默认 3）
+
+### 基础用法
+
+<demo vue="basic/sort/MultiSort.vue"></demo>
+
+### API 扩展
+
+#### setMultiSorter 方法
+
+多列排序模式下，可以使用 `setMultiSorter` 方法一次性设置多个排序列：
+
+```ts
+stkTableRef.value?.setMultiSorter([
+  { colKey: 'department', order: 'asc' },  // 优先级最高
+  { colKey: 'age', order: 'desc' },        // 优先级次之
+]);
+```
+
+| 参数 | 类型 | 说明 |
+| ---- | ---- | ---- |
+| sortConfigs | `{ colKey: string; order: Order; sortOption?: SortOption }[]` | 排序配置数组，按优先级排序 |
+| option.silent | `boolean` | 是否禁止触发 sort-change 事件，默认 true |
+| option.sort | `boolean` | 是否执行排序，默认 true |
+
+#### getSortColumns 返回值
+
+`getSortColumns()` 返回所有排序列的信息：
+
+```ts
+// 单列排序模式
+[{ key: 'name', order: 'desc' }]
+
+// 多列排序模式
+[
+  { key: 'department', order: 'asc' },
+  { key: 'age', order: 'desc' }
+]
+```
+
+#### sortStates 状态数组
+
+新增暴露 `sortStates` 响应式数组，可以获取所有排序状态：
+
+```ts
+const sortStates = stkTableRef.value?.sortStates
+// SortState[] - 包含所有排序列的完整信息
+```
+
+## 
 
 
 ## API
@@ -150,13 +214,21 @@ defineExpose({
      */
     setSorter,
     /**
-     * 重置sorter状态
+     * 设置多列排序状态（多列排序模式专用）
+     */
+    setMultiSorter,
+    /**
+     * 重置 sorter 状态
      */
     resetSorter,
     /**
      * 表格排序列顺序
      */
     getSortColumns,
+    /**
+     * 多列排序状态数组（多列排序模式时使用）
+     */
+    sortStates,
 })
 ```
 详情参考 [Expose 实例方法](/main/api/expose)

@@ -284,6 +284,7 @@ import {
     SeqConfig,
     SortConfig,
     SortOption,
+    SortState,
     StkTableColumn,
     TagType,
     TreeConfig,
@@ -729,12 +730,23 @@ const currentHoverRowKey = ref<UniqKey | null>(null);
 /** 当前hover的列的key */
 // const currentColHoverKey = ref(null);
 
-/** sort colKey*/
-let sortCol = ref<keyof DT>();
-let sortOrderIndex = ref(0);
-
 /** 排序切换顺序 */
-const sortSwitchOrder: Order[] = [null, 'desc', 'asc'];
+const sortSwitchOrder: Order[] = [null, 'desc', 'asc'] as const;
+
+/** 是否启用多列排序 */
+const isMultiSort = computed(() => props.sortConfig.multiSort ?? false);
+
+/** 多列排序限制 */
+const multiSortLimit = computed(() => props.sortConfig.multiSortLimit ?? 3);
+
+/**
+ * 多列排序状态数组
+ * 优先级按数组顺序，越靠前优先级越高（先点击的优先级高）
+ */
+const sortStates = ref<SortState<DT>[]>([]);
+
+/** 对外暴露：当前排序的列 key（只读计算属性） */
+const sortCol = computed<keyof DT | undefined>(() => sortStates.value[0]?.dataIndex);
 
 const [tableHeaders, tableHeadersForCalc, dealColumns] = useTableColumns<DT>(props.virtualX, isRelativeMode);
 
@@ -1002,13 +1014,17 @@ onMounted(() => {
     dealDefaultSorter();
 });
 
-function initDataSource(v = props.dataSource) {
+function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) {
     let dataSourceTemp = v.slice(); // shallow copy
     if (isTreeData.value) {
         // only tree data need flat
         dataSourceTemp = flatTreeData(dataSourceTemp);
     }
     dataSourceTemp = filterDataSource(dataSourceTemp);
+    if ((!props.sortRemote || option?.forceSort) && sortStates.value.length) {
+        const sortConfig = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig };
+        dataSourceTemp = execMultiSort(dataSourceTemp, sortConfig);
+    }
     dataSourceCopy.value = dataSourceTemp;
 }
 
@@ -1067,13 +1083,6 @@ function updateDataSource(val: DT[]) {
     if (needInitVirtualScrollY) {
         // wait for table render,initVirtualScrollY has get `dom` operation.
         nextTick(() => initVirtualScrollY());
-    }
-    const sortColValue = sortCol.value;
-    if (!isEmptyValue(sortColValue) && !props.sortRemote) {
-        // sort
-        const colKey = colKeyGen.value;
-        const column = tableHeaderLast.value.find(it => colKey(it) === sortColValue);
-        onColumnSort(column, false);
     }
 }
 
@@ -1180,6 +1189,9 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
 
 function getTHProps(col: PrivateStkTableColumn<DT>) {
     const colKey = colKeyGen.value(col);
+    const sortState = getColumnSortState(colKey);
+    const isSorted = !!sortState && sortState.order !== null;
+
     return {
         'data-col-key': colKey,
         draggable: Boolean(isHeaderDraggable(col)),
@@ -1189,7 +1201,7 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
         title: getHeaderTitle(col),
         class: [
             col.sorter ? 'sortable' : '',
-            colKey === sortCol.value && sortOrderIndex.value !== 0 && 'sorter-' + sortSwitchOrder[sortOrderIndex.value],
+            isSorted && 'sorter-' + sortState?.order,
             col.headerClassName,
             fixedColClassMap.value.get(colKey),
             col.headerAlign &&
@@ -1265,6 +1277,94 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     };
 }
 
+function getColumnSortState(colKey: UniqKey): SortState<DT> | undefined {
+    return sortStates.value[getSortStateIndex(colKey)];
+}
+/**
+ * 获取列的排序状态索引
+ */
+function getSortStateIndex(colKey: UniqKey): number {
+    return sortStates.value.findIndex(s => s.key === colKey || s.dataIndex === colKey);
+}
+
+/**
+ * 添加或更新排序状态到 sortStates
+ * @param newState 新的排序状态
+ * @param mode '1' - 追加模式（多列排序），0 - 替换模式（单列排序）
+ */
+function addOrUpdateSortState(newState: SortState<DT>, mode?: 1 | 0) {
+    const existingIndex = sortStates.value.findIndex(s => s.key === newState.key || s.dataIndex === newState.dataIndex);
+
+    if (existingIndex >= 0) {
+        // 移除已存在的相同列
+        sortStates.value.splice(existingIndex, 1);
+    }
+
+    if (mode && isMultiSort.value) {
+        // 多列排序模式：检查数量限制，然后添加到最前面
+        if (sortStates.value.length >= multiSortLimit.value) {
+            sortStates.value.pop();
+        }
+        sortStates.value.unshift(newState);
+    } else {
+        sortStates.value = [newState];
+    }
+}
+
+function updateSortState(col: StkTableColumn<DT>, colKey: UniqKey): Order {
+    const existingIndex = getSortStateIndex(colKey);
+    let newOrder: Order;
+
+    if (existingIndex >= 0) {
+        // 已存在该列的排序，切换排序顺序
+        const currentOrder = sortStates.value[existingIndex].order;
+        const currentIndex = sortSwitchOrder.indexOf(currentOrder);
+        newOrder = sortSwitchOrder[(currentIndex + 1) % 3];
+
+        if (newOrder === null) {
+            // 取消排序，从数组中移除
+            sortStates.value.splice(existingIndex, 1);
+        } else {
+            // 更新排序顺序
+            const updatedState = { ...sortStates.value[existingIndex], order: newOrder };
+            addOrUpdateSortState(updatedState, 1);
+        }
+    } else {
+        newOrder = sortSwitchOrder[1];
+
+        const newState: SortState<DT> = {
+            key: colKey,
+            dataIndex: col.dataIndex,
+            sortField: col.sortField,
+            sortType: col.sortType,
+            order: newOrder,
+        };
+
+        addOrUpdateSortState(newState, 1);
+    }
+
+    return newOrder;
+}
+
+/**
+ * 执行多列排序
+ */
+function execMultiSort(dataSource: DT[], sortConfig: SortConfig<DT>): DT[] {
+    let result = dataSource.slice();
+
+    // 从后往前排序，这样前面的排序优先级更高
+    for (let i = sortStates.value.length - 1; i >= 0; i--) {
+        const state = sortStates.value[i];
+        const col = tableHeaderLast.value.find(c => (state.key && colKeyGen.value(c) === state.key) || c.dataIndex === state.dataIndex);
+        if (col && state.order) {
+            const colSortConfig = { ...sortConfig, ...col.sortConfig };
+            result = tableSort(col, state.order, result, colSortConfig);
+        }
+    }
+
+    return result;
+}
+
 /**
  * 表头点击排序
  *
@@ -1273,66 +1373,46 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
  * @param options.force sort-remote 开启后是否强制排序
  * @param options.emit 是否触发回调
  */
-function onColumnSort(col: StkTableColumn<DT> | undefined | null, click = true, options: { force?: boolean; emit?: boolean } = {}) {
+function onColumnSort(col: StkTableColumn<DT> | undefined | null) {
     if (!col) {
         console.warn('onColumnSort: not found col:', col);
         return;
     }
-    if (!col.sorter && click) {
+    if (!col.sorter) {
         // 点击表头触发的排序，如果列没有配置sorter则不处理。setSorter 触发的排序则保持通行。
         return;
     }
-    options = { force: false, emit: false, ...options };
     const colKey = colKeyGen.value(col);
-    if (sortCol.value !== colKey) {
-        // 改变排序的列时，重置排序
-        sortCol.value = colKey;
-        sortOrderIndex.value = 0;
-    }
-    const prevOrder = sortSwitchOrder[sortOrderIndex.value];
-    if (click) sortOrderIndex.value++;
-    sortOrderIndex.value = sortOrderIndex.value % 3;
 
-    let order = sortSwitchOrder[sortOrderIndex.value];
-    const sortConfig: SortConfig<DT> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
-    const { defaultSort } = sortConfig;
-    const colKeyGenValue = colKeyGen.value;
+    let order = updateSortState(col, colKey);
+    let sortConfig: SortConfig<DT> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
 
-    if (!order && defaultSort) {
-        // if no order ,use default order
-        const defaultColKey = defaultSort.key || defaultSort.dataIndex;
-        if (!defaultColKey) {
-            console.error('sortConfig.defaultSort key or dataIndex is required');
-            return;
-        }
-        if (colKey === defaultColKey && prevOrder === defaultSort.order) {
-            order = sortSwitchOrder.find(o => o !== defaultSort.order && o) as Order;
-        } else {
-            order = defaultSort.order;
-        }
-        sortOrderIndex.value = sortSwitchOrder.indexOf(order);
-        sortCol.value = defaultColKey as string;
-        col = null;
-        for (const row of tableHeaders.value) {
-            const c = row.find(item => colKeyGenValue(item) === defaultColKey);
-            if (c) {
-                col = c;
-                break;
+    // 处理 defaultSort（当取消排序时）
+    if (!order && sortConfig.defaultSort) {
+        const defaultColKey = sortConfig.defaultSort.key || sortConfig.defaultSort.dataIndex;
+        if (defaultColKey) {
+            const defaultCol = tableHeaderLast.value.find(item => colKeyGen.value(item) === defaultColKey);
+            if (defaultCol) {
+                col = defaultCol;
+                order = sortConfig.defaultSort.order;
+                if (order) {
+                    addOrUpdateSortState({
+                        key: defaultColKey,
+                        dataIndex: defaultCol.dataIndex,
+                        sortField: defaultCol.sortField,
+                        sortType: defaultCol.sortType,
+                        order,
+                    });
+                }
             }
         }
     }
-    let dataSourceTemp: DT[] = props.dataSource.slice();
-    if (!props.sortRemote || options.force) {
-        const sortOption = col || defaultSort;
-        if (sortOption) {
-            dataSourceTemp = tableSort(sortOption, order, dataSourceTemp, sortConfig);
-            dataSourceCopy.value = isTreeData.value ? flatTreeData(dataSourceTemp) : dataSourceTemp;
-        }
+
+    if (!props.sortRemote) {
+        initDataSource();
     }
-    // only emit sort-change event when click
-    if (click || options.emit) {
-        emits('sort-change', col, order, toRaw(dataSourceTemp), sortConfig);
-    }
+
+    emits('sort-change', col, order, toRaw(dataSourceCopy.value), sortConfig);
 }
 
 function onRowClick(e: MouseEvent) {
@@ -1641,26 +1721,59 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
+ * @param option.append 是否追加排序（多列排序模式）。为true时保留现有排序状态，将新排序添加到最前面；为false时替换所有排序状态
  * @return 表格数据
  */
-function setSorter(colKey: string, order: Order, option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean } = {}) {
-    const newOption = { silent: true, sortOption: null, sort: true, ...option };
-    sortCol.value = colKey;
-    sortOrderIndex.value = sortSwitchOrder.indexOf(order);
+function setSorter(
+    colKey: string,
+    order: Order,
+    option: { sortOption?: SortOption<DT>; force?: boolean; silent?: boolean; sort?: boolean; append?: boolean } = {},
+) {
+    const newOption = { silent: true, sortOption: null, sort: true, append: false, ...option };
     const colKeyGenValue = colKeyGen.value;
+    let column: StkTableColumn<DT> | undefined;
+
+    if (order) {
+        column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGenValue(it) === colKey);
+        if (column) {
+            const newState: SortState<DT> = {
+                key: colKey,
+                dataIndex: column.dataIndex,
+                sortField: column.sortField,
+                sortType: column.sortType,
+                order,
+            };
+
+            const mode = newOption.append && isMultiSort.value ? 1 : 0;
+            addOrUpdateSortState(newState, mode);
+        }
+    } else {
+        sortStates.value = [];
+    }
 
     if (newOption.sort && dataSourceCopy.value?.length) {
-        const column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGenValue(it) === sortCol.value);
-        if (column) onColumnSort(column, false, { force: option.force ?? true, emit: !newOption.silent });
-        else console.warn('Can not find column by key:', sortCol.value);
+        if (!props.sortRemote || newOption.force) {
+            initDataSource(props.dataSource, { forceSort: newOption.force });
+        }
     }
+
+    if (!newOption.silent) {
+        if (!column) {
+            column = newOption.sortOption || tableHeaderLast.value.find(it => colKeyGenValue(it) === colKey);
+        }
+        if (column) {
+            emits('sort-change', column, order, toRaw(dataSourceCopy.value), props.sortConfig);
+        } else {
+            console.warn('Can not find column by key:', colKey);
+        }
+    }
+
     return dataSourceCopy.value;
 }
 
 function resetSorter() {
-    sortCol.value = void 0;
-    sortOrderIndex.value = 0;
-    dataSourceCopy.value = props.dataSource.slice();
+    sortStates.value = [];
+    initDataSource();
 }
 
 /**
@@ -1683,10 +1796,8 @@ function getTableData() {
  * get current sort info
  * @return {{key:string,order:Order}[]}
  */
-function getSortColumns() {
-    const sortOrder = sortSwitchOrder[sortOrderIndex.value];
-    if (!sortOrder) return [];
-    return [{ key: sortCol.value, order: sortOrder }];
+function getSortColumns(): { key: keyof DT | undefined; order: Order }[] {
+    return sortStates.value.map(s => ({ key: s.key || s.dataIndex, order: s.order }));
 }
 
 defineExpose({
@@ -1745,6 +1856,12 @@ defineExpose({
      * en: Table sort column colKey
      */
     sortCol,
+    /**
+     * 排序状态数组
+     *
+     * en: Multi-column sort states array
+     */
+    sortStates,
     /**
      * 表格排序列顺序
      *
