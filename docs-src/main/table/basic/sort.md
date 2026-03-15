@@ -68,11 +68,7 @@
 
 <demo vue="basic/sort/SortChildren.vue"></demo>
 
-## 多列排序
-
-::: tip
-多列排序功能从 v0.12.0 开始支持
-:::
+## 多列排序 <Badge type="tip" text="^0.11.2" />
 
 配置 `props.sortConfig.multiSort = true` 即可开启多列排序模式。
 
@@ -81,109 +77,82 @@
 - 先点击的列优先级更高（排序时先按该列排序）
 - 再次点击同一列切换排序方向（desc → asc → null）
 - 第三次点击取消该列排序
-- 可通过 `multiSortLimit` 限制最大排序列数（默认 3）
-
-### 基础用法
+- 可通过 `props.sortConfig.multiSortLimit` 限制最大排序列数（默认 3）
 
 <demo vue="basic/sort/MultiSort.vue"></demo>
-
-### API 扩展
-
-#### setMultiSorter 方法
-
-多列排序模式下，可以使用 `setMultiSorter` 方法一次性设置多个排序列：
-
-```ts
-stkTableRef.value?.setMultiSorter([
-  { colKey: 'department', order: 'asc' },  // 优先级最高
-  { colKey: 'age', order: 'desc' },        // 优先级次之
-]);
-```
-
-| 参数 | 类型 | 说明 |
-| ---- | ---- | ---- |
-| sortConfigs | `{ colKey: string; order: Order; sortOption?: SortOption }[]` | 排序配置数组，按优先级排序 |
-| option.silent | `boolean` | 是否禁止触发 sort-change 事件，默认 true |
-| option.sort | `boolean` | 是否执行排序，默认 true |
-
-#### getSortColumns 返回值
-
-`getSortColumns()` 返回所有排序列的信息：
-
-```ts
-// 单列排序模式
-[{ key: 'name', order: 'desc' }]
-
-// 多列排序模式
-[
-  { key: 'department', order: 'asc' },
-  { key: 'age', order: 'desc' }
-]
-```
-
-#### sortStates 状态数组
-
-新增暴露 `sortStates` 响应式数组，可以获取所有排序状态：
-
-```ts
-const sortStates = stkTableRef.value?.sortStates
-// SortState[] - 包含所有排序列的完整信息
-```
-
-## 
-
 
 ## API
 ### StkTableColumn列配置
 
-`StkTableColumn` 列配置参数。
-``` ts
+`StkTableColumn` 列配置中与排序相关的参数。
+
+```ts
 const columns: StkTableColumn[] = [{
     sorter: true,
     sortField: 'xxx',
     sortType: 'number',
+    sortConfig: Omit<SortConfig<T>, 'defaultSort'>;
 }]
-``` 
-| 参数 | 类型 | 默认值| 说明 |
+```
+
+| 参数 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
-| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | 指定是否开启排序。 |
-| sortField | `string` | 同 StkTableColumn['dataIndex']  | 指定排序的字段。 |
-| sortType | `'string'` \| `'number'` | 默认检测该列第一行的数据类型，判断 `'string'` 或 `'number'` 排序。| 指定排序的类型。 |
+| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | 指定是否开启排序。为 `true` 时开启默认排序；为函数时使用自定义排序规则。 |
+| sortField | `string` | 同 `dataIndex` | 指定排序的字段。当需要使用不同于显示字段的数据进行排序时使用。 |
+| sortType | `'string'` \| `'number'` | 自动检测 | 指定排序的类型。默认自动检测该列第一行的数据类型。 |
+| sortConfig | `Omit<SortConfig<T>, 'defaultSort'>` | - | 配置当前列的排序规则，优先级高于全局 `props.sortConfig`。 |
 
 ### props.sortConfig
-SortConfig 类型：
+
+全局排序配置。
+
 ```ts
 type SortConfig<T extends Record<string, any>> = {
     /**
-     * 默认排序（1.初始化时触发 2.排序方向为null时触发)
-     * 类似onMounted时，调用setSorter点了下表头。
+     * 默认排序（1.初始化时触发 2.排序方向为null时触发）
+     * 类似 onMounted 时调用 setSorter 点了下表头
      */
     defaultSort?: {
-        /**
-         * 列唯一键，
-         *
-         * 如果您配了 `props.colKey` 则这里表示的列唯一键的值
-         */
+        /** 列唯一键，如果配置了 props.colKey 则这里表示列唯一键的值 */
         key?: StkTableColumn<T>['key'];
+        /** 排序字段 */
         dataIndex: StkTableColumn<T>['dataIndex'];
+        /** 排序方向 */
         order: Order;
+        /** 指定排序字段 */
         sortField?: StkTableColumn<T>['sortField'];
+        /** 排序类型 */
         sortType?: StkTableColumn<T>['sortType'];
+        /** 自定义排序函数 */
         sorter?: StkTableColumn<T>['sorter'];
-        /** 是否禁止触发sort-change事件。默认false，表示触发事件。 */
+        /** 是否禁止触发 sort-change 事件，默认 false */
         silent?: boolean;
     };
-        /** 空值始终排在列表末尾 */
+    /** 空值始终排在列表末尾 */
     emptyToBottom?: boolean;
-    /**
-     * 使用`String.prototype.localCompare`对字符串排序
-     * default: false
-     */
+    /** 使用 String.prototype.localeCompare 对字符串排序，默认 false */
     stringLocaleCompare?: boolean;
-    /** 是否对子节点也进行排序 */
+    /** 是否对子节点也进行排序，默认 false */
     sortChildren?: boolean;
+    /** 是否启用多列排序，默认 false */
+    multiSort?: boolean;
+    /** 多列排序时的最大列数限制，默认 3 */
+    multiSortLimit?: number;
 };
 ```
+
+| 参数 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ---- | ---- |
+| defaultSort | `object` | - | 默认排序配置。初始化时和排序方向为 null 时触发。 |
+| defaultSort.key | `string` | - | 列唯一键。 |
+| defaultSort.dataIndex | `string` | - | 排序字段，**必填**。 |
+| defaultSort.order | `Order` | - | 排序方向：`'asc'` \| `'desc'` \| `null`，**必填**。 |
+| defaultSort.silent | `boolean` | `false` | 是否禁止触发 `sort-change` 事件。 |
+| emptyToBottom | `boolean` | `false` | 空值是否始终排在列表末尾。 |
+| stringLocaleCompare | `boolean` | `false` | 是否使用 `localeCompare` 对字符串排序（中文按拼音排序）。 |
+| sortChildren | `boolean` | `false` | 树形数据下，是否对子节点也进行排序。 |
+| multiSort | `boolean` | `false` | 是否启用多列排序模式。 |
+| multiSortLimit | `number` | `3` | 多列排序时的最大列数限制。 |
 
 ### @sort-change
 defineEmits 类型：
@@ -213,10 +182,6 @@ defineExpose({
      * 设置表头排序状态
      */
     setSorter,
-    /**
-     * 设置多列排序状态（多列排序模式专用）
-     */
-    setMultiSorter,
     /**
      * 重置 sorter 状态
      */

@@ -34,19 +34,18 @@ const dataSource = ref<DataType[]>([
     { key: '10', name: 'Jack', age: 30, score: 78, department: 'Marketing' },
 ]);
 
-// 多列排序配置
 const sortConfig = {
     multiSort: true,
     multiSortLimit: 3,
 };
 
-// 获取当前排序信息
 function getSortInfo() {
     const sortColumns = stkTableRef.value?.getSortColumns();
     const sortStates = stkTableRef.value?.sortStates;
-    console.log('Sort Columns:', sortColumns);
-    console.log('Sort States:', sortStates);
-    alert(`Current Sort: ${JSON.stringify(sortColumns, null, 2)}`);
+    alert(
+        `Current Sort: ${JSON.stringify(sortColumns, null, 2)}, 
+        Sort States: ${JSON.stringify(sortStates, null, 2)}`,
+    );
 }
 
 // 使用 setMultiSorter 设置多列排序
@@ -70,19 +69,19 @@ function resetSort() {
 <template>
     <div class="multi-sort-demo">
         <div class="toolbar">
-            <button class="btn" @click="setMultiSort">Set Multi Sort (Dept↑, Age↓)</button>
-            <button class="btn" @click="setSingleSort">Set Single Sort (Score↓)</button>
+            <button class="btn" @click="setMultiSort">Set (Age↓, Dept↑)</button>
+            <button class="btn" @click="setSingleSort">Set (Score↓)</button>
             <button class="btn" @click="getSortInfo">Get Sort Info</button>
-            <button class="btn" @click="resetSort">Reset Sort</button>
+            <button class="btn" @click="resetSort">Reset</button>
         </div>
 
         <StkTable
             ref="stkTableRef"
-            style="height: 300px"
+            style="height: 200px"
             row-key="key"
+            :sort-config="sortConfig"
             :columns="columns"
             :data-source="dataSource"
-            :sort-config="sortConfig"
         />
     </div>
 </template>

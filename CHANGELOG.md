@@ -4,6 +4,9 @@
   - add: `props.footerConfig.position` which can be set footer to top. 
 
 ## 0.11.2
+* Feature:
+  - Add: `props.sortConfig.multiSort`
+  - Add: `props.sortConfig.multiSortLimit`
 * Bugfix:
   - fix: areaSelection keyboard left right not work correctly when table has fixed sticky column
   - fix(#30): horizontal scrollbar has wrong position when `props.scrollbar` && `props.scrollRowByRow` be set. 
