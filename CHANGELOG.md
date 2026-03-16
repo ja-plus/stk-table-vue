@@ -2,7 +2,8 @@
 ## 0.11.2
 * Bugfix:
   - fix: areaSelection keyboard left right not work correctly when table has fixed sticky column
-
+  - fix(#30): horizontal scrollbar has wrong position when `props.scrollbar` && `props.scrollRowByRow` be set. 
+  
 ## 0.11.1
 * Bugfix
   - fix: areaSelection keyboard not work correctly when `props.footerData` is set.

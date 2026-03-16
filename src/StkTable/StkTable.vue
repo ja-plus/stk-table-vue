@@ -26,7 +26,7 @@
             'scroll-row-by-row': isSRBRActive,
             'scrollbar-on': scrollbarOptions.enabled,
             'is-area-selecting': isAreaSelecting,
-            'exp-scroll-y': experimental?.scrollY,
+            'exp-scroll-y': isExperimentalScrollY,
         }"
         :tabindex="props.areaSelection ? 0 : void 0"
         :style="{
@@ -41,7 +41,7 @@
         @scroll="onTableScroll"
         @wheel="onTableWheel"
     >
-        <div v-if="!experimental?.scrollY && SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
+        <div v-if="!isExperimentalScrollY && SRBRTotalHeight" class="row-by-row-table-height" :style="`height: ${SRBRTotalHeight}px`"></div>
 
         <div v-if="colResizable" ref="colResizeIndicatorRef" class="column-resize-indicator"></div>
 
@@ -132,7 +132,7 @@
                     @mouseover="onCellMouseOver"
                 >
                     <tr
-                        v-if="!experimental?.scrollY && virtual_on && !isSRBRActive"
+                        v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive"
                         :style="`height:${virtualScroll.offsetTop}px`"
                         class="padding-top-tr"
                     >
@@ -208,7 +208,7 @@
                         </template>
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
-                    <template v-if="!experimental?.scrollY">
+                    <template v-if="!isExperimentalScrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
                         <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
                     </template>
@@ -798,6 +798,13 @@ const scrollbarOptions = computed(() => ({
     ...(typeof props.scrollbar === 'boolean' ? { enabled: props.scrollbar } : props.scrollbar),
 }));
 
+const isExperimentalScrollY = computed(() => {
+    if (scrollbarOptions.value?.enabled && props.scrollRowByRow) {
+        return true;
+    }
+    return props.experimental?.scrollY;
+});
+
 const rowKeyGenCache = new WeakMap();
 
 const [isSRBRActive] = useScrollRowByRow(props, tableContainerRef);
@@ -825,7 +832,18 @@ const [
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
-] = useVirtualScroll(props, tableContainerRef, trRef, dataSourceCopy, tableHeaderLast, tableHeaders, rowKeyGen, maxRowSpan, scrollbarOptions);
+] = useVirtualScroll(
+    props,
+    tableContainerRef,
+    trRef,
+    dataSourceCopy,
+    tableHeaderLast,
+    tableHeaders,
+    rowKeyGen,
+    maxRowSpan,
+    scrollbarOptions,
+    isExperimentalScrollY,
+);
 
 /** requestAnimationFrame throttled version of updateVirtualScrollY for smoother wheel scrolling */
 const rafUpdateVirtualScrollYForWheel = rafThrottle((scrollTop: number) => {
@@ -839,6 +857,7 @@ const [scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrol
     virtualScrollX,
     updateVirtualScrollY,
     scrollbarOptions,
+    isExperimentalScrollY,
 );
 
 const [hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells] = useMergeCells(
@@ -1438,7 +1457,7 @@ function onTableWheel(e: WheelEvent) {
         if (isWheeling()) {
             e.preventDefault();
         }
-        if (props.experimental?.scrollY) {
+        if (isExperimentalScrollY.value) {
             rafUpdateVirtualScrollYForWheel(scrollTop + deltaY);
             updateCustomScrollbar();
         } else {
