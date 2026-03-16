@@ -102,7 +102,12 @@
                     </tr>
                 </thead>
 
-                <tfoot v-if="footerData && footerData.length > 0">
+                <component
+                    :is="footerTagName"
+                    v-if="footerData && footerData.length > 0"
+                    class="stk-footer"
+                    :style="isFooterTop ? { top: tableHeaderHeight + 'px' } : {}"
+                >
                     <tr v-for="(footRow, footRowIndex) in footerData" :key="footRowIndex">
                         <td v-if="virtualX_on" class="vt-x-left"></td>
                         <td v-for="(col, colIndex) in virtualX_columnPart" :key="colKeyGen(col)" v-bind="getTFProps(col)">
@@ -122,7 +127,7 @@
                         </td>
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
-                </tfoot>
+                </component>
 
                 <tbody
                     class="stk-tbody-main"
@@ -269,6 +274,7 @@ import {
     DragRowConfig,
     ExpandConfig,
     ExperimentalConfig,
+    FooterConfig,
     HeaderDragConfig,
     HighlightConfig,
     Order,
@@ -470,6 +476,8 @@ const props = withDefaults(
         experimental?: ExperimentalConfig;
         /** 表格底部合计行数据 */
         footerData?: DT[];
+        /** 表格底部配置 */
+        footerConfig?: FooterConfig;
     }>(),
     {
         width: '',
@@ -524,6 +532,7 @@ const props = withDefaults(
         scrollRowByRow: false,
         scrollbar: false,
         experimental: () => ({}),
+        footerConfig: () => ({ position: 'bottom' }),
     },
 );
 
@@ -694,6 +703,12 @@ const trRef = ref<HTMLTableRowElement[]>();
 
 /** 是否使用 relative 固定头和列 */
 const isRelativeMode = ref(IS_LEGACY_MODE ? true : props.cellFixedMode === 'relative');
+
+/** 表格底部是否吸附在顶部 */
+const isFooterTop = computed(() => props.footerConfig?.position === 'top');
+
+/** 表格底部标签名：顶部吸附用 tbody，底部吸附用 tfoot */
+const footerTagName = computed(() => (isFooterTop.value ? 'tbody' : 'tfoot'));
 
 /**
  * 当前选中的一行

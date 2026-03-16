@@ -358,3 +358,13 @@ export type ExperimentalConfig = {
     /** use transform to simulate scroll */
     scrollY?: boolean;
 };
+
+/** 表格底部配置 */
+export type FooterConfig = {
+    /**
+     * 表格底部吸附位置
+     * - bottom: 吸附在表格底部（默认）
+     * - top: 吸附在表格顶部
+     */
+    position?: 'bottom' | 'top';
+};
