@@ -141,4 +141,5 @@ export const zh = {
     Average: '平均',
     Summary: '总计',
     records: '条',
+    showFooter: '显示总计行',
 };

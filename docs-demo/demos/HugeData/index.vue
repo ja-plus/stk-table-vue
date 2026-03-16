@@ -40,6 +40,7 @@ const updateFreq = ref(1000);
 const scrollbar = ref(true);
 const areaSelection = ref(true);
 const experimentalScrollY = ref(false);
+const showFooter = ref(false); // 控制总计行显示
 
 const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
@@ -183,7 +184,7 @@ function handleSortChange(
 }
 
 function calculateFootData() {
-    if (dataSource.value.length === 0) {
+    if (dataSource.value.length === 0 || !showFooter.value) {
         footerData.value = [];
         return;
     }
@@ -311,6 +312,7 @@ function handleColSpan(v: boolean) {
     <CheckItem v-model="scrollbar" text="scrollbar" />
     <CheckItem v-model="areaSelection" text="areaSelection" />
     <CheckItem v-model="experimentalScrollY" text="experimentalScrollY" />
+    <CheckItem v-model="showFooter" :text="t('showFooter')" @change="calculateFootData" />
     <StkTable
         ref="stkTableRef"
         v-model:columns="columns"
@@ -337,7 +339,7 @@ function handleColSpan(v: boolean) {
         :empty-cell-text="({ row }: any) => (row._isChildren ? '' : '--')"
         :row-class-name="(row: DataType) => (row._isChildren ? 'child-row' : '')"
         :data-source="dataSource"
-        :footer-data="footerData"
+        :footer-data="showFooter ? footerData : undefined"
         @sort-change="handleSortChange"
         @scroll="handleScroll"
     ></StkTable>

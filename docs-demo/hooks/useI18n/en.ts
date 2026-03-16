@@ -125,4 +125,5 @@ export const en = {
     bidCsiBp: 'Bid-CSI(BP)',
     csiOfrBp: 'CSI-Ofr(BP)',
     keyboardSelect: 'Keyboard Select',
+    showFooter: 'Show Footer',
 };
