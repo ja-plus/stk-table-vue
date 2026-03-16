@@ -43,6 +43,7 @@ export const zhConfig = defineConfig({
             { text: '主页', link: '/' },
             { text: '文档', link: '/main/start/start' },
             { text: '示例', link: '/demos/huge-data' },
+            { text: '赞助', link: '/main/other/sponsor' },
         ],
         sidebar: {
             '/main': {
@@ -129,6 +130,7 @@ export const zhConfig = defineConfig({
                                     { text: 'Tips', link: '/other/tips' },
                                     { text: 'Q&A', link: '/other/qa' },
                                     { text: '变更日志', link: '/other/change' },
+                                    { text: '赞助支持', link: '/other/sponsor' },
                                 ]
                             }
                         ]

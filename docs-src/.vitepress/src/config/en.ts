@@ -17,7 +17,8 @@ export const enConfig = defineConfig({
         nav: [
             { text: 'Home', link: '/en/' },
             { text: 'Documentation', link: '/en/main/start/start' },
-            { text: 'Demos', link: '/en/demos/huge-data' }
+            { text: 'Demos', link: '/en/demos/huge-data' },
+            { text: 'Sponsor', link: '/en/main/other/sponsor' }
         ],
         sidebar: {
             '/en/main': {
@@ -101,6 +102,7 @@ export const enConfig = defineConfig({
                                     { text: 'Tips', link: '/other/tips' },
                                     { text: 'Q&A', link: '/other/qa' },
                                     { text: 'Change Log', link: '/other/change' },
+                                    { text: 'Sponsor', link: '/other/sponsor' },
                                 ]
                             }
                         ]
