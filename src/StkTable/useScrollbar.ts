@@ -27,6 +27,7 @@ export function useScrollbar(
     virtualScrollX: Ref<VirtualScrollXStore>,
     updateVirtualScrollY: (sTop?: number) => void,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
+    isExperimentalScrollY: Ref<boolean | undefined>,
 ) {
     const showScrollbar = ref({ x: false, y: false });
     const scrollbar = ref({ h: 0, w: 0, t: 0, l: 0 });
@@ -114,7 +115,7 @@ export function useScrollbar(
         const trackRange = containerHeight - scrollbar.value.h;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
 
-        if (props.experimental?.scrollY) {
+        if (isExperimentalScrollY.value) {
             const ratio = containerHeight / scrollHeight;
             const top = Math.round((dragStartTop + scrollDelta) * ratio);
             const maxTop = containerHeight - scrollbar.value.h;

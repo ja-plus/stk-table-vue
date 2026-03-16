@@ -57,6 +57,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
     rowKeyGen: RowKeyGen,
     maxRowSpan: Map<UniqKey, number>,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
+    isExperimentalScrollY: Ref<boolean | undefined>,
 ) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
@@ -276,7 +277,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
         const { enabled: scrollbarEnable } = scrollbarOptions.value;
         if (scrollbarEnable) {
             vsValue.scrollHeight = scrollHeight;
-            if (props.experimental?.scrollY) {
+            if (isExperimentalScrollY.value) {
                 let maxTop: number;
                 sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
                 vsValue.translateY = props.scrollRowByRow ? 0 : -(sTop % rowHeight);
