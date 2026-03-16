@@ -18,7 +18,7 @@ export type ScrollbarOptions = {
  * @param options 滚动条配置选项
  * @returns 滚动条相关状态和方法
  */
-export declare function useScrollbar(props: any, containerRef: Ref<HTMLDivElement | undefined>, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, updateVirtualScrollY: (sTop?: number) => void, scrollbarOptions: Ref<Required<ScrollbarOptions>>): readonly [Ref<{
+export declare function useScrollbar(props: any, containerRef: Ref<HTMLDivElement | undefined>, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, updateVirtualScrollY: (sTop?: number) => void, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>): readonly [Ref<{
     h: number;
     w: number;
     t: number;
