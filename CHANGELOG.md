@@ -1,7 +1,11 @@
 
+## 0.11.4
+* Bugfix
+  - fix: `seq` error, when dataSource changed from more to less in virtual mode.
+
 ## 0.11.3
 * Feature
-  - add: `props.footerConfig.position` which can be set footer to top. 
+  - Add: `props.footerConfig.position` which can be set footer to top. 
   - Add: `props.sortConfig.multiSort`
   - Add: `props.sortConfig.multiSortLimit`
 

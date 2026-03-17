@@ -212,7 +212,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
             const headerToBodyRowHeightCount = Math.floor(tableHeaderHeight.value / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
-        const maxScrollTop = dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight;
+        const maxScrollTop = Math.max(0, dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight);
         if (scrollTop > maxScrollTop) {
             /** fix： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
             scrollTop = maxScrollTop;
@@ -272,7 +272,11 @@ export function useVirtualScroll<DT extends Record<string, any>>(
         const dataLength = dataSourceCopyTemp.length;
         const rowHeight = getRowHeightFn.value();
 
-        const vsValue: any = {};
+        const vsValue: any = {
+            startIndex: 0, // github #34 init
+            endIndex: dataLength, // github #34 init
+            offsetTop: 0, // github #34 init
+        };
         const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
         const { enabled: scrollbarEnable } = scrollbarOptions.value;
         if (scrollbarEnable) {
