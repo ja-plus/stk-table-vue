@@ -1,4 +1,8 @@
 
+## 0.11.3
+* Feature
+  - add: `props.footerConfig.position` which can be set footer to top. 
+
 ## 0.11.2
 * Bugfix:
   - fix: areaSelection keyboard left right not work correctly when table has fixed sticky column
