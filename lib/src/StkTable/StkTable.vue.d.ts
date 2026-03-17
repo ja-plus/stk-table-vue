@@ -1,5 +1,5 @@
 import { FilterStatus } from './components/Filter/types';
-import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
@@ -36,6 +36,7 @@ declare function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option?: {
  * @param option.sort 是否触发排序-默认true
  * @param option.silent 是否禁止触发回调-默认true
  * @param option.force 是否触发排序-默认true
+ * @param option.append 是否追加排序（多列排序模式）。为true时保留现有排序状态，将新排序添加到最前面；为false时替换所有排序状态
  * @return 表格数据
  */
 declare function setSorter(colKey: string, order: Order, option?: {
@@ -43,6 +44,7 @@ declare function setSorter(colKey: string, order: Order, option?: {
     force?: boolean;
     silent?: boolean;
     sort?: boolean;
+    append?: boolean;
 }): any[];
 declare function resetSorter(): void;
 /**
@@ -58,8 +60,8 @@ declare function getTableData(): any[];
  * @return {{key:string,order:Order}[]}
  */
 declare function getSortColumns(): {
-    key: string | number | symbol | undefined;
-    order: "desc" | "asc";
+    key: keyof DT | undefined;
+    order: Order;
 }[];
 declare function __VLS_template(): {
     tableHeader?(_: {
@@ -228,6 +230,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     experimental?: ExperimentalConfig;
     /** 表格底部合计行数据 */
     footerData?: DT[];
+    /** 表格底部配置 */
+    footerConfig?: FooterConfig;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -285,6 +289,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     scrollRowByRow: boolean;
     scrollbar: boolean;
     experimental: () => {};
+    footerConfig: () => {
+        position: string;
+    };
 }>>, {
     /**
      * 重新计算虚拟列表宽高
@@ -340,7 +347,25 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      *
      * en: Table sort column colKey
      */
-    sortCol: import('vue').Ref<string | number | symbol | undefined, string | number | symbol | undefined>;
+    sortCol: import('vue').ComputedRef<string | number | symbol | undefined>;
+    /**
+     * 排序状态数组
+     *
+     * en: Multi-column sort states array
+     */
+    sortStates: import('vue').Ref<{
+        key?: any;
+        dataIndex: string;
+        sortField?: string | number | symbol | undefined;
+        sortType?: "number" | "string" | undefined;
+        order: Order;
+    }[], SortState<any>[] | {
+        key?: any;
+        dataIndex: string;
+        sortField?: string | number | symbol | undefined;
+        sortType?: "number" | "string" | undefined;
+        order: Order;
+    }[]>;
     /**
      * 表格排序列顺序
      *
@@ -660,6 +685,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     experimental?: ExperimentalConfig;
     /** 表格底部合计行数据 */
     footerData?: DT[];
+    /** 表格底部配置 */
+    footerConfig?: FooterConfig;
 }>, {
     width: string;
     fixedMode: boolean;
@@ -717,6 +744,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     scrollRowByRow: boolean;
     scrollbar: boolean;
     experimental: () => {};
+    footerConfig: () => {
+        position: string;
+    };
 }>>> & Readonly<{
     onScroll?: ((ev: Event, data: {
         startIndex: number;
@@ -829,6 +859,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     scrollRowByRow: boolean | "scrollbar";
     experimental: ExperimentalConfig;
     footerData: DT[];
+    footerConfig: FooterConfig;
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
 export default _default;

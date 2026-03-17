@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v0.11.2
+ * version: v0.11.3
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -371,16 +371,16 @@
   background-color:var(--th-bgc);
   height:var(--header-row-height);
 }
-.stk-table tfoot{
+.stk-table .stk-footer{
   position:sticky;
   bottom:0;
   z-index:1;
 }
-.stk-table tfoot tr{
+.stk-table .stk-footer tr{
   background-color:var(--tf-bgc);
   height:var(--footer-row-height);
 }
-.stk-table tfoot tr td{
+.stk-table .stk-footer tr td{
   background-color:inherit;
 }
 .stk-table tbody tr{
@@ -504,7 +504,8 @@
 .stk-table td.fixed-cell--active{
   z-index:1;
 }
-.stk-table tfoot td.fixed-cell--active{
+.stk-table tfoot td.fixed-cell--active,
+.stk-table .stk-footer td.fixed-cell--active{
   z-index:2;
 }
 .stk-table .table-header-cell-wrapper{
