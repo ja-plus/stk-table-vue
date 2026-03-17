@@ -25,6 +25,11 @@ defineExpose({
         baseStkTableRef.value?.setCurrentRow(...p),
     setSelectedCell: (...p: Parameters<BaseStkTableType['setSelectedCell']>) =>
         baseStkTableRef.value?.setSelectedCell(...p),
+    getSortColumns: (...p: Parameters<BaseStkTableType['getSortColumns']>) =>
+        baseStkTableRef.value?.getSortColumns(...p),
+    sortStates: typeof baseStkTableRef.value?.sortStates,
+    resetSorter: (...p: Parameters<BaseStkTableType['resetSorter']>) =>
+        baseStkTableRef.value?.resetSorter(...p),
 });
 </script>
 <template>

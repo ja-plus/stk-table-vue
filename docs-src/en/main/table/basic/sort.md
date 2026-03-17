@@ -67,25 +67,44 @@ After configuring `props.sortConfig.sortChildren = true`, when clicking on the t
 
 <demo vue="basic/sort/SortChildren.vue"></demo>
 
+## Multi-column Sorting <Badge type="tip" text="^0.11.2" />
+
+Configure `props.sortConfig.multiSort = true` to enable multi-column sorting mode.
+
+In multi-column sorting mode:
+- Clicking different columns will maintain multiple sorting conditions simultaneously
+- Columns clicked first have higher priority (sorted by that column first during sorting)
+- Click the same column again to toggle sorting direction (desc → asc → null)
+- Third click cancels sorting for that column
+- Can limit maximum number of sorting columns via `props.sortConfig.multiSortLimit` (default 3)
+
+<demo vue="basic/sort/MultiSort.vue"></demo>
+
 ## API
 ### StkTableColumn Configuration
 
-`StkTableColumn` configuration parameters.
-``` ts
+Sorting-related parameters in `StkTableColumn` column configuration.
+
+```ts
 const columns: StkTableColumn[] = [{
     sorter: true,
     sortField: 'xxx',
     sortType: 'number',
+    sortConfig: Omit<SortConfig<T>, 'defaultSort'>;
 }]
-``` 
+```
+
 | Parameter | Type | Default | Description |
 | ---- | ---- | ---- | ---- |
-| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | Specify whether to enable sorting. |
-| sortField | `string` | Same as StkTableColumn['dataIndex']  | Specify the sorting field. |
-| sortType | `'string'` \| `'number'` | Automatically detects the data type of the first row of the column to determine `'string'` or `'number'` sorting. | Specify the sorting type. |
+| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | Specify whether to enable sorting. Set to `true` for basic sorting, or a function for custom sorting rules. |
+| sortField | `string` | Same as `dataIndex` | Specify the sorting field. Use when you need to sort by a different field than the display field. |
+| sortType | `'string'` \| `'number'` | Auto-detect | Specify the sorting type. Automatically detects the data type of the first row by default. |
+| sortConfig | `Omit<SortConfig<T>, 'defaultSort'>` | - | Configure sorting rules at the column level. Higher priority than global `props.sortConfig`. |
 
 ### props.sortConfig
-SortConfig type:
+
+Global sorting configuration.
+
 ```ts
 type SortConfig<T extends Record<string, any>> = {
     /**
@@ -93,31 +112,46 @@ type SortConfig<T extends Record<string, any>> = {
      * Similar to clicking the table header via setSorter during onMounted.
      */
     defaultSort?: {
-        /**
-         * Column unique key,
-         *
-         * If you have configured `props.colKey`, this represents the value of the column unique key
-         */
+        /** Column unique key. If `props.colKey` is configured, this represents the column unique key value */
         key?: StkTableColumn<T>['key'];
+        /** Sorting field */
         dataIndex: StkTableColumn<T>['dataIndex'];
+        /** Sorting order */
         order: Order;
+        /** Specify sorting field */
         sortField?: StkTableColumn<T>['sortField'];
+        /** Sorting type */
         sortType?: StkTableColumn<T>['sortType'];
+        /** Custom sorting function */
         sorter?: StkTableColumn<T>['sorter'];
-        /** Whether to prohibit triggering the sort-change event. Default false, meaning the event is triggered. */
+        /** Whether to disable triggering sort-change event, default false */
         silent?: boolean;
     };
     /** Empty values are always placed at the end of the list */
     emptyToBottom?: boolean;
-    /**
-     * Use `String.prototype.localCompare` to sort strings
-     * default: false
-     */
+    /** Use String.prototype.localeCompare for string sorting, default false */
     stringLocaleCompare?: boolean;
-    /** Whether to also sort child nodes */
+    /** Whether to also sort child nodes, default false */
     sortChildren?: boolean;
+    /** Whether to enable multi-column sorting, default false */
+    multiSort?: boolean;
+    /** Maximum number of columns for multi-column sorting, default 3 */
+    multiSortLimit?: number;
 };
 ```
+
+| Parameter | Type | Default | Description |
+| ---- | ---- | ---- | ---- |
+| defaultSort | `object` | - | Default sorting configuration. Triggered during initialization and when sorting order is null. |
+| defaultSort.key | `string` | - | Column unique key. |
+| defaultSort.dataIndex | `string` | - | Sorting field, **required**. |
+| defaultSort.order | `Order` | - | Sorting order: `'asc'` \| `'desc'` \| `null`, **required**. |
+| defaultSort.silent | `boolean` | `false` | Whether to disable triggering `sort-change` event. |
+| emptyToBottom | `boolean` | `false` | Whether empty values are always placed at the bottom of the list. |
+| stringLocaleCompare | `boolean` | `false` | Whether to use `localeCompare` for string sorting (Chinese characters sorted by pinyin). |
+| sortChildren | `boolean` | `false` | For tree data, whether to also sort child nodes. |
+| multiSort | `boolean` | `false` | Whether to enable multi-column sorting mode. |
+| multiSortLimit | `number` | `3` | Maximum number of columns allowed in multi-column sorting. |
 
 ### @sort-change
 defineEmits type:
@@ -155,6 +189,10 @@ defineExpose({
      * Table sort column order
      */
     getSortColumns,
+    /**
+     * Multi-column sorting state array (used in multi-column sorting mode)
+     */
+    sortStates,
 })
 ```
 For details, see [Expose Instance Methods](/en/main/api/expose)

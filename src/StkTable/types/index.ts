@@ -195,13 +195,39 @@ export type PrivateRowDT = {
 
 export type SortOption<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'sorter' | 'dataIndex' | 'sortField' | 'sortType'>;
 
-export type SortState<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'dataIndex' | 'sortField' | 'sortType'> & {
+/**
+ * 单列排序状态
+ */
+export type SortState<T extends Record<string, any>> = Pick<StkTableColumn<T>, 'key' | 'dataIndex' | 'sortField' | 'sortType'> & {
     order: Order;
 };
 
 export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
+
+/**
+ * 默认排序配置
+ */
+export type DefaultSortConfig<T extends Record<string, any>> = {
+    /**
+     * colKey
+     *
+     * if set `props.colKey`
+     *
+     * default: StkTableColumn<T>['dataIndex']
+     */
+    key?: StkTableColumn<T>['key'];
+    dataIndex: StkTableColumn<T>['dataIndex'];
+    order: Order;
+    sortField?: StkTableColumn<T>['sortField'];
+    sortType?: StkTableColumn<T>['sortType'];
+    sorter?: StkTableColumn<T>['sorter'];
+    /**
+     * whether to disable trigger`sort-change` event. default: false
+     */
+    silent?: boolean;
+};
 
 export type SortConfig<T extends Record<string, any>> = {
     /**
@@ -215,25 +241,7 @@ export type SortConfig<T extends Record<string, any>> = {
      * 1. trigger when init
      * 2. trigger when sort direction is null
      */
-    defaultSort?: {
-        /**
-         * colKey
-         *
-         * if set `props.colKey`
-         *
-         * default: StkTableColumn<T>['dataIndex']
-         */
-        key?: StkTableColumn<T>['key'];
-        dataIndex: StkTableColumn<T>['dataIndex'];
-        order: Order;
-        sortField?: StkTableColumn<T>['sortField'];
-        sortType?: StkTableColumn<T>['sortType'];
-        sorter?: StkTableColumn<T>['sorter'];
-        /**
-         * whether to disable trigger`sort-change` event. default: false
-         */
-        silent?: boolean;
-    };
+    defaultSort?: DefaultSortConfig<T>;
     /** empty value always sort to bottom */
     emptyToBottom?: boolean;
     /**
@@ -245,6 +253,17 @@ export type SortConfig<T extends Record<string, any>> = {
      * whether to sort children when sort current column. default: false
      */
     sortChildren?: boolean;
+    /**
+     * 是否启用多列排序
+     * - false (default): 单列排序，点击新列会取消之前列的排序
+     * - true: 多列排序，支持同时按多列排序，通过点击顺序决定优先级
+     */
+    multiSort?: boolean;
+    /**
+     * 多列排序时的最大列数限制
+     * default: 3
+     */
+    multiSortLimit?: number;
 };
 
 /** th td type */
