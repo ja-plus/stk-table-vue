@@ -28,7 +28,7 @@
             'is-area-selecting': isAreaSelecting,
             'exp-scroll-y': isExperimentalScrollY,
         }"
-        :tabindex="props.areaSelection ? 0 : void 0"
+        :tabindex="areaSelectionConfig.enabled ? 0 : void 0"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
@@ -896,8 +896,29 @@ if (props.autoResize) {
     useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
 }
 
+const {
+    config: areaSelectionConfig,
+    isSelecting: isAreaSelecting,
+    onMD: onSelectionMouseDown,
+    getClass: getAreaSelectionClasses,
+    get: getSelectedArea,
+    clear: clearSelectedArea,
+    copy: copySelectedArea,
+} = ON_DEMAND_FEATURE[useAreaSelection.name](
+    props,
+    emits,
+    tableContainerRef,
+    dataSourceCopy,
+    tableHeaderLast,
+    colKeyGen,
+    cellKeyGen,
+    scrollTo,
+    virtualScroll,
+    virtualScrollX,
+);
+
 /** 键盘箭头滚动 */
-useKeyboardArrowScroll(tableContainerRef, props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on);
+useKeyboardArrowScroll(tableContainerRef, props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on, areaSelectionConfig);
 
 /** 固定列处理 */
 const [fixedCols, fixedColClassMap, updateFixedShadow] = useFixedCol(
@@ -922,26 +943,6 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
 const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen);
 
 const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits);
-
-const {
-    isSelecting: isAreaSelecting,
-    onMD: onSelectionMouseDown,
-    getClass: getAreaSelectionClasses,
-    get: getSelectedArea,
-    clear: clearSelectedArea,
-    copy: copySelectedArea,
-} = ON_DEMAND_FEATURE[useAreaSelection.name](
-    props,
-    emits,
-    tableContainerRef,
-    dataSourceCopy,
-    tableHeaderLast,
-    colKeyGen,
-    cellKeyGen,
-    scrollTo,
-    virtualScroll,
-    virtualScrollX,
-);
 
 watch(
     () => props.columns,
@@ -1240,7 +1241,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
     }
 
     // 单元格拖选选区样式
-    if (props.areaSelection) {
+    if (areaSelectionConfig.value.enabled) {
         const absRowIndex = getRowIndex(rowIndex);
         classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
     }
@@ -1363,7 +1364,7 @@ function onCellMouseDown(e: MouseEvent) {
     const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
     // 单元格拖选
-    if (props.areaSelection) {
+    if (areaSelectionConfig.value.enabled) {
         onSelectionMouseDown(e);
     }
 }
@@ -1570,7 +1571,14 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
  */
 function scrollTo(top: number | null = 0, left: number | null = 0) {
     if (!tableContainerRef.value) return;
-    if (top !== null) tableContainerRef.value.scrollTop = top;
+    if (top !== null) {
+        if (isExperimentalScrollY.value) {
+            updateVirtualScrollY(top);
+            updateCustomScrollbar();
+        } else {
+            tableContainerRef.value.scrollTop = top;
+        }
+    }
     if (left !== null) tableContainerRef.value.scrollLeft = left;
 }
 

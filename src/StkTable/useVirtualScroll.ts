@@ -47,7 +47,7 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
  * virtual scroll
  * @returns
  */
-export function useVirtualScroll<DT extends Record<string, any>>(
+export function useVirtualScroll(
     props: any,
     tableContainerRef: Ref<HTMLElement | undefined>,
     trRef: Ref<HTMLTableRowElement[] | undefined>,
@@ -372,7 +372,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
             endIndex = correctedEndIndex;
         }
 
-        if (stripe && startIndex > 0 && startIndex % 2) {
+        if (stripe && !isExperimentalScrollY.value && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
             startIndex -= 1; // 奇数-1变成偶数
             if (autoRowHeight || hasExpandCol.value) {

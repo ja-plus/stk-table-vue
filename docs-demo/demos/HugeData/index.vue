@@ -330,7 +330,7 @@ function handleColSpan(v: boolean) {
         sort-remote
         :area-selection="{
             enabled: areaSelection,
-            keyboard: true,
+            keyboard: areaSelection,
         }"
         :scrollbar="scrollbar"
         :experimental="{ scrollY: experimentalScrollY }"
