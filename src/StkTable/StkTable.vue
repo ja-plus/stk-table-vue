@@ -1439,7 +1439,9 @@ function onTableScroll(e: Event) {
         const { scrollTop, scrollLeft } = e.target as HTMLElement;
         const { scrollTop: vScrollTop } = virtualScroll.value;
         const { scrollLeft: vScrollLeft } = virtualScrollX.value;
-        const isYScroll = scrollTop !== vScrollTop;
+        // 在 experimental.scrollY 模式下，纵向滚动通过 transform 模拟，DOM scrollTop 始终为 0，
+        // 不能用来判断纵向滚动，否则横向滚动时会误触发纵向滚动重置
+        const isYScroll = isExperimentalScrollY.value ? false : scrollTop !== vScrollTop;
         const isXScroll = scrollLeft !== vScrollLeft;
 
         if (isYScroll) {
