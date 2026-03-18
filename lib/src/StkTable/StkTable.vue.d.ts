@@ -1,5 +1,5 @@
 import { FilterStatus } from './components/Filter/types';
-import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, SortOption, SortState, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 /** Generic stands for DataType */
@@ -29,25 +29,6 @@ declare function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option?: {
     silent: boolean;
 }): void;
 /**
- * 设置表头排序状态。
- * @param colKey 列唯一键字段。如果你想要取消排序状态，请使用`resetSorter`
- * @param order 正序倒序
- * @param option.sortOption 指定排序参数。同 StkTableColumn 中排序相关字段。建议从columns中find得到。
- * @param option.sort 是否触发排序-默认true
- * @param option.silent 是否禁止触发回调-默认true
- * @param option.force 是否触发排序-默认true
- * @param option.append 是否追加排序（多列排序模式）。为true时保留现有排序状态，将新排序添加到最前面；为false时替换所有排序状态
- * @return 表格数据
- */
-declare function setSorter(colKey: string, order: Order, option?: {
-    sortOption?: SortOption<DT>;
-    force?: boolean;
-    silent?: boolean;
-    sort?: boolean;
-    append?: boolean;
-}): any[];
-declare function resetSorter(): void;
-/**
  * set scroll bar position
  * @param top null to not change
  * @param left null to not change
@@ -55,14 +36,6 @@ declare function resetSorter(): void;
 declare function scrollTo(top?: number | null, left?: number | null): void;
 /** get current table data */
 declare function getTableData(): any[];
-/**
- * get current sort info
- * @return {{key:string,order:Order}[]}
- */
-declare function getSortColumns(): {
-    key: keyof DT | undefined;
-    order: Order;
-}[];
 declare function __VLS_template(): {
     tableHeader?(_: {
         col: PrivateStkTableColumn<PrivateRowDT>;
@@ -359,34 +332,43 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         sortField?: string | number | symbol | undefined;
         sortType?: "number" | "string" | undefined;
         order: Order;
-    }[], SortState<any>[] | {
+    }[], {
         key?: any;
         dataIndex: string;
         sortField?: string | number | symbol | undefined;
         sortType?: "number" | "string" | undefined;
         order: Order;
-    }[]>;
+    }[] | import('.').SortState<any>[]>;
     /**
      * 表格排序列顺序
      *
      * en: get current sort info
      * @see {@link getSortColumns}
      */
-    getSortColumns: typeof getSortColumns;
+    getSortColumns: () => {
+        key: string | number | symbol | undefined;
+        order: Order;
+    }[];
     /**
      * 设置表头排序状态
      *
      * en: Set the sort status of the table header
      * @see {@link setSorter}
      */
-    setSorter: typeof setSorter;
+    setSorter: (colKey: string, order: Order, option?: {
+        sortOption?: import('.').SortOption<any> | undefined;
+        force?: boolean;
+        silent?: boolean;
+        sort?: boolean;
+        append?: boolean;
+    }) => any[];
     /**
      * 重置sorter状态
      *
      * en: Reset the sorter status
      * @see {@link resetSorter}
      */
-    resetSorter: typeof resetSorter;
+    resetSorter: () => void;
     /**
      * 滚动至
      *

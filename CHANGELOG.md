@@ -2,15 +2,14 @@
 ## 0.11.4
 * Bugfix
   - fix: `seq` error, when dataSource changed from more to less in virtual mode.
+  - fix: Tree Node Deep Sorting.
+  - fix: horizontal scroll will cause vertical scrollbar init
 
 ## 0.11.3
 * Feature
   - Add: `props.footerConfig.position` which can be set footer to top. 
   - Add: `props.sortConfig.multiSort`
   - Add: `props.sortConfig.multiSortLimit`
-* Bugfix:
-  - fix: Tree Node Deep Sorting.
-  - fix: horizontal scroll will cause vertical scrollbar init
 
 ## 0.11.2
 * Bugfix:
