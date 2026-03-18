@@ -274,7 +274,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
 
         const vsValue: any = {
             startIndex: 0, // github #34 init
-            endIndex: dataLength, // github #34 init
+            // endIndex: , // FIXME: endIndex may be old value
             offsetTop: 0, // github #34 init
         };
         const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;

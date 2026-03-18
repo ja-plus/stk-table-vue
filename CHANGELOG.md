@@ -1,4 +1,8 @@
 
+## 0.11.5
+* Bugfix:
+  - fix: virtual scroll lag.
+
 ## 0.11.4
 * Bugfix
   - fix: `seq` error, when dataSource changed from more to less in virtual mode.
