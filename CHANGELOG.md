@@ -8,6 +8,8 @@
   - Add: `props.footerConfig.position` which can be set footer to top. 
   - Add: `props.sortConfig.multiSort`
   - Add: `props.sortConfig.multiSortLimit`
+* Bugfix:
+  - fix: Tree Node Deep Sorting
 
 ## 0.11.2
 * Bugfix:
