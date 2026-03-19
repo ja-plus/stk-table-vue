@@ -4,6 +4,7 @@
   - change: add `AreaSelectionConfig``enabled` attribute 
 * Bugfix：
   - fix: `scrollTo` not work correctly when `expertimeltal.scrollY`(`scrollbar`& `scroll-row-by-row`) be set. 
+  - fix:  scroll to bottom will cause lag when `expertimeltal.scrollY` enabled
 
 ## 0.11.5
 * Bugfix:
