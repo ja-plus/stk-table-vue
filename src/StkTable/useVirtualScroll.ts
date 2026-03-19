@@ -47,7 +47,7 @@ const VUE2_SCROLL_TIMEOUT_MS = 200;
  * virtual scroll
  * @returns
  */
-export function useVirtualScroll<DT extends Record<string, any>>(
+export function useVirtualScroll(
     props: any,
     tableContainerRef: Ref<HTMLElement | undefined>,
     trRef: Ref<HTMLTableRowElement[] | undefined>,
@@ -201,7 +201,9 @@ export function useVirtualScroll<DT extends Record<string, any>>(
             height = 0;
         }
         const { clientHeight, scrollHeight } = tableContainerRef.value || {};
-        let scrollTop = tableContainerRef.value?.scrollTop || 0;
+        // 当 isExperimentalScrollY 为 true 时，DOM 的 scrollTop 始终为 0（纵向滚动通过 transform 模拟）
+        // 此时应该使用 virtualScroll 中保存的 scrollTop 值
+        let scrollTop = isExperimentalScrollY.value ? virtualScroll.value.scrollTop : tableContainerRef.value?.scrollTop || 0;
 
         const rowHeight = getRowHeightFn.value();
         const containerHeight = height || clientHeight || DEFAULT_TABLE_HEIGHT;
@@ -272,11 +274,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
         const dataLength = dataSourceCopyTemp.length;
         const rowHeight = getRowHeightFn.value();
 
-        const vsValue: any = {
-            startIndex: 0, // github #34 init
-            // endIndex: , // FIXME: endIndex may be old value
-            offsetTop: 0, // github #34 init
-        };
+        const vsValue: any = {};
         const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
         const { enabled: scrollbarEnable } = scrollbarOptions.value;
         if (scrollbarEnable) {
@@ -292,6 +290,8 @@ export function useVirtualScroll<DT extends Record<string, any>>(
         Object.assign(virtualScroll.value, vsValue);
 
         if (!virtual_on.value) {
+            // github #34 init
+            Object.assign(virtualScroll.value, { startIndex: 0, endIndex: 0, offsetTop: 0 });
             return;
         }
 
@@ -372,7 +372,7 @@ export function useVirtualScroll<DT extends Record<string, any>>(
             endIndex = correctedEndIndex;
         }
 
-        if (stripe && startIndex > 0 && startIndex % 2) {
+        if (stripe && !isExperimentalScrollY.value && startIndex > 0 && startIndex % 2) {
             // 斑马纹情况下，每滚动偶数行才加载。防止斑马纹错位。
             startIndex -= 1; // 奇数-1变成偶数
             if (autoRowHeight || hasExpandCol.value) {

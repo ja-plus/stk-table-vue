@@ -1,5 +1,5 @@
 import { Ref, ShallowRef, computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
+import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 import { getClosestColKey, getClosestTrIndex } from '../utils';
 import { getCalculatedColWidth } from '../utils/constRefUtils';
@@ -61,6 +61,14 @@ export function useAreaSelection<DT extends Record<string, any>>(
     /** 最后一次鼠标位置（用于边界自动滚动计算） */
     let lastMouseClientX = 0;
     let lastMouseClientY = 0;
+
+    const config = computed<AreaSelectionConfig>(() => {
+        if (typeof props.areaSelection === 'boolean') {
+            const b = props.areaSelection;
+            return { enabled: b, keyboard: b };
+        }
+        return props.areaSelection;
+    });
 
     /** colKey → absolute index 映射 */
     const colKeyToIndexMap = computed(() => {
@@ -292,7 +300,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /** mousedown 处理：设置锚点，开始拖选 */
     function onSelectionMouseDown(e: MouseEvent) {
-        if (!props.areaSelection || e.button !== 0) return;
+        if (!config.value.enabled || e.button !== 0) return;
 
         const rowIndex = getClosestTrIndex(e.target as HTMLElement);
         const colKey = getClosestColKey(e.target as HTMLElement);
@@ -483,14 +491,13 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /** 获取 areaSelection 配置中的格式化回调 */
     function getFormatCellFn() {
-        const cfg = props.areaSelection;
-        return cfg && typeof cfg === 'object' && typeof cfg.formatCellForClipboard === 'function' ? cfg.formatCellForClipboard : null;
+        const cfg = config.value;
+        return typeof cfg.formatCellForClipboard === 'function' ? cfg.formatCellForClipboard : null;
     }
 
     /** 是否启用键盘控制选区移动 */
     const keyboardEnabled = computed(() => {
-        const cfg = props.areaSelection;
-        return cfg && typeof cfg === 'object' && cfg.keyboard === true;
+        return config.value.keyboard;
     });
 
     /**
@@ -538,7 +545,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * Arrow keys / Tab 移动选区（keyboard=true时）
      **/
     function onKeydown(e: KeyboardEvent) {
-        if (!props.areaSelection) return;
+        if (!config.value.enabled) return;
 
         const key = e.key;
 
@@ -666,13 +673,17 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const vs = virtualScroll.value;
         const vsx = virtualScrollX.value;
 
+        // 是否开启按行滚动模式（experimental.scrollY 模式）
+        const isScrollRowByRow = props.scrollRowByRow;
+
         // 计算目标行的位置（基于虚拟滚动数据）
         const rowHeight = vs.rowHeight;
         const targetRowTop = rowIndex * rowHeight;
         const targetRowBottom = targetRowTop + rowHeight;
 
         // 计算可视区域
-        const visibleTop = container.scrollTop;
+        // experimental.scrollY 模式下，容器 scrollTop 始终为 0，需要使用 virtualScroll.scrollTop
+        const visibleTop = isScrollRowByRow ? vs.scrollTop : container.scrollTop;
         const visibleBottom = visibleTop + vs.containerHeight - headerHeight - footerHeight;
 
         // 计算需要的垂直滚动位置
@@ -681,7 +692,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             // 目标行在可视区域上方，滚动到使目标行位于顶部
             newScrollTop = targetRowTop;
         } else if (targetRowBottom > visibleBottom) {
-            // 目标行在可视区域下方，滚动到使目标行位于底部
+            // 目标行在可视区域下方
             newScrollTop = targetRowBottom - (vs.containerHeight - headerHeight - footerHeight);
         }
 
@@ -704,7 +715,6 @@ export function useAreaSelection<DT extends Record<string, any>>(
             newScrollLeft = targetColRight - vsx.containerWidth + rightFixedWidth;
         }
 
-        // 执行滚动
         if (newScrollTop !== null || newScrollLeft !== null) {
             scrollTo(newScrollTop, newScrollLeft);
         }
@@ -755,6 +765,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
     }
 
     return {
+        config,
         isSelecting,
         getClass: getAreaSelectionClasses,
         get: getSelectedArea,

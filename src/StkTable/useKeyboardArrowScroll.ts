@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, ShallowRef, onBeforeUnmount, onMounted, watch } from 'vue';
-import { StkTableColumn } from './types';
+import { AreaSelectionConfig, StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 /** 翻页按键 */
@@ -29,6 +29,7 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     virtualScrollX: Ref<VirtualScrollXStore>,
     tableHeaders: ShallowRef<StkTableColumn<DT>[][]>,
     virtual_on: ComputedRef<boolean>,
+    areaSelectionConfig: ComputedRef<AreaSelectionConfig>,
 ) {
     /** 检测鼠标是否悬浮在表格体上 */
     let isMouseOver = false;
@@ -62,8 +63,7 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     function handleKeydown(e: KeyboardEvent) {
         if (!virtual_on.value) return; // 非虚拟滚动使用浏览器默认滚动
         // 如果单元格选区键盘控制已启用，则不处理滚动，交给 useAreaSelection 处理
-        const areaSelection = props.areaSelection;
-        if (areaSelection && typeof areaSelection === 'object' && areaSelection.keyboard) return;
+        if (areaSelectionConfig.value.keyboard) return;
         const keyCode = e.code;
         if (!ScrollCodesValues.includes(keyCode as any)) return;
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
