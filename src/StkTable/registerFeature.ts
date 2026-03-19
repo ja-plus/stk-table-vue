@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useAreaSelection } from './features';
 
 type OnDemandFeature = {
@@ -9,6 +9,7 @@ export const ON_DEMAND_FEATURE: OnDemandFeature = {
     [useAreaSelection.name]: (() => {
         console.warn('useAreaSelection is not registered');
         return {
+            config: computed(() => ({ enabled: false })),
             isSelecting: ref(false),
             onMD: () => {},
             getClass: () => [],
