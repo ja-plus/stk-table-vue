@@ -1,5 +1,5 @@
 import { Ref, ShallowRef } from 'vue';
-import { CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
+import { AreaSelectionConfig, CellKeyGen, ColKeyGen, StkTableColumn, UniqKey } from '../types';
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 
 /**
@@ -8,6 +8,7 @@ import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
  * en: Cell area selection feature with mouse drag, keyboard navigation, copy-paste, etc.
  */
 export declare function useAreaSelection<DT extends Record<string, any>>(props: any, emits: any, tableContainerRef: Ref<HTMLDivElement | undefined>, dataSourceCopy: ShallowRef<DT[]>, tableHeaderLast: ShallowRef<StkTableColumn<DT>[]>, colKeyGen: ColKeyGen, cellKeyGen: CellKeyGen, scrollTo: (top: number | null, left: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>): {
+    config: import('vue').ComputedRef<AreaSelectionConfig>;
     isSelecting: Ref<boolean, boolean>;
     getClass: (cellKey: string, absoluteRowIndex: number, colKey: UniqKey) => string[];
     get: () => {

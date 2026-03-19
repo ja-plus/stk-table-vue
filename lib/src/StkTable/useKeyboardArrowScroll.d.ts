@@ -1,5 +1,5 @@
 import { ComputedRef, Ref, ShallowRef } from 'vue';
-import { StkTableColumn } from './types';
+import { AreaSelectionConfig, StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 /**
@@ -7,4 +7,4 @@ import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
  *
  * 在低版本浏览器中，虚拟滚动时，使用键盘滚动，等选中的行消失在视口外时，滚动会失效。
  */
-export declare function useKeyboardArrowScroll<DT extends Record<string, any>>(targetElement: Ref<HTMLElement | undefined>, props: any, scrollTo: (y: number | null, x: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, tableHeaders: ShallowRef<StkTableColumn<DT>[][]>, virtual_on: ComputedRef<boolean>): void;
+export declare function useKeyboardArrowScroll<DT extends Record<string, any>>(targetElement: Ref<HTMLElement | undefined>, props: any, scrollTo: (y: number | null, x: number | null) => void, virtualScroll: Ref<VirtualScrollStore>, virtualScrollX: Ref<VirtualScrollXStore>, tableHeaders: ShallowRef<StkTableColumn<DT>[][]>, virtual_on: ComputedRef<boolean>, areaSelectionConfig: ComputedRef<AreaSelectionConfig>): void;
