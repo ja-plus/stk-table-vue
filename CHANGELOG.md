@@ -1,4 +1,8 @@
 
+## 0.11.7
+* Change:
+  - change: `AreaSelectionConfig['enabled']` default set `true`.
+
 ## 0.11.6
 * Change:
   - change: add `AreaSelectionConfig``enabled` attribute 

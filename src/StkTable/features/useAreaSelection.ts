@@ -67,7 +67,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             const b = props.areaSelection;
             return { enabled: b, keyboard: b };
         }
-        return props.areaSelection;
+        return { enabled: true, ...props.areaSelection };
     });
 
     /** colKey → absolute index 映射 */

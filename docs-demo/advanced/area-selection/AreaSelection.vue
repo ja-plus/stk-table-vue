@@ -7,7 +7,7 @@
             :row-active="false"
             :data-source="rows"
             :columns="cols"
-            :area-selection="{ formatCellForClipboard: formatCell, keyboard }"
+            :area-selection="{ enabled: true, formatCellForClipboard: formatCell, keyboard }"
             @area-selection-change="onSelectionChange"
         />
         <div style="margin-top: 12px">
