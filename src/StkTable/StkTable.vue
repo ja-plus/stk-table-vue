@@ -864,9 +864,7 @@ const [
 );
 
 /** requestAnimationFrame throttled version of updateVirtualScrollY for smoother wheel scrolling */
-const rafUpdateVirtualScrollYForWheel = rafThrottle((scrollTop: number) => {
-    updateVirtualScrollY(scrollTop);
-});
+const rafUpdateVirtualScrollYForWheel = rafThrottle(updateVirtualScrollY);
 
 const [scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrollbarMouseDown, updateCustomScrollbar] = useScrollbar(
     props,
