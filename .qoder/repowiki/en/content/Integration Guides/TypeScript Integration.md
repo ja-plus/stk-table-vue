@@ -1,0 +1,386 @@
+# TypeScript Integration
+
+<cite>
+**Referenced Files in This Document**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue)
+- [src/StkTable/index.ts](file://src/StkTable/index.ts)
+- [src/vite-env.d.ts](file://src/vite-env.d.ts)
+- [tsconfig.json](file://tsconfig.json)
+- [lib/src/StkTable/types/index.d.ts](file://lib/src/StkTable/types/index.d.ts)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts)
+- [history/StkTable.d.ts](file://history/StkTable.d.ts)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts)
+- [src/StkTable/useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts)
+- [package.json](file://package.json)
+</cite>
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Project Structure](#project-structure)
+3. [Core Components](#core-components)
+4. [Architecture Overview](#architecture-overview)
+5. [Detailed Component Analysis](#detailed-component-analysis)
+6. [Dependency Analysis](#dependency-analysis)
+7. [Performance Considerations](#performance-considerations)
+8. [Troubleshooting Guide](#troubleshooting-guide)
+9. [Conclusion](#conclusion)
+10. [Appendices](#appendices)
+
+## Introduction
+This document explains the complete TypeScript integration of the table library, focusing on type definitions, interface implementations, and generic type usage. It covers the type system around StkTableColumn, DataSource, and configuration interfaces, along with advanced patterns such as conditional types, mapped types, and utility types. It also documents component prop typing, event handler signatures, slot typing strategies, type augmentation, module declaration files, and integration with popular TypeScript tooling.
+
+## Project Structure
+The library exposes a Vue 3 component with comprehensive TypeScript typings. The primary type definitions live under src/StkTable/types/index.ts, while the component implementation and emitted events are typed in src/StkTable/StkTable.vue. Distribution typings are generated under lib/src/StkTable/*.d.ts.
+
+```mermaid
+graph TB
+subgraph "Source Types"
+A["src/StkTable/types/index.ts"]
+end
+subgraph "Component"
+B["src/StkTable/StkTable.vue"]
+C["src/StkTable/index.ts"]
+end
+subgraph "Distribution Typings"
+D["lib/src/StkTable/types/index.d.ts"]
+E["lib/src/StkTable/StkTable.vue.d.ts"]
+end
+subgraph "Tooling"
+F["tsconfig.json"]
+G["src/vite-env.d.ts"]
+H["package.json"]
+end
+A --> B
+C --> B
+A --> D
+B --> E
+F --> B
+G --> B
+H --> D
+```
+
+**Diagram sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L1-L318)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L209-L621)
+- [src/StkTable/index.ts](file://src/StkTable/index.ts#L1-L5)
+- [lib/src/StkTable/types/index.d.ts](file://lib/src/StkTable/types/index.d.ts#L1-L293)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L1-L818)
+- [tsconfig.json](file://tsconfig.json#L1-L39)
+- [src/vite-env.d.ts](file://src/vite-env.d.ts#L1-L11)
+- [package.json](file://package.json#L1-L76)
+
+**Section sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L1-L318)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L209-L621)
+- [src/StkTable/index.ts](file://src/StkTable/index.ts#L1-L5)
+- [lib/src/StkTable/types/index.d.ts](file://lib/src/StkTable/types/index.d.ts#L1-L293)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L1-L818)
+- [tsconfig.json](file://tsconfig.json#L1-L39)
+- [src/vite-env.d.ts](file://src/vite-env.d.ts#L1-L11)
+- [package.json](file://package.json#L1-L76)
+
+## Core Components
+This section focuses on the core type system and how it is used in the component.
+
+- StkTableColumn<T>: The central configuration interface for table columns. It is generic over the data type T and includes fields for data indexing, sorting, alignment, fixed positioning, custom renderers, nested headers, and cell merging.
+- DataSource: The table’s data source is typed as an array of the generic row type T.
+- Configuration interfaces: SortConfig<T>, SeqConfig, ExpandConfig, DragRowConfig, TreeConfig, HeaderDragConfig<DT>, AutoRowHeightConfig<DT>, ColResizableConfig<DT>, RowActiveOption<DT>, CellSelectionConfig<T>, and others define strongly typed options for various features.
+- Private types: PrivateStkTableColumn<T> and PrivateRowDT augment columns and rows with internal keys used during rendering and virtualization.
+
+Key patterns:
+- Generic type parameters: StkTableColumn<T>, SortConfig<T>, HeaderDragConfig<DT>, AutoRowHeightConfig<DT>, and RowActiveOption<DT> ensure type safety across features.
+- Optional properties: Many fields are optional to allow flexible column definitions.
+- Type inference: The component uses a local generic DT = any & PrivateRowDT to unify row shapes internally while preserving external type information.
+
+**Section sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L54-L120)
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L122-L173)
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L185-L220)
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L235-L282)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L269-L270)
+
+## Architecture Overview
+The component defines its props and emits with explicit TypeScript signatures. Events carry strongly typed payloads, and slots are typed via template-level slot typing in the distribution typings.
+
+```mermaid
+sequenceDiagram
+participant Comp as "StkTable.vue"
+participant Types as "types/index.ts"
+participant Dist as "StkTable.vue.d.ts"
+Comp->>Types : "import { StkTableColumn, SortConfig, ... }"
+Comp->>Comp : "defineProps<{ ... }>() with generics"
+Comp->>Comp : "defineEmits<{ ... }>() with generics"
+Dist-->>Comp : "Expose props/emits/slots types for consumers"
+```
+
+**Diagram sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L218-L247)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L278-L476)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L478-L621)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L60-L793)
+
+**Section sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L218-L247)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L278-L476)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L478-L621)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L60-L793)
+
+## Detailed Component Analysis
+
+### StkTableColumn<T> and Custom Renderers
+- Purpose: Defines column metadata and behavior, including data indexing, alignment, sorting, fixed positions, and custom renderers.
+- CustomCell typing: Uses a union that accepts ConcreteComponent with typed props, Partial<T> components (loose props), or a string tag. This enables flexible component usage while preserving type safety for props like row, col, cellValue, rowIndex, and colIndex.
+- CustomHeaderCell typing: Mirrors CustomCell for header cells.
+- MergeCells: Provides a function to compute rowspan/colspan for merged cells.
+
+```mermaid
+classDiagram
+class StkTableColumn_T_ {
++key? : any
++type? : "seq"|"expand"|"dragRow"|"tree-node"
++dataIndex : keyof T & string
++title? : string
++align? : "right"|"left"|"center"
++headerAlign? : "right"|"left"|"center"
++sorter? : Sorter_T_
++width? : string|number
++minWidth? : string|number
++maxWidth? : string|number
++headerClassName? : string
++className? : string
++sortField? : keyof T
++sortType? : "number"|"string"
++sortConfig? : Omit<SortConfig_T_, "defaultSort">
++fixed? : "left"|"right"|null
++customCell? : CustomCell<CustomCellProps_T_, T>
++customHeaderCell? : CustomCell<CustomHeaderCellProps_T_, T>
++children? : StkTableColumn_T_[]
++mergeCells? : MergeCellsFn_T_
+}
+class CustomCell_T_U_ {
+<<union>>
+}
+class CustomCellProps_T_ {
++row : T
++col : StkTableColumn_T_
++cellValue : any
++rowIndex : number
++colIndex : number
++expanded? : PrivateRowDT.__EXP__
++treeExpanded? : PrivateRowDT.__T_EXP__
+}
+class CustomHeaderCellProps_T_ {
++col : StkTableColumn_T_
++rowIndex : number
++colIndex : number
+}
+class MergeCellsParam_T_ {
++row : T
++col : StkTableColumn_T_
++rowIndex : number
++colIndex : number
+}
+class MergeCellsFn_T_ {
+<<function>>
+}
+StkTableColumn_T_ --> CustomCell_T_U_ : "uses"
+CustomCell_T_U_ --> CustomCellProps_T_ : "typed props"
+CustomCell_T_U_ --> CustomHeaderCellProps_T_ : "typed props"
+StkTableColumn_T_ --> MergeCellsFn_T_ : "uses"
+MergeCellsFn_T_ --> MergeCellsParam_T_ : "parameter"
+```
+
+**Diagram sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L49-L120)
+
+**Section sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L49-L120)
+
+### DataSource and Generic Row Type
+- DataSource is typed as an array of the generic row type T.
+- Internally, the component defines a local generic DT = any & PrivateRowDT to incorporate internal row keys and flags used during rendering and virtualization.
+
+```mermaid
+flowchart TD
+Start(["Props received"]) --> CheckDS["Check props.dataSource: T[]"]
+CheckDS --> UseDT["Use DT = any & PrivateRowDT internally"]
+UseDT --> Render["Render rows with typed props"]
+Render --> End(["Done"])
+```
+
+**Diagram sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L319-L321)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L269-L270)
+
+**Section sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L319-L321)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L269-L270)
+
+### Event Handler Signatures
+- The component emits a comprehensive set of typed events, each carrying strongly typed payloads. Examples include sort-change, row-click, current-change, cell-selected, row-dblclick, header-row-menu, row-menu, cell-click, cell-mouseenter, cell-mouseleave, cell-mouseover, cell-mousedown, header-cell-click, scroll, scroll-x, col-order-change, th-drag-start, th-drop, row-order-change, col-resize, toggle-row-expand, toggle-tree-expand, cell-selection-change, and update:columns.
+- These signatures ensure consumers receive accurate types for event handlers.
+
+```mermaid
+sequenceDiagram
+participant User as "User Interaction"
+participant Comp as "StkTable.vue"
+participant Consumer as "App Code"
+User->>Comp : "Click header"
+Comp->>Consumer : "emit('header-cell-click', ev, col)"
+User->>Comp : "Sort column"
+Comp->>Consumer : "emit('sort-change', col, order, data, sortConfig)"
+User->>Comp : "Select cell"
+Comp->>Consumer : "emit('cell-selected', ev, { select, row, col })"
+```
+
+**Diagram sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L478-L621)
+
+**Section sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L478-L621)
+
+### Slot Typing Strategies
+- Slots are typed via template-level slot typing in the distribution typings. Consumers can type slot props such as tableHeader, expand, empty, and customBottom.
+- Example slot typing includes props like col for tableHeader, row and col for expand, and no props for empty/customBottom.
+
+```mermaid
+classDiagram
+class Slots {
++tableHeader(col : PrivateStkTableColumn<PrivateRowDT>) : any
++expand(row : any, col : StkTableColumn<any>|undefined) : any
++empty() : any
++customBottom() : any
+}
+```
+
+**Diagram sources**
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L60-L70)
+
+**Section sources**
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L60-L70)
+
+### Advanced TypeScript Patterns
+- Conditional types: CustomCell<T extends CustomCellProps<U> | CustomHeaderCellProps<U>, U extends Record<string, any>> unions ConcreteComponent with Partial<T> to accept both strict and loose component prop definitions.
+- Mapped types: Utility types and pick types are used to derive subsets like SortOption<T> and SortState<T>.
+- Utility types: Exposed helpers like isEmptyValue, strCompare, binarySearch, and insertToOrderedArray demonstrate reusable typed utilities.
+
+```mermaid
+flowchart TD
+A["CustomCell<T,U>"] --> B{"ConcreteComponent<T>?"}
+B --> |Yes| C["Accept"]
+B --> |No| D["Exclude<Component<Partial<T>>, ConcreteComponent>"]
+D --> E["Accept"]
+C --> F["Union with string"]
+E --> F
+```
+
+**Diagram sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L49-L52)
+
+**Section sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L49-L52)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts#L25-L66)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts#L102-L116)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts#L73-L92)
+
+### Type Augmentation and Module Declarations
+- Module declaration for Vue SFCs: vite-env.d.ts declares module '*.vue' with DefineComponent<object, object, any> to allow importing Vue components without type errors.
+- Global augmentation: A window global __STK_TB_ID_COUNT__ is declared for internal ID counting.
+
+```mermaid
+graph LR
+A["vite-env.d.ts"] --> B["Module '*.vue' declaration"]
+C["vite-env.d.ts"] --> D["Window augmentation"]
+```
+
+**Diagram sources**
+- [src/vite-env.d.ts](file://src/vite-env.d.ts#L2-L10)
+
+**Section sources**
+- [src/vite-env.d.ts](file://src/vite-env.d.ts#L2-L10)
+
+### Integration with TypeScript Tooling
+- Compiler options: tsconfig.json sets strict, esnext modules, bundler resolution, jsxImportSource, and paths for clean builds.
+- Package exports: package.json points types to lib/src/StkTable/index.d.ts for consumers.
+- Distribution typings: lib/src/StkTable/*.d.ts provide accurate runtime and template typings for consumers.
+
+```mermaid
+graph TB
+A["tsconfig.json"] --> B["Compiler options"]
+C["package.json"] --> D["types export"]
+E["lib/src/StkTable/types/index.d.ts"] --> F["Consumer types"]
+G["lib/src/StkTable/StkTable.vue.d.ts"] --> F
+```
+
+**Diagram sources**
+- [tsconfig.json](file://tsconfig.json#L1-L39)
+- [package.json](file://package.json#L6-L6)
+- [lib/src/StkTable/types/index.d.ts](file://lib/src/StkTable/types/index.d.ts#L1-L293)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L1-L818)
+
+**Section sources**
+- [tsconfig.json](file://tsconfig.json#L1-L39)
+- [package.json](file://package.json#L6-L6)
+- [lib/src/StkTable/types/index.d.ts](file://lib/src/StkTable/types/index.d.ts#L1-L293)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L1-L818)
+
+## Dependency Analysis
+The component imports and uses types from the types/index.ts module and utility functions from utils/index.ts. Virtualization logic in useVirtualScroll.ts consumes types and computes virtualized views.
+
+```mermaid
+graph LR
+A["StkTable.vue"] --> B["types/index.ts"]
+A --> C["utils/index.ts"]
+A --> D["useVirtualScroll.ts"]
+B --> E["StkTableColumn<T>"]
+B --> F["SortConfig<T>"]
+B --> G["HeaderDragConfig<DT>"]
+C --> H["tableSort<T>"]
+D --> I["VirtualScrollStore"]
+D --> J["VirtualScrollXStore"]
+```
+
+**Diagram sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L218-L267)
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L1-L318)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts#L153-L207)
+- [src/StkTable/useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L499)
+
+**Section sources**
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L218-L267)
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L1-L318)
+- [src/StkTable/utils/index.ts](file://src/StkTable/utils/index.ts#L153-L207)
+- [src/StkTable/useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L499)
+
+## Performance Considerations
+- Virtual scrolling: The component uses virtualized stores and computed slices to render only visible rows and columns, minimizing DOM and reflows.
+- Auto row height: Supports dynamic row heights with caching to avoid repeated measurements.
+- Efficient updates: Utilities like binarySearch and insertToOrderedArray maintain sorted arrays efficiently.
+
+[No sources needed since this section provides general guidance]
+
+## Troubleshooting Guide
+- CustomCell prop typing: Prefer passing a component with Partial<T> props or a string tag to avoid strict prop requirements.
+- Column resizing: When enabling colResizable, ensure columns are reactive and width is set appropriately; the table width becomes fit-content after resizing.
+- Sort remote: When sortRemote is true, handle sorting externally and update dataSource accordingly.
+- Slots: Use typed slot props from the distribution typings to ensure correct typing in templates.
+
+**Section sources**
+- [src/StkTable/types/index.ts](file://src/StkTable/types/index.ts#L49-L52)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L361-L361)
+- [src/StkTable/StkTable.vue](file://src/StkTable/StkTable.vue#L333-L333)
+- [lib/src/StkTable/StkTable.vue.d.ts](file://lib/src/StkTable/StkTable.vue.d.ts#L60-L70)
+
+## Conclusion
+The library provides a robust, fully typed experience for Vue applications. Its type system leverages generics, conditional types, and mapped types to deliver strong guarantees across columns, data sources, configuration interfaces, and component APIs. Consumers benefit from precise prop typing, event signatures, and slot typing, along with practical utilities for sorting and virtualization.
+
+[No sources needed since this section summarizes without analyzing specific files]
+
+## Appendices
+
+### Historical Type Definition
+A legacy definition exists in history/StkTable.d.ts for older integrations.
+
+**Section sources**
+- [history/StkTable.d.ts](file://history/StkTable.d.ts#L1-L18)
