@@ -2,6 +2,8 @@
 ## 0.11.7
 * Change:
   - change: `AreaSelectionConfig['enabled']` default set `true`.
+* Bugfix：
+  - fix: `useAreaSelection` not tree shaking.
 
 ## 0.11.6
 * Change:

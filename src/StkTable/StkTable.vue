@@ -265,6 +265,7 @@ import {
     DEFAULT_SORT_CONFIG,
     IS_LEGACY_MODE,
 } from './const';
+import { useAreaSelectionName } from './features';
 import { ON_DEMAND_FEATURE } from './registerFeature';
 import {
     AreaSelectionConfig,
@@ -301,16 +302,15 @@ import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
 import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
 import { useScrollRowByRow } from './useScrollRowByRow';
+import { useSorter } from './useSorter';
 import { useTableColumns } from './useTableColumns';
 import { useThDrag } from './useThDrag';
 import { useTrDrag } from './useTrDrag';
 import { useTree } from './useTree';
 import { useVirtualScroll } from './useVirtualScroll';
 import { useWheeling } from './useWheeling';
-import { useSorter } from './useSorter';
 import { createStkTableId, getCalculatedColWidth } from './utils/constRefUtils';
 import { getClosestColKey, getClosestTr, getClosestTrIndex, rafThrottle, transformWidthToStr } from './utils/index';
-import { useAreaSelection } from './features';
 
 /** Generic stands for DataType */
 type DT = any & PrivateRowDT;
@@ -902,7 +902,7 @@ const {
     get: getSelectedArea,
     clear: clearSelectedArea,
     copy: copySelectedArea,
-} = ON_DEMAND_FEATURE[useAreaSelection.name](
+} = ON_DEMAND_FEATURE[useAreaSelectionName](
     props,
     emits,
     tableContainerRef,

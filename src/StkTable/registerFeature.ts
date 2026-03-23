@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue';
-import { useAreaSelection } from './features';
+import { useAreaSelection, useAreaSelectionName } from './features';
 
 type OnDemandFeature = {
-    [useAreaSelection.name]: typeof useAreaSelection<any>;
+    [useAreaSelectionName]: typeof useAreaSelection<any>;
 };
 
 export const ON_DEMAND_FEATURE: OnDemandFeature = {
-    [useAreaSelection.name]: (() => {
+    [useAreaSelectionName]: (() => {
         console.warn('useAreaSelection is not registered');
         return {
             config: computed(() => ({ enabled: false })),
