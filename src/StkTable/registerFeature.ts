@@ -25,6 +25,11 @@ type Feature = OnDemandFeature[keyof OnDemandFeature];
 export function registerFeature(feature: Feature | Feature[]) {
     const features = Array.isArray(feature) ? feature : [feature];
     features.forEach(f => {
-        (ON_DEMAND_FEATURE as any)[f.name] = f as any;
+        const fnName = (f as any).stkName;
+        if (!fnName) {
+            console.warn('invalid feature');
+            return;
+        }
+        (ON_DEMAND_FEATURE as any)[fnName] = f as any;
     });
 }

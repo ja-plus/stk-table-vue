@@ -3,6 +3,7 @@ import { AreaSelectionConfig, AreaSelectionRange, CellKeyGen, ColKeyGen, StkTabl
 import { VirtualScrollStore, VirtualScrollXStore } from '../useVirtualScroll';
 import { getClosestColKey, getClosestTrIndex } from '../utils';
 import { getCalculatedColWidth } from '../utils/constRefUtils';
+import { MY_FN_NAME } from './const';
 
 /**
  * 单元格区域选择功能
@@ -774,7 +775,6 @@ export function useAreaSelection<DT extends Record<string, any>>(
         onMD: onSelectionMouseDown,
     };
 }
-const useAreaSelectionName = 'useAreaSelection';
-useAreaSelection.name = useAreaSelectionName;
+export const useAreaSelectionName = 'useAreaSelection';
 
-export { useAreaSelectionName };
+(useAreaSelection as any)[MY_FN_NAME] = useAreaSelectionName;
