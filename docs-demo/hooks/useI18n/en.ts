@@ -126,4 +126,12 @@ export const en = {
     csiOfrBp: 'CSI-Ofr(BP)',
     keyboardSelect: 'Keyboard Select',
     showFooter: 'Show Footer',
+    best: 'Best',
+    department: 'Department',
+    position: 'Position',
+    salary: 'Salary',
+    total: 'Total',
+    average: 'Average',
+    summary: 'Summary',
+    records: 'records',
 };

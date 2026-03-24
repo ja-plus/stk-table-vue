@@ -2,6 +2,7 @@ import { useData } from 'vitepress';
 import { computed } from 'vue';
 import { en } from './en';
 import { zh } from './zh';
+import { ja } from './ja';
 
 interface LanguagePack {
     [key: string]: string;
@@ -11,12 +12,12 @@ interface I18nConfig {
     [locale: string]: LanguagePack;
 }
 
-export function useI18n(localeConfig: I18nConfig = { en, zh }) {
+export function useI18n(localeConfig: I18nConfig = { en, zh, ja }) {
     const { lang } = useData();
 
     const t = (key: string, defaultValue: string = key): string => {
         const currentLang = lang.value;
-        return localeConfig[currentLang]?.[key] || localeConfig['en']?.[key] || defaultValue;
+        return localeConfig[currentLang]?.[key] || localeConfig.en?.[key] || defaultValue;
     };
 
     const getCurrentLang = (): string => {

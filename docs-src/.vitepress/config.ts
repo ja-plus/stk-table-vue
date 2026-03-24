@@ -4,6 +4,7 @@ import { vitepressDemoPlugin } from 'vitepress-demo-plugin';
 import llmstxt from 'vitepress-plugin-llms';
 import { enConfig } from './src/config/en';
 import { zhConfig } from './src/config/zh';
+import { jaConfig } from './src/config/ja';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -30,6 +31,10 @@ export default defineConfig({
             label: 'English',
             ...enConfig,
         },
+        ja: {
+            label: '日本語',
+            ...jaConfig,
+        },
     },
     markdown: {
         config(md) {
@@ -37,7 +42,8 @@ export default defineConfig({
                 demoDir: path.resolve(__dirname, '../../docs-demo'),
                 locale: {
                     zh: 'zh-CN',
-                    'en': 'en-US'
+                    'en': 'en-US',
+                    'ja': 'ja-JP'
                 },
             });
         },
