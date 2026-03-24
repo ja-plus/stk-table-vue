@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { en } from './en';
 import { zh } from './zh';
 import { ja } from './ja';
+import { ko } from './ko';
 
 interface LanguagePack {
     [key: string]: string;
@@ -12,7 +13,7 @@ interface I18nConfig {
     [locale: string]: LanguagePack;
 }
 
-export function useI18n(localeConfig: I18nConfig = { en, zh, ja }) {
+export function useI18n(localeConfig: I18nConfig = { en, zh, ja, ko }) {
     const { lang } = useData();
 
     const t = (key: string, defaultValue: string = key): string => {
@@ -32,10 +33,15 @@ export function useI18n(localeConfig: I18nConfig = { en, zh, ja }) {
         return lang.value === 'en';
     });
 
+    const isKO = computed(() => {
+        return lang.value === 'ko';
+    });
+
     return {
         t,
         getCurrentLang,
         isZH,
         isEN,
+        isKO,
     };
 }

@@ -5,6 +5,7 @@ import llmstxt from 'vitepress-plugin-llms';
 import { enConfig } from './src/config/en';
 import { zhConfig } from './src/config/zh';
 import { jaConfig } from './src/config/ja';
+import { koConfig } from './src/config/ko';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -35,6 +36,10 @@ export default defineConfig({
             label: '日本語',
             ...jaConfig,
         },
+        ko: {
+            label: '한국어',
+            ...koConfig,
+        },
     },
     markdown: {
         config(md) {
@@ -43,7 +48,8 @@ export default defineConfig({
                 locale: {
                     zh: 'zh-CN',
                     'en': 'en-US',
-                    'ja': 'ja-JP'
+                    'ja': 'ja-JP',
+                    'ko': 'ko-KR'
                 },
             });
         },
