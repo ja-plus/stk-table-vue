@@ -5,6 +5,7 @@
 - [AreaSelection.vue](file://docs-demo/advanced/area-selection/AreaSelection.vue)
 - [useAreaSelection.ts](file://src/StkTable/features/useAreaSelection.ts)
 - [registerFeature.ts](file://src/StkTable/registerFeature.ts)
+- [const.ts](file://src/StkTable/features/const.ts)
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 - [index.ts](file://src/StkTable/types/index.ts)
 - [index.ts](file://src/StkTable/utils/index.ts)
@@ -17,11 +18,11 @@
 
 ## Update Summary
 **Changes Made**
-- Updated documentation to reflect the new `useAreaSelectionName` constant for enhanced tree shaking capabilities
-- Enhanced on-demand feature registration system documentation with improved runtime feature resolution
+- Updated documentation to reflect the enhanced `useAreaSelectionName` constant implementation with improved tree-shaking support
+- Enhanced on-demand feature registration system documentation with better integration and runtime feature resolution
 - Added information about bundle optimization benefits and dead code elimination support
-- Updated feature registration requirements with the new naming convention
-- Revised integration examples to demonstrate the improved registration system
+- Updated feature registration requirements with the new naming convention and improved tree-shaking capabilities
+- Revised integration examples to demonstrate the improved registration system with enhanced tree-shaking support
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -38,7 +39,7 @@
 ## Introduction
 Area Selection is a powerful feature in StkTable that enables users to select rectangular regions of cells through mouse drag operations. This functionality provides intuitive data selection capabilities with support for keyboard shortcuts, automatic scrolling during selection, and clipboard integration for copying selected data.
 
-**Enhanced** The area selection system now operates under an improved on-demand registration model with enhanced tree shaking capabilities. The introduction of the `useAreaSelectionName` constant provides better bundle optimization and allows developers to include only the features they need while enabling dead code elimination.
+**Enhanced** The area selection system now operates under an improved on-demand registration model with enhanced tree shaking capabilities. The introduction of the `useAreaSelectionName` constant provides better bundle optimization and allows developers to include only the features they need while enabling dead code elimination. The system now features improved integration with the registration system and enhanced tree-shaking support through consistent naming conventions.
 
 The feature transforms a simple table into a sophisticated spreadsheet-like interface, allowing users to:
 - Drag-select rectangular cell ranges
@@ -47,7 +48,7 @@ The feature transforms a simple table into a sophisticated spreadsheet-like inte
 - Programmatically access selected data via exposed methods including the new `copySelectedArea()`
 - Navigate using arrow keys, Tab, and Shift combinations for enhanced keyboard accessibility
 
-**Enhanced** The area selection system now provides dual access methods - both keyboard shortcuts and programmatic clipboard operations for maximum flexibility, integrated through the improved on-demand registration system with enhanced tree shaking capabilities.
+**Enhanced** The area selection system now provides dual access methods - both keyboard shortcuts and programmatic clipboard operations for maximum flexibility, integrated through the improved on-demand registration system with enhanced tree shaking capabilities and better bundle optimization.
 
 ## Project Structure
 The Area Selection feature is implemented as a composable hook that integrates seamlessly with the main StkTable component through an enhanced on-demand registration system. The implementation follows Vue 3 Composition API patterns and maintains separation of concerns between the selection logic and the table rendering.
@@ -58,40 +59,42 @@ subgraph "Enhanced On-Demand Registration System"
 A[registerFeature Function] --> B[ON_DEMAND_FEATURE Registry]
 B --> C[useAreaSelection Hook]
 C --> D[useAreaSelectionName Constant]
+D --> E[Tree Shaking Support]
 end
 subgraph "Area Selection Implementation"
-C --> E[Selection State Management]
-C --> F[Mouse Event Handlers]
-C --> G[Enhanced Keyboard Navigation]
-C --> H[Optimized Auto Scrolling]
-C --> I[Clipboard Integration]
-C --> J[Programmatic Methods]
+C --> F[Selection State Management]
+C --> G[Mouse Event Handlers]
+C --> H[Enhanced Keyboard Navigation]
+C --> I[Optimized Auto Scrolling]
+C --> J[Clipboard Integration]
+C --> K[Programmatic Methods]
 end
 subgraph "Table Integration"
-K[StkTable Component] --> L[Feature Registry Lookup]
-L --> M[Dynamic Feature Binding]
-M --> N[Event Delegation]
-M --> O[Selection Styling]
-M --> P[Exposed Methods]
+L[StkTable Component] --> M[Feature Registry Lookup]
+M --> N[Dynamic Feature Binding]
+N --> O[Event Delegation]
+O --> P[Selection Styling]
+P --> Q[Exposed Methods]
 end
 subgraph "Utilities"
-Q[Helper Functions] --> R[DOM Traversal]
-Q --> S[Element Positioning]
-Q --> T[Key Generation]
+R[Helper Functions] --> S[DOM Traversal]
+R --> T[Element Positioning]
+R --> U[Key Generation]
 end
-C --> Q
-K --> C
-P --> J
+C --> R
+L --> C
+Q --> K
 D --> B
+E --> B
 ```
 
 **Diagram sources**
-- [registerFeature.ts:25-30](file://src/StkTable/registerFeature.ts#L25-L30)
-- [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
+- [registerFeature.ts:25-35](file://src/StkTable/registerFeature.ts#L25-L35)
+- [useAreaSelection.ts:777-781](file://src/StkTable/features/useAreaSelection.ts#L777-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 
 **Section sources**
-- [registerFeature.ts:1-31](file://src/StkTable/registerFeature.ts#L1-L31)
+- [registerFeature.ts:1-36](file://src/StkTable/registerFeature.ts#L1-L36)
 - [useAreaSelection.ts:1-781](file://src/StkTable/features/useAreaSelection.ts#L1-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 
@@ -105,7 +108,7 @@ D --> B
 - `ON_DEMAND_FEATURE` serves as a lookup table for dynamically loaded features with enhanced runtime resolution
 - Features are resolved at runtime based on the `useAreaSelectionName` property
 - Provides fallback implementations when features are not registered
-- Enables better bundle optimization through consistent naming conventions
+- Enables better bundle optimization through consistent naming conventions and enhanced tree-shaking support
 
 ### useAreaSelectionName Constant
 **New** The `useAreaSelectionName` constant provides enhanced tree shaking capabilities:
@@ -115,6 +118,7 @@ D --> B
 - Enables dead code elimination in bundlers that support static analysis
 - Provides consistent feature identification across the application
 - Improves bundle size optimization by allowing unused features to be removed
+- **Enhanced** Now properly integrated with the registration system for better tree-shaking support
 
 ### Selection State Management
 The core selection logic is encapsulated in the `useAreaSelection` composable, which manages:
@@ -139,7 +143,7 @@ The implementation provides comprehensive mouse event handling:
 - **Esc Key**: Cancel current selection
 - **Ctrl/Cmd + C**: Copy selected range to clipboard in TSV format
 
-**Enhanced** The keyboard system now provides Excel-like navigation with intelligent boundary handling and automatic scrolling optimization, integrated with the improved registration system.
+**Enhanced** The keyboard system now provides Excel-like navigation with intelligent boundary handling and automatic scrolling optimization, integrated with the improved registration system and enhanced tree-shaking support.
 
 ### Optimized Auto Scrolling
 **Enhanced** Intelligent auto-scrolling automatically scrolls the table container when the mouse approaches edges, with significant performance improvements:
@@ -159,8 +163,8 @@ The implementation provides comprehensive mouse event handling:
 - Returns the copied text content for immediate use
 
 **Section sources**
-- [registerFeature.ts:1-31](file://src/StkTable/registerFeature.ts#L1-L31)
-- [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
+- [registerFeature.ts:1-36](file://src/StkTable/registerFeature.ts#L1-L36)
+- [useAreaSelection.ts:777-781](file://src/StkTable/features/useAreaSelection.ts#L777-L781)
 - [useAreaSelection.ts:1-781](file://src/StkTable/features/useAreaSelection.ts#L1-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 
@@ -212,13 +216,13 @@ Hook->>Clipboard : Write to Clipboard
 ```
 
 **Diagram sources**
-- [registerFeature.ts:25-30](file://src/StkTable/registerFeature.ts#L25-L30)
-- [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
+- [registerFeature.ts:25-35](file://src/StkTable/registerFeature.ts#L25-L35)
+- [useAreaSelection.ts:777-781](file://src/StkTable/features/useAreaSelection.ts#L777-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 - [useAreaSelection.ts:547-653](file://src/StkTable/features/useAreaSelection.ts#L547-L653)
 
 The architecture demonstrates a clean separation of concerns with the enhanced on-demand registration system:
-- **Feature Registration**: Developers explicitly register features they want to use with enhanced naming conventions
+- **Feature Registration**: Developers explicitly register features they want to use with enhanced naming conventions and tree-shaking support
 - **Runtime Resolution**: Features are resolved dynamically based on the `useAreaSelectionName` constant
 - **Tree Shaking Support**: The constant enables better dead code elimination and bundle optimization
 - **Event Delegation**: The StkTable component delegates selection events to the registered hook
@@ -270,7 +274,7 @@ The registration system provides a clean interface for feature management with i
 - Features are stored in the `ON_DEMAND_FEATURE` registry using the `useAreaSelectionName` constant
 - Each feature is identified by its stable `useAreaSelectionName` property
 - Provides fallback implementations when features are not registered
-- Enables better bundle optimization through consistent naming conventions
+- Enables better bundle optimization through consistent naming conventions and enhanced tree-shaking support
 
 #### Runtime Feature Resolution
 **Enhanced** The StkTable component resolves features at runtime with improved naming support:
@@ -278,11 +282,11 @@ The registration system provides a clean interface for feature management with i
 - Uses the `useAreaSelectionName` constant for feature identification
 - Binds the resolved feature to the table instance
 - Integrates event handlers and exposed methods automatically
-- Supports enhanced tree shaking capabilities
+- Supports enhanced tree shaking capabilities through consistent naming
 
 **Section sources**
-- [registerFeature.ts:1-31](file://src/StkTable/registerFeature.ts#L1-L31)
-- [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
+- [registerFeature.ts:1-36](file://src/StkTable/registerFeature.ts#L1-L36)
+- [useAreaSelection.ts:777-781](file://src/StkTable/features/useAreaSelection.ts#L777-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 
 ### Enhanced useAreaSelection Hook Implementation
@@ -527,7 +531,7 @@ F --> H
 ```
 
 **Diagram sources**
-- [registerFeature.ts:1-31](file://src/StkTable/registerFeature.ts#L1-L31)
+- [registerFeature.ts:1-36](file://src/StkTable/registerFeature.ts#L1-L36)
 - [useAreaSelection.ts:1-781](file://src/StkTable/features/useAreaSelection.ts#L1-L781)
 - [StkTable.vue:897-916](file://src/StkTable/StkTable.vue#L897-L916)
 - [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
@@ -542,7 +546,7 @@ The enhanced dependency structure ensures:
 - **Dual Access Methods**: Both keyboard shortcuts and programmatic methods provide flexible integration options
 
 **Section sources**
-- [registerFeature.ts:1-31](file://src/StkTable/registerFeature.ts#L1-L31)
+- [registerFeature.ts:1-36](file://src/StkTable/registerFeature.ts#L1-L36)
 - [index.ts:355-375](file://src/StkTable/types/index.ts#L355-L375)
 - [useAreaSelection.ts:777-778](file://src/StkTable/features/useAreaSelection.ts#L777-L778)
 
