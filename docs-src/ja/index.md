@@ -21,23 +21,24 @@ hero:
       link: https://github.com/ja-plus/stk-table-vue
 
 features:
-  - icon: 🛠️
-    title: 行/セルハイライト
-    details: 行とセルをハイライトするメソッドを封装。リアルタイムデータ更新に最適。
   - icon: 💡
     title: 軽量で使いやすい
     details: position:sticky ベースの固定ヘッダーと固定列で、仮想リストの高さ制御がより便利に。
   - icon: ⚡️
     title: 高パフォーマンス
-    details: 横方向、縦方向、可変高さの仮想リストに対応。
+    details: 横方向、縦方向、可変高さの仮想リストに対応。リアルタイムデータテーブル、相場テーブル、ダイナミックテーブルに特化。
   - icon: 🔩
     title: 柔軟性
-    details: DOMベースで、柔軟なカスタムセル設定が可能。スロット散らかり解消。
+    details: DOM ベース、設定式カスタムセル、スロット複雑さ解消。
+  - icon: 🛠️
+    title: 行/セルハイライト
+    details: 行とセルをハイライトするメソッドをカプセル化。データ更新通知に使用。
   - icon: 🔑
-    title: 完全型付けAPI
-    details: 柔軟なAPIと完全なTypeScript型定義。
+    title: 完全型付け API
+    details: 柔軟な API と完全な TypeScript 型定義。
   - icon:
       src: /assets/vue-logo.svg
-    title: Vue 2.7対応
-    details: Vue SFC + TSソースコードで、Vue 2プロジェクト에서도導入 가능。
+    title: Vue 2.7 対応
+    details: Vue SFC + TS ソースコード、Vue 2 プロジェクトでの導入をサポート。
 ---
+

@@ -21,18 +21,18 @@ hero:
       link: https://github.com/ja-plus/stk-table-vue
 
 features:
-  - icon: 🛠️
-    title: Row/Cell Highlighting
-    details: Encapsulates methods for highlighting rows and cells. Useful for real-time data updates.
   - icon: 💡
     title: Lightweight & Easy to Use
     details: Fixed headers and columns based on position:sticky, making virtual list height control more convenient.
   - icon: ⚡️
     title: High Performance
-    details: Supports horizontal, vertical, and variable height virtual lists.
+    details: Supports horizontal, vertical, and variable height virtual lists. Focused on real-time data tables, quote tables, and dynamic tables.
   - icon: 🔩
     title: Flexible
     details: DOM-based, configurable custom cells, no more bloated slots.
+  - icon: 🛠️
+    title: Row/Cell Highlighting
+    details: Encapsulates methods for highlighting rows and cells. Used for data update notifications.
   - icon: 🔑
     title: Fully Typed API
     details: Flexible API with complete TypeScript types.
