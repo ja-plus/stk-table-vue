@@ -65,7 +65,7 @@ theme?: 'light' | 'dark';
 ### rowHeight
 
 행 높이
-- `props.autoRowHeight`가 `true`일 때,期望行高로 사용됩니다. 실제 행 높이에 영향을 주지 않습니다.
+- `props.autoRowHeight` 가 `true` 일 때, 기대 행 높이로 사용됩니다. 실제 행 높이에는 영향을 주지 않습니다.
 
 ```ts
 rowHeight?: number;
@@ -74,7 +74,7 @@ rowHeight?: number;
 ### autoRowHeight
 
 가변 행 높이 여부
-- `true`로 설정하면, `props.rowHeight`는期望行高로 사용됩니다. 실제 행 높이에 영향을 주지 않습니다.
+- `true` 로 설정하면, `props.rowHeight` 는 기대 행 높이로 사용됩니다. 실제 행 높이에는 영향을 주지 않습니다.
 
 ```ts
 autoRowHeight?: boolean | {
@@ -208,7 +208,7 @@ sortRemote?: boolean;
 
 ### showHeaderOverflow
 
-헤더溢出 표시 여부
+헤더 오버플로우 표시 여부
 
 ```ts
 showHeaderOverflow?: boolean;
@@ -271,8 +271,8 @@ areaSelection?: boolean | {
   formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
   /**
    * 키보드 제어 선택 영역 이동 활성화 여부.
-   * 활성화하면, 방향키/Tab/Shift+Tab로 선택 영역 이동 제어 가능, Excel 동작과 유사.
-   * 이 기능 활성화 시, 기존 키보드 스크롤 동작은无效됩니다.
+   * 활성화하면, 방향키/Tab/Shift+Tab 로 선택 영역 이동 제어 가능, Excel 동작과 유사.
+   * 이 기능 활성화 시, 기존 키보드 스크롤 동작은 무효화됩니다.
    * @default false
    */
   keyboard?: boolean;
@@ -311,8 +311,8 @@ rowClassName?: (row: any, i: number) => string;
 
 열 너비 드래그 가능 여부 (v-model:columns 설정 필요)
 **설정하지 마세요** 열 minWidth, **반드시** width 설정 필요
-열 너비 드래그 시, 각 열에는 width가 반드시 필요하며 minWidth/maxWidth는无效됩니다. 테이블 너비는 "fit-content"가 됩니다.
-- props.columns의 width 속성을 자동으로 업데이트합니다
+열 너비 드래그 시, 각 열에는 width 가 반드시 필요하며 minWidth/maxWidth 는 무효화됩니다. 테이블 너비는 "fit-content"가 됩니다.
+- props.columns 의 width 속성을 자동으로 업데이트합니다
 
 ```ts
 colResizable?: boolean | {
@@ -331,7 +331,7 @@ colMinWidth?: number;
 
 ### bordered
 
-셀分隔线.
+셀 구분선.
 기본값 가로 세로 모두 있음
 "h" - 가로선만 표시
 "v" - 세로선만 표시
@@ -345,7 +345,7 @@ bordered?: boolean | 'h' | 'v' | 'body-v' | 'body-h';
 ### autoResize
 
 가상 스크롤 높이/너비 자동 재계산. 기본값 true
-[非반응형]
+[비반응형]
 메서드 전달 시 resize 후 콜백 의미
 
 ```ts
@@ -376,7 +376,7 @@ optimizeVue2Scroll?: boolean;
 sortConfig?: {
   /** 빈 값 하단 정렬 여부 */
   emptyToBottom: boolean,
-  /** 기본 정렬 (1.초기화 시トリ거 2.정렬 방향이 null일 때トリ거) */
+  /** 기본 정렬 (1.초기화 시 트리거 2.정렬 방향이 null 일 때 트리거) */
   defaultSort?: {
       dataIndex: keyof T;
       order: Order;
@@ -416,7 +416,7 @@ highlightConfig?: {
 
 ```ts
 seqConfig?: {
-  /** 순번 열 시작 인덱스 페이지네이션适配용 */
+  /** 순번 열 시작 인덱스 페이지네이션 적응용 */
   startIndex?: number;
 };
 ```
@@ -444,7 +444,7 @@ dragRowConfig?: {
 ### cellFixedMode
 
 고정 헤더, 고정 열 구현 방식.
-[非반응형]
+[비반응형]
 relative: 고정 열은 props.columns 양쪽에만 배치 가능.
 - 열 너비가 변경되면 주의해서 사용.
 - 멀티 레벨 헤더 고정 열 주의
@@ -459,8 +459,8 @@ cellFixedMode?: 'sticky' | 'relative';
 
 부드러운 스크롤 여부
 - 기본값: chrome < 85 || chrome > 120 ? true : false
-- false: wheel 이벤트 스크롤 사용. 스크롤 너무 빠를 때 白屏 방지.
-- true: wheel 이벤트 스크롤 미사용. 마우스휠 스크롤 시 더 부드러움. 스크롤太快时会出现白屏.
+- false: wheel 이벤트 스크롤 사용. 스크롤 너무 빠를 때 백색 화면 방지.
+- true: wheel 이벤트 스크롤 미사용. 마우스휠 스크롤 시 더 부드러움. 스크롤 너무 빠르면 백색 화면이 나타납니다.
 
 ```ts
 smoothScroll?: boolean;
@@ -469,7 +469,7 @@ smoothScroll?: boolean;
 ### scrollRowByRow
 
 정수 행 단위 세로 스크롤
-- scrollbar: 스크롤바만 드래그 시生效, 드래그 白屏 문제 처리可用(v0.7.2)
+- scrollbar: 스크롤바만 드래그 시生效, 드래그 백색 화면 문제 처리可用(v0.7.2)
 
 ```ts
 scrollRowByRow?: boolean | 'scrollbar';

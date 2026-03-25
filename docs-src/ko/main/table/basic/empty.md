@@ -1,27 +1,24 @@
 # 빈 데이터
 
-데이터가 없을 때 빈 상태를 표시합니다.
+## 기본
 
-```vue
-<script lang="ts" setup>
-import { ref } from 'vue';
-import { StkTable } from 'stk-table-vue';
-import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
+<demo vue="basic/empty/Default.vue"></demo>
 
-type Data = {
-    name: string;
-    age: number;
-};
+## 높이 채우기 (no-data-full)
 
-const columns: StkTableColumn<Data>[] = [
-    { type: 'seq', title: 'No.', width: 50 },
-    { title: '이름', dataIndex: 'name' },
-    { title: '나이', dataIndex: 'age' },
-];
+::: tip
+`no-data-full` 속성을 통해 구성합니다.
+:::
 
-const dataSource = ref<Data[]>([]);
-</script>
-<template>
-    <StkTable style="height: 200px" row-key="name" :columns="columns" :data-source="dataSource"></StkTable>
-</template>
-```
+<demo vue="basic/empty/NoDataFull.vue"></demo>
+
+## 사용자 정의 콘텐츠 슬롯 (#empty)
+
+슬롯 이름: `empty`
+
+::: tip
+
+`i18n` 국제화도 슬롯을 통해 구현할 수 있습니다.
+:::
+
+<demo vue="basic/empty/Slot.vue"></demo>

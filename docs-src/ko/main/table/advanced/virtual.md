@@ -31,35 +31,35 @@ props:
 <demo vue="advanced/virtual/VirtualX.vue"></demo>
 
 ## 가시 영역 자동 재계산 autoResize
-很多情况下，虚拟列表区域的宽高会因为各种原因发生变化，这时需要重新计算可视区域。
+많은 상황에서 가상 리스트 영역의 높이와 너비가 다양한 이유로 인해 변경되며, 이때 가시 영역을 다시 계산해야 합니다.
 
-组件内部已基于 `ResizeObserver` 监听 `StkTable` 的尺寸变化，当尺寸变化时，会自动重新计算可视区域，该功能默认打开。
+컴포넌트 내부는 이미 `ResizeObserver` 를 기반으로 `StkTable` 의 크기 변화를 감지하며, 크기가 변경될 때 자동으로 가시 영역을 다시 계산합니다. 이 기능은 기본적으로 활성화되어 있습니다.
 
 
 ::: warning
-不支持 `ResizeObserver` 的浏览器会使用 `onresize`兜底。
+`ResizeObserver` 를 지원하지 않는 브라우저는 `onresize` 를 사용하여 폴백합니다.
 :::
 
-某些情况下，仍需要手动重新计算虚拟列表的可视区域，此时可以调用组件expose的方法。
+특정 상황에서는 여전히 수동으로 가상 리스트의 가시 영역을 다시 계산해야 하며, 이때 컴포넌트의 expose 메서드를 호출할 수 있습니다.
 
 ```ts
 /**
- * 初始化纵向虚拟列表的可视区域
- * @param {number} [height] 虚拟滚动的高度
+ * 세로 가상 리스트의 가시 영역 초기화
+ * @param {number} [height] 가상 스크롤의 높이
  */
 initVirtualScrollY(height?: number)
 /**
- * 初始化横向虚拟列表的可视区域
+ * 가로 가상 리스트의 가시 영역 초기화
  */
 initVirtualScrollX()
 /**
- * 初始化纵向和横向虚拟列表的可视区域
+ * 세로 및 가로 가상 리스트의 가시 영역 초기화
  */
 initVirtualScroll(height?: number)
 ```
-`initVirtualScroll` 等价于 `initVirtualScrollY` + `initVirtualScrollX`
+`initVirtualScroll` 은 `initVirtualScrollY` + `initVirtualScrollX` 와 동일합니다.
 
-### 关闭自动计算
+### 자동 계산 비활성화
 ```vue
 <StkTable :autoResize="false"></StkTable>
 ```

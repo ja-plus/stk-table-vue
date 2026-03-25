@@ -26,7 +26,7 @@
 더 많은 정렬 사용법은 [커스텀 정렬](/ko/main/table/advanced/custom-sort)을 참고하세요.
 
 ## sortField 정렬 필드
-일부 필드는 독립적인 필드로 정렬될 수 있습니다, 예를 들어 년, 월, 일 필드의 경우.此时可以使用一个排序专用字段，将年、月都转换为最小单位日，便于排序，此时通过 `sortField` 指定该排序字段。
+일부 필드는 독립적인 필드로 정렬될 수 있습니다, 예를 들어 년, 월, 일 필드의 경우. 이 경우 정렬 전용 필드를 제공할 수 있으며, 년과 월을 최소 단위인 일로 변환하여 정렬을 용이하게 합니다. 이때 `sortField` 를 통해 해당 정렬 필드를 지정합니다.
 
 다음 표에서 `period` 열은 `periodNumber`를 정렬 필드로 지정했습니다.
 <demo vue="basic/sort/SortField.vue"></demo>
@@ -47,16 +47,16 @@
 :::
 <demo vue="basic/sort/DefaultSort.vue"></demo>
 
-## localCompare를 사용한 문자열 정렬
-`props.sortConfig.stringLocaleCompare = true`를 설정하면 [`String.prototype.localeCompare`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare)를 사용하여 문자열을 정렬합니다.
+## localCompare 를 사용한 문자열 정렬
+`props.sortConfig.stringLocaleCompare = true`를 설정하면 [`String.prototype.localeCompare`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare) 를 사용하여 문자열을 정렬합니다.
 
 작용: 중국어는 병음 첫 글자순으로 정렬됩니다.
 
-##服务端정렬
+## 서버측 정렬
 
 `props.sort-remote`를 `true`로 설정하면 컴포넌트 내부의 정렬 로직이 트리거되지 않습니다.
 
-테이블 헤더를 클릭하면 `@sort-change` 이벤트가 트리거되며, 이벤트에서 ajax 요청을发起하여 `props.dataSource`를 다시 할당하여 정렬을 완료할 수 있습니다.
+테이블 헤더를 클릭하면 `@sort-change` 이벤트가 트리거되며, 이벤트에서 ajax 요청을 보내고 `props.dataSource` 를 다시 할당하여 정렬을 완료할 수 있습니다.
 
 ```vue
 <StkTable sort-remote></StkTable>
@@ -109,8 +109,8 @@ const columns: StkTableColumn[] = [{
 ```ts
 type SortConfig<T extends Record<string, any>> = {
     /**
-     * 기본 정렬 (1.초기화 시 트리거 2.정렬 방향이 null일 때 트리거)
-     * onMounted 시 setSorter를 호출하면 테이블 헤더를 클릭한 것과类似的行为
+     * 기본 정렬 (1.초기화 시 트리거 2.정렬 방향이 null 일 때 트리거)
+     * onMounted 시 setSorter 를 호출하면 테이블 헤더를 클릭한 것과 유사한 동작
      */
     defaultSort?: {
         /** 열 고유 키. props.colKey를 설정했으면 여기서는 열 고유 키 값을 나타냅니다 */
@@ -125,7 +125,7 @@ type SortConfig<T extends Record<string, any>> = {
         sortType?: StkTableColumn<T>['sortType'];
         /** 커스텀 정렬 함수 */
         sorter?: StkTableColumn<T>['sorter'];
-        /** sort-change 이벤트 트리거禁止여부, 기본값 false */
+        /** sort-change 이벤트 트리거 금지 여부, 기본값 false */
         silent?: boolean;
     };
     /** 빈 값은 항상 리스트 하단에 배치 */
@@ -147,7 +147,7 @@ type SortConfig<T extends Record<string, any>> = {
 | defaultSort.key | `string` | - | 열 고유 키. |
 | defaultSort.dataIndex | `string` | - | 정렬 필드, **필수**. |
 | defaultSort.order | `Order` | - | 정렬 방향: `'asc'` \| `'desc'` \| `null`, **필수**. |
-| defaultSort.silent | `boolean` | `false` | `sort-change` 이벤트 트리거禁止여부. |
+| defaultSort.silent | `boolean` | `false` | `sort-change` 이벤트 트리거 금지 여부. |
 | emptyToBottom | `boolean` | `false` | 빈 값이 항상 리스트 하단에 배치되는지 여부. |
 | stringLocaleCompare | `boolean` | `false` | `localeCompare`를 사용하여 문자열 정렬 여부 (중국어 병음 정렬). |
 | sortChildren | `boolean` | `false` | 트리 데이터에서 하위 노드도 정렬할지 여부. |

@@ -1,29 +1,14 @@
 # 행 단위 스크롤
 
-`scrollRowByRow` 속성을 사용하여 행 단위로 스크롤할 수 있습니다.
+표에서 세로로 스크롤할 때, 픽셀 단위가 아닌 **정수 행** 단위로만 스크롤합니다. 이를 통해 표의 행이 항상 정렬되어 가독성을 높일 수 있습니다.
 
-```vue
-<script lang="ts" setup>
-import { ref } from 'vue';
-import { StkTable } from 'stk-table-vue';
-import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
+`props.scrollRowByRow` 를 구성하여 이 기능을 활성화할 수 있습니다.
 
-type Data = {
-    name: string;
-    age: number;
-};
+| 값 | 설명 |
+| ---- | ---- |
+| boolean | 활성화 여부 |
+| "scrollbar" | 스크롤바 드래그 시에만 트리거되며, 스크롤바 드래그로 인한 백색 화면 발생 시 이 방식을 사용하여 백색 화면 영향을 줄일 수 있음 |
 
-const columns: StkTableColumn<Data>[] = [
-    { type: 'seq', title: 'No.', width: 50 },
-    { title: '이름', dataIndex: 'name' },
-    { title: '나이', dataIndex: 'age' },
-];
+아래 표를 스크롤하면 표 행의 위치가 기본적으로 변하지 않는 것을 볼 수 있습니다.
 
-const dataSource = ref<Data[]>(
-    Array.from({ length: 50 }, (_, i) => ({ name: `사용자${i + 1}`, age: 18 + i }))
-);
-</script>
-<template>
-    <StkTable scroll-row-by-row style="height: 300px" row-key="name" :columns="columns" :data-source="dataSource"></StkTable>
-</template>
-```
+<demo vue="basic/scroll-row-by-row/ScrollRowByRow.vue"></demo>

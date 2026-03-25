@@ -41,6 +41,6 @@ columns 설정에 다중 선택상자를 표시하는 커스텀 열을 추가합
     },
 }
 ```
-input 요소 외부에 부모 요소를 추가하여垂直居中합니다.
+input 요소 외부에 부모 요소를 추가하여 수직 중앙 정렬합니다.
 
-프로젝트에서 사용하는 vue 컴포넌트 라이브러리(Element Plus, Ant Design Vue, Naive UI 등)의 `Checkbox` 컴포넌트로 대체하여 프로젝트 전체 스타일统일을 유지할 수 있습니다.
+프로젝트에서 사용하는 vue 컴포넌트 라이브러리 (Element Plus, Ant Design Vue, Naive UI 등) 의 `Checkbox` 컴포넌트로 대체하여 프로젝트 전체 스타일 통일을 유지할 수 있습니다.

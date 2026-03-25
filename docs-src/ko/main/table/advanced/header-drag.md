@@ -1,7 +1,7 @@
 # 열 드래그 순서 변경
 
 * `headerDrag` 속성을 설정하면 열 드래그 순서 변경 기능이 활성화됩니다.
-* `columns` 설정은 `v-model`修飾符로 해야 합니다.
+* `columns` 설정은 `v-model` 수식어로 해야 합니다.
 
 ```js
 <StkTable
@@ -24,7 +24,7 @@
 (e: 'col-order-change', dragStartKey: string, targetColKey: string): void;
 ```
 
-이렇게 하면 `columns` 앞에 `v-model`修飾符를 추가할 필요 없이,手動更新 `columns` 배열의 순서만 하면 됩니다.
+이렇게 하면 `columns` 앞에 `v-model` 수식어를 추가할 필요 없이, 수동으로 `columns` 배열의 순서만 업데이트하면 됩니다.
 
 ## API
 

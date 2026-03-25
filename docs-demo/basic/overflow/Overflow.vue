@@ -59,7 +59,7 @@ const dataSource = ref<DataType[]>([
 <template>
     <CheckItem v-model="showOverflow" text="showOverflow"></CheckItem>
     <CheckItem v-model="showHeaderOverflow" text="showHeaderOverflow"></CheckItem>
-    <CheckItem v-model="virtual" text="开启虚拟列表virtual"></CheckItem>
+    <CheckItem v-model="virtual" text="virtual"></CheckItem>
 
     <StkTable
         row-key="key"

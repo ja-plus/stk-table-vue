@@ -1,41 +1,26 @@
-# Vue 2 스크롤 최적화
+# Vue2 스크롤 최적화
 
-`optimizeVue2Scroll` 속성을 사용하여 Vue 2 환경에서 스크롤 성능을 최적화할 수 있습니다.
+## 개요
+Vue2 의 가상 DOM `diff` 메커니즘 (양방향 diff) 으로 인해 Vue2 에서 가상 리스트를 아래로 스크롤할 때 테이블의 모든 tr 가 업데이트됩니다.
 
+위로 스크롤할 때는 테이블 상단에 tr 을 추가하고 하단에서 tr 을 삭제하는 것이 정확합니다.
+
+아래로 스크롤할 때가 위로 스크롤할 때보다 체감상 더 약간 끊기는 느낌이 듭니다.
+
+따라서 마우스 휠로 스크롤할 때 위아래로 스크롤하는 체감이 일관되도록 이 상황에 대한 최적화를 수행합니다.
+
+## 설정
+`props.optimizeVue2Scroll` 를 통해 Vue2 스크롤 최적화를 활성화합니다.
 ```vue
-<script lang="ts" setup>
-import { ref } from 'vue';
-import { StkTable } from 'stk-table-vue';
-import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
-
-type Data = {
-    id: number;
-    name: string;
-    age: number;
-};
-
-const columns: StkTableColumn<Data>[] = [
-    { type: 'seq', title: 'No.', width: 60 },
-    { title: '이름', dataIndex: 'name' },
-    { title: '나이', dataIndex: 'age' },
-];
-
-const dataSource = ref<Data[]>(
-    Array.from({ length: 1000 }, (_, i) => ({
-        id: i + 1,
-        name: `사용자${i + 1}`,
-        age: 18 + (i % 50),
-    }))
-);
-</script>
-<template>
-    <StkTable 
-        virtual
-        optimize-vue2-scroll
-        style="height: 400px" 
-        row-key="id" 
-        :columns="columns" 
-        :data-source="dataSource"
-    ></StkTable>
-</template>
+<StkTable optimize-vue2-scroll></StkTable>
 ```
+## 최적화 원리
+아래로 스크롤하는 동작을 두 단계로 분리합니다:
+1. 테이블 하단에 tr 추가
+2. 짧은 지연 후 상단의 tr 삭제
+
+즉, 가상 리스트의 `startIndex` 를 먼저 유지한 후 짧은 시간이 지나야 목표값으로 변경합니다. 이렇게 하면 Vue2 의 diff 메커니즘에 도움이 되어 불필요한 DOM 업데이트를 줄이고 스크롤 성능을 향상시킬 수 있습니다.
+
+::: tip
+마우스로 스크롤바를 드래그하여 **대범위**로 드래그할 때, 이 최적화 방안을 적용하면 많은 노드가 생성되므로 DOM 수를 제어하기 위해 이 작업은 **최적화되지 않습니다**.
+:::
