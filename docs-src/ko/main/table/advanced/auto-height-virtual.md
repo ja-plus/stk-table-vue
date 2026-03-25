@@ -6,7 +6,7 @@
 | props.autoRowHeight | `boolean` \| `AutoRowHeightConfig<DT>` | false | 자동 행 높이 활성화 여부 |
 | props.rowHeight | `number` | -- | `props.autoRowHeight`가 `true`일 때,期望行高로 사용하여 계산합니다. 실제 행 높이에 영향을 주지 않습니다. |
 
-### AutoRowHeightConfig<DT>
+### AutoRowHeightConfig&lt;DT&gt;
 ```ts
 type AutoRowHeightConfig<DT> = {
     /** 예상 행 높이 */
@@ -26,7 +26,7 @@ type AutoRowHeightConfig<DT> = {
 
 <demo vue="advanced/auto-height-virtual/AutoHeightVirtual/index.vue"></demo>
 
-셀 상하 패딩을 제어하려면 CSS 변수를 오버라이드하여实现할 수 있습니다：
+셀 상하 패딩을 제어하려면 CSS 변수를 오버라이드하여 구현할 수 있습니다:
 ```css
 .stk-table {
     --cell-padding-y: 8px;
