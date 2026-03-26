@@ -17,7 +17,6 @@ const columns = ref<StkTableColumn<FilterOption>[]>([
             h('input', {
                 type: 'checkbox',
                 checked: checkedTempValueSet.has(row.value),
-                onClick: e => e.preventDefault(),
             }),
     },
     { title: '', dataIndex: 'label', customCell: ({ row }) => h('span', [row.label]) },
@@ -29,6 +28,10 @@ const options = ref<FilterOption[]>([]);
 
 const dropdownEl = ref<HTMLDivElement>();
 
+const DROPDOWN_DEFAULT_WIDTH = 300; // 默认宽度（用于首次计算）
+const DROPDOWN_DEFAULT_HEIGHT = 400; // 默认高度（用于首次计算）
+const PADDING = 8; // 与屏幕边缘的安全距离
+
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
 });
@@ -39,9 +42,64 @@ onUnmounted(() => {
 
 let onConfirmFn: (values: FilterOption['value'][]) => void;
 
+function getDropdownSize() {
+    if (!dropdownEl.value) {
+        return { width: DROPDOWN_DEFAULT_WIDTH, height: DROPDOWN_DEFAULT_HEIGHT };
+    }
+    const rect = dropdownEl.value.getBoundingClientRect();
+    return {
+        width: rect.width || DROPDOWN_DEFAULT_WIDTH,
+        height: rect.height || DROPDOWN_DEFAULT_HEIGHT,
+    };
+}
+
+function calculatePosition(docPos: { x: number; y: number }) {
+    // docPos 是相对于文档的坐标（已包含滚动偏移）
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // 获取 dropdown 实际尺寸
+    const { width: dropdownWidth, height: dropdownHeight } = getDropdownSize();
+
+    let finalX = docPos.x;
+    let finalY = docPos.y;
+
+    // 检测是否超出右边界（相对于视口）
+    const relativeX = docPos.x - scrollLeft;
+    if (relativeX + dropdownWidth > viewportWidth - PADDING) {
+        finalX = viewportWidth - dropdownWidth - PADDING + scrollLeft;
+    }
+
+    // 检测是否超出下边界（相对于视口）
+    const relativeY = docPos.y - scrollTop;
+    if (relativeY + dropdownHeight > viewportHeight - PADDING) {
+        // 如果下方空间不足，尝试在上方显示
+        // 需要知道触发元素的位置来计算上方空间
+        const estimatedTriggerHeight = 30; // 估算的触发元素高度
+        if (relativeY - estimatedTriggerHeight >= dropdownHeight + PADDING) {
+            // 上方空间足够，在触发元素上方显示
+            finalY = docPos.y - estimatedTriggerHeight - dropdownHeight - PADDING;
+        } else {
+            // 上方空间也不足，使用最大可用空间（从视口顶部开始）
+            finalY = PADDING + scrollTop;
+        }
+    }
+
+    // 确保不会超出左边界和上边界
+    finalX = Math.max(PADDING + scrollLeft, finalX);
+    finalY = Math.max(PADDING + scrollTop, finalY);
+
+    return { x: finalX, y: finalY };
+}
+
 function show(pos: { x: number; y: number }, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void) {
     visible.value = true;
-    position.value = pos;
+    if (dropdownEl.value) {
+        dropdownEl.value.style.display = 'block';
+    }
+    position.value = calculatePosition(pos);
     options.value = opt || [];
     initChecked();
     onConfirmFn = onConfirm;
@@ -98,7 +156,11 @@ defineExpose({ visible, show, hide, setTheme });
         ref="dropdownEl"
         class="stk-filter-dropdown"
         :class="[`stk-filter-dropdown--${theme}`]"
-        :style="{ top: position.y + 'px', left: position.x + 'px', display: visible ? void 0 : 'none' }"
+        :style="{
+            top: position.y + 'px',
+            left: position.x + 'px',
+            display: visible ? void 0 : 'none',
+        }"
         @click.stop
     >
         <div style="padding: 4px">Filter (Beta)</div>

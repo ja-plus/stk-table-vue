@@ -22,14 +22,20 @@ const emit = defineEmits<{
 function handleIconClick(e: MouseEvent) {
     e.stopPropagation();
     const target = e.target as HTMLElement;
-    const pos = target.getBoundingClientRect();
+    const rect = target.getBoundingClientRect();
+
+    // 计算相对于文档的位置（考虑滚动偏移）
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
     getDropdownIns().then(ins => {
         ins.setTheme(theme.value);
         if (ins.visible) {
             ins.hide();
             return;
         }
-        ins.show({ x: pos.left, y: pos.bottom }, props.options, handleConfirm);
+        // 传递相对于文档的坐标
+        ins.show({ x: rect.left + scrollLeft, y: rect.bottom + scrollTop }, props.options, handleConfirm);
     });
 }
 
