@@ -29,13 +29,20 @@ function handleIconClick(e: MouseEvent) {
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
     getDropdownIns().then(ins => {
-        ins.setTheme(theme.value);
         if (ins.visible) {
             ins.hide();
             return;
         }
-        // 传递相对于文档的坐标
-        ins.show({ x: rect.left + scrollLeft, y: rect.bottom + scrollTop }, props.options, handleConfirm);
+        ins.setTheme(theme.value);
+        ins.show(
+            {
+                x: rect.left + scrollLeft,
+                y: rect.bottom + scrollTop,
+                height: rect.height,
+            },
+            props.options,
+            handleConfirm,
+        );
     });
 }
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { StkTableColumn } from '@/StkTable/types';
-import { h, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { h, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
 import type { FilterOption } from '../types';
 
@@ -30,7 +30,7 @@ const dropdownEl = ref<HTMLDivElement>();
 
 const DROPDOWN_DEFAULT_WIDTH = 300; // 默认宽度（用于首次计算）
 const DROPDOWN_DEFAULT_HEIGHT = 400; // 默认高度（用于首次计算）
-const PADDING = 8; // 与屏幕边缘的安全距离
+const PADDING = 6; // 与屏幕边缘的安全距离
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
@@ -44,24 +44,20 @@ let onConfirmFn: (values: FilterOption['value'][]) => void;
 
 function getDropdownSize() {
     if (!dropdownEl.value) {
-        return { width: DROPDOWN_DEFAULT_WIDTH, height: DROPDOWN_DEFAULT_HEIGHT };
+        return [DROPDOWN_DEFAULT_WIDTH, DROPDOWN_DEFAULT_HEIGHT] as const;
     }
     const rect = dropdownEl.value.getBoundingClientRect();
-    return {
-        width: rect.width || DROPDOWN_DEFAULT_WIDTH,
-        height: rect.height || DROPDOWN_DEFAULT_HEIGHT,
-    };
+    return [rect.width || DROPDOWN_DEFAULT_WIDTH, rect.height || DROPDOWN_DEFAULT_HEIGHT] as const;
 }
 
-function calculatePosition(docPos: { x: number; y: number }) {
+function calculatePosition(docPos: { x: number; y: number; height?: number }) {
     // docPos 是相对于文档的坐标（已包含滚动偏移）
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    const viewportWidth = document.documentElement.clientWidth;
+    const viewportHeight = document.documentElement.clientHeight;
 
-    // 获取 dropdown 实际尺寸
-    const { width: dropdownWidth, height: dropdownHeight } = getDropdownSize();
+    const [dropdownWidth, dropdownHeight] = getDropdownSize();
 
     let finalX = docPos.x;
     let finalY = docPos.y;
@@ -76,11 +72,10 @@ function calculatePosition(docPos: { x: number; y: number }) {
     const relativeY = docPos.y - scrollTop;
     if (relativeY + dropdownHeight > viewportHeight - PADDING) {
         // 如果下方空间不足，尝试在上方显示
-        // 需要知道触发元素的位置来计算上方空间
-        const estimatedTriggerHeight = 30; // 估算的触发元素高度
-        if (relativeY - estimatedTriggerHeight >= dropdownHeight + PADDING) {
+        const triggerHeight = docPos.height || 30;
+        if (relativeY - triggerHeight >= dropdownHeight + PADDING) {
             // 上方空间足够，在触发元素上方显示
-            finalY = docPos.y - estimatedTriggerHeight - dropdownHeight - PADDING;
+            finalY = docPos.y - triggerHeight - dropdownHeight - PADDING;
         } else {
             // 上方空间也不足，使用最大可用空间（从视口顶部开始）
             finalY = PADDING + scrollTop;
@@ -94,15 +89,19 @@ function calculatePosition(docPos: { x: number; y: number }) {
     return { x: finalX, y: finalY };
 }
 
-function show(pos: { x: number; y: number }, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void) {
-    visible.value = true;
+async function show(pos: { x: number; y: number; height?: number }, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void) {
     if (dropdownEl.value) {
-        dropdownEl.value.style.display = 'block';
+        dropdownEl.value.style.visibility = 'hidden';
     }
-    position.value = calculatePosition(pos);
+    visible.value = true;
     options.value = opt || [];
     initChecked();
     onConfirmFn = onConfirm;
+    await nextTick();
+    position.value = calculatePosition(pos);
+    if (dropdownEl.value) {
+        dropdownEl.value.style.visibility = 'visible';
+    }
 }
 
 async function handleClickOutside(e: MouseEvent) {
