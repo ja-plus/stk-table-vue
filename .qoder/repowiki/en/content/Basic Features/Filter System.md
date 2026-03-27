@@ -14,10 +14,11 @@
 
 ## Update Summary
 **Changes Made**
-- Enhanced dropdown positioning system with improved boundary detection and automatic positioning calculations
-- Added safety padding constants for better viewport positioning
-- Implemented document-relative coordinate handling for accurate positioning
-- Improved viewport boundary detection with fallback positioning logic
+- Enhanced dropdown positioning system with improved viewport measurement and automatic positioning calculations
+- Refined padding calculation from 8px to 6px safety distance for better viewport positioning
+- Enhanced dropdown size calculation returning tuple arrays for width and height
+- Improved visibility management to prevent flickering during show animations
+- Added enhanced boundary detection with fallback positioning logic
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -73,8 +74,8 @@ Styles --> Less
 
 **Diagram sources**
 - [useFilter.ts:1-91](file://src/StkTable/components/Filter/useFilter.ts#L1-L91)
-- [Filter.vue:1-55](file://src/StkTable/components/Filter/Filter.vue#L1-L55)
-- [Dropdown/index.vue:1-186](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L186)
+- [Filter.vue:1-62](file://src/StkTable/components/Filter/Filter.vue#L1-L62)
+- [Dropdown/index.vue:1-185](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L185)
 - [StkTable.vue:1022-1046](file://src/StkTable/StkTable.vue#L1022-L1046)
 
 The architecture demonstrates a clean separation where the useFilter hook manages filter state and creates filter components, while the StkTable component handles the actual data filtering logic. The enhanced dropdown component provides the user interface for selecting filter options with improved positioning capabilities.
@@ -152,7 +153,7 @@ FilterComponent --> FilterOption : displays
 The component inherits from the standard header cell props and adds filter-specific functionality including theme support and option display.
 
 **Section sources**
-- [Filter.vue:1-55](file://src/StkTable/components/Filter/Filter.vue#L1-L55)
+- [Filter.vue:1-62](file://src/StkTable/components/Filter/Filter.vue#L1-L62)
 
 ### Enhanced Dropdown Component
 
@@ -172,6 +173,7 @@ class EnhancedDropdownComponent {
 +show(position, options, callback) : void
 +hide() : void
 +confirm() : void
++getDropdownSize() : [number, number]
 +calculatePosition(docPos) : Position
 +handleRowClick(event, row) : void
 +setTheme(theme) : void
@@ -187,10 +189,10 @@ EnhancedDropdownComponent --> FilterOption : manages
 **Diagram sources**
 - [Dropdown/index.vue:42-94](file://src/StkTable/components/Filter/Dropdown/index.vue#L42-L94)
 
-The enhanced dropdown includes safety padding constants, automatic positioning calculations, and improved boundary detection for optimal viewport positioning.
+The enhanced dropdown includes refined padding constants, automatic positioning calculations, and improved boundary detection for optimal viewport positioning.
 
 **Section sources**
-- [Dropdown/index.vue:1-186](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L186)
+- [Dropdown/index.vue:1-185](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L185)
 
 ## Enhanced Positioning System
 
@@ -200,7 +202,8 @@ The enhanced dropdown positioning system automatically calculates the best place
 
 ```mermaid
 flowchart TD
-Start([Show Dropdown]) --> GetDocPos["Get Document Coordinates"]
+Start([Show Dropdown]) --> HideTemp["Set Visibility Hidden"]
+HideTemp --> GetDocPos["Get Document Coordinates"]
 GetDocPos --> CalcViewport["Calculate Viewport Dimensions"]
 CalcViewport --> CheckRightBound{"Right Boundary Exceeded?"}
 CheckRightBound --> |Yes| AdjustRight["Adjust X Position"]
@@ -212,23 +215,34 @@ CheckTopSpace --> |Yes| ShowAbove["Show Above Trigger"]
 CheckTopSpace --> |No| UseMaxSpace["Use Maximum Available Space"]
 ShowAbove --> EnsureBounds
 UseMaxSpace --> EnsureBounds
-EnsureBounds --> FinalPos["Final Position"]
+EnsureBounds --> ShowVisible["Set Visibility Visible"]
+ShowVisible --> FinalPos["Final Position"]
 ```
 
 **Diagram sources**
-- [Dropdown/index.vue:56-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L56-L95)
+- [Dropdown/index.vue:92-105](file://src/StkTable/components/Filter/Dropdown/index.vue#L92-L105)
+- [Dropdown/index.vue:53-90](file://src/StkTable/components/Filter/Dropdown/index.vue#L53-L90)
 
-The positioning system considers document-relative coordinates, viewport boundaries, and safety padding to ensure the dropdown is always fully visible.
+**Updated** Enhanced with improved visibility management to prevent flickering during show animations and refined padding calculation with 6px safety distance.
+
+The positioning system considers document-relative coordinates, viewport boundaries, and safety padding to ensure the dropdown is always fully visible. The enhanced system now includes:
+
+- **Visibility Management**: Dropdown is temporarily hidden during position calculation to prevent visual flickering
+- **Tuple Size Calculation**: `getDropdownSize()` returns `[width, height]` tuple arrays for precise sizing
+- **Reduced Padding**: Changed from 8px to 6px safety distance for better viewport utilization
+- **Improved Flicker Prevention**: Visibility toggling prevents layout thrashing during animation
 
 ### Safety Padding Constants
 
-The system implements safety padding constants to prevent dropdown overlap with viewport edges:
+The system implements refined safety padding constants to prevent dropdown overlap with viewport edges:
 
 | Constant | Value | Purpose |
 |----------|-------|---------|
 | `DROPDOWN_DEFAULT_WIDTH` | 300px | Default width for initial size calculation |
 | `DROPDOWN_DEFAULT_HEIGHT` | 400px | Default height for initial size calculation |
-| `PADDING` | 8px | Safety distance from viewport edges |
+| `PADDING` | 6px | **Updated** Reduced safety distance from 8px to 6px |
+
+**Updated** The padding constant has been reduced from 8px to 6px to provide better viewport utilization while maintaining safe distances from edges.
 
 ### Document-Relative Coordinate Handling
 
@@ -244,19 +258,24 @@ User->>Filter : Click Filter Icon
 Filter->>Filter : Calculate Element Rect
 Filter->>Window : Get Scroll Offsets
 Filter->>Dropdown : Pass Document Coordinates
+Dropdown->>Dropdown : Set Visibility Hidden
+Dropdown->>Dropdown : Get Dropdown Size (Tuple)
 Dropdown->>Dropdown : Convert to Viewport Coordinates
 Dropdown->>Dropdown : Check Boundary Conditions
 Dropdown->>Dropdown : Calculate Optimal Position
+Dropdown->>Dropdown : Set Visibility Visible
 Dropdown->>User : Display Positioned Dropdown
 ```
 
 **Diagram sources**
-- [Filter.vue:22-40](file://src/StkTable/components/Filter/Filter.vue#L22-L40)
-- [Dropdown/index.vue:56-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L56-L95)
+- [Filter.vue:22-47](file://src/StkTable/components/Filter/Filter.vue#L22-L47)
+- [Dropdown/index.vue:92-105](file://src/StkTable/components/Filter/Dropdown/index.vue#L92-L105)
+
+**Updated** Enhanced with improved visibility management during the show animation process to prevent flickering artifacts.
 
 **Section sources**
-- [Dropdown/index.vue:31-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L31-L95)
-- [Filter.vue:22-40](file://src/StkTable/components/Filter/Filter.vue#L22-L40)
+- [Dropdown/index.vue:31-105](file://src/StkTable/components/Filter/Dropdown/index.vue#L31-L105)
+- [Filter.vue:22-47](file://src/StkTable/components/Filter/Filter.vue#L22-L47)
 
 ## Filter Implementation
 
@@ -306,6 +325,10 @@ participant Hook as useFilter Hook
 participant StkTable as StkTable Instance
 User->>FilterUI : Click Filter Icon
 FilterUI->>Dropdown : show(position, options, callback)
+Dropdown->>Dropdown : Set Visibility Hidden
+Dropdown->>Dropdown : Get Dropdown Size (Tuple)
+Dropdown->>Dropdown : Calculate Position
+Dropdown->>Dropdown : Set Visibility Visible
 Dropdown->>User : Display Filter Options
 User->>Dropdown : Select/Deselect Options
 User->>Dropdown : Click Confirm
@@ -319,6 +342,8 @@ StkTable->>User : Updated Filtered Data
 **Diagram sources**
 - [useFilter.ts:65-68](file://src/StkTable/components/Filter/useFilter.ts#L65-L68)
 - [StkTable.vue:1022-1034](file://src/StkTable/StkTable.vue#L1022-L1034)
+
+**Updated** Enhanced with improved visibility management during the dropdown show animation to prevent visual flickering.
 
 **Section sources**
 - [useFilter.ts:33-91](file://src/StkTable/components/Filter/useFilter.ts#L33-L91)
@@ -419,6 +444,10 @@ The enhanced dropdown component properly cleans up event listeners and temporary
 - **Selective Rendering**: Only affected components are re-rendered when filter state changes
 - **Efficient Data Structures**: Uses Set objects for O(1) lookup performance in filter operations
 - **Boundary Detection**: Optimized viewport boundary calculations reduce layout thrashing
+- **Visibility Management**: Improved show/hide animation prevents visual flickering
+- **Tuple Size Calculation**: More efficient width/height calculations using tuple arrays
+
+**Updated** Enhanced with improved visibility management and tuple-based size calculations for better performance.
 
 ## Troubleshooting Guide
 
@@ -440,12 +469,21 @@ The enhanced dropdown component properly cleans up event listeners and temporary
 - **Solution**: Verify that the page has proper scroll offsets and viewport dimensions
 - **Check**: Ensure the filter icon element has proper bounding rectangle calculations
 
+**Issue**: Visual flickering during dropdown show
+- **Solution**: The enhanced positioning system now includes visibility management to prevent flickering
+- **Check**: Verify that the dropdown element has proper CSS transitions and animations
+
+**Issue**: Reduced padding affecting positioning
+- **Solution**: The padding has been reduced from 8px to 6px for better viewport utilization
+- **Check**: Verify that the new 6px safety distance works correctly with your viewport constraints
+
 ### Debugging Tips
 
 1. **Console Logging**: Monitor `filter-change` events to track filter state changes
 2. **State Inspection**: Use Vue DevTools to inspect the reactive filter status object
 3. **Network Monitoring**: For remote filtering, monitor network requests to ensure proper API calls
 4. **Position Debugging**: Check calculated positions in the browser console for positioning issues
+5. **Visibility Debugging**: Monitor dropdown visibility states during show/hide animations
 
 **Section sources**
 - [StkTable.vue:681-685](file://src/StkTable/StkTable.vue#L681-L685)
@@ -457,8 +495,9 @@ The Filter System provides a robust, flexible solution for implementing filterin
 
 **Key Enhancements**:
 - **Enhanced Positioning System**: Improved boundary detection with automatic positioning calculations
-- **Safety Padding Constants**: Prevents dropdown overlap with viewport edges
-- **Document-Relative Coordinates**: Accurate positioning accounting for scroll offsets
+- **Refined Padding Calculation**: Reduced from 8px to 6px safety distance for better viewport utilization
+- **Tuple Size Calculation**: Enhanced dropdown size calculation returning `[width, height]` tuple arrays
+- **Improved Visibility Management**: Added visibility control during show animations to prevent flickering
 - **Fallback Positioning**: Intelligent positioning logic for edge cases
 
 Key benefits include:
@@ -468,5 +507,6 @@ Key benefits include:
 - **Theme Support**: Consistent theming across light and dark modes
 - **Developer Friendly**: Simple API with comprehensive type definitions
 - **Responsive Design**: Adaptive positioning system for various viewport sizes
+- **Visual Stability**: Enhanced animation management prevents visual flickering
 
 The system is designed to scale from basic filtering needs to complex enterprise applications requiring sophisticated data manipulation capabilities.
