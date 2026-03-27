@@ -14,11 +14,10 @@
 
 ## Update Summary
 **Changes Made**
-- Enhanced dropdown positioning system with improved viewport measurement and automatic positioning calculations
-- Refined padding calculation from 8px to 6px safety distance for better viewport positioning
-- Enhanced dropdown size calculation returning tuple arrays for width and height
-- Improved visibility management to prevent flickering during show animations
-- Added enhanced boundary detection with fallback positioning logic
+- Enhanced dropdown clear button functionality with improved synchronization to parent table component
+- Added confirm() call in handleClear() method to ensure proper filter state synchronization
+- Updated clear button behavior to immediately apply cleared selections to filter status
+- Enhanced filter state management during clear operations
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -177,6 +176,7 @@ class EnhancedDropdownComponent {
 +calculatePosition(docPos) : Position
 +handleRowClick(event, row) : void
 +setTheme(theme) : void
++handleClear() : void
 }
 class Position {
 +x : number
@@ -331,7 +331,10 @@ Dropdown->>Dropdown : Calculate Position
 Dropdown->>Dropdown : Set Visibility Visible
 Dropdown->>User : Display Filter Options
 User->>Dropdown : Select/Deselect Options
-User->>Dropdown : Click Confirm
+User->>Dropdown : Click Clear Button
+Dropdown->>Dropdown : handleClear()
+Dropdown->>Dropdown : checkedTempValueSet.clear()
+Dropdown->>Dropdown : confirm()
 Dropdown->>FilterUI : handleConfirm(selectedValues)
 FilterUI->>Hook : handleChange(selectedValues)
 Hook->>StkTable : setFilter(filterStatus, options)
@@ -348,6 +351,33 @@ StkTable->>User : Updated Filtered Data
 **Section sources**
 - [useFilter.ts:33-91](file://src/StkTable/components/Filter/useFilter.ts#L33-L91)
 - [StkTable.vue:1022-1034](file://src/StkTable/StkTable.vue#L1022-L1034)
+
+### Clear Button Functionality
+
+**Updated** The clear button functionality has been enhanced to ensure proper synchronization with the parent table component.
+
+The clear button in the dropdown footer provides users with the ability to reset all filter selections instantly. The enhanced implementation now includes:
+
+- **Immediate Synchronization**: The `handleClear()` method now calls `confirm()` after clearing selections
+- **State Consistency**: Ensures filter state is properly synchronized with the parent table component
+- **User Experience**: Provides immediate visual feedback when clearing filter selections
+
+```mermaid
+flowchart TD
+Start([User Clicks Clear Button]) --> ClearSelections["checkedTempValueSet.clear()"]
+ClearSelections --> CallConfirm["confirm()"]
+CallConfirm --> UpdateSelectedFlag["options.value.forEach(opt => opt.selected = false)"]
+UpdateSelectedFlag --> CallCallback["onConfirmFn([])"]
+CallCallback --> HideDropdown["hide()"]
+HideDropdown --> End([Clear Complete])
+```
+
+**Diagram sources**
+- [Dropdown/index.vue:147-150](file://src/StkTable/components/Filter/Dropdown/index.vue#L147-L150)
+- [Dropdown/index.vue:128-132](file://src/StkTable/components/Filter/Dropdown/index.vue#L128-L132)
+
+**Section sources**
+- [Dropdown/index.vue:147-150](file://src/StkTable/components/Filter/Dropdown/index.vue#L147-L150)
 
 ## Integration with StkTable
 
@@ -446,8 +476,9 @@ The enhanced dropdown component properly cleans up event listeners and temporary
 - **Boundary Detection**: Optimized viewport boundary calculations reduce layout thrashing
 - **Visibility Management**: Improved show/hide animation prevents visual flickering
 - **Tuple Size Calculation**: More efficient width/height calculations using tuple arrays
+- **Enhanced Clear Functionality**: Immediate synchronization prevents state inconsistencies
 
-**Updated** Enhanced with improved visibility management and tuple-based size calculations for better performance.
+**Updated** Enhanced with improved visibility management, tuple-based size calculations, and synchronized clear button functionality for better performance.
 
 ## Troubleshooting Guide
 
@@ -477,6 +508,14 @@ The enhanced dropdown component properly cleans up event listeners and temporary
 - **Solution**: The padding has been reduced from 8px to 6px for better viewport utilization
 - **Check**: Verify that the new 6px safety distance works correctly with your viewport constraints
 
+**Issue**: Clear button not working properly
+- **Solution**: The clear button now calls `confirm()` to ensure proper synchronization
+- **Check**: Verify that the `handleClear()` method is properly clearing selections and calling `confirm()`
+
+**Issue**: Filter state inconsistencies after clearing
+- **Solution**: The enhanced clear functionality ensures immediate synchronization with parent table component
+- **Check**: Monitor filter status updates after clicking the clear button
+
 ### Debugging Tips
 
 1. **Console Logging**: Monitor `filter-change` events to track filter state changes
@@ -484,10 +523,12 @@ The enhanced dropdown component properly cleans up event listeners and temporary
 3. **Network Monitoring**: For remote filtering, monitor network requests to ensure proper API calls
 4. **Position Debugging**: Check calculated positions in the browser console for positioning issues
 5. **Visibility Debugging**: Monitor dropdown visibility states during show/hide animations
+6. **Clear Button Debugging**: Verify that `handleClear()` method properly clears selections and calls `confirm()`
 
 **Section sources**
 - [StkTable.vue:681-685](file://src/StkTable/StkTable.vue#L681-L685)
 - [useFilter.ts:65-68](file://src/StkTable/components/Filter/useFilter.ts#L65-L68)
+- [Dropdown/index.vue:147-150](file://src/StkTable/components/Filter/Dropdown/index.vue#L147-L150)
 
 ## Conclusion
 
@@ -499,14 +540,16 @@ The Filter System provides a robust, flexible solution for implementing filterin
 - **Tuple Size Calculation**: Enhanced dropdown size calculation returning `[width, height]` tuple arrays
 - **Improved Visibility Management**: Added visibility control during show animations to prevent flickering
 - **Fallback Positioning**: Intelligent positioning logic for edge cases
+- **Enhanced Clear Button Functionality**: Added confirm() call in handleClear() method for proper synchronization
 
 Key benefits include:
-- **Intuitive User Interface**: Clean dropdown interface with checkbox selection and improved positioning
+- **Intuitive User Interface**: Clean dropdown interface with checkbox selection, improved positioning, and synchronized clear functionality
 - **Flexible Configuration**: Support for both local and remote filtering modes
 - **Performance Optimized**: Efficient filtering algorithms with virtual scrolling compatibility
 - **Theme Support**: Consistent theming across light and dark modes
 - **Developer Friendly**: Simple API with comprehensive type definitions
 - **Responsive Design**: Adaptive positioning system for various viewport sizes
 - **Visual Stability**: Enhanced animation management prevents visual flickering
+- **State Consistency**: Improved filter state synchronization prevents inconsistencies
 
 The system is designed to scale from basic filtering needs to complex enterprise applications requiring sophisticated data manipulation capabilities.
