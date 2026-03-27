@@ -12,23 +12,31 @@
 - [FilterDemo.vue](file://docs-demo/basic/filter/FilterDemo.vue)
 </cite>
 
+## Update Summary
+**Changes Made**
+- Enhanced dropdown positioning system with improved boundary detection and automatic positioning calculations
+- Added safety padding constants for better viewport positioning
+- Implemented document-relative coordinate handling for accurate positioning
+- Improved viewport boundary detection with fallback positioning logic
+
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [System Architecture](#system-architecture)
 3. [Core Components](#core-components)
-4. [Filter Implementation](#filter-implementation)
-5. [Integration with StkTable](#integration-with-stktable)
-6. [Usage Examples](#usage-examples)
-7. [Styling and Theming](#styling-and-theming)
-8. [Performance Considerations](#performance-considerations)
-9. [Troubleshooting Guide](#troubleshooting-guide)
-10. [Conclusion](#conclusion)
+4. [Enhanced Positioning System](#enhanced-positioning-system)
+5. [Filter Implementation](#filter-implementation)
+6. [Integration with StkTable](#integration-with-stktable)
+7. [Usage Examples](#usage-examples)
+8. [Styling and Theming](#styling-and-theming)
+9. [Performance Considerations](#performance-considerations)
+10. [Troubleshooting Guide](#troubleshooting-guide)
+11. [Conclusion](#conclusion)
 
 ## Introduction
 
 The Filter System is a comprehensive filtering solution integrated into the StkTable component library. It provides users with the ability to apply multi-value filters to table columns through an intuitive dropdown interface. The system supports both local and remote filtering modes, allowing developers to customize how filtering is applied based on their specific requirements.
 
-The filter system consists of several key components working together to provide a seamless filtering experience: a filter hook for managing filter state, a filter component for rendering filter controls in table headers, a dropdown component for selecting filter options, and integration with the main StkTable component for applying filters to data sources.
+The filter system consists of several key components working together to provide a seamless filtering experience: a filter hook for managing filter state, a filter component for rendering filter controls in table headers, an enhanced dropdown component with improved positioning system for selecting filter options, and integration with the main StkTable component for applying filters to data sources.
 
 ## System Architecture
 
@@ -39,7 +47,7 @@ graph TB
 subgraph "Filter System Components"
 useFilter[useFilter Hook]
 FilterComp[Filter Component]
-Dropdown[Dropdown Component]
+Dropdown[Enhanced Dropdown Component]
 Types[Type Definitions]
 Styles[Filter Styles]
 end
@@ -65,11 +73,11 @@ Styles --> Less
 
 **Diagram sources**
 - [useFilter.ts:1-91](file://src/StkTable/components/Filter/useFilter.ts#L1-L91)
-- [Filter.vue:1-49](file://src/StkTable/components/Filter/Filter.vue#L1-L49)
-- [Dropdown/index.vue:1-124](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L124)
+- [Filter.vue:1-55](file://src/StkTable/components/Filter/Filter.vue#L1-L55)
+- [Dropdown/index.vue:1-186](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L186)
 - [StkTable.vue:1022-1046](file://src/StkTable/StkTable.vue#L1022-L1046)
 
-The architecture demonstrates a clean separation where the useFilter hook manages filter state and creates filter components, while the StkTable component handles the actual data filtering logic. The dropdown component provides the user interface for selecting filter options.
+The architecture demonstrates a clean separation where the useFilter hook manages filter state and creates filter components, while the StkTable component handles the actual data filtering logic. The enhanced dropdown component provides the user interface for selecting filter options with improved positioning capabilities.
 
 **Section sources**
 - [useFilter.ts:1-91](file://src/StkTable/components/Filter/useFilter.ts#L1-L91)
@@ -144,43 +152,111 @@ FilterComponent --> FilterOption : displays
 The component inherits from the standard header cell props and adds filter-specific functionality including theme support and option display.
 
 **Section sources**
-- [Filter.vue:1-49](file://src/StkTable/components/Filter/Filter.vue#L1-L49)
+- [Filter.vue:1-55](file://src/StkTable/components/Filter/Filter.vue#L1-L55)
 
-### Dropdown Component
+### Enhanced Dropdown Component
 
-The dropdown component provides the interactive interface for selecting filter options.
+The dropdown component provides the interactive interface for selecting filter options with an enhanced positioning system.
 
 ```mermaid
 classDiagram
-class DropdownComponent {
+class EnhancedDropdownComponent {
 +theme : Ref~'light' | 'dark'~
 +visible : Ref~boolean~
 +position : Ref~Position~
 +options : Ref~FilterOption[]~
 +checkedTempValueSet : Set~any~
++DROPDOWN_DEFAULT_WIDTH : number
++DROPDOWN_DEFAULT_HEIGHT : number
++PADDING : number
 +show(position, options, callback) : void
 +hide() : void
 +confirm() : void
++calculatePosition(docPos) : Position
 +handleRowClick(event, row) : void
 +setTheme(theme) : void
 }
-class StkTableColumn {
-+title : string
-+dataIndex : string
-+width : number
-+customCell : Function
+class Position {
++x : number
++y : number
 }
-DropdownComponent --> StkTableColumn : renders
-DropdownComponent --> FilterOption : manages
+EnhancedDropdownComponent --> Position : calculates
+EnhancedDropdownComponent --> FilterOption : manages
 ```
 
 **Diagram sources**
 - [Dropdown/index.vue:42-94](file://src/StkTable/components/Filter/Dropdown/index.vue#L42-L94)
 
-The dropdown uses a nested StkTable instance to display filter options in a compact, scrollable interface with checkbox selection capabilities.
+The enhanced dropdown includes safety padding constants, automatic positioning calculations, and improved boundary detection for optimal viewport positioning.
 
 **Section sources**
-- [Dropdown/index.vue:1-124](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L124)
+- [Dropdown/index.vue:1-186](file://src/StkTable/components/Filter/Dropdown/index.vue#L1-L186)
+
+## Enhanced Positioning System
+
+### Automatic Position Calculation
+
+The enhanced dropdown positioning system automatically calculates the best placement for the filter dropdown based on viewport boundaries and available space.
+
+```mermaid
+flowchart TD
+Start([Show Dropdown]) --> GetDocPos["Get Document Coordinates"]
+GetDocPos --> CalcViewport["Calculate Viewport Dimensions"]
+CalcViewport --> CheckRightBound{"Right Boundary Exceeded?"}
+CheckRightBound --> |Yes| AdjustRight["Adjust X Position"]
+CheckRightBound --> |No| CheckBottomBound{"Bottom Boundary Exceeded?"}
+AdjustRight --> CheckBottomBound
+CheckBottomBound --> |Yes| CheckTopSpace{"Top Space Available?"}
+CheckBottomBound --> |No| EnsureBounds["Ensure Minimum Bounds"]
+CheckTopSpace --> |Yes| ShowAbove["Show Above Trigger"]
+CheckTopSpace --> |No| UseMaxSpace["Use Maximum Available Space"]
+ShowAbove --> EnsureBounds
+UseMaxSpace --> EnsureBounds
+EnsureBounds --> FinalPos["Final Position"]
+```
+
+**Diagram sources**
+- [Dropdown/index.vue:56-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L56-L95)
+
+The positioning system considers document-relative coordinates, viewport boundaries, and safety padding to ensure the dropdown is always fully visible.
+
+### Safety Padding Constants
+
+The system implements safety padding constants to prevent dropdown overlap with viewport edges:
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `DROPDOWN_DEFAULT_WIDTH` | 300px | Default width for initial size calculation |
+| `DROPDOWN_DEFAULT_HEIGHT` | 400px | Default height for initial size calculation |
+| `PADDING` | 8px | Safety distance from viewport edges |
+
+### Document-Relative Coordinate Handling
+
+The positioning system converts element coordinates to document-relative positions, accounting for scroll offsets:
+
+```mermaid
+sequenceDiagram
+participant User as User
+participant Filter as Filter Component
+participant Dropdown as Enhanced Dropdown
+participant Window as Browser Window
+User->>Filter : Click Filter Icon
+Filter->>Filter : Calculate Element Rect
+Filter->>Window : Get Scroll Offsets
+Filter->>Dropdown : Pass Document Coordinates
+Dropdown->>Dropdown : Convert to Viewport Coordinates
+Dropdown->>Dropdown : Check Boundary Conditions
+Dropdown->>Dropdown : Calculate Optimal Position
+Dropdown->>User : Display Positioned Dropdown
+```
+
+**Diagram sources**
+- [Filter.vue:22-40](file://src/StkTable/components/Filter/Filter.vue#L22-L40)
+- [Dropdown/index.vue:56-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L56-L95)
+
+**Section sources**
+- [Dropdown/index.vue:31-95](file://src/StkTable/components/Filter/Dropdown/index.vue#L31-L95)
+- [Filter.vue:22-40](file://src/StkTable/components/Filter/Filter.vue#L22-L40)
 
 ## Filter Implementation
 
@@ -225,7 +301,7 @@ The system maintains filter state through a reactive object structure that maps 
 sequenceDiagram
 participant User as User
 participant FilterUI as Filter Component
-participant Dropdown as Dropdown
+participant Dropdown as Enhanced Dropdown
 participant Hook as useFilter Hook
 participant StkTable as StkTable Instance
 User->>FilterUI : Click Filter Icon
@@ -272,7 +348,7 @@ DataFiltered --> EventEmitted : filter-change Event
 EventEmitted --> Idle : Filter Complete
 note right of FilterActive
 Filter options selected
-in dropdown interface
+in enhanced dropdown interface
 end note
 note right of Processing
 Filter status updated
@@ -321,7 +397,7 @@ The filter system supports both light and dark themes, with automatic theme dete
 
 ### Responsive Design
 
-The filter dropdown adapts to different screen sizes and positions itself relative to the filter icon for optimal user experience.
+The enhanced filter dropdown adapts to different screen sizes and positions itself relative to the filter icon for optimal user experience, with improved boundary detection and automatic positioning calculations.
 
 **Section sources**
 - [Filter.less:27-58](file://src/StkTable/components/Filter/Filter.less#L27-L58)
@@ -335,13 +411,14 @@ The filter system is fully compatible with StkTable's virtual scrolling features
 
 ### Memory Management
 
-The dropdown component properly cleans up event listeners and temporary state when hidden, preventing memory leaks in long-running applications.
+The enhanced dropdown component properly cleans up event listeners and temporary state when hidden, preventing memory leaks in long-running applications.
 
 ### Optimization Strategies
 
 - **Debounced Updates**: Filter changes are processed efficiently to avoid excessive re-renders
 - **Selective Rendering**: Only affected components are re-rendered when filter state changes
 - **Efficient Data Structures**: Uses Set objects for O(1) lookup performance in filter operations
+- **Boundary Detection**: Optimized viewport boundary calculations reduce layout thrashing
 
 ## Troubleshooting Guide
 
@@ -359,11 +436,16 @@ The dropdown component properly cleans up event listeners and temporary state wh
 - **Solution**: Ensure parent StkTable component has proper theme configuration
 - **Check**: Verify CSS variables are properly defined in the component styles
 
+**Issue**: Dropdown positioned incorrectly
+- **Solution**: Verify that the page has proper scroll offsets and viewport dimensions
+- **Check**: Ensure the filter icon element has proper bounding rectangle calculations
+
 ### Debugging Tips
 
 1. **Console Logging**: Monitor `filter-change` events to track filter state changes
 2. **State Inspection**: Use Vue DevTools to inspect the reactive filter status object
 3. **Network Monitoring**: For remote filtering, monitor network requests to ensure proper API calls
+4. **Position Debugging**: Check calculated positions in the browser console for positioning issues
 
 **Section sources**
 - [StkTable.vue:681-685](file://src/StkTable/StkTable.vue#L681-L685)
@@ -373,11 +455,18 @@ The dropdown component properly cleans up event listeners and temporary state wh
 
 The Filter System provides a robust, flexible solution for implementing filtering functionality in StkTable components. Its modular architecture allows for easy integration while maintaining excellent performance characteristics. The system supports both simple and complex filtering scenarios through its comprehensive API and configuration options.
 
+**Key Enhancements**:
+- **Enhanced Positioning System**: Improved boundary detection with automatic positioning calculations
+- **Safety Padding Constants**: Prevents dropdown overlap with viewport edges
+- **Document-Relative Coordinates**: Accurate positioning accounting for scroll offsets
+- **Fallback Positioning**: Intelligent positioning logic for edge cases
+
 Key benefits include:
-- **Intuitive User Interface**: Clean dropdown interface with checkbox selection
+- **Intuitive User Interface**: Clean dropdown interface with checkbox selection and improved positioning
 - **Flexible Configuration**: Support for both local and remote filtering modes
 - **Performance Optimized**: Efficient filtering algorithms with virtual scrolling compatibility
 - **Theme Support**: Consistent theming across light and dark modes
 - **Developer Friendly**: Simple API with comprehensive type definitions
+- **Responsive Design**: Adaptive positioning system for various viewport sizes
 
 The system is designed to scale from basic filtering needs to complex enterprise applications requiring sophisticated data manipulation capabilities.

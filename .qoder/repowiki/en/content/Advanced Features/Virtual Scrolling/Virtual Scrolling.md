@@ -15,15 +15,18 @@
 - [AutoHeightVirtual/index.vue](file://docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue)
 - [useAreaSelection.ts](file://src/StkTable/features/useAreaSelection.ts)
 - [useScrollbar.ts](file://src/StkTable/useScrollbar.ts)
+- [virtual.md (Korean)](file://docs-src/ko/main/table/advanced/virtual.md)
+- [auto-height-virtual.md (Korean)](file://docs-src/ko/main/table/advanced/auto-height-virtual.md)
+- [experimental.md (Korean)](file://docs-src/ko/main/other/experimental.md)
 </cite>
 
 ## Update Summary
 **Changes Made**
-- Added comprehensive documentation for experimental scrollY mode with transform-based vertical scrolling
-- Enhanced edge case handling documentation for scroll position restoration and boundary conditions
-- Updated area selection integration section with new experimental features
-- Improved performance optimization guidelines and troubleshooting
-- Added new sections covering experimental features and enhanced integration capabilities
+- Enhanced documentation coverage with comprehensive Korean language documentation for virtual scrolling features
+- Added detailed Korean documentation for auto-height virtual scrolling implementation
+- Expanded Korean documentation for experimental scrollY mode with transform-based vertical scrolling
+- Updated configuration options and examples to include Korean language references
+- Enhanced integration documentation with Korean language examples and best practices
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -31,18 +34,19 @@
 3. [Core Components](#core-components)
 4. [Architecture Overview](#architecture-overview)
 5. [Detailed Component Analysis](#detailed-component-analysis)
-6. [Experimental Features](#experimental-features)
-7. [Dependency Analysis](#dependency-analysis)
-8. [Performance Considerations](#performance-considerations)
-9. [Troubleshooting Guide](#troubleshooting-guide)
-10. [Conclusion](#conclusion)
-11. [Appendices](#appendices)
+6. [Korean Documentation Enhancement](#korean-documentation-enhancement)
+7. [Experimental Features](#experimental-features)
+8. [Dependency Analysis](#dependency-analysis)
+9. [Performance Considerations](#performance-considerations)
+10. [Troubleshooting Guide](#troubleshooting-guide)
+11. [Conclusion](#conclusion)
+12. [Appendices](#appendices)
 
 ## Introduction
-This document explains the virtual scrolling implementation in Stk Table Vue. It covers vertical virtual scrolling with fixed row heights, horizontal virtual scrolling for wide datasets, and auto-height virtual scrolling for dynamic content. It details the underlying algorithms, performance benefits, memory management, configuration options, viewport calculation, item rendering optimization, scroll position tracking, and integration with other table features. The implementation now includes experimental features for enhanced performance and better integration with area selection capabilities.
+This document explains the virtual scrolling implementation in Stk Table Vue. It covers vertical virtual scrolling with fixed row heights, horizontal virtual scrolling for wide datasets, and auto-height virtual scrolling for dynamic content. It details the underlying algorithms, performance benefits, memory management, configuration options, viewport calculation, item rendering optimization, scroll position tracking, and integration with other table features. The implementation now includes comprehensive Korean language documentation covering auto-height virtual scrolling and advanced scrolling optimizations.
 
 ## Project Structure
-Virtual scrolling is implemented primarily in a composable hook and integrated into the main table component. Supporting types and constants define configuration and behavior. Demo pages illustrate usage patterns for vertical, horizontal, and auto-height scenarios. The system now includes experimental features for enhanced performance and better integration with area selection.
+Virtual scrolling is implemented primarily in a composable hook and integrated into the main table component. Supporting types and constants define configuration and behavior. Demo pages illustrate usage patterns for vertical, horizontal, and auto-height scenarios. The system now includes extensive Korean language documentation for enhanced international accessibility.
 
 ```mermaid
 graph TB
@@ -60,6 +64,9 @@ DemoAH["AutoHeightVirtual/index.vue"]
 DocsV["virtual.md"]
 DocsAH["auto-height-virtual.md"]
 DocsExp["experimental.md"]
+DocsKoV["virtual.md (Korean)"]
+DocsKoAH["auto-height-virtual.md (Korean)"]
+DocsKoExp["experimental.md (Korean)"]
 End
 subgraph "Features Integration"
 AreaSel["useAreaSelection.ts"]
@@ -77,6 +84,8 @@ DocsV --> DemoY
 DocsV --> DemoX
 DocsAH --> DemoAH
 DocsExp --> Experimental
+DocsKoV --> DocsKoAH
+DocsKoAH --> DocsKoExp
 AreaSel --> Comp
 ScrollBar --> Comp
 Optimize --> Comp
@@ -91,6 +100,9 @@ Optimize --> Comp
 - [useScrollbar.ts:1-160](file://src/StkTable/useScrollbar.ts#L1-L160)
 - [experimental.md:1-25](file://docs-src/main/other/experimental.md#L1-L25)
 - [optimize.md:1-32](file://docs-src/en/main/other/optimize.md#L1-L32)
+- [virtual.md (Korean):1-69](file://docs-src/ko/main/table/advanced/virtual.md#L1-L69)
+- [auto-height-virtual.md (Korean):1-38](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L1-L38)
+- [experimental.md (Korean):1-24](file://docs-src/ko/main/other/experimental.md#L1-L24)
 
 **Section sources**
 - [useVirtualScroll.ts:1-512](file://src/StkTable/useVirtualScroll.ts#L1-L512)
@@ -100,18 +112,23 @@ Optimize --> Comp
 - [virtual.md:1-70](file://docs-src/main/table/advanced/virtual.md#L1-L70)
 - [auto-height-virtual.md:1-38](file://docs-src/main/table/advanced/auto-height-virtual.md#L1-L38)
 - [experimental.md:1-25](file://docs-src/main/other/experimental.md#L1-L25)
+- [virtual.md (Korean):1-69](file://docs-src/ko/main/table/advanced/virtual.md#L1-L69)
+- [auto-height-virtual.md (Korean):1-38](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L1-L38)
+- [experimental.md (Korean):1-24](file://docs-src/ko/main/other/experimental.md#L1-L24)
 
 ## Core Components
 - Virtual scrolling composable: Computes viewport bounds, manages offsets, tracks scroll positions, and optimizes updates for both Y and X axes with experimental mode support.
 - Main table component: Wires scroll events, exposes initialization APIs, renders only visible items, and integrates with fixed columns, merged cells, area selection, and other features.
 - Types and constants: Define configuration shapes, defaults, and shared constants for row/column sizing and behavior.
 - Experimental features: Transform-based vertical scrolling simulation and enhanced area selection integration.
+- Korean language documentation: Comprehensive Korean documentation covering auto-height virtual scrolling, configuration options, and advanced optimizations.
 
 Key responsibilities:
 - Vertical virtual scrolling: Determines visible rows based on scroll position and row height; handles auto-height and expanded row height overrides with experimental mode support.
 - Horizontal virtual scrolling: Determines visible columns based on scrollLeft and cumulative widths; preserves fixed columns visibility.
 - Auto-height virtual scrolling: Stores measured row heights and expected heights to compute viewport accurately.
 - Experimental scrollY: Uses transform-based scrolling to simulate vertical scrolling for extremely large datasets.
+- Korean localization: Provides complete Korean language support for all virtual scrolling documentation and examples.
 
 **Section sources**
 - [useVirtualScroll.ts:60-512](file://src/StkTable/useVirtualScroll.ts#L60-L512)
@@ -119,9 +136,11 @@ Key responsibilities:
 - [types/index.ts:275-278](file://src/StkTable/types/index.ts#L275-L278)
 - [const.ts:6-8](file://src/StkTable/const.ts#L6-L8)
 - [experimental.md:5-9](file://docs-src/main/other/experimental.md#L5-L9)
+- [virtual.md (Korean):4-11](file://docs-src/ko/main/table/advanced/virtual.md#L4-L11)
+- [auto-height-virtual.md (Korean):3-7](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L3-L7)
 
 ## Architecture Overview
-The virtual scrolling pipeline connects DOM scroll events to viewport calculations and reactive re-rendering, with enhanced support for experimental features and area selection integration.
+The virtual scrolling pipeline connects DOM scroll events to viewport calculations and reactive re-rendering, with enhanced support for experimental features and area selection integration. The system now includes comprehensive Korean language documentation for better international accessibility.
 
 ```mermaid
 sequenceDiagram
@@ -324,6 +343,50 @@ Table-->>Table : emits('scroll'|'scroll-x')
 - [StkTable.vue:821-828](file://src/StkTable/StkTable.vue#L821-L828)
 - [useAreaSelection.ts:660-721](file://src/StkTable/features/useAreaSelection.ts#L660-L721)
 
+## Korean Documentation Enhancement
+
+### Comprehensive Korean Language Coverage
+The virtual scrolling system now includes comprehensive Korean language documentation covering all aspects of virtual scrolling implementation, configuration, and optimization. This enhancement ensures better accessibility for Korean-speaking developers and provides localized guidance for implementing virtual scrolling features.
+
+**Key Korean Documentation Areas:**
+- Auto-height virtual scrolling configuration and implementation details
+- Experimental scrollY mode with transform-based vertical scrolling
+- Complete property documentation in Korean
+- Practical examples and usage patterns
+- Performance optimization guidelines tailored for Korean development teams
+
+**Section sources**
+- [virtual.md (Korean):1-69](file://docs-src/ko/main/table/advanced/virtual.md#L1-L69)
+- [auto-height-virtual.md (Korean):1-38](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L1-L38)
+- [experimental.md (Korean):1-24](file://docs-src/ko/main/other/experimental.md#L1-L24)
+
+### Korean Auto-Height Virtual Scrolling Documentation
+The Korean documentation provides detailed guidance for implementing auto-height virtual scrolling with comprehensive configuration options and examples. Developers can now access complete documentation in Korean for setting up expected row heights, configuring auto-row-height properties, and optimizing performance for variable content heights.
+
+**Korean Documentation Highlights:**
+- AutoRowHeightConfig interface documentation in Korean
+- Expected height configuration examples
+- CSS variable customization guidance
+- Single column list implementation details
+- Priority handling between expectedHeight and rowHeight
+
+**Section sources**
+- [auto-height-virtual.md (Korean):9-22](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L9-L22)
+- [auto-height-virtual.md (Korean):29-34](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L29-L34)
+
+### Korean Experimental Features Documentation
+The Korean documentation includes comprehensive coverage of experimental features, particularly the scrollY mode with transform-based vertical scrolling. This documentation provides Korean-language guidance for implementing advanced scrolling optimizations and handling extremely large datasets.
+
+**Korean Experimental Documentation Features:**
+- Transform-based vertical scrolling simulation explanation
+- Configuration examples with Korean comments
+- Performance benefits and use cases
+- Integration considerations with other features
+- Troubleshooting guidance in Korean
+
+**Section sources**
+- [experimental.md (Korean):5-23](file://docs-src/ko/main/other/experimental.md#L5-L23)
+
 ## Experimental Features
 
 ### Experimental ScrollY Mode
@@ -377,6 +440,7 @@ Comp["StkTable.vue"]
 Experimental["Experimental Mode"]
 AreaSel["useAreaSelection.ts"]
 ScrollBar["useScrollbar.ts"]
+DocsKo["Korean Documentation"]
 Props --> Hook
 Consts --> Hook
 Types --> Hook
@@ -385,6 +449,7 @@ Comp --> Hook
 Experimental --> Hook
 AreaSel --> Comp
 ScrollBar --> Comp
+DocsKo --> Props
 ```
 
 **Diagram sources**
@@ -411,6 +476,7 @@ ScrollBar --> Comp
 - Experimental mode: Transform-based scrolling reduces DOM manipulation overhead for very large datasets.
 - Area selection integration: Optimized scrolling behavior when combined with area selection features.
 - Edge case handling: Improved scroll position restoration and boundary condition handling.
+- Korean documentation optimization: Localized documentation improves developer productivity and reduces implementation errors.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -422,6 +488,7 @@ Common issues and resolutions:
 - Experimental mode issues: Ensure experimental.scrollY is properly configured; transform-based scrolling requires different scroll handling.
 - Area selection conflicts: When using experimental mode with area selection, ensure proper integration for smooth scrolling behavior.
 - Performance optimization: Use the provided optimization techniques including tr layering and highlight frame rate adjustment.
+- Korean documentation access: Utilize the comprehensive Korean language documentation for localized troubleshooting guidance.
 
 **Section sources**
 - [StkTable.vue:1570-1581](file://src/StkTable/StkTable.vue#L1570-L1581)
@@ -432,7 +499,7 @@ Common issues and resolutions:
 - [optimize.md:1-32](file://docs-src/en/main/other/optimize.md#L1-L32)
 
 ## Conclusion
-Stk Table Vue's virtual scrolling delivers significant performance improvements for large datasets by rendering only visible items, maintaining accurate viewport calculations, and integrating seamlessly with fixed columns, merged cells, expandable rows, and area selection features. The addition of experimental scrollY mode with transform-based scrolling provides enhanced performance for extremely large datasets, while improved edge case handling ensures reliable scroll position restoration and boundary condition management. With configurable row heights, optimized scroll handling, and comprehensive integration capabilities, it supports diverse UX needs while keeping memory usage low and responsiveness high.
+Stk Table Vue's virtual scrolling delivers significant performance improvements for large datasets by rendering only visible items, maintaining accurate viewport calculations, and integrating seamlessly with fixed columns, merged cells, expandable rows, and area selection features. The addition of experimental scrollY mode with transform-based scrolling provides enhanced performance for extremely large datasets, while improved edge case handling ensures reliable scroll position restoration and boundary condition management. With configurable row heights, optimized scroll handling, and comprehensive integration capabilities, it supports diverse UX needs while keeping memory usage low and responsiveness high. The enhanced Korean language documentation further improves accessibility and developer experience for international development teams.
 
 ## Appendices
 
@@ -442,12 +509,15 @@ Stk Table Vue's virtual scrolling delivers significant performance improvements 
 - Auto height: Configure expectedHeight or a function to estimate row height.
 - Experimental scrollY: Enable transform-based vertical scrolling for large datasets.
 - Area selection: Enhanced integration with area selection features for comprehensive functionality.
+- Korean localization: Complete Korean language documentation for all configuration options and examples.
 
 **Section sources**
 - [virtual.md:4-11](file://docs-src/main/table/advanced/virtual.md#L4-L11)
 - [auto-height-virtual.md:3-7](file://docs-src/main/table/advanced/auto-height-virtual.md#L3-L7)
 - [experimental.md:5-23](file://docs-src/main/other/experimental.md#L5-L23)
 - [types/index.ts:275-278](file://src/StkTable/types/index.ts#L275-L278)
+- [virtual.md (Korean):4-11](file://docs-src/ko/main/table/advanced/virtual.md#L4-L11)
+- [auto-height-virtual.md (Korean):3-7](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L3-L7)
 
 ### Practical Examples
 - Vertical virtual scrolling with many rows: See demo usage.
@@ -455,12 +525,15 @@ Stk Table Vue's virtual scrolling delivers significant performance improvements 
 - Auto height virtual scrolling with variable content: See demo usage.
 - Experimental scrollY mode with large datasets: See experimental documentation.
 - Area selection with virtual scrolling: See area selection documentation.
+- Korean language examples: Comprehensive Korean documentation with localized examples and best practices.
 
 **Section sources**
 - [VirtualY.vue:1-34](file://docs-demo/advanced/virtual/VirtualY.vue#L1-L34)
 - [VirtualX.vue:1-29](file://docs-demo/advanced/virtual/VirtualX.vue#L1-L29)
 - [AutoHeightVirtual/index.vue:1-42](file://docs-demo/advanced/auto-height-virtual/AutoHeightVirtual/index.vue#L1-L42)
 - [experimental.md:11-23](file://docs-src/main/other/experimental.md#L11-L23)
+- [virtual.md (Korean):18-21](file://docs-src/ko/main/table/advanced/virtual.md#L18-L21)
+- [auto-height-virtual.md (Korean):25-27](file://docs-src/ko/main/table/advanced/auto-height-virtual.md#L25-L27)
 
 ### Performance Optimization Guidelines
 - Use tr layering for complex custom cells and highlight animations.
@@ -468,8 +541,10 @@ Stk Table Vue's virtual scrolling delivers significant performance improvements 
 - Consider experimental scrollY mode for datasets exceeding DOM height limitations.
 - Implement proper edge case handling for scroll position restoration.
 - Monitor and adjust virtual scrolling parameters based on dataset characteristics.
+- Utilize Korean documentation for localized optimization guidance and best practices.
 
 **Section sources**
 - [optimize.md:1-32](file://docs-src/en/main/other/optimize.md#L1-L32)
 - [useVirtualScroll.ts:204-206](file://src/StkTable/useVirtualScroll.ts#L204-L206)
 - [useAreaSelection.ts:660-721](file://src/StkTable/features/useAreaSelection.ts#L660-L721)
+- [experimental.md (Korean):5-9](file://docs-src/ko/main/other/experimental.md#L5-L9)

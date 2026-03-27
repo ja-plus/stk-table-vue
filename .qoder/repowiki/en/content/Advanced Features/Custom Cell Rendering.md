@@ -18,7 +18,16 @@
 - [types.ts](file://docs-demo/demos/HugeData/types.ts)
 - [event.ts](file://docs-demo/demos/HugeData/event.ts)
 - [MatrixCell.vue](file://docs-demo/demos/Matrix/MatrixCell.vue)
+- [custom-cell.md](file://docs-src/ko/main/table/advanced/custom-cell.md)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive Korean documentation coverage for custom cell rendering patterns
+- Enhanced documentation with Vue SFC component examples, render functions, and JSX syntax
+- Expanded practical implementation guidance with real-world use cases
+- Added detailed API documentation and TypeScript type definitions
+- Included performance considerations and troubleshooting guides in Korean
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -39,8 +48,10 @@ This document explains custom cell rendering in Stk Table Vue with a focus on th
 
 It documents the cell rendering lifecycle, prop passing mechanisms, and event handling within custom cells. It also provides comprehensive examples for editable cells, action buttons, progress indicators, and rich content displays, along with performance considerations and best practices for smooth scrolling with complex cell content.
 
+**Updated** Enhanced with comprehensive Korean documentation covering Vue SFC components, render functions, and JSX syntax for custom cell creation.
+
 ## Project Structure
-The repository organizes custom cell examples under docs-demo and the core table implementation under src/StkTable. The documentation for custom cells is located in docs-src.
+The repository organizes custom cell examples under docs-demo and the core table implementation under src/StkTable. The documentation for custom cells is located in docs-src with support for multiple languages including Korean.
 
 ```mermaid
 graph TB
@@ -60,6 +71,7 @@ J["src/StkTable/types/index.ts"]
 K["src/StkTable/useVirtualScroll.ts"]
 end
 L["docs-src/main/table/advanced/custom-cell.md"]
+M["docs-src/ko/main/table/advanced/custom-cell.md"]
 A --> I
 B --> I
 C --> I
@@ -72,25 +84,29 @@ I --> J
 I --> K
 L --> I
 L --> J
+M --> I
+M --> J
 ```
 
 **Diagram sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L104-L108)
-- [custom-cell.md](file://docs-src/main/table/advanced/custom-cell.md#L1-L147)
-- [CustomCell/index.vue](file://docs-demo/advanced/custom-cell/CustomCell/index.vue#L1-L24)
-- [YieldCell.vue](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
-- [CellEdit/index.vue](file://docs-demo/demos/CellEdit/index.vue#L1-L50)
-- [EditCell.vue](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
-- [HugeData/index.vue](file://docs-demo/demos/HugeData/index.vue#L1-L200)
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
-- [SourceCell.vue](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
-- [MatrixCell.vue](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
+- [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
+- [custom-cell.md:1-147](file://docs-src/main/table/advanced/custom-cell.md#L1-L147)
+- [custom-cell.md:1-157](file://docs-src/ko/main/table/advanced/custom-cell.md#L1-L157)
+- [CustomCell/index.vue:1-24](file://docs-demo/advanced/custom-cell/CustomCell/index.vue#L1-L24)
+- [YieldCell.vue:1-28](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
+- [CellEdit/index.vue:1-50](file://docs-demo/demos/CellEdit/index.vue#L1-L50)
+- [EditCell.vue:1-92](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
+- [HugeData/index.vue:1-200](file://docs-demo/demos/HugeData/index.vue#L1-L200)
+- [ExpandCell.vue:1-37](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
+- [SourceCell.vue:1-19](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
+- [MatrixCell.vue:1-91](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [custom-cell.md](file://docs-src/main/table/advanced/custom-cell.md#L1-L147)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [custom-cell.md:1-147](file://docs-src/main/table/advanced/custom-cell.md#L1-L147)
+- [custom-cell.md:1-157](file://docs-src/ko/main/table/advanced/custom-cell.md#L1-L157)
 
 ## Core Components
 - Custom cell props interface: Defines the shape of props passed to customCell components, including row, col, cellValue, rowIndex, colIndex, expanded, and treeExpanded.
@@ -103,10 +119,10 @@ Key implementation references:
 - Virtual data source slicing and index computation
 
 **Section sources**
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
-- [types/index.ts](file://src/StkTable/types/index.ts#L49-L52)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L104-L108)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
+- [types/index.ts:49-52](file://src/StkTable/types/index.ts#L49-L52)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
 
 ## Architecture Overview
 The table renders cells by either:
@@ -132,8 +148,8 @@ Table-->>App : Finalized table with custom cells
 ```
 
 **Diagram sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
 
 ## Detailed Component Analysis
 
@@ -146,8 +162,8 @@ Practical usage:
 - Use the tableHeader slot to wrap header titles with additional UI.
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L121-L124)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L91-L93)
+- [StkTable.vue:121-124](file://src/StkTable/StkTable.vue#L121-L124)
+- [StkTable.vue:91-93](file://src/StkTable/StkTable.vue#L91-L93)
 
 ### Component-Based Cell Rendering
 - Columns accept customCell and customHeaderCell as Vue components or render functions.
@@ -165,24 +181,102 @@ Examples:
 - MatrixCell demonstrates rich layout with gradient backgrounds and directional indicators.
 
 **Section sources**
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [YieldCell.vue](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
-- [EditCell.vue](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
-- [SourceCell.vue](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
-- [MatrixCell.vue](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [YieldCell.vue:1-28](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
+- [EditCell.vue:1-92](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
+- [ExpandCell.vue:1-37](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
+- [SourceCell.vue:1-19](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
+- [MatrixCell.vue:1-91](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
 
-### Yield-Based Cell Implementation Patterns
-- Render functions: Provide a concise way to render simple content directly from column configuration.
-- JSX: Enable expressive markup with build tool support.
+### Vue SFC Components for Custom Cells
+Vue Single File Components (SFC) provide a structured approach to creating reusable custom cells with proper TypeScript integration.
 
-Guidance:
-- Prefer render functions for lightweight transformations.
-- Use JSX when you need dynamic, component-like composition inside column definitions.
+**Implementation Pattern**:
+- Define custom cell component with `CustomCellProps` interface
+- Use Vue 3 Composition API with TypeScript
+- Implement computed properties for dynamic styling
+- Export component for reuse across different tables
+
+**Example Structure**:
+```vue
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { CustomCellProps } from 'stk-table-vue/src/StkTable/types/index';
+
+const props = defineProps<CustomCellProps<DataType>>();
+const className = computed(() => {
+    return props.cellValue > 0 ? 'color-up' : 'color-down';
+});
+</script>
+<template>
+    <span :class="className">{{ props.cellValue > 0 ? '+' : '' }}{{ (props.cellValue * 100).toFixed(4) }}%</span>
+</template>
+```
 
 **Section sources**
-- [custom-cell.md](file://docs-src/main/table/advanced/custom-cell.md#L71-L109)
+- [custom-cell.md:13-67](file://docs-src/ko/main/table/advanced/custom-cell.md#L13-L67)
+- [YieldCell.vue:1-28](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
+- [CustomCell/index.vue:1-24](file://docs-demo/advanced/custom-cell/CustomCell/index.vue#L1-L24)
+
+### Render Functions with h() for Lightweight Components
+Render functions offer a concise way to create lightweight custom cells without the overhead of SFC compilation.
+
+**Usage Pattern**:
+- Import Vue's `h` function for creating VNodes
+- Return simple JSX-like expressions directly in column configuration
+- Ideal for basic transformations and simple conditional rendering
+
+**Example Implementation**:
+```typescript
+import { h } from 'vue';
+import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
+
+const columns: StkTableColumn<any>[] = [
+    {
+        title: 'Yield',
+        dataIndex: 'yield',
+        customCell: ({ cellValue }) => h('span', `${cellValue * 100}%`),
+    },
+]
+```
+
+**Section sources**
+- [custom-cell.md:71-85](file://docs-src/ko/main/table/advanced/custom-cell.md#L71-L85)
+
+### JSX Syntax for Complex Cell Implementations
+JSX enables expressive markup with build tool support for complex custom cell implementations.
+
+**Setup Requirements**:
+- Install appropriate JSX plugin based on build tool
+- Configure TypeScript for JSX support
+- Use functional components with JSX syntax
+
+**Build Tool Compatibility**:
+| Build Tool | Plugin |
+|---|---|
+| Vite | @vitejs/plugin-vue-jsx |
+| Webpack + Babel | @vue/babel-plugin-jsx |
+| Webpack + SWC | swc-plugin-vue-jsx |
+| Rspack | swc-plugin-vue-jsx |
+
+**Example Implementation**:
+```tsx
+import { StkTableColumn } from 'stk-table-vue/src/StkTable/index';
+
+const columns: StkTableColumn<any>[] = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        customCell: ({ row, col, cellValue }) => {
+            return <span style="color: red">{cellValue}</span>;
+        },
+    },
+]
+```
+
+**Section sources**
+- [custom-cell.md:87-109](file://docs-src/ko/main/table/advanced/custom-cell.md#L87-L109)
 
 ### Cell Rendering Lifecycle and Prop Passing
 - Lifecycle: Cells are created during virtualized rendering of visible rows/columns. Props are recomputed per render pass.
@@ -198,9 +292,9 @@ Render --> End(["Commit to DOM"])
 ```
 
 **Diagram sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L104-L176)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L104-L108)
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
+- [StkTable.vue:104-176](file://src/StkTable/StkTable.vue#L104-L176)
+- [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
 
 ### Event Handling Within Custom Cells
 - Emitting events: Custom cells can emit domain-specific events (e.g., toggling expand state).
@@ -210,8 +304,8 @@ Example pattern:
 - ExpandCell emits a toggle-expand event; parent subscribes and toggles row expansion state.
 
 **Section sources**
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L8-L10)
-- [event.ts](file://docs-demo/demos/HugeData/event.ts#L4-L6)
+- [ExpandCell.vue:8-10](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L8-L10)
+- [event.ts:4-6](file://docs-demo/demos/HugeData/event.ts#L4-L6)
 
 ### Comprehensive Examples
 
@@ -235,37 +329,37 @@ Table-->>User : Re-render with updated value
 ```
 
 **Diagram sources**
-- [EditCell.vue](file://docs-demo/demos/CellEdit/EditCell.vue#L38-L72)
-- [CellEdit/index.vue](file://docs-demo/demos/CellEdit/index.vue#L32-L38)
+- [EditCell.vue:38-72](file://docs-demo/demos/CellEdit/EditCell.vue#L38-L72)
+- [CellEdit/index.vue:32-38](file://docs-demo/demos/CellEdit/index.vue#L32-L38)
 
 **Section sources**
-- [EditCell.vue](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
-- [CellEdit/index.vue](file://docs-demo/demos/CellEdit/index.vue#L1-L50)
-- [type.ts](file://docs-demo/demos/CellEdit/type.ts#L1-L15)
+- [EditCell.vue:1-92](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
+- [CellEdit/index.vue:1-50](file://docs-demo/demos/CellEdit/index.vue#L1-L50)
+- [type.ts:1-15](file://docs-demo/demos/CellEdit/type.ts#L1-L15)
 
 #### Action Buttons
 - Pattern: Render clickable actions (e.g., expand/collapse) inside a custom cell component.
 - Interaction: Emit events to parent; parent toggles row state.
 
 **Section sources**
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
-- [event.ts](file://docs-demo/demos/HugeData/event.ts#L1-L7)
-- [HugeData/index.vue](file://docs-demo/demos/HugeData/index.vue#L1-L200)
+- [ExpandCell.vue:1-37](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
+- [event.ts:1-7](file://docs-demo/demos/HugeData/event.ts#L1-L7)
+- [HugeData/index.vue:1-200](file://docs-demo/demos/HugeData/index.vue#L1-L200)
 
 #### Progress Indicators
 - Pattern: Use a rich layout with gradient backgrounds and directional indicators to visualize metrics.
 - Data binding: Bind CSS variables to dynamic values for percent and color.
 
 **Section sources**
-- [MatrixCell.vue](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
+- [MatrixCell.vue:1-91](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
 
 #### Rich Content Displays
 - Pattern: Combine multiple values and icons into a single cell for compact, informative layouts.
 - Styling: Use scoped styles and CSS custom properties for consistent theming.
 
 **Section sources**
-- [YieldCell.vue](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
-- [SourceCell.vue](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
+- [YieldCell.vue:1-28](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
+- [SourceCell.vue:1-19](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
 
 ## Dependency Analysis
 Custom cell rendering depends on:
@@ -285,19 +379,19 @@ Table --> DemoMatrix["MatrixCell.vue"]
 ```
 
 **Diagram sources**
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L104-L108)
-- [YieldCell.vue](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
-- [EditCell.vue](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
-- [SourceCell.vue](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
-- [MatrixCell.vue](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
+- [YieldCell.vue:1-28](file://docs-demo/advanced/custom-cell/CustomCell/YieldCell.vue#L1-L28)
+- [EditCell.vue:1-92](file://docs-demo/demos/CellEdit/EditCell.vue#L1-L92)
+- [ExpandCell.vue:1-37](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L1-L37)
+- [SourceCell.vue:1-19](file://docs-demo/demos/HugeData/custom-cells/SourceCell.vue#L1-L19)
+- [MatrixCell.vue:1-91](file://docs-demo/demos/Matrix/MatrixCell.vue#L1-L91)
 
 **Section sources**
-- [types/index.ts](file://src/StkTable/types/index.ts#L8-L23)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L135-L153)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L104-L108)
+- [types/index.ts:8-23](file://src/StkTable/types/index.ts#L8-L23)
+- [StkTable.vue:135-153](file://src/StkTable/StkTable.vue#L135-L153)
+- [useVirtualScroll.ts:104-108](file://src/StkTable/useVirtualScroll.ts#L104-L108)
 
 ## Performance Considerations
 - Keep custom cells lightweight:
@@ -314,7 +408,7 @@ Table --> DemoMatrix["MatrixCell.vue"]
   - Debounce or coalesce frequent events.
   - Limit global event subscriptions; prefer scoped emissions.
 
-[No sources needed since this section provides general guidance]
+**Updated** Enhanced with Korean-specific performance guidelines and best practices for custom cell rendering.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -331,9 +425,12 @@ Common issues and resolutions:
   - Subscribe in the parent and update row state accordingly.
 
 **Section sources**
-- [custom-cell.md](file://docs-src/main/table/advanced/custom-cell.md#L8-L11)
-- [ExpandCell.vue](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L8-L10)
-- [event.ts](file://docs-demo/demos/HugeData/event.ts#L4-L6)
+- [custom-cell.md:8-11](file://docs-src/main/table/advanced/custom-cell.md#L8-L11)
+- [custom-cell.md:8-11](file://docs-src/ko/main/table/advanced/custom-cell.md#L8-L11)
+- [ExpandCell.vue:8-10](file://docs-demo/demos/HugeData/custom-cells/ExpandCell.vue#L8-L10)
+- [event.ts:4-6](file://docs-demo/demos/HugeData/event.ts#L4-L6)
 
 ## Conclusion
 Stk Table Vue offers flexible, high-performance custom cell rendering through component-based, slot-based, and yield-based patterns. By leveraging the provided CustomCellProps, integrating with virtual scrolling, and following performance best practices, you can implement rich, interactive cells while maintaining smooth scrolling performance across large datasets.
+
+**Updated** The Korean documentation now provides comprehensive coverage of all custom cell rendering patterns, including Vue SFC components, render functions, and JSX syntax, enabling developers to create complex cell content with proper TypeScript integration and build tool support.

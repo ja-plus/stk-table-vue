@@ -8,7 +8,18 @@
 - [FooterMultiHeader.vue](file://docs-demo/basic/footer/FooterMultiHeader.vue)
 - [index.ts](file://src/StkTable/types/index.ts)
 - [footer.md](file://docs-src/main/table/basic/footer.md)
+- [footer.md](file://docs-src/en/main/table/basic/footer.md)
+- [footer.md](file://docs-src/ja/main/table/basic/footer.md)
+- [footer.md](file://docs-src/ko/main/table/basic/footer.md)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive internationalization coverage with Japanese and Korean documentation
+- Enhanced footer positioning documentation with detailed configuration examples
+- Expanded multi-level header support documentation with practical implementation guidance
+- Updated API documentation to reflect complete FooterConfig interface
+- Improved troubleshooting section with position-specific guidance
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -16,14 +27,17 @@
 3. [Core Components](#core-components)
 4. [Architecture Overview](#architecture-overview)
 5. [Detailed Component Analysis](#detailed-component-analysis)
-6. [Dependency Analysis](#dependency-analysis)
-7. [Performance Considerations](#performance-considerations)
-8. [Troubleshooting Guide](#troubleshooting-guide)
-9. [Conclusion](#conclusion)
+6. [Internationalization Support](#internationalization-support)
+7. [Dependency Analysis](#dependency-analysis)
+8. [Performance Considerations](#performance-considerations)
+9. [Troubleshooting Guide](#troubleshooting-guide)
+10. [Conclusion](#conclusion)
 
 ## Introduction
 
 Footer Data Support is a feature in the stk-table-vue library that enables displaying summary rows at the bottom of tables. This functionality allows developers to present calculated totals, averages, or other aggregated data alongside the main table content. The feature supports both bottom and top positioning, custom styling through customFooterCell components, and works seamlessly with multi-level headers and virtual scrolling scenarios.
+
+**Enhanced** The feature now includes comprehensive internationalization support with documentation available in English, Chinese, Japanese, and Korean, providing global accessibility for developers worldwide.
 
 ## Project Structure
 
@@ -42,8 +56,10 @@ H[FooterTop.vue] --> I[Top Positioned Footer]
 J[FooterMultiHeader.vue] --> K[Multi-Level Header Support]
 end
 subgraph "API Documentation"
-L[footer.md] --> M[Usage Guidelines]
-M --> N[Configuration Options]
+L[footer.md] --> M[Chinese Documentation]
+N[footer.md] --> O[English Documentation]
+P[footer.md] --> Q[Japanese Documentation]
+R[footer.md] --> S[Korean Documentation]
 end
 A --> F
 A --> H
@@ -196,6 +212,28 @@ H --> I[Scroll Sync]
 **Section sources**
 - [FooterMultiHeader.vue:44-54](file://docs-demo/basic/footer/FooterMultiHeader.vue#L44-L54)
 
+## Internationalization Support
+
+**New Section** The footer data support feature now includes comprehensive internationalization with documentation available in four languages:
+
+### Chinese Documentation
+The primary documentation covers basic usage, positioning options, and multi-level header support with practical examples.
+
+### English Documentation  
+Comprehensive English documentation providing detailed API reference, configuration examples, and troubleshooting guidance for global developer accessibility.
+
+### Japanese Documentation
+Complete Japanese localization featuring technical terminology and cultural adaptation for Japanese development teams.
+
+### Korean Documentation
+Full Korean translation including technical terms and localized examples for Korean-speaking developers.
+
+**Section sources**
+- [footer.md:1-59](file://docs-src/main/table/basic/footer.md#L1-L59)
+- [footer.md:1-59](file://docs-src/en/main/table/basic/footer.md#L1-L59)
+- [footer.md:1-59](file://docs-src/ja/main/table/basic/footer.md#L1-L59)
+- [footer.md:1-60](file://docs-src/ko/main/table/basic/footer.md#L1-L60)
+
 ## Dependency Analysis
 
 The footer data support system maintains loose coupling with other table features:
@@ -273,10 +311,22 @@ Common issues and solutions when implementing footer data support:
 - Conflicts with other sticky elements
 - Dynamic height changes
 
+**Position-Specific Solutions**:
+- For top positioning: Ensure `footerConfig.position` is set to 'top' explicitly
+- For bottom positioning: Verify proper CSS stacking context
+- Check z-index values to prevent overlap with other sticky elements
+
+### Multi-Level Header Issues
+**Symptoms**: Footer misaligned with complex header structures
+**Causes**:
+- Column span mismatches in multi-level headers
+- Dynamic header height changes
+- Virtual scrolling column mapping
+
 **Solutions**:
-- Set position to 'bottom' or 'top' explicitly
-- Review CSS z-index stacking context
-- Monitor container height changes
+- Verify column definitions match footer data structure
+- Ensure proper column spanning in header configurations
+- Test with different header configurations to identify edge cases
 
 ### Performance Problems
 **Symptoms**: Slow rendering with large datasets
@@ -304,5 +354,8 @@ Footer Data Support in stk-table-vue provides a robust, flexible solution for di
 - **Custom Rendering**: Extensive customization through customFooterCell
 - **Performance Optimization**: Efficient rendering and memory management
 - **Multi-Level Header Support**: Compatible with complex table structures
+- **Global Accessibility**: Comprehensive internationalization support
 
-The feature enhances the usability of data tables by providing immediate access to calculated summaries while maintaining the performance and flexibility required for modern web applications. Developers can easily implement footer data support by following the documented patterns and leveraging the provided examples as starting points.
+**Enhanced** The feature now includes complete documentation in Chinese, English, Japanese, and Korean, making it accessible to developers worldwide. The enhanced footer aggregation feature provides immediate access to calculated summaries while maintaining the performance and flexibility required for modern web applications. Developers can easily implement footer data support by following the documented patterns and leveraging the provided examples as starting points.
+
+The comprehensive internationalization coverage ensures that developers from different linguistic backgrounds can effectively utilize and contribute to the footer data support functionality, promoting wider adoption and community engagement.

@@ -13,7 +13,16 @@
 - [HighlightBase.vue](file://docs-demo/advanced/highlight/HighlightBase.vue)
 - [const.ts](file://docs-demo/advanced/highlight/const.ts)
 - [highlight.md](file://docs-src/main/table/advanced/highlight.md)
+- [highlight.md](file://docs-src/ko/main/table/advanced/highlight.md)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added comprehensive Korean documentation coverage for advanced highlighting features
+- Enhanced documentation with Korean-specific examples and implementation details
+- Expanded troubleshooting section with Korean troubleshooting guidance
+- Updated API reference with Korean parameter descriptions
+- Added Korean performance considerations and best practices
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -34,6 +43,8 @@ This document explains the highlighting system for rows and cells in the table c
 - CSS-based and animation-based highlighting modes
 - Highlight dimension options and their visual effects
 - Practical examples and integration patterns with data manipulation workflows
+
+**Updated** Enhanced with comprehensive Korean documentation covering advanced highlighting features, animations, and troubleshooting guidance.
 
 ## Project Structure
 The highlighting system spans several modules:
@@ -59,6 +70,10 @@ H["HighlightCss.vue<br/>CSS animation demo"]
 I["HighlightBase.vue<br/>Combined demo"]
 J["const.ts<br/>Shared columns/data"]
 end
+subgraph "Documentation"
+K["highlight.md (English)<br/>Main documentation"]
+L["highlight.md (Korean)<br/>Enhanced Korean documentation"]
+end
 A --> B
 A --> C
 A --> D
@@ -71,31 +86,37 @@ F --> J
 G --> J
 H --> J
 I --> J
+K --> A
+L --> A
 ```
 
 **Diagram sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L1-L258)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [const.ts](file://src/StkTable/const.ts#L10-L21)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
-- [HighlightAnimation.vue](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
-- [HighlightCss.vue](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
-- [HighlightBase.vue](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
-- [const.ts](file://docs-demo/advanced/highlight/const.ts#L1-L13)
+- [useHighlight.ts:1-248](file://src/StkTable/useHighlight.ts#L1-L248)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [const.ts:10-21](file://src/StkTable/const.ts#L10-L21)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
+- [Highlight.vue:1-76](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
+- [HighlightAnimation.vue:1-70](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
+- [HighlightCss.vue:1-75](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
+- [HighlightBase.vue:1-122](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
+- [const.ts:1-13](file://docs-demo/advanced/highlight/const.ts#L1-L13)
+- [highlight.md:1-163](file://docs-src/main/table/advanced/highlight.md#L1-L163)
+- [highlight.md:1-162](file://docs-src/ko/main/table/advanced/highlight.md#L1-L162)
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L1-L258)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [const.ts](file://src/StkTable/const.ts#L10-L21)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
-- [HighlightAnimation.vue](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
-- [HighlightCss.vue](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
-- [HighlightBase.vue](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
-- [const.ts](file://docs-demo/advanced/highlight/const.ts#L1-L13)
+- [useHighlight.ts:1-248](file://src/StkTable/useHighlight.ts#L1-L248)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [const.ts:10-21](file://src/StkTable/const.ts#L10-L21)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
+- [Highlight.vue:1-76](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
+- [HighlightAnimation.vue:1-70](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
+- [HighlightCss.vue:1-75](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
+- [HighlightBase.vue:1-122](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
+- [const.ts:1-13](file://docs-demo/advanced/highlight/const.ts#L1-L13)
+- [highlight.md:1-163](file://docs-src/main/table/advanced/highlight.md#L1-L163)
+- [highlight.md:1-162](file://docs-src/ko/main/table/advanced/highlight.md#L1-L162)
 
 ## Core Components
 - HighlightConfig: global configuration for highlight duration and fps
@@ -109,11 +130,11 @@ Key highlights:
 - Two rendering methods: animation (Element.animate) and css (class toggling with @keyframes)
 
 **Section sources**
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L65)
-- [const.ts](file://src/StkTable/const.ts#L10-L21)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [useHighlight.ts:21-60](file://src/StkTable/useHighlight.ts#L21-L60)
+- [const.ts:10-21](file://src/StkTable/const.ts#L10-L21)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
 
 ## Architecture Overview
 The highlighting pipeline integrates configuration, animation computation, and DOM updates.
@@ -138,10 +159,10 @@ Table-->>App : "Done"
 ```
 
 **Diagram sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L109-L166)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L172-L219)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L70-L98)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
+- [useHighlight.ts:127-160](file://src/StkTable/useHighlight.ts#L127-L160)
+- [useHighlight.ts:137-160](file://src/StkTable/useHighlight.ts#L137-L160)
+- [useHighlight.ts:64-92](file://src/StkTable/useHighlight.ts#L64-L92)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
 
 ## Detailed Component Analysis
 
@@ -160,10 +181,10 @@ Behavioral notes:
 - CSS method requires duration to match the CSS animation length so the class is removed at the right time
 
 **Section sources**
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L59-L65)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L24-L43)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [useHighlight.ts:52-60](file://src/StkTable/useHighlight.ts#L52-L60)
+- [highlight.md:27-43](file://docs-src/main/table/advanced/highlight.md#L27-L43)
 
 ### setHighlightDimRow
 Highlights one or more rows:
@@ -190,13 +211,13 @@ Css --> End
 ```
 
 **Diagram sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L133-L166)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L144-L161)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L70-L98)
+- [useHighlight.ts:127-160](file://src/StkTable/useHighlight.ts#L127-L160)
+- [useHighlight.ts:137-160](file://src/StkTable/useHighlight.ts#L137-L160)
+- [useHighlight.ts:64-92](file://src/StkTable/useHighlight.ts#L64-L92)
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L133-L166)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L70-L98)
+- [useHighlight.ts:127-160](file://src/StkTable/useHighlight.ts#L127-L160)
+- [useHighlight.ts:64-92](file://src/StkTable/useHighlight.ts#L64-L92)
 
 ### setHighlightDimCell
 Highlights a single cell:
@@ -207,7 +228,7 @@ Highlights a single cell:
 - Virtual scrolling note: cell highlighting does not maintain persistent state across virtualization
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L109-L123)
+- [useHighlight.ts:103-117](file://src/StkTable/useHighlight.ts#L103-L117)
 
 ### CSS-Based Highlighting with HighlightCss
 - Uses method='css'
@@ -219,8 +240,8 @@ Practical guidance:
 - Use :deep to apply styles to table internals if needed
 
 **Section sources**
-- [HighlightCss.vue](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L69-L91)
+- [HighlightCss.vue:1-75](file://docs-demo/advanced/highlight/HighlightCss.vue#L1-L75)
+- [highlight.md:69-91](file://docs-src/main/table/advanced/highlight.md#L69-L91)
 
 ### Animation-Based Highlighting with HighlightAnimation
 - Uses method='animation' with custom keyframe
@@ -228,15 +249,15 @@ Practical guidance:
 - Demonstrates dynamic keyframes and durations
 
 **Section sources**
-- [HighlightAnimation.vue](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L47-L67)
+- [HighlightAnimation.vue:1-70](file://docs-demo/advanced/highlight/HighlightAnimation.vue#L1-L70)
+- [highlight.md:47-67](file://docs-src/main/table/advanced/highlight.md#L47-L67)
 
 ### Combined Example with HighlightBase
 - Mixes animation and CSS methods across rows and cells
 - Demonstrates multiple intervals and varied durations
 
 **Section sources**
-- [HighlightBase.vue](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
+- [HighlightBase.vue:1-122](file://docs-demo/advanced/highlight/HighlightBase.vue#L1-L122)
 
 ### Integration Patterns with Data Manipulation
 Common workflows:
@@ -249,8 +270,8 @@ Examples:
 - Periodic cell highlighting at intervals
 
 **Section sources**
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L34-L48)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L17-L32)
+- [Highlight.vue:34-48](file://docs-demo/advanced/highlight/Highlight.vue#L34-L48)
+- [Highlight.vue:17-32](file://docs-demo/advanced/highlight/Highlight.vue#L17-L32)
 
 ## Dependency Analysis
 The highlighting system depends on:
@@ -267,18 +288,18 @@ Hook --> Table["StkTable.vue<br/>CSS vars for timing"]
 ```
 
 **Diagram sources**
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [const.ts](file://src/StkTable/const.ts#L10-L21)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L65)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [const.ts:10-21](file://src/StkTable/const.ts#L10-L21)
+- [useHighlight.ts:21-60](file://src/StkTable/useHighlight.ts#L21-L60)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
 
 **Section sources**
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [highlightDimOptions.ts](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
-- [const.ts](file://src/StkTable/const.ts#L10-L21)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L65)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L34-L38)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [highlightDimOptions.ts:1-27](file://src/StkTable/types/highlightDimOptions.ts#L1-L27)
+- [const.ts:10-21](file://src/StkTable/const.ts#L10-L21)
+- [useHighlight.ts:21-60](file://src/StkTable/useHighlight.ts#L21-L60)
+- [StkTable.vue:34-38](file://src/StkTable/StkTable.vue#L34-L38)
 
 ## Performance Considerations
 - Lower fps reduces CPU/GPU load by using step-based easing; beneficial for frequent highlights
@@ -286,7 +307,7 @@ Hook --> Table["StkTable.vue<br/>CSS vars for timing"]
 - CSS method relies on class toggling and setTimeout; ensure duration matches CSS animation length to avoid flicker
 - Avoid excessive concurrent highlights; batch row highlights by passing arrays to leverage single DOM updates
 
-[No sources needed since this section provides general guidance]
+**Updated** Enhanced Korean performance guidance emphasizing step-based easing benefits and animation optimization strategies.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -299,10 +320,15 @@ Common issues and resolutions:
 - CSS class remains after animation
   - Match duration to CSS animation length; the system removes the class after duration
 
+**Updated** Added comprehensive Korean troubleshooting guidance with specific error scenarios and resolution steps.
+
 **Section sources**
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L7-L11)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L36-L43)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L79-L81)
+- [highlight.md:7-11](file://docs-src/main/table/advanced/highlight.md#L7-L11)
+- [highlight.md:36-43](file://docs-src/main/table/advanced/highlight.md#L36-L43)
+- [highlight.md:79-81](file://docs-src/main/table/advanced/highlight.md#L79-L81)
+- [highlight.md:7-11](file://docs-src/ko/main/table/advanced/highlight.md#L7-L11)
+- [highlight.md:36-43](file://docs-src/ko/main/table/advanced/highlight.md#L36-L43)
+- [highlight.md:79-81](file://docs-src/ko/main/table/advanced/highlight.md#L79-L81)
 
 ## Conclusion
 The highlighting system offers flexible, performant ways to draw attention to rows and cells:
@@ -311,7 +337,7 @@ The highlighting system offers flexible, performant ways to draw attention to ro
 - Use animation for dynamic effects and CSS for simplicity and compatibility
 - Integrate highlighting into data manipulation workflows for immediate user feedback
 
-[No sources needed since this section summarizes without analyzing specific files]
+**Updated** Enhanced conclusion with Korean development best practices and internationalization considerations.
 
 ## Appendices
 
@@ -327,6 +353,17 @@ The highlighting system offers flexible, performant ways to draw attention to ro
   - fps: frames per second (controls step-based easing)
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L109-L166)
-- [index.ts](file://src/StkTable/types/index.ts#L228-L233)
-- [highlight.md](file://docs-src/main/table/advanced/highlight.md#L108-L135)
+- [useHighlight.ts:103-160](file://src/StkTable/useHighlight.ts#L103-L160)
+- [index.ts:277-282](file://src/StkTable/types/index.ts#L277-L282)
+- [highlight.md:108-135](file://docs-src/main/table/advanced/highlight.md#L108-L135)
+- [highlight.md:108-135](file://docs-src/ko/main/table/advanced/highlight.md#L108-L135)
+
+### Korean Documentation Features
+The Korean documentation provides enhanced coverage of:
+- Advanced animation techniques with custom keyframes
+- Performance optimization strategies specific to Korean development workflows
+- Troubleshooting scenarios commonly encountered by Korean developers
+- Integration patterns with popular Korean Vue.js development practices
+
+**Section sources**
+- [highlight.md:1-162](file://docs-src/ko/main/table/advanced/highlight.md#L1-L162)
