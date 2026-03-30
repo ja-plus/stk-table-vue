@@ -4,6 +4,7 @@
   - change: `AreaSelectionConfig['enabled']` default set `true`.
 * Bugfix：
   - fix: `useAreaSelection` not tree shaking.
+  - fix: `props.sortConfig.defaultSort`  will cause default sort column's header not be clicked when the order set `asc`.
 
 ## 0.11.6
 * Change:

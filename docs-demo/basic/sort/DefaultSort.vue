@@ -33,7 +33,7 @@ const dataSource = ref<DataType[]>([
             emptyToBottom: true,
             defaultSort: {
                 dataIndex: 'age',
-                order: 'desc',
+                order: 'asc',
                 sortType: 'number',
             },
         }"

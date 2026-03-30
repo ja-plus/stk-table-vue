@@ -5,6 +5,7 @@ import { tableSort } from './utils/index';
 
 /**
  * 排序切换顺序
+ * 循环顺序：null → desc → asc → null → ...
  */
 const SORT_SWITCH_ORDER: Order[] = [null, 'desc', 'asc'] as const;
 
@@ -53,13 +54,24 @@ export function useSorter<DT extends Record<string, any>>(
         return sortStates.value.findIndex(s => s.key === colKey || s.dataIndex === colKey);
     }
 
+    function getTableCol(state: { key?: SortState<DT>['key']; dataIndex: SortState<DT>['dataIndex'] }) {
+        return tableHeaderLast.value.find(c => (state.key && colKeyGen.value(c) === state.key) || c.dataIndex === state.dataIndex);
+    }
+
+    /**
+     * 获取排序列信息
+     */
+    function getSortColumns(): { key: keyof DT | undefined; order: Order }[] {
+        return sortStates.value.map(s => ({ key: s.key || s.dataIndex, order: s.order }));
+    }
+
     /**
      * 添加或更新排序状态到 sortStates
      * @param newState 新的排序状态
      * @param mode '1' - 追加模式（多列排序），0 - 替换模式（单列排序）
      */
     function addOrUpdateSortState(newState: SortState<DT>, mode?: 1 | 0) {
-        const existingIndex = sortStates.value.findIndex(s => s.key === newState.key || s.dataIndex === newState.dataIndex);
+        const existingIndex = getSortStateIndex(newState.key || newState.dataIndex);
 
         if (existingIndex >= 0) {
             // 移除已存在的相同列
@@ -80,23 +92,37 @@ export function useSorter<DT extends Record<string, any>>(
     /**
      * 更新排序状态（点击表头时调用）
      */
-    function updateSortState(col: StkTableColumn<DT>, colKey: UniqKey): Order {
+    function updateSortState(col: StkTableColumn<DT>, sortConfig: SortConfig<DT>): Order {
+        const colKey = colKeyGen.value(col);
         const existingIndex = getSortStateIndex(colKey);
         let newOrder: Order;
 
-        if (existingIndex >= 0) {
-            // 已存在该列的排序，切换排序顺序
-            const currentOrder = sortStates.value[existingIndex].order;
-            const currentIndex = SORT_SWITCH_ORDER.indexOf(currentOrder);
-            newOrder = SORT_SWITCH_ORDER[(currentIndex + 1) % 3];
+        const defaultSort = sortConfig.defaultSort;
 
-            if (newOrder === null) {
-                // 取消排序，从数组中移除
-                sortStates.value.splice(existingIndex, 1);
+        if (existingIndex >= 0) {
+            const currentOrder = sortStates.value[existingIndex].order;
+            if (currentOrder && defaultSort && (defaultSort.key === colKey || defaultSort.dataIndex === col.dataIndex)) {
+                // If click default sort column
+                const defaultSwitchOrder = SORT_SWITCH_ORDER.filter(order => order !== null);
+                const currentIndex = defaultSwitchOrder.indexOf(currentOrder);
+                newOrder = defaultSwitchOrder[(currentIndex + 1) % defaultSwitchOrder.length];
             } else {
-                // 更新排序顺序
+                // Click other column
+                const currentIndex = SORT_SWITCH_ORDER.indexOf(currentOrder);
+                newOrder = SORT_SWITCH_ORDER[(currentIndex + 1) % 3];
+            }
+
+            if (newOrder) {
                 const updatedState = { ...sortStates.value[existingIndex], order: newOrder };
                 addOrUpdateSortState(updatedState as any, 1);
+            } else {
+                sortStates.value.splice(existingIndex, 1); // Delete sort state
+                if (defaultSort?.order) {
+                    // Has default sort
+                    const defaultSortCol = getTableCol(defaultSort);
+                    const { key, sortField, sortType } = defaultSortCol || {};
+                    addOrUpdateSortState({ key, sortField, sortType, ...defaultSort }, 1);
+                }
             }
         } else {
             newOrder = SORT_SWITCH_ORDER[1];
@@ -121,14 +147,14 @@ export function useSorter<DT extends Record<string, any>>(
      */
     function sortData(dataSource: DT[]): DT[] {
         if (!sortStates.value.length) return dataSource;
-        
+
         const sortConfig = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig };
         let result = dataSource.slice();
 
         // 从后往前排序，这样前面的排序优先级更高
         for (let i = sortStates.value.length - 1; i >= 0; i--) {
             const state = sortStates.value[i];
-            const col = tableHeaderLast.value.find(c => (state.key && colKeyGen.value(c) === state.key) || c.dataIndex === state.dataIndex);
+            const col = getTableCol(state);
             if (col && state.order) {
                 const colSortConfig = { ...sortConfig, ...col.sortConfig };
                 result = tableSort(col, state.order, result, colSortConfig);
@@ -147,34 +173,12 @@ export function useSorter<DT extends Record<string, any>>(
             return;
         }
         if (!col.sorter) {
-            // 点击表头触发的排序，如果列没有配置sorter则不处理。setSorter 触发的排序则保持通行。
+            // 点击表头触发的排序，如果列没有配置 sorter 则不处理。setSorter 触发的排序则保持通行。
             return;
         }
-        const colKey = colKeyGen.value(col);
 
-        let order = updateSortState(col, colKey);
         const sortConfig: SortConfig<DT> = { ...DEFAULT_SORT_CONFIG, ...props.sortConfig, ...col.sortConfig };
-
-        // 处理 defaultSort（当取消排序时）
-        if (!order && sortConfig.defaultSort) {
-            const defaultColKey = sortConfig.defaultSort.key || sortConfig.defaultSort.dataIndex;
-            if (defaultColKey) {
-                const defaultCol = tableHeaderLast.value.find(item => colKeyGen.value(item) === defaultColKey);
-                if (defaultCol) {
-                    col = defaultCol;
-                    order = sortConfig.defaultSort.order;
-                    if (order) {
-                        addOrUpdateSortState({
-                            key: defaultColKey,
-                            dataIndex: defaultCol.dataIndex,
-                            sortField: defaultCol.sortField,
-                            sortType: defaultCol.sortType,
-                            order,
-                        });
-                    }
-                }
-            }
-        }
+        const order = updateSortState(col, sortConfig);
 
         if (!props.sortRemote) {
             initDataSource();
@@ -242,18 +246,11 @@ export function useSorter<DT extends Record<string, any>>(
     }
 
     /**
-     * 获取排序列信息
-     */
-    function getSortColumns(): { key: keyof DT | undefined; order: Order }[] {
-        return sortStates.value.map(s => ({ key: s.key || s.dataIndex, order: s.order }));
-    }
-
-    /**
      * 处理默认排序
      */
     function dealDefaultSorter() {
         if (!props.sortConfig.defaultSort) return;
-        const { key, dataIndex, order, silent } = { silent: false, ...props.sortConfig.defaultSort };
+        const { key, dataIndex, order, silent } = { silent: true, ...props.sortConfig.defaultSort };
         setSorter((key || dataIndex) as string, order, { force: false, silent });
     }
 
