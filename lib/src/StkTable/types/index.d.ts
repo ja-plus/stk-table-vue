@@ -325,6 +325,7 @@ export type AreaSelectionRange = {
 };
 /** 单元格选区配置 */
 export type AreaSelectionConfig<T extends Record<string, any> = any> = {
+    /** default: true */
     enabled?: boolean;
     /**
      * 复制时的单元格文本格式化回调。

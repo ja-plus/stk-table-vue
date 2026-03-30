@@ -3,7 +3,8 @@ export declare function getDropdownIns(): Promise<import('vue').CreateComponentP
     show: (pos: {
         x: number;
         y: number;
-    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => void;
+        height?: number;
+    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
     hide: () => void;
     setTheme: (t: "light" | "dark") => void;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, import('vue').PublicProps, {}, true, {}, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, {}, any, import('vue').ComponentProvideOptions, {
@@ -18,7 +19,8 @@ export declare function getDropdownIns(): Promise<import('vue').CreateComponentP
     show: (pos: {
         x: number;
         y: number;
-    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => void;
+        height?: number;
+    }, opt: import('../types').FilterOption[], onConfirm: (values: import('../types').FilterOption["value"][]) => void) => Promise<void>;
     hide: () => void;
     setTheme: (t: "light" | "dark") => void;
 }, {}, {}, {}, {}>>;

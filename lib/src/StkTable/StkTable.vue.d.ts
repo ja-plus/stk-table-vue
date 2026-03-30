@@ -418,7 +418,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     })) | (UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
-        expand?: boolean;
+        expand
+        /**
+         * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
+         */
+        ? /**
+         * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
+         */: boolean;
     }) => void;
     /**
      * 获取拖选选中的单元格信息
@@ -745,6 +751,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT;
         col: StkTableColumn<DT> | null;
     }) => any) | undefined;
+    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
     "onTh-drop"?: ((targetColKey: string) => any) | undefined;
     "onCol-order-change"?: ((dragStartKey: string, targetColKey: string) => any) | undefined;
@@ -754,7 +761,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         row: DT;
         col: StkTableColumn<DT> | null;
     }) => any) | undefined;
-    "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any, data: {
         rowIndex: number;
     }) => any) | undefined;

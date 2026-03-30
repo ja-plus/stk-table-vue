@@ -3,7 +3,8 @@ import { FilterOption } from '../types';
 declare function show(pos: {
     x: number;
     y: number;
-}, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void): void;
+    height?: number;
+}, opt: FilterOption[], onConfirm: (values: FilterOption['value'][]) => void): Promise<void>;
 declare function hide(): void;
 declare function setTheme(t: 'light' | 'dark'): void;
 declare const _default: import('vue').DefineComponent<{}, {
