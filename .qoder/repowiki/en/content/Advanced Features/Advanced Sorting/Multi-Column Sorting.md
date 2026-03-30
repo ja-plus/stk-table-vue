@@ -16,6 +16,13 @@
 - [SortRemote.vue](file://docs-demo/basic/sort/SortRemote.vue)
 </cite>
 
+## Update Summary
+**Changes Made**
+- Enhanced sorting cycle logic with improved default sort integration
+- Refined state management for both default and regular columns
+- Improved multi-column sorting state handling and limit enforcement
+- Better default sort fallback mechanism when canceling sorts
+
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
@@ -29,6 +36,8 @@
 
 ## Introduction
 This document explains the multi-column sorting feature in the table component. It covers how sorting states are managed, how multiple columns can be sorted simultaneously, and how the system integrates with the table rendering pipeline. The implementation supports both single-column and multi-column sorting modes, custom sorters, remote sorting, and advanced options like empty value placement and recursive sorting of tree nodes.
+
+**Updated** Enhanced with improved state management for default sort configurations and refined sorting cycle logic that better distinguishes between default and regular columns.
 
 ## Project Structure
 The multi-column sorting feature spans several modules:
@@ -94,6 +103,8 @@ Key capabilities:
 - Recursive sorting for tree structures
 - Empty value placement control
 
+**Updated** Enhanced state management now includes improved sorting cycle logic that properly handles default sort columns differently from regular columns, with separate switch orders for each type.
+
 **Section sources**
 - [useSorter.ts](file://src/StkTable/useSorter.ts)
 - [utils/index.ts](file://src/StkTable/utils/index.ts)
@@ -137,9 +148,11 @@ Responsibilities:
 - Apply default sort when canceling
 - Emit sort-change events and return sorted data
 
+**Updated** Enhanced with improved sorting cycle logic that distinguishes between default sort columns and regular columns. Default sort columns use a restricted switch order (null → desc → asc) while regular columns use the full cycle (null → desc → asc → null).
+
 Key behaviors:
 - Maintains sortStates as a reactive array
-- Uses a switch order for cycling: null → desc → asc → null
+- Uses separate switch orders for default and regular columns
 - In multi-column mode, adds new sorts at the front and respects multiSortLimit
 - Supports defaultSort fallback when order becomes null
 - Exposes helpers to query current sort columns and reset state
@@ -148,14 +161,27 @@ Key behaviors:
 flowchart TD
 Start(["updateSortState(col, colKey)"]) --> Exists{"Column already sorted?"}
 Exists --> |Yes| CurrentOrder["Read current order"]
-CurrentOrder --> NextOrder["Cycle to next order"]
-NextOrder --> IsNull{"Order is null?"}
-IsNull --> |Yes| Remove["Remove from sortStates"]
-IsNull --> |No| Replace["Replace state with new order"]
+CurrentOrder --> IsDefault{"Is default sort column?"}
+IsDefault --> |Yes| DefaultSwitch["Use restricted switch order"]
+IsDefault --> |No| FullSwitch["Use full switch order"]
+DefaultSwitch --> NextOrder1["Cycle to next order"]
+FullSwitch --> NextOrder2["Cycle to next order"]
+NextOrder1 --> IsNull1{"Order is null?"}
+NextOrder2 --> IsNull2{"Order is null?"}
+IsNull1 --> |Yes| Remove1["Remove from sortStates"]
+IsNull2 --> |Yes| Remove2["Remove from sortStates"]
+IsNull1 --> |No| Replace1["Replace state with new order"]
+IsNull2 --> |No| Replace2["Replace state with new order"]
 Exists --> |No| NewState["Create new SortState"]
 NewState --> Add["Add to sortStates (respect multiSortLimit)"]
-Remove --> Done(["Return new order"])
-Replace --> Done
+Remove1 --> CheckDefault["Check for default sort"]
+Remove2 --> CheckDefault
+CheckDefault --> HasDefault{"Has default sort?"}
+HasDefault --> |Yes| ApplyDefault["Apply default sort"]
+HasDefault --> |No| Done(["Return new order"])
+ApplyDefault --> Done
+Replace1 --> Done
+Replace2 --> Done
 Add --> Done
 ```
 
@@ -307,6 +333,8 @@ TS --> SI["SortIcon.vue"]
 - Using sortChildren triggers recursive sorting of nested structures, which increases cost proportional to tree depth and node count.
 - Empty value placement affects sorting performance slightly due to pre-separation of values and empties.
 
+**Updated** Enhanced state management improves performance by avoiding unnecessary state updates when dealing with default sort columns, and the refined sorting cycle logic reduces redundant operations during sort transitions.
+
 ## Troubleshooting Guide
 Common issues and resolutions:
 - Sorting does not apply: ensure the column has sorter configured and that sortRemote is not enabled unintentionally.
@@ -314,6 +342,8 @@ Common issues and resolutions:
 - Tree sorting not working: enable sortChildren in sortConfig to recursively sort child nodes.
 - Empty values appear unexpectedly at the top: adjust emptyToBottom in sortConfig to move them to the bottom.
 - Remote sorting not updating data: handle the sort-change event, fetch sorted data from the server, and update the data source accordingly.
+
+**Updated** Default sort columns now properly respect their restricted sorting cycle, preventing unexpected behavior when clicking default sort headers multiple times. The system automatically applies default sort when canceling non-default columns, improving the user experience.
 
 **Section sources**
 - [useSorter.ts](file://src/StkTable/useSorter.ts)
@@ -323,3 +353,5 @@ Common issues and resolutions:
 
 ## Conclusion
 The multi-column sorting feature provides a robust, configurable sorting mechanism integrated tightly with the table component. It supports single and multi-column modes, custom sorters, remote sorting, and advanced options like empty value placement and recursive tree sorting. By leveraging the useSorter hook and the sorting utility, developers can implement flexible sorting behaviors tailored to their applications.
+
+**Updated** Recent enhancements improve the reliability and user experience of multi-column sorting through better state management, refined sorting cycle logic, and enhanced integration with default sort configurations. The system now provides more predictable behavior when dealing with default sort columns and offers improved performance through optimized state updates.

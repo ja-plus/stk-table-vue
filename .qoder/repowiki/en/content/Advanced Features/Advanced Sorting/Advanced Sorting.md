@@ -14,16 +14,17 @@
 - [CustomSort.vue](file://docs-demo/basic/sort/CustomSort.vue)
 - [DefaultSort.vue](file://docs-demo/basic/sort/DefaultSort.vue)
 - [Sort.vue](file://docs-demo/basic/sort/Sort.vue)
+- [defaultSort.test.js](file://test/defaultSort.test.js)
+- [setSorter.test.js](file://test/setSorter.test.js)
 </cite>
 
 ## Update Summary
 **Changes Made**
-- Complete overhaul of sorting architecture with new `useSorter.ts` hook replacing monolithic sorting approach
-- Added comprehensive multi-column sorting capabilities with priority handling
-- Enhanced sort state management with improved integration into table data flow
-- Updated sort configuration with multiSort and multiSortLimit options
-- Improved remote sorting integration with better event handling
-- Added new sorting APIs: `setSorter`, `resetSorter`, `getSortColumns`, `getColumnSortState`
+- Enhanced default sort behavior with improved direction cycling logic
+- Refined sorting state management with smarter default sort handling
+- Added comprehensive test coverage for default sort scenarios
+- Updated default sort direction from 'desc' to 'asc' for better user experience
+- Improved multi-column sorting integration with default sort considerations
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -40,6 +41,8 @@
 ## Introduction
 This document explains advanced sorting capabilities in Stk Table Vue, focusing on the new modular sorting architecture centered around the `useSorter.ts` hook. It covers multi-column sorting with priority handling, improved sort state management, and enhanced remote sorting integration. The document details sort state management, sort direction indicators, and performance optimization strategies for large datasets. Practical examples demonstrate complex sorting logic, handling sort conflicts with virtual scrolling, and creating custom sort icons and behaviors.
 
+**Updated** Enhanced default sort behavior with improved direction cycling logic and better integration with multi-column sorting scenarios.
+
 ## Project Structure
 The sorting system has been completely redesigned with a modular architecture:
 - **useSorter.ts**: New hook managing multi-column sorting state and operations
@@ -49,6 +52,7 @@ The sorting system has been completely redesigned with a modular architecture:
 - **Types and configuration**: Extended SortConfig with multiSort capabilities
 - **Virtual scrolling integration**: Optimized for multi-column sorting scenarios
 - **Demo usage**: Updated examples demonstrating new multi-column sorting features
+- **Test coverage**: Comprehensive testing for default sort scenarios
 
 ```mermaid
 graph TB
@@ -61,6 +65,8 @@ STK --> VIRT["useVirtualScroll.ts"]
 DEMO1["MultiSort.vue"] --> STK
 DEMO2["SortRemote.vue"] --> STK
 DEMO3["CustomSort.vue"] --> STK
+TEST1["defaultSort.test.js"] --> USESORTER
+TEST2["setSorter.test.js"] --> USESORTER
 ```
 
 **Diagram sources**
@@ -73,6 +79,8 @@ DEMO3["CustomSort.vue"] --> STK
 - [useVirtualScroll.ts:1-120](file://src/StkTable/useVirtualScroll.ts#L1-L120)
 - [MultiSort.vue:1-100](file://docs-demo/basic/sort/MultiSort.vue#L1-L100)
 - [SortRemote.vue:1-67](file://docs-demo/basic/sort/SortRemote.vue#L1-L67)
+- [defaultSort.test.js:1-238](file://test/defaultSort.test.js#L1-L238)
+- [setSorter.test.js:1-185](file://test/setSorter.test.js#L1-L185)
 
 **Section sources**
 - [useSorter.ts:1-263](file://src/StkTable/useSorter.ts#L1-L263)
@@ -84,6 +92,8 @@ DEMO3["CustomSort.vue"] --> STK
 - [useVirtualScroll.ts:1-120](file://src/StkTable/useVirtualScroll.ts#L1-L120)
 - [MultiSort.vue:1-100](file://docs-demo/basic/sort/MultiSort.vue#L1-L100)
 - [SortRemote.vue:1-67](file://docs-demo/basic/sort/SortRemote.vue#L1-L67)
+- [defaultSort.test.js:1-238](file://test/defaultSort.test.js#L1-L238)
+- [setSorter.test.js:1-185](file://test/setSorter.test.js#L1-L185)
 
 ## Core Components
 The new sorting architecture introduces several key components:
@@ -95,6 +105,7 @@ The new sorting architecture introduces several key components:
   - Dynamic sort state management with priority handling
   - Integration with table data flow and virtual scrolling
   - Enhanced remote sorting support
+  - Smart default sort handling with improved direction cycling
 - **API**: Returns comprehensive sorting functions and reactive state
 
 ### Enhanced Sort State Management
@@ -102,11 +113,12 @@ The new sorting architecture introduces several key components:
 - **Dynamic limits**: Configurable maximum number of simultaneous sorts
 - **Priority handling**: Automatic reordering based on interaction sequence
 - **State persistence**: Robust state management across component lifecycle
+- **Smart default sort integration**: Different cycling logic for default vs non-default columns
 
 ### Improved Sort Configuration
 - **multiSort**: Enables/disables multi-column sorting mode
 - **multiSortLimit**: Controls maximum number of concurrent sorts (default: 3)
-- **Enhanced defaultSort**: Better integration with multi-column scenarios
+- **Enhanced defaultSort**: Better integration with multi-column scenarios and improved cycling behavior
 
 **Section sources**
 - [useSorter.ts:22-262](file://src/StkTable/useSorter.ts#L22-L262)
@@ -125,6 +137,8 @@ participant Util as "utils/index.ts"
 User->>Table : Click header cell
 Table->>Hook : onColumnSort(col)
 Hook->>Hook : updateSortState(col, colKey)
+Hook->>Hook : Check if default sort column
+Hook->>Hook : Apply smart cycling logic
 Hook->>Hook : addOrUpdateSortState(newState, mode)
 Hook->>Hook : sortData(dataSource)
 Hook->>Util : tableSort(col, order, dataSource, sortConfig)
@@ -152,6 +166,7 @@ The useSorter hook provides comprehensive multi-column sorting capabilities:
 - **Dynamic sort addition**: Supports adding new sorts while maintaining limits
 - **Priority handling**: Automatically moves active sorts to front with highest priority
 - **Enhanced configuration**: Integrates with both global and column-specific sort settings
+- **Smart default sort handling**: Different cycling logic for default vs non-default columns
 
 #### State Management:
 - **sortStates**: Reactive array of active sort configurations
@@ -159,7 +174,7 @@ The useSorter hook provides comprehensive multi-column sorting capabilities:
 - **multiSortLimit**: Configurable limit for concurrent sorts (default: 3)
 
 #### Core Methods:
-- **updateSortState()**: Handles header click interactions and order cycling
+- **updateSortState()**: Handles header click interactions and order cycling with smart logic
 - **addOrUpdateSortState()**: Manages sort state array with priority preservation
 - **sortData()**: Applies multi-column sorting with proper priority handling
 - **setSorter()**: Programmatic sorting control with append mode support
@@ -171,11 +186,11 @@ Init --> Config["Compute isMultiSort and multiSortLimit"]
 Config --> Wait["Wait for user interaction"]
 Wait --> Click{"Header click?"}
 Click --> |Yes| Update["updateSortState()"]
-Update --> CheckExisting{"Existing sort state?"}
-CheckExisting --> |Yes| Cycle["Cycle order (null→desc→asc→null)"]
-CheckExisting --> |No| Create["Create new sort state"]
-Cycle --> AddOrUpdate["addOrUpdateSortState()"]
-Create --> AddOrUpdate
+Update --> CheckDefault{"Is default sort column?"}
+CheckDefault --> |Yes| DefaultCycle["Smart default cycling (asc→desc→null)"]
+CheckDefault --> |No| NormalCycle["Normal cycling (null→desc→asc→null)"]
+DefaultCycle --> AddOrUpdate["addOrUpdateSortState()"]
+NormalCycle --> AddOrUpdate
 AddOrUpdate --> SortData["sortData()"]
 SortData --> ApplySorts["Apply sorts in reverse priority order"]
 ApplySorts --> Result["Return sorted data"]
@@ -189,7 +204,7 @@ Result --> End(["Ready for table rendering"])
 - [useSorter.ts:22-262](file://src/StkTable/useSorter.ts#L22-L262)
 
 ### Enhanced Sort State Management and Direction Cycling
-The new architecture improves upon the previous single-column approach:
+The new architecture improves upon the previous single-column approach with smarter default sort handling:
 
 #### Multi-column State Handling:
 - **Priority-based ordering**: Active sorts are maintained in priority order (first item has highest priority)
@@ -197,23 +212,24 @@ The new architecture improves upon the previous single-column approach:
 - **Limit enforcement**: Enforces `multiSortLimit` to prevent excessive concurrent sorts
 - **Smart removal**: When order becomes null, removes the sort state entirely
 
-#### Direction Cycling Logic:
-- **Three-state cycle**: null → desc → asc → null (cycle continues indefinitely)
-- **Smart default handling**: When removing a sort, automatically applies defaultSort if configured
+#### Enhanced Direction Cycling Logic:
+- **Smart default handling**: When clicking the default sort column, cycles through asc→desc→null (skipping null)
+- **Normal cycling**: When clicking non-default columns, cycles through null→desc→asc→null
 - **Consistent behavior**: Same cycling logic works for both single and multi-column modes
+- **Better UX**: Default sort column starts with asc order, providing immediate feedback
 
 ```mermaid
 stateDiagram-v2
 [*] --> Idle
 Idle --> Sorting : "Header click"
-Sorting --> Adding : "New column sort"
-Sorting --> Updating : "Existing column sort"
+Sorting --> CheckDefault : "Check if default sort column"
+CheckDefault --> |Yes| DefaultCycle : "Smart cycling : asc→desc→null"
+CheckDefault --> |No| NormalCycle : "Normal cycling : null→desc→asc"
+DefaultCycle --> Adding : "Add/update sort state"
+NormalCycle --> Adding : "Add/update sort state"
 Adding --> PriorityCheck : "Check multiSortLimit"
 PriorityCheck --> |Exceeded| RemoveLeast : "Remove lowest priority"
 PriorityCheck --> |Within limit| MoveToFront : "Move to front"
-Updating --> CycleOrder : "Cycle order (null→desc→asc)"
-CycleOrder --> Removing : "Order became null"
-Removing --> Idle : "Remove sort state"
 MoveToFront --> Sorting : "Update sort state"
 RemoveLeast --> MoveToFront : "Add new sort"
 ```
@@ -445,6 +461,41 @@ The new architecture provides better foundation for custom sort icon implementat
 - [StkTable.vue:1177-1196](file://src/StkTable/StkTable.vue#L1177-L1196)
 - [useSorter.ts:45-47](file://src/StkTable/useSorter.ts#L45-L47)
 
+### Enhanced Default Sort Behavior and Testing
+The new architecture includes comprehensive testing for default sort scenarios:
+
+#### Enhanced Default Sort Logic:
+- **Smart cycling**: Default sort columns cycle through asc→desc→null (skipping null)
+- **Non-default columns**: Cycle through null→desc→asc→null
+- **Better UX**: Default sort column starts with asc order for immediate feedback
+- **Consistent behavior**: Same logic applies to both single and multi-column modes
+
+#### Test Coverage:
+- **Comprehensive scenarios**: Tests for both 'asc' and 'desc' default sort orders
+- **Event handling**: Verifies sort-change events with correct parameters
+- **State management**: Ensures proper sort state updates and cleanup
+- **Edge cases**: Handles empty values and multi-column scenarios
+
+```mermaid
+flowchart TD
+DefaultSort["Default Sort Configuration"] --> AscDefault["defaultSort.order = 'asc'"]
+DefaultSort --> DescDefault["defaultSort.order = 'desc'"]
+AscDefault --> SmartCycle["Smart cycling: asc→desc→null"]
+DescDefault --> NormalCycle["Normal cycling: desc→asc→null→desc"]
+SmartCycle --> TestCases["Comprehensive test scenarios"]
+NormalCycle --> TestCases
+TestCases --> Events["Verify sort-change events"]
+TestCases --> State["Validate sort state management"]
+```
+
+**Diagram sources**
+- [defaultSort.test.js:25-170](file://test/defaultSort.test.js#L25-L170)
+- [useSorter.ts:104-126](file://src/StkTable/useSorter.ts#L104-L126)
+
+**Section sources**
+- [defaultSort.test.js:1-238](file://test/defaultSort.test.js#L1-L238)
+- [useSorter.ts:104-126](file://src/StkTable/useSorter.ts#L104-L126)
+
 ## Dependency Analysis
 The new architecture creates clean dependencies between components:
 
@@ -459,6 +510,8 @@ STK --> ICON["SortIcon.vue<br/>Sort indicators"]
 DEMO1["MultiSort.vue"] --> STK
 DEMO2["SortRemote.vue"] --> STK
 DEMO3["CustomSort.vue"] --> STK
+TEST1["defaultSort.test.js"] --> USESORTER
+TEST2["setSorter.test.js"] --> USESORTER
 ```
 
 **Diagram sources**
@@ -472,6 +525,8 @@ DEMO3["CustomSort.vue"] --> STK
 - [MultiSort.vue:1-100](file://docs-demo/basic/sort/MultiSort.vue#L1-L100)
 - [SortRemote.vue:1-67](file://docs-demo/basic/sort/SortRemote.vue#L1-L67)
 - [CustomSort.vue:1-50](file://docs-demo/basic/sort/CustomSort.vue#L1-L50)
+- [defaultSort.test.js:1-238](file://test/defaultSort.test.js#L1-L238)
+- [setSorter.test.js:1-185](file://test/setSorter.test.js#L1-L185)
 
 **Section sources**
 - [types/index.ts:232-267](file://src/StkTable/types/index.ts#L232-L267)
@@ -484,6 +539,8 @@ DEMO3["CustomSort.vue"] --> STK
 - [MultiSort.vue:1-100](file://docs-demo/basic/sort/MultiSort.vue#L1-L100)
 - [SortRemote.vue:1-67](file://docs-demo/basic/sort/SortRemote.vue#L1-L67)
 - [CustomSort.vue:1-50](file://docs-demo/basic/sort/CustomSort.vue#L1-L50)
+- [defaultSort.test.js:1-238](file://test/defaultSort.test.js#L1-L238)
+- [setSorter.test.js:1-185](file://test/setSorter.test.js#L1-L185)
 
 ## Performance Considerations
 The new architecture introduces several performance optimizations:
@@ -532,10 +589,16 @@ Common issues with the new multi-column sorting system:
 - **Configuration access**: Access column-specific sortConfig through sortOption
 - **Tree recursion**: Ensure proper handling of sortChildren for hierarchical data
 
+### Default Sort Issues:
+- **Unexpected cycling**: Verify defaultSort.order configuration matches expected behavior
+- **Event timing**: Check that sort-change events fire correctly with default sort scenarios
+- **State persistence**: Ensure default sort state persists across component updates
+
 **Section sources**
 - [useSorter.ts:34-37](file://src/StkTable/useSorter.ts#L34-L37)
 - [useSorter.ts:189-234](file://src/StkTable/useSorter.ts#L189-L234)
 - [StkTable.vue:1007-1020](file://src/StkTable/StkTable.vue#L1007-L1020)
+- [defaultSort.test.js:25-170](file://test/defaultSort.test.js#L25-L170)
 
 ## Conclusion
 The new Stk Table Vue sorting system represents a significant architectural improvement with the introduction of the useSorter hook. The modular design provides comprehensive multi-column sorting capabilities while maintaining excellent performance and developer experience. Key improvements include:
@@ -546,6 +609,8 @@ The new Stk Table Vue sorting system represents a significant architectural impr
 - **Improved integration**: Better integration with table data flow and virtual scrolling
 - **Remote sorting**: Enhanced remote sorting capabilities with comprehensive event handling
 - **Performance optimization**: Optimized for large datasets and complex sorting scenarios
+- **Smart default sort handling**: Enhanced default sort behavior with improved cycling logic
+- **Comprehensive testing**: Added extensive test coverage for default sort scenarios
 
 The new system provides a solid foundation for advanced sorting scenarios while maintaining backward compatibility and ease of use for simple sorting requirements.
 
@@ -555,7 +620,7 @@ The new system provides a solid foundation for advanced sorting scenarios while 
 **Enhanced SortConfig Options**:
 - **multiSort**: Enables multi-column sorting mode (default: false)
 - **multiSortLimit**: Maximum concurrent sorts (default: 3)
-- **Enhanced defaultSort**: Better integration with multi-column scenarios
+- **Enhanced defaultSort**: Better integration with multi-column scenarios and improved cycling behavior
 
 **New useSorter Hook Exposed Methods**:
 - **sortStates**: Reactive array of active sort configurations
@@ -575,7 +640,13 @@ The new system provides a solid foundation for advanced sorting scenarios while 
 - **sortType**: Data type ('number' | 'string')
 - **order**: Current sort order (null | 'asc' | 'desc')
 
+**Smart Default Sort Behavior**:
+- **Default columns**: Cycle through asc→desc→null (skipping null)
+- **Non-default columns**: Cycle through null→desc→asc→null
+- **Better UX**: Immediate feedback with asc order for default sort columns
+
 **Section sources**
 - [types/index.ts:257-267](file://src/StkTable/types/index.ts#L257-L267)
 - [useSorter.ts:261-261](file://src/StkTable/useSorter.ts#L261-L261)
 - [StkTable.vue:1643-1670](file://src/StkTable/StkTable.vue#L1643-L1670)
+- [defaultSort.test.js:25-170](file://test/defaultSort.test.js#L25-L170)
