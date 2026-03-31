@@ -41,6 +41,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@chenglou/pretext": "^0.0.3",
     "@types/mockjs": "^1.0.10",
     "@types/node": "^22.18.10",
     "@typescript-eslint/eslint-plugin": "^7.7.0",

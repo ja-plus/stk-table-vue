@@ -3,7 +3,7 @@
         <button @click="refreshData(1)">refresh</button>
     </div>
     <!-- <StkTableHugeData></StkTableHugeData> -->
-    <div ref="stkTableParent" class="stk-table-parent">
+    <!-- <div ref="stkTableParent" class="stk-table-parent">
         <StkTable
             v-bind="props"
             v-model:columns="columns"
@@ -14,13 +14,15 @@
             :empty-cell-text="({ col }) => (col.dataIndex === 'R' ? '/' : '--')"
             :data-source="dataSource"
         ></StkTable>
-    </div>
+    </div> -->
+    <AutoRowHeight />
 </template>
 
 <script lang="ts" setup>
 import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { StkTable, StkTableColumn } from '../src/StkTable/index';
 import { DragRowConfig, HeaderDragConfig } from '@/StkTable/types';
+import AutoRowHeight from './AutoRowHeight.vue';
 
 const props = ref({
     // showTrHoverClass: true,

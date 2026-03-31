@@ -301,7 +301,7 @@ export function useVirtualScroll(
         let startIndex = 0;
         let endIndex = dataLength;
         let autoRowHeightTop = 0;
-
+        console.log(autoRowHeightMap, 'autoRowHeightMap');
         if (autoRowHeight || hasExpandCol.value) {
             if (autoRowHeight && trRef.value) {
                 // Batch DOM measurements for better performance
@@ -316,6 +316,7 @@ export function useVirtualScroll(
             // calculate startIndex
             for (let i = 0; i < dataLength; i++) {
                 const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
+                console.log('🚀 ~ updateVirtualScrollY ~ height:', height, i);
                 autoRowHeightTop += height;
                 if (autoRowHeightTop >= sTop) {
                     startIndex = i;
