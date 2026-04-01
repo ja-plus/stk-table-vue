@@ -12,7 +12,7 @@ const columns: StkTableColumn<any>[] = [
 ];
 
 const data = new Array(1000).fill(0).map((it, index) => {
-    return { id: index, name: getCellContent({ id: index }), address: 'sss' };
+    return { id: index, name: getCellContent(), address: 'sss' };
 });
 
 onMounted(() => {
@@ -27,16 +27,16 @@ function getCellContent() {
 
 function calculateHeightWithPretext(text: string, width: number): number {
     const prepared = prepare(text, '14px system-ui');
-    const { height } = layout(prepared, width, 20);
+    const { height } = layout(prepared, width, 18);
     return Math.max(height, 28);
 }
 
 // 预计算所有行的行高
 function preCalculateAllRowHeights(data: any[]) {
     const columnWidth = 184; // 列宽
-    data.forEach((row, index) => {
+    data.forEach(row => {
         const height = calculateHeightWithPretext(row.name, columnWidth);
-        stkTableRef.value?.setAutoHeight(index, height);
+        stkTableRef.value?.setAutoHeight(row.id, height);
     });
 }
 </script>
@@ -56,3 +56,8 @@ function preCalculateAllRowHeights(data: any[]) {
         ></StkTable>
     </div>
 </template>
+<style scoped>
+.stk-table {
+    line-height: 18px;
+}
+</style>

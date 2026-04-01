@@ -131,7 +131,7 @@
 
                 <tbody
                     class="stk-tbody-main"
-                    :style="{ transform: `translateY(${virtualScroll.translateY}px)` }"
+                    :style="{ transform: isExperimentalScrollY ? `translateY(${virtualScroll.translateY}px)` : '' }"
                     @click="onCellClick"
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
