@@ -12,21 +12,22 @@
     </p>
 </p>
 
-> Stk Table Vue(Sticky Table) is a high-performance virtual list component based on Vue.
->
-> Used for real-time data display, with data highlighting and dynamic effects
->
-> Support Vue3 and Vue2.7
+Stk Table Vue(Sticky Table) is a high-performance virtual list component based on Vue.
+
+Smooth performance with tens of thousands of rows
+
+Used for real-time data display, with data highlighting and dynamic effects.
+
+Support Vue3 and Vue2.7
 
 
 ## Documentation
-### [Stk Table Vue Official en](https://ja-plus.github.io/stk-table-vue/en/)
-### [Stk Table Vue Official zh-CN](https://ja-plus.github.io/stk-table-vue/)
+### [Stk Table Vue Official](https://ja-plus.github.io/stk-table-vue/)
 
 
 ## Repo: 
 - [Github](https://github.com/ja-plus/stk-table-vue)
-- [Gitee](https://gitee.com/japlus/stk-table-vue) 🇨🇳
+- [Gitee](https://gitee.com/japlus/stk-table-vue)
 
 ## Demo
 [<span style="font-size: 16px;font-weight: bold;">Online Demo in stackblitz</span>](https://stackblitz.com/edit/vitejs-vite-ad91hh?file=src%2FDemo%2Findex.vue)
