@@ -3,16 +3,19 @@ import { AreaSelectionConfig, StkTableColumn } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
 /** 翻页按键 */
-enum ScrollCodes {
-    ArrowUp = 'ArrowUp',
-    ArrowRight = 'ArrowRight',
-    ArrowDown = 'ArrowDown',
-    ArrowLeft = 'ArrowLeft',
-    PageUp = 'PageUp',
-    PageDown = 'PageDown',
-    Home = 'Home',
-    End = 'End',
-}
+const ScrollCodes = {
+    ArrowUp: 'ArrowUp',
+    ArrowRight: 'ArrowRight',
+    ArrowDown: 'ArrowDown',
+    ArrowLeft: 'ArrowLeft',
+    PageUp: 'PageUp',
+    PageDown: 'PageDown',
+    Home: 'Home',
+    End: 'End',
+} as const;
+
+type ScrollCodes = (typeof ScrollCodes)[keyof typeof ScrollCodes];
+
 /** 所有翻页按键数组 */
 const ScrollCodesValues = Object.values(ScrollCodes);
 

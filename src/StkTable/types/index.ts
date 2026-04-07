@@ -267,12 +267,14 @@ export type SortConfig<T extends Record<string, any>> = {
 };
 
 /** th td type */
-export const enum TagType {
-    TH,
-    TD,
+export const TagType = {
+    TH: 0,
+    TD: 1,
     /** tfoot */
-    TF,
-}
+    TF: 2,
+} as const;
+
+export type TagType = (typeof TagType)[keyof typeof TagType];
 
 export type HighlightConfig = {
     /** Duration of the highlight in seconds */

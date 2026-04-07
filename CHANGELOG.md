@@ -1,4 +1,8 @@
 
+## 0.11.8
+* Change
+  - change: all enum types in TypeScript replaced with const. ("erasableSyntaxOnly": true,)
+
 ## 0.11.7
 * Change:
   - change: `AreaSelectionConfig['enabled']` default set `true`.

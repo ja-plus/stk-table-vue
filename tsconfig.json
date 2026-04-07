@@ -12,6 +12,7 @@
         "jsxImportSource": "vue",
         "resolveJsonModule": true,
         "allowSyntheticDefaultImports": true,
+        "erasableSyntaxOnly": true,
         "lib": [
             "ESNext",
             "DOM",
