@@ -163,11 +163,11 @@ export function useColResize<DT extends Record<string, any>>(
         const colKey = colKeyGen.value;
 
         const curCol = tableHeaderLast.value.find(it => colKey(it) === colKey(lastCol));
-        if (!curCol) return;
-        curCol.width = width + 'px';
-
-        emits('update:columns', props.columns.slice());
-        emits('col-resize', { ...curCol });
+        if (curCol) {
+            curCol.width = width + 'px';
+            emits('update:columns', props.columns.slice());
+            emits('col-resize', { ...curCol });
+        }
 
         // 隐藏指示线
         if (colResizeIndicatorRef.value) {

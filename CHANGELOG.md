@@ -2,6 +2,10 @@
 ## 0.11.8
 * Change
   - change: all enum types in TypeScript replaced with const. ("erasableSyntaxOnly": true,)
+* Bugfix
+  - fix: scrollbar prevent memory leaks
+* Optimize
+  - optimize useHighlight code
 
 ## 0.11.7
 * Change:

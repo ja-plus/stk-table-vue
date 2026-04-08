@@ -129,25 +129,24 @@ export function useVirtualScroll(
             // 虚拟横向滚动，固定列要一直保持存在
             const leftCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
             const rightCols: PrivateStkTableColumn<PrivateRowDT>[] = [];
-            /**
-             * 存在问题：
-             * table columns 从多到少时。比方原来的start=5,end=10，现在start=4,end=8。这时候endIndex就超出数组范围了。
-             * FIXME: 如果新列数 < endIndex，此时需要重新计算列startIndex和endIndex。
-             */
             const { startIndex, endIndex } = virtualScrollX.value;
+            // 将索引钳制到列数组范围内，防止列数减少时越界
+            const maxIndex = tableHeaderLastValue.length;
+            const validEndIndex = Math.min(endIndex, maxIndex);
+            const validStartIndex = Math.min(startIndex, maxIndex);
 
             // 左侧固定列，如果在左边不可见区。则需要拿出来放在前面
-            for (let i = 0; i < startIndex; i++) {
+            for (let i = 0; i < validStartIndex; i++) {
                 const col = tableHeaderLastValue[i];
                 if (col?.fixed === 'left') leftCols.push(col);
             }
             // 右侧固定列，如果在右边不可见区。则需要拿出来放在后面
-            for (let i = endIndex; i < tableHeaderLastValue.length; i++) {
+            for (let i = validEndIndex; i < tableHeaderLastValue.length; i++) {
                 const col = tableHeaderLastValue[i];
                 if (col?.fixed === 'right') rightCols.push(col);
             }
 
-            const mainColumns = tableHeaderLastValue.slice(startIndex, endIndex);
+            const mainColumns = tableHeaderLastValue.slice(validStartIndex, validEndIndex);
 
             return leftCols.concat(mainColumns).concat(rightCols);
         }

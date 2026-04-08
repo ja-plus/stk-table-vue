@@ -1,4 +1,4 @@
-import { nextTick, onMounted, onUnmounted, ref, Ref } from 'vue';
+import { nextTick, onMounted, onBeforeUnmount, ref, Ref } from 'vue';
 import type { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 import { rafThrottle, throttle } from './utils/index';
 
@@ -40,6 +40,7 @@ export function useScrollbar(
     let dragStartLeft = 0;
 
     let resizeObserver: ResizeObserver | null = null;
+    let currentDragHandler: ((e: MouseEvent | TouchEvent) => void) | undefined;
 
     const throttledUpdateScrollbar = throttle(() => updateCustomScrollbar(), 200);
     // Use requestAnimationFrame for smoother scrollbar dragging performance
@@ -53,7 +54,9 @@ export function useScrollbar(
         initScrollbar();
     });
 
-    onUnmounted(() => {
+    onBeforeUnmount(() => {
+        // en: Clean up all event listeners to prevent memory leaks
+        onDragEnd();
         resizeObserver?.disconnect();
         resizeObserver = null;
     });
@@ -99,6 +102,8 @@ export function useScrollbar(
     }
 
     function addDragListeners(dragHandler: (e: MouseEvent | TouchEvent) => void) {
+        removeCurrentDragHandlerListeners();
+        currentDragHandler = dragHandler;
         document.addEventListener('mousemove', dragHandler);
         document.addEventListener('mouseup', onDragEnd);
         document.addEventListener('touchmove', dragHandler, { passive: false });
@@ -143,12 +148,17 @@ export function useScrollbar(
     function onDragEnd() {
         isDraggingVertical = false;
         isDraggingHorizontal = false;
-        document.removeEventListener('mousemove', onVerticalDrag);
-        document.removeEventListener('mousemove', onHorizontalDrag);
+        removeCurrentDragHandlerListeners();
         document.removeEventListener('mouseup', onDragEnd);
-        document.removeEventListener('touchmove', onVerticalDrag);
-        document.removeEventListener('touchmove', onHorizontalDrag);
         document.removeEventListener('touchend', onDragEnd);
+    }
+
+    function removeCurrentDragHandlerListeners() {
+        if (currentDragHandler) {
+            document.removeEventListener('mousemove', currentDragHandler);
+            document.removeEventListener('touchmove', currentDragHandler);
+            currentDragHandler = void 0;
+        }
     }
 
     function initScrollbar() {

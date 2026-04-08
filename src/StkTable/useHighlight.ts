@@ -68,15 +68,17 @@ export function useHighlight(props: any, stkTableId: string, tableContainerRef: 
             window.requestAnimationFrame(
                 () => {
                     const nowTs = performance.now();
+                    const keysToDelete: UniqKey[] = [];
                     highlightDimRowsAnimation.forEach((store, rowKeyValue) => {
                         const { ts, duration } = store;
                         const timeOffset = nowTs - ts;
                         if (timeOffset < duration) {
                             updateRowAnimation(rowKeyValue, store, timeOffset);
                         } else {
-                            highlightDimRowsAnimation.delete(rowKeyValue);
+                            keysToDelete.push(rowKeyValue);
                         }
                     });
+                    keysToDelete.forEach(key => highlightDimRowsAnimation.delete(key));
 
                     if (highlightDimRowsAnimation.size) {
                         recursion();

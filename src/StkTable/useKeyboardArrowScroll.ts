@@ -37,9 +37,8 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     /** 检测鼠标是否悬浮在表格体上 */
     let isMouseOver = false;
     watch(virtual_on, val => {
-        if (!val) {
-            removeListeners();
-        } else {
+        removeListeners();
+        if (val) {
             addEventListeners();
         }
     });

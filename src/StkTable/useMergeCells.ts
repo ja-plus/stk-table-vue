@@ -6,7 +6,7 @@ export function useMergeCells(
     tableHeaderLast: ShallowRef<PrivateStkTableColumn<any>[]>,
     rowKeyGen: RowKeyGen,
     colKeyGen: ColKeyGen,
-    virtual_dataSourcePart: ShallowRef<any[]>
+    virtual_dataSourcePart: ShallowRef<any[]>,
 ) {
     /**
      * which cell need be hidden
@@ -99,7 +99,7 @@ export function useMergeCells(
         const rowKey = rowKeyGen(row);
 
         const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
-        if (curRowIndex === -1) return;
+        if (curRowIndex < 0) return;
 
         const colKey = colKeyGen.value(col);
         const mergedCellKey = pureCellKeyGen(rowKey, colKey);
