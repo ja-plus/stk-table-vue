@@ -7,24 +7,34 @@
 - [useFixedCol.ts](file://src/StkTable/useFixedCol.ts)
 - [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts)
 - [useGetFixedColPosition.ts](file://src/StkTable/useGetFixedColPosition.ts)
+- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts)
 - [constRefUtils.ts](file://src/StkTable/utils/constRefUtils.ts)
 - [index.ts](file://src/StkTable/types/index.ts)
 - [ColResizable.vue](file://docs-demo/advanced/column-resize/ColResizable.vue)
+- [ColResizableFullHack.vue](file://docs-demo/advanced/column-resize/ColResizableFullHack.vue)
 - [ColumnWidth.vue](file://docs-demo/basic/column-width/ColumnWidth.vue)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Enhanced Column Resizing System section with improved null checking and edge case handling
+- Added Virtual Data Source Indexing section for better virtual scrolling column management
+- Updated troubleshooting guide with new edge case scenarios
+- Improved error handling documentation for virtual data source operations
 
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [System Architecture](#system-architecture)
 3. [Core Components](#core-components)
 4. [Column Processing Engine](#column-processing-engine)
-5. [Column Resizing System](#column-resizing-system)
-6. [Fixed Column Management](#fixed-column-management)
-7. [Column Width Calculation](#column-width-calculation)
-8. [Integration Examples](#integration-examples)
-9. [Performance Considerations](#performance-considerations)
-10. [Troubleshooting Guide](#troubleshooting-guide)
-11. [Conclusion](#conclusion)
+5. [Enhanced Column Resizing System](#enhanced-column-resizing-system)
+6. [Virtual Data Source Indexing](#virtual-data-source-indexing)
+7. [Fixed Column Management](#fixed-column-management)
+8. [Column Width Calculation](#column-width-calculation)
+9. [Integration Examples](#integration-examples)
+10. [Performance Considerations](#performance-considerations)
+11. [Troubleshooting Guide](#troubleshooting-guide)
+12. [Conclusion](#conclusion)
 
 ## Introduction
 
@@ -40,30 +50,34 @@ The Column Management System follows a modular architecture with clear separatio
 graph TB
 subgraph "Column Management Core"
 A[useTableColumns] --> B[Column Processing Engine]
-C[useColResize] --> D[Column Resizing System]
+C[useColResize] --> D[Enhanced Column Resizing System]
 E[useFixedCol] --> F[Fixed Column Manager]
 G[useFixedStyle] --> H[Fixed Style Generator]
 I[useGetFixedColPosition] --> J[Position Calculator]
+K[useVirtualScroll] --> L[Virtual Data Source Indexing]
 end
 subgraph "Utility Layer"
-K[constRefUtils] --> L[Width Calculations]
-M[index.ts] --> N[Type Definitions]
+M[constRefUtils] --> N[Width Calculations]
+O[index.ts] --> P[Type Definitions]
 end
 subgraph "Demo Integration"
-O[ColResizable.vue] --> P[Live Examples]
-Q[ColumnWidth.vue] --> R[Usage Patterns]
+Q[ColResizable.vue] --> R[Live Examples]
+S[ColResizableFullHack.vue] --> T[Advanced Configurations]
+U[ColumnWidth.vue] --> V[Usage Patterns]
 end
-B --> L
-D --> L
+B --> N
+D --> N
 F --> J
 H --> J
 L --> N
+N --> P
 ```
 
 **Diagram sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L15-L137)
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L29-L214)
-- [useFixedCol.ts](file://src/StkTable/useFixedCol.ts#L19-L155)
+- [useTableColumns.ts:15-130](file://src/StkTable/useTableColumns.ts#L15-L130)
+- [useColResize.ts:29-201](file://src/StkTable/useColResize.ts#L29-L201)
+- [useFixedCol.ts:19-155](file://src/StkTable/useFixedCol.ts#L19-L155)
+- [useVirtualScroll.ts:126-154](file://src/StkTable/useVirtualScroll.ts#L126-L154)
 
 ## Core Components
 
@@ -104,16 +118,18 @@ ColumnNode --> ColumnNode : parent-child relationship
 ```
 
 **Diagram sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L38-L130)
-- [index.ts](file://src/StkTable/types/index.ts#L54-L138)
+- [useTableColumns.ts:38-130](file://src/StkTable/useTableColumns.ts#L38-L130)
+- [index.ts:54-138](file://src/StkTable/types/index.ts#L54-L138)
 
 **Section sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L15-L137)
-- [index.ts](file://src/StkTable/types/index.ts#L54-L138)
+- [useTableColumns.ts:15-137](file://src/StkTable/useTableColumns.ts#L15-L137)
+- [index.ts:54-138](file://src/StkTable/types/index.ts#L54-L138)
 
-### Column Resizing System
+## Enhanced Column Resizing System
 
-The Column Resizing System provides interactive column width adjustment capabilities with support for both left and right resize handles, minimum width constraints, and visual feedback during resizing operations.
+**Updated** Enhanced with improved null checking and better edge case handling for virtual data source indexing
+
+The Column Resizing System provides interactive column width adjustment capabilities with support for both left and right resize handles, minimum width constraints, and visual feedback during resizing operations. Recent enhancements include robust null checking and improved edge case handling.
 
 ```mermaid
 sequenceDiagram
@@ -124,99 +140,28 @@ participant Indicator as Resize Indicator
 participant Events as Event System
 User->>ResizeHook : Mouse Down on Resize Handle
 ResizeHook->>Table : Get Container Position
-ResizeHook->>ResizeHook : Calculate Resize State
+ResizeHook->>ResizeHook : Calculate Resize State with Null Checks
 ResizeHook->>Indicator : Show Visual Feedback
 Events->>ResizeHook : Mouse Move Event
-ResizeHook->>Indicator : Update Position
+ResizeHook->>Indicator : Update Position with Edge Case Handling
 Events->>ResizeHook : Mouse Up Event
-ResizeHook->>Table : Update Column Width
+ResizeHook->>Table : Update Column Width with Validation
 ResizeHook->>Events : Emit Resize Event
 ResizeHook->>Indicator : Hide Visual Feedback
 ```
 
 **Diagram sources**
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L83-L198)
+- [useColResize.ts:73-188](file://src/StkTable/useColResize.ts#L73-L188)
 
-**Section sources**
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L29-L214)
+### Enhanced Resize State Management
 
-### Fixed Column Management
-
-The Fixed Column Management system handles the positioning, styling, and shadow effects of fixed columns in both normal and virtual scrolling modes.
-
-```mermaid
-flowchart TD
-Start([Fixed Column Processing]) --> CheckMode{Check Scroll Mode}
-CheckMode --> |Normal Scroll| NormalCalc[Calculate Fixed Positions]
-CheckMode --> |Virtual Scroll| VirtualCalc[Calculate Virtual Positions]
-NormalCalc --> LeftCols[Process Left Fixed Columns]
-NormalCalc --> RightCols[Process Right Fixed Columns]
-VirtualCalc --> LeftVirtual[Process Left Virtual Fixed]
-VirtualCalc --> RightVirtual[Process Right Virtual Fixed]
-LeftCols --> PositionCalc[Calculate Position Values]
-RightCols --> PositionCalc
-LeftVirtual --> PositionCalc
-RightVirtual --> PositionCalc
-PositionCalc --> ShadowCalc[Calculate Shadow Effects]
-ShadowCalc --> StyleApply[Apply Fixed Styles]
-StyleApply --> End([Fixed Columns Ready])
-```
-
-**Diagram sources**
-- [useFixedCol.ts](file://src/StkTable/useFixedCol.ts#L91-L145)
-- [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts#L34-L72)
-
-**Section sources**
-- [useFixedCol.ts](file://src/StkTable/useFixedCol.ts#L19-L155)
-- [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts#L19-L75)
-
-## Column Processing Engine
-
-### Multi-Level Header Processing
-
-The system supports complex multi-level header structures with automatic row span and column span calculation. The processing algorithm uses a depth-first search approach to traverse nested column configurations.
-
-```mermaid
-flowchart TD
-Input[Input Columns Array] --> Validate{Validate Input}
-Validate --> |Valid| CalcDepth[Calculate Header Depth]
-Validate --> |Invalid| Error[Throw Error]
-CalcDepth --> InitArrays[Initialize Header Arrays]
-InitArrays --> DFS[Depth-First Search]
-DFS --> ProcessNode[Process Current Node]
-ProcessNode --> HasChildren{Has Children?}
-HasChildren --> |Yes| Recurse[Recurse to Children]
-HasChildren --> |No| CalcLeaf[Calculate Leaf Width]
-Recurse --> Backtrack[Backtrack to Parent]
-CalcLeaf --> Backtrack
-Backtrack --> UpdateStats[Update Width Statistics]
-UpdateStats --> NextNode[Process Next Node]
-NextNode --> DFS
-DFS --> Complete[Complete Processing]
-Complete --> Output[Output Processed Headers]
-```
-
-**Diagram sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L80-L125)
-
-### Column Flattening Algorithm
-
-The column flattening process transforms hierarchical column configurations into flat arrays organized by header depth level, enabling efficient rendering and positioning calculations.
-
-**Section sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L38-L130)
-
-## Column Resizing System
-
-### Resize State Management
-
-The resize system maintains comprehensive state information including current resizing column, mouse position tracking, and resize direction calculations.
+The resize system now includes comprehensive null checking and edge case validation:
 
 ```mermaid
 classDiagram
 class ColResizeState {
-+currentCol : StkTableColumn
-+lastCol : StkTableColumn
++currentCol : StkTableColumn|null
++lastCol : StkTableColumn|null
 +startX : number
 +startOffsetTableX : number
 +revertMoveX : boolean
@@ -233,20 +178,70 @@ class ResizeEventHandlers {
 +initColResizeEvent() : void
 +clearColResizeEvent() : void
 }
+class EnhancedValidation {
++validateColumn(column) : boolean
++checkNullSafety(value) : boolean
++handleEdgeCases() : void
+}
 ColResizeState --> ResizeEventHandlers : manages
 ResizeConfig --> ResizeEventHandlers : configures
+EnhancedValidation --> ResizeEventHandlers : validates
 ```
 
 **Diagram sources**
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L5-L48)
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L83-L198)
-
-### Resize Constraints and Validation
-
-The system enforces strict width constraints ensuring columns maintain minimum and maximum width limits during resizing operations.
+- [useColResize.ts:5-48](file://src/StkTable/useColResize.ts#L5-L48)
+- [useColResize.ts:73-188](file://src/StkTable/useColResize.ts#L73-L188)
 
 **Section sources**
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L141-L198)
+- [useColResize.ts:29-201](file://src/StkTable/useColResize.ts#L29-L201)
+
+### Improved Null Checking and Edge Case Handling
+
+Recent enhancements include:
+
+- **Null Safety**: All column operations now include null checks before accessing column properties
+- **Edge Case Validation**: Enhanced validation for virtual data source indexing scenarios
+- **Graceful Degradation**: Improved error handling when columns become unavailable during resize operations
+- **Type Safety**: Enhanced TypeScript definitions for better compile-time safety
+
+**Section sources**
+- [useColResize.ts:73-188](file://src/StkTable/useColResize.ts#L73-L188)
+
+## Virtual Data Source Indexing
+
+**New Section** Added to document enhanced virtual data source indexing capabilities
+
+The Virtual Data Source Indexing system provides robust column management for virtual scrolling environments with enhanced edge case handling and null checking.
+
+```mermaid
+flowchart TD
+Start([Virtual Column Processing]) --> CheckMode{Check Virtual Mode}
+CheckMode --> |Virtual X| VirtualPath[Process Virtual Columns]
+CheckMode --> |Normal| NormalPath[Process Normal Columns]
+VirtualPath --> IndexClamp[Index Clamp to Array Bounds]
+IndexClamp --> EdgeCheck{Check Edge Cases}
+EdgeCheck --> |Null Columns| SafeAccess[Safe Column Access]
+EdgeCheck --> |Valid Columns| ProcessCols[Process Columns]
+SafeAccess --> FixedCols[Handle Fixed Columns]
+ProcessCols --> FixedCols
+NormalPath --> End([Return Columns])
+FixedCols --> End
+```
+
+**Diagram sources**
+- [useVirtualScroll.ts:126-154](file://src/StkTable/useVirtualScroll.ts#L126-L154)
+
+### Enhanced Index Clamping and Null Safety
+
+The virtual scrolling system now includes:
+
+- **Index Clamping**: Automatic clamping of start and end indices to array bounds
+- **Null Column Handling**: Safe access to columns with null checks
+- **Edge Case Protection**: Robust handling of dynamic column count changes
+- **Fixed Column Preservation**: Ensures fixed columns remain visible during virtual scrolling
+
+**Section sources**
+- [useVirtualScroll.ts:126-154](file://src/StkTable/useVirtualScroll.ts#L126-L154)
 
 ## Fixed Column Management
 
@@ -270,12 +265,12 @@ end
 ```
 
 **Diagram sources**
-- [useGetFixedColPosition.ts](file://src/StkTable/useGetFixedColPosition.ts#L23-L61)
+- [useGetFixedColPosition.ts:23-61](file://src/StkTable/useGetFixedColPosition.ts#L23-L61)
 
 **Section sources**
-- [useFixedCol.ts](file://src/StkTable/useFixedCol.ts#L91-L145)
-- [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts#L34-L72)
-- [useGetFixedColPosition.ts](file://src/StkTable/useGetFixedColPosition.ts#L15-L65)
+- [useFixedCol.ts:91-145](file://src/StkTable/useFixedCol.ts#L91-L145)
+- [useFixedStyle.ts:34-72](file://src/StkTable/useFixedStyle.ts#L34-L72)
+- [useGetFixedColPosition.ts:15-65](file://src/StkTable/useGetFixedColPosition.ts#L15-L65)
 
 ## Column Width Calculation
 
@@ -302,26 +297,27 @@ CheckWidthFallback --> |No| UseDefault
 ```
 
 **Diagram sources**
-- [constRefUtils.ts](file://src/StkTable/utils/constRefUtils.ts#L9-L20)
+- [constRefUtils.ts:9-20](file://src/StkTable/utils/constRefUtils.ts#L9-L20)
 
 **Section sources**
-- [constRefUtils.ts](file://src/StkTable/utils/constRefUtils.ts#L1-L30)
+- [constRefUtils.ts:1-30](file://src/StkTable/utils/constRefUtils.ts#L1-L30)
 
 ## Integration Examples
 
 ### Live Resizing Demo
 
-The column resizing functionality is demonstrated through a comprehensive live demo showcasing real-time column width adjustments with visual feedback and persistent state updates.
+The column resizing functionality is demonstrated through comprehensive live demos showcasing real-time column width adjustments with visual feedback and persistent state updates.
 
 **Section sources**
-- [ColResizable.vue](file://docs-demo/advanced/column-resize/ColResizable.vue#L1-L46)
+- [ColResizable.vue:1-46](file://docs-demo/advanced/column-resize/ColResizable.vue#L1-L46)
+- [ColResizableFullHack.vue:1-51](file://docs-demo/advanced/column-resize/ColResizableFullHack.vue#L1-L51)
 
 ### Column Width Configuration
 
 The basic column width demonstration showcases various width configuration options including fixed widths, maximum width constraints, and responsive behavior in virtual scrolling environments.
 
 **Section sources**
-- [ColumnWidth.vue](file://docs-demo/basic/column-width/ColumnWidth.vue#L1-L46)
+- [ColumnWidth.vue:1-46](file://docs-demo/basic/column-width/ColumnWidth.vue#L1-L46)
 
 ## Performance Considerations
 
@@ -333,6 +329,7 @@ The column management system implements several performance optimizations includ
 - **Efficient Data Structures**: Shallow refs and optimized arrays reduce memory overhead
 - **Batch Updates**: Grouped operations prevent excessive re-renders
 - **Constraint Validation**: Early exit conditions avoid redundant processing
+- **Enhanced Null Checking**: Reduced error handling overhead through proactive null safety
 
 ### Memory Management
 
@@ -341,6 +338,7 @@ The system employs careful memory management strategies:
 - **WeakMap Usage**: Reference-based storage for internal relationships
 - **Computed Caching**: Memoized calculations prevent repeated computations
 - **Event Cleanup**: Proper event listener management prevents memory leaks
+- **Virtual Scrolling Optimization**: Efficient column indexing reduces memory footprint
 
 ## Troubleshooting Guide
 
@@ -362,13 +360,22 @@ The system employs careful memory management strategies:
 - Issue: Unexpected column widths in virtual mode
 - Solution: Verify minWidth vs width priority and default value fallbacks
 
+**Enhanced Edge Case Handling**
+- Issue: Column resize fails with dynamic column changes
+- Solution: Ensure proper null checking and index validation in virtual environments
+- Issue: Fixed columns disappear during virtual scrolling
+- Solution: Verify index clamping and edge case protection mechanisms
+
 **Section sources**
-- [useTableColumns.ts](file://src/StkTable/useTableColumns.ts#L65-L67)
-- [useColResize.ts](file://src/StkTable/useColResize.ts#L151-L153)
+- [useTableColumns.ts:65-67](file://src/StkTable/useTableColumns.ts#L65-L67)
+- [useColResize.ts:151-153](file://src/StkTable/useColResize.ts#L151-L153)
+- [useVirtualScroll.ts:133-136](file://src/StkTable/useVirtualScroll.ts#L133-L136)
 
 ## Conclusion
 
 The Column Management System provides a comprehensive solution for handling complex table column scenarios in modern web applications. Its modular architecture, robust processing engine, and extensive configuration options make it suitable for a wide range of use cases from simple data tables to complex analytical interfaces.
+
+The recent enhancements to the column resizing system with improved null checking and better edge case handling for virtual data source indexing significantly improve the system's reliability and performance. These improvements ensure that column operations remain stable even under challenging conditions such as dynamic column changes, virtual scrolling environments, and edge case scenarios.
 
 The system's emphasis on performance, accessibility, and developer experience ensures reliable operation across diverse environments while maintaining flexibility for customization. The integration with Vue's reactivity system enables seamless updates and optimal rendering performance.
 
