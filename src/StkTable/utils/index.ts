@@ -266,7 +266,7 @@ export function throttle<T extends (...args: any[]) => any>(fn: T, delay: number
     let timer: number;
     let lastArgs: Parameters<T> | null = null;
 
-    const callFn = function () {
+    const callFn = () => {
         if (lastArgs) {
             fn(...lastArgs);
             lastArgs = null;
@@ -295,7 +295,7 @@ export function rafThrottle<T extends (...args: any[]) => any>(fn: T): (...args:
     let rafId: number | null = null;
     let lastArgs: Parameters<T> | null = null;
 
-    const callFn = function () {
+    const callFn = () => {
         if (lastArgs) {
             fn(...lastArgs);
             lastArgs = null;

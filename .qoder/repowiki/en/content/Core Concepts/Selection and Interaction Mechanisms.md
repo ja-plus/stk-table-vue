@@ -6,12 +6,22 @@
 - [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts)
 - [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts)
 - [useHighlight.ts](file://src/StkTable/useHighlight.ts)
+- [useAreaSelection.ts](file://src/StkTable/features/useAreaSelection.ts)
 - [types/index.ts](file://src/StkTable/types/index.ts)
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 - [DragSelection.vue](file://docs-demo/advanced/drag-selection/DragSelection.vue)
 - [RowCellHoverSelect.vue](file://docs-demo/basic/row-cell-mouse-event/RowCellHoverSelect.vue)
 - [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue)
+- [Default.vue](file://docs-demo/basic/empty/Default.vue)
+- [NoDataFull.vue](file://docs-demo/basic/empty/NoDataFull.vue)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added new section on Empty Data State Synchronization
+- Updated existing sections to reflect improved selection state management
+- Enhanced troubleshooting guide with empty data handling scenarios
+- Added practical examples demonstrating empty data state behavior
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -19,11 +29,12 @@
 3. [Core Components](#core-components)
 4. [Architecture Overview](#architecture-overview)
 5. [Detailed Component Analysis](#detailed-component-analysis)
-6. [Dependency Analysis](#dependency-analysis)
-7. [Performance Considerations](#performance-considerations)
-8. [Troubleshooting Guide](#troubleshooting-guide)
-9. [Conclusion](#conclusion)
-10. [Appendices](#appendices)
+6. [Empty Data State Synchronization](#empty-data-state-synchronization)
+7. [Dependency Analysis](#dependency-analysis)
+8. [Performance Considerations](#performance-considerations)
+9. [Troubleshooting Guide](#troubleshooting-guide)
+10. [Conclusion](#conclusion)
+11. [Appendices](#appendices)
 
 ## Introduction
 This document explains the selection and interaction mechanisms of the table, focusing on:
@@ -31,6 +42,7 @@ This document explains the selection and interaction mechanisms of the table, fo
 - Keyboard navigation and shortcuts
 - Multi-selection via Shift drag and drag selection ranges
 - Selection state management and persistence across virtual scrolling
+- **Updated**: Automatic selection state synchronization with empty data handling
 - Accessibility and integration with highlighting and drag-and-drop
 - Practical examples and performance guidance for large datasets
 
@@ -41,68 +53,78 @@ The selection and interaction features are implemented as composable hooks integ
 - Virtual scrolling engine that renders only visible items
 - Highlighting utilities for visual feedback
 - Types and configuration interfaces for selection and interaction
+- **Updated**: Area selection feature with automatic empty data state cleanup
 
 ```mermaid
 graph TB
 STK["StkTable.vue"]
 UCS["useCellSelection.ts"]
+UAS["useAreaSelection.ts"]
 UKA["useKeyboardArrowScroll.ts"]
 UV["useVirtualScroll.ts"]
 UHL["useHighlight.ts"]
 TIDX["types/index.ts"]
 STK --> UCS
+STK --> UAS
 STK --> UKA
 STK --> UV
 STK --> UHL
 UCS --> TIDX
+UAS --> TIDX
 UKA --> UV
 UV --> TIDX
 ```
 
 **Diagram sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L265-L265)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L51)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L69)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L27)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
+- [StkTable.vue:265-265](file://src/StkTable/StkTable.vue#L265-L265)
+- [useCellSelection.ts:42-51](file://src/StkTable/useCellSelection.ts#L42-L51)
+- [useAreaSelection.ts:13-24](file://src/StkTable/features/useAreaSelection.ts#L13-L24)
+- [useKeyboardArrowScroll.ts:32-35](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
+- [useVirtualScroll.ts:60-69](file://src/StkTable/useVirtualScroll.ts#L60-L69)
+- [useHighlight.ts:27-27](file://src/StkTable/useHighlight.ts#L27-L27)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L265-L265)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L51)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L69)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L27)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
+- [StkTable.vue:265-265](file://src/StkTable/StkTable.vue#L265-L265)
+- [useCellSelection.ts:42-51](file://src/StkTable/useCellSelection.ts#L42-L51)
+- [useAreaSelection.ts:13-24](file://src/StkTable/features/useAreaSelection.ts#L13-L24)
+- [useKeyboardArrowScroll.ts:32-35](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
+- [useVirtualScroll.ts:60-69](file://src/StkTable/useVirtualScroll.ts#L60-L69)
+- [useHighlight.ts:27-27](file://src/StkTable/useHighlight.ts#L27-L27)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
 
 ## Core Components
 - Cell selection manager: Provides drag-to-select ranges, Shift multi-range extension, keyboard shortcuts (copy and cancel), and selection classes for rendering.
+- **Updated**: Area selection manager: Comprehensive cell selection with keyboard navigation, copy/paste functionality, and automatic empty data state cleanup.
 - Keyboard arrow navigation: Handles arrow/page/home/end keys while ensuring the mouse is hovering over the table body.
 - Virtual scrolling: Renders only visible rows/columns and manages offsets and indices for large datasets.
 - Highlighting: Adds animated highlights for rows and cells, including integration with virtual scrolling.
 - Types: Defines selection range, configuration, and callbacks for selection behavior.
 
 **Section sources**
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L456)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L112)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L497)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L257)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
+- [useCellSelection.ts:42-456](file://src/StkTable/useCellSelection.ts#L42-L456)
+- [useAreaSelection.ts:13-781](file://src/StkTable/features/useAreaSelection.ts#L13-L781)
+- [useKeyboardArrowScroll.ts:32-112](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L112)
+- [useVirtualScroll.ts:60-497](file://src/StkTable/useVirtualScroll.ts#L60-L497)
+- [useHighlight.ts:27-257](file://src/StkTable/useHighlight.ts#L27-L257)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
 
 ## Architecture Overview
 The selection and interaction pipeline integrates the following:
 - The table registers listeners for mouse and keyboard events.
 - Cell selection tracks the anchor point and updates the selection range as the mouse moves.
+- **Updated**: Area selection provides comprehensive selection management with automatic cleanup.
 - During drag selection, the system auto-scrolls the container near edges using requestAnimationFrame.
 - When the mouse is released, a selection change event is emitted with the normalized range and sliced rows/columns.
 - Keyboard arrow navigation scrolls the virtual viewport when the mouse is hovering over the table body.
 - Highlighting utilities animate row/cell highlights independently of selection.
+- **Updated**: Empty data state triggers automatic selection clearing to prevent visual artifacts.
 
 ```mermaid
 sequenceDiagram
 participant User as "User"
 participant Table as "StkTable.vue"
-participant Sel as "useCellSelection.ts"
+participant Sel as "useAreaSelection.ts"
 participant Virt as "useVirtualScroll.ts"
 participant Doc as "Document"
 User->>Table : "MouseDown on cell"
@@ -116,16 +138,16 @@ Sel->>Sel : "checkAutoScroll()"
 User->>Doc : "MouseUp"
 Doc-->>Sel : "onDocumentMouseUp()"
 Sel->>Table : "emitSelectionChange(range, {rows, cols})"
-Table-->>User : "cell-selection-change event"
+Table-->>User : "area-selection-change event"
+Note over Table,Sel : "When dataSource becomes empty : <br/>clearSelectedArea() called<br/>to prevent visual artifacts"
 ```
 
 **Diagram sources**
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L137-L172)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L174-L186)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L214-L282)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L319-L330)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L332-L345)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L616-L620)
+- [useAreaSelection.ts:303-338](file://src/StkTable/features/useAreaSelection.ts#L303-L338)
+- [useAreaSelection.ts:341-352](file://src/StkTable/features/useAreaSelection.ts#L341-L352)
+- [useAreaSelection.ts:466-476](file://src/StkTable/features/useAreaSelection.ts#L466-L476)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
 
 ## Detailed Component Analysis
 
@@ -159,15 +181,65 @@ Emit --> End(["Done"])
 ```
 
 **Diagram sources**
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L137-L172)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L174-L186)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L214-L282)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L319-L345)
+- [useCellSelection.ts:137-172](file://src/StkTable/useCellSelection.ts#L137-L172)
+- [useCellSelection.ts:174-186](file://src/StkTable/useCellSelection.ts#L174-L186)
+- [useCellSelection.ts:214-282](file://src/StkTable/useCellSelection.ts#L214-L282)
+- [useCellSelection.ts:319-345](file://src/StkTable/useCellSelection.ts#L319-L345)
 
 **Section sources**
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L456)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
-- [DragSelection.vue](file://docs-demo/advanced/drag-selection/DragSelection.vue#L1-L59)
+- [useCellSelection.ts:42-456](file://src/StkTable/useCellSelection.ts#L42-L456)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
+- [DragSelection.vue:1-59](file://docs-demo/advanced/drag-selection/DragSelection.vue#L1-L59)
+
+### Area Selection Manager
+**Updated**: Comprehensive selection management with automatic empty data state handling.
+
+Responsibilities:
+- Track selection range with anchor and end points
+- Normalize selection bounds for consistent rendering
+- Compute selected cell keys for fast lookup
+- Provide keyboard shortcuts (Ctrl/Cmd+C to copy, Escape to clear)
+- **Enhanced**: Automatic selection clearing when dataSource becomes empty
+- Emit selection change events with sliced rows and columns
+- Provide helper classes for rendering selection borders
+- Auto-scroll the container when dragging near edges
+- Support for keyboard navigation and Tab key wrapping
+
+Key behaviors:
+- Anchor-based selection: On mousedown, set anchor; on Shift+drag, extend selection from anchor.
+- Edge auto-scroll: When mouse approaches container edges, scroll smoothly using requestAnimationFrame and elementFromPoint to resolve the hovered cell.
+- Clipboard copy: Build tab-separated text from the selected rectangle, optionally formatting via a callback.
+- **New**: Empty data synchronization: Automatically clears selection state when dataSource array length becomes zero.
+
+```mermaid
+flowchart TD
+Start(["MouseDown"]) --> SetAnchor["Set anchor cell"]
+SetAnchor --> StartDrag["Start dragging"]
+StartDrag --> Move["MouseMove updates selection"]
+Move --> NearEdge{"Near container edge?"}
+NearEdge --> |Yes| AutoScroll["requestAnimationFrame scroll loop"]
+NearEdge --> |No| Continue["Continue selection"]
+AutoScroll --> Continue
+Continue --> Release["MouseUp"]
+Release --> Emit["Emit selection change"]
+Emit --> End(["Done"])
+EmptyCheck{"DataSource empty?"}
+EmptyCheck --> |Yes| ClearSel["clearSelectedArea()"]
+EmptyCheck --> |No| Continue
+ClearSel --> End
+```
+
+**Diagram sources**
+- [useAreaSelection.ts:303-338](file://src/StkTable/features/useAreaSelection.ts#L303-L338)
+- [useAreaSelection.ts:341-352](file://src/StkTable/features/useAreaSelection.ts#L341-L352)
+- [useAreaSelection.ts:466-476](file://src/StkTable/features/useAreaSelection.ts#L466-L476)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
+
+**Section sources**
+- [useAreaSelection.ts:13-781](file://src/StkTable/features/useAreaSelection.ts#L13-L781)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
+- [DragSelection.vue:1-59](file://docs-demo/advanced/drag-selection/DragSelection.vue#L1-L59)
 
 ### Keyboard Navigation and Shortcuts
 - Arrow keys move the viewport by single row height or 50px horizontally.
@@ -190,13 +262,13 @@ Table-->>User : "Viewport scrolled"
 ```
 
 **Diagram sources**
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L65-L96)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L72-L81)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L273-L406)
+- [useKeyboardArrowScroll.ts:65-96](file://src/StkTable/useKeyboardArrowScroll.ts#L65-L96)
+- [useVirtualScroll.ts:72-81](file://src/StkTable/useVirtualScroll.ts#L72-L81)
+- [useVirtualScroll.ts:273-406](file://src/StkTable/useVirtualScroll.ts#L273-L406)
 
 **Section sources**
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L112)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L72-L81)
+- [useKeyboardArrowScroll.ts:32-112](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L112)
+- [useVirtualScroll.ts:72-81](file://src/StkTable/useVirtualScroll.ts#L72-L81)
 
 ### Virtual Scrolling and Selection Persistence
 - Virtual scrolling computes visible rows and columns, offsets, and page sizes.
@@ -215,15 +287,15 @@ Slice --> Persist["Selection persists across scroll"]
 ```
 
 **Diagram sources**
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L195-L228)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L413-L477)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L17-L24)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L332-L345)
+- [useVirtualScroll.ts:195-228](file://src/StkTable/useVirtualScroll.ts#L195-L228)
+- [useVirtualScroll.ts:413-477](file://src/StkTable/useVirtualScroll.ts#L413-L477)
+- [useCellSelection.ts:17-24](file://src/StkTable/useCellSelection.ts#L17-L24)
+- [useCellSelection.ts:332-345](file://src/StkTable/useCellSelection.ts#L332-L345)
 
 **Section sources**
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L497)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L17-L24)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L332-L345)
+- [useVirtualScroll.ts:60-497](file://src/StkTable/useVirtualScroll.ts#L60-L497)
+- [useCellSelection.ts:17-24](file://src/StkTable/useCellSelection.ts#L17-L24)
+- [useCellSelection.ts:332-345](file://src/StkTable/useCellSelection.ts#L332-L345)
 
 ### Highlighting Integration
 - Highlights can be applied to cells or entire rows with configurable duration and FPS.
@@ -242,13 +314,13 @@ HL-->>App : "Highlight completes"
 ```
 
 **Diagram sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L133-L166)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L144-L153)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L17-L28)
+- [useHighlight.ts:133-166](file://src/StkTable/useHighlight.ts#L133-L166)
+- [useHighlight.ts:144-153](file://src/StkTable/useHighlight.ts#L144-L153)
+- [Highlight.vue:17-28](file://docs-demo/advanced/highlight/Highlight.vue#L17-L28)
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L257)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
+- [useHighlight.ts:27-257](file://src/StkTable/useHighlight.ts#L27-L257)
+- [Highlight.vue:1-76](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
 
 ### Drag-and-Drop Integration
 - The table supports row drag-and-drop and header drag-and-drop.
@@ -256,8 +328,8 @@ HL-->>App : "Highlight completes"
 - Dragging rows does not alter the cell selection state; they are orthogonal features.
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L771-L771)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L769-L771)
+- [StkTable.vue:771-771](file://src/StkTable/StkTable.vue#L771-L771)
+- [StkTable.vue:769-771](file://src/StkTable/StkTable.vue#L769-L771)
 
 ### Accessibility and Keyboard Shortcuts
 - The table container can receive focus when cell selection is enabled, enabling keyboard shortcuts.
@@ -267,46 +339,91 @@ HL-->>App : "Highlight completes"
 - Keyboard arrow navigation requires the mouse to be hovering over the table body.
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L30-L30)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L357-L401)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L69-L70)
+- [StkTable.vue:30-30](file://src/StkTable/StkTable.vue#L30-L30)
+- [useCellSelection.ts:357-401](file://src/StkTable/useCellSelection.ts#L357-L401)
+- [useKeyboardArrowScroll.ts:69-70](file://src/StkTable/useKeyboardArrowScroll.ts#L69-L70)
+
+## Empty Data State Synchronization
+**New Section**: Automatic selection state management when data becomes empty.
+
+The table now automatically synchronizes selection state with empty data conditions to prevent visual artifacts and maintain consistent user experience.
+
+Key Features:
+- Automatic selection clearing: When dataSource prop becomes empty (length === 0), the selection state is automatically cleared
+- Prevents visual artifacts: No more highlighted cells or selection borders when no data is present
+- Seamless user experience: Selection state reflects actual data availability
+- Integration with area selection: Works with both simple cell selection and comprehensive area selection
+
+Implementation Details:
+- Trigger point: The synchronization occurs in the `updateDataSource` function when checking for empty arrays
+- Method called: `clearSelectedArea()` function from the area selection manager
+- Timing: Executed before virtual scroll initialization to ensure clean state
+- Scope: Affects both simple cell selection and area selection modes
+
+```mermaid
+flowchart TD
+DataSource["updateDataSource(val)"] --> CheckEmpty{"!val.length?"}
+CheckEmpty --> |Yes| ClearArea["clearSelectedArea()"]
+CheckEmpty --> |No| Continue["Continue normal processing"]
+ClearArea --> InitVirtual["initVirtualScrollY()"]
+Continue --> InitVirtual
+InitVirtual --> End["Processing complete"]
+```
+
+**Diagram sources**
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)
+
+**Section sources**
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)
+- [Default.vue](file://docs-demo/basic/empty/Default.vue#L16)
+- [NoDataFull.vue](file://docs-demo/basic/empty/NoDataFull.vue#L26)
 
 ## Dependency Analysis
-- StkTable.vue composes useCellSelection, useKeyboardArrowScroll, useVirtualScroll, and useHighlight.
+- StkTable.vue composes useCellSelection, useAreaSelection, useKeyboardArrowScroll, useVirtualScroll, and useHighlight.
 - useCellSelection depends on types for selection range and configuration.
+- **Updated**: useAreaSelection depends on area selection configuration and provides automatic empty data state cleanup.
 - useKeyboardArrowScroll depends on useVirtualScroll stores for scroll calculations.
 - useVirtualScroll provides stores consumed by both selection and keyboard navigation.
 
 ```mermaid
 graph LR
 STK["StkTable.vue"] --> UCS["useCellSelection.ts"]
+STK --> UAS["useAreaSelection.ts"]
 STK --> UKA["useKeyboardArrowScroll.ts"]
 STK --> UV["useVirtualScroll.ts"]
 STK --> UHL["useHighlight.ts"]
 UCS --> TIDX["types/index.ts"]
+UAS --> TIDX
 UKA --> UV
 ```
 
 **Diagram sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L265-L265)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L51)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L69)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L27)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
+- [StkTable.vue:265-265](file://src/StkTable/StkTable.vue#L265-L265)
+- [useCellSelection.ts:42-51](file://src/StkTable/useCellSelection.ts#L42-L51)
+- [useAreaSelection.ts:13-24](file://src/StkTable/features/useAreaSelection.ts#L13-L24)
+- [useKeyboardArrowScroll.ts:32-35](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
+- [useVirtualScroll.ts:60-69](file://src/StkTable/useVirtualScroll.ts#L60-L69)
+- [useHighlight.ts:27-27](file://src/StkTable/useHighlight.ts#L27-L27)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L265-L265)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L42-L51)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L60-L69)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L27)
-- [types/index.ts](file://src/StkTable/types/index.ts#L298-L317)
+- [StkTable.vue:265-265](file://src/StkTable/StkTable.vue#L265-L265)
+- [useCellSelection.ts:42-51](file://src/StkTable/useCellSelection.ts#L42-L51)
+- [useAreaSelection.ts:13-24](file://src/StkTable/features/useAreaSelection.ts#L13-L24)
+- [useKeyboardArrowScroll.ts:32-35](file://src/StkTable/useKeyboardArrowScroll.ts#L32-L35)
+- [useVirtualScroll.ts:60-69](file://src/StkTable/useVirtualScroll.ts#L60-L69)
+- [useHighlight.ts:27-27](file://src/StkTable/useHighlight.ts#L27-L27)
+- [types/index.ts:298-317](file://src/StkTable/types/index.ts#L298-L317)
 
 ## Performance Considerations
 - Selection computation:
   - Selection range normalization and selected cell key set construction are O(width×height) within the visible rectangle.
   - Using a Set for selected keys enables fast containment checks.
+- **Updated**: Empty data handling:
+  - Automatic selection clearing is O(1) operation that prevents unnecessary computations when no data is present.
+  - Clearing selection before virtual scroll initialization avoids redundant DOM manipulations.
 - Auto-scroll during selection:
   - Uses requestAnimationFrame to avoid blocking the UI.
   - elementFromPoint is used to resolve the hovered cell after scroll; limit calls by throttling updates.
@@ -315,8 +432,6 @@ UKA --> UV
   - Page size and indices are recomputed efficiently; merging spans and auto row heights are handled incrementally.
 - Clipboard copy:
   - Builds a tab-separated string row-by-row; consider batching large selections if needed.
-
-[No sources needed since this section provides general guidance]
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -331,17 +446,21 @@ Common issues and resolutions:
   - Ensure the mouse pointer is over the table body; the handler exits early otherwise.
 - Highlights not visible in virtual mode:
   - Verify row keys match and that elements are visible; animations rely on element presence.
+- **Updated**: Selection persists when data becomes empty:
+  - Verify that the dataSource prop is being set to an empty array (length === 0) rather than null or undefined.
+  - Check that the updateDataSource function is being called when data changes.
+  - Ensure clearSelectedArea() is being executed before virtual scroll initialization.
 
 **Section sources**
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L112-L128)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L357-L401)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L69-L70)
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L144-L153)
+- [useCellSelection.ts:112-128](file://src/StkTable/useCellSelection.ts#L112-L128)
+- [useCellSelection.ts:357-401](file://src/StkTable/useCellSelection.ts#L357-L401)
+- [useKeyboardArrowScroll.ts:69-70](file://src/StkTable/useKeyboardArrowScroll.ts#L69-L70)
+- [useHighlight.ts:144-153](file://src/StkTable/useHighlight.ts#L144-L153)
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)
 
 ## Conclusion
-The selection and interaction system combines a robust cell selection manager, precise keyboard navigation for virtualized tables, and efficient virtual scrolling to support large datasets. Highlights and drag-and-drop operate independently, allowing flexible UX patterns. By leveraging normalized ranges, efficient slicing, and auto-scroll during selection, the system remains responsive and accessible.
-
-[No sources needed since this section summarizes without analyzing specific files]
+The selection and interaction system combines a robust cell selection manager, precise keyboard navigation for virtualized tables, and efficient virtual scrolling to support large datasets. **Updated**: The system now includes automatic selection state synchronization with empty data handling to prevent visual artifacts and maintain consistent user experience. Highlights and drag-and-drop operate independently, allowing flexible UX patterns. By leveraging normalized ranges, efficient slicing, and auto-scroll during selection, the system remains responsive and accessible.
 
 ## Appendices
 
@@ -351,9 +470,9 @@ The selection and interaction system combines a robust cell selection manager, p
 - Inspect the emitted range and payload to update application state.
 
 **Section sources**
-- [DragSelection.vue](file://docs-demo/advanced/drag-selection/DragSelection.vue#L1-L59)
-- [types/index.ts](file://src/StkTable/types/index.ts#L306-L317)
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L616-L620)
+- [DragSelection.vue:1-59](file://docs-demo/advanced/drag-selection/DragSelection.vue#L1-L59)
+- [types/index.ts:306-317](file://src/StkTable/types/index.ts#L306-L317)
+- [StkTable.vue:616-620](file://src/StkTable/StkTable.vue#L616-L620)
 
 ### Example: Handling Selection in Large Datasets
 - Use virtual scrolling to render only visible rows.
@@ -361,29 +480,40 @@ The selection and interaction system combines a robust cell selection manager, p
 - For very large selections, consider debouncing clipboard operations.
 
 **Section sources**
-- [useVirtualScroll.ts](file://src/StkTable/useVirtualScroll.ts#L103-L107)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L332-L345)
+- [useVirtualScroll.ts:103-107](file://src/StkTable/useVirtualScroll.ts#L103-L107)
+- [useCellSelection.ts:332-345](file://src/StkTable/useCellSelection.ts#L332-L345)
 
 ### Example: Custom Selection Behavior
 - Provide a formatCellForClipboard callback to ensure copied text matches rendered content.
 - Use getSelectedCells to programmatically retrieve the current selection payload.
 
 **Section sources**
-- [types/index.ts](file://src/StkTable/types/index.ts#L306-L317)
-- [useCellSelection.ts](file://src/StkTable/useCellSelection.ts#L426-L438)
+- [types/index.ts:306-317](file://src/StkTable/types/index.ts#L306-L317)
+- [useCellSelection.ts:426-438](file://src/StkTable/useCellSelection.ts#L426-L438)
 
 ### Example: Keyboard Navigation and Accessibility
 - Ensure the table container is focusable when cell selection is enabled.
 - Use arrow keys to navigate within the viewport; combine with Shift for multi-selection.
 
 **Section sources**
-- [StkTable.vue](file://src/StkTable/StkTable.vue#L30-L30)
-- [useKeyboardArrowScroll.ts](file://src/StkTable/useKeyboardArrowScroll.ts#L65-L96)
+- [StkTable.vue:30-30](file://src/StkTable/StkTable.vue#L30-L30)
+- [useKeyboardArrowScroll.ts:65-96](file://src/StkTable/useKeyboardArrowScroll.ts#L65-L96)
 
 ### Example: Highlighting Integration
 - Animate row or cell highlights independently of selection.
 - Configure duration and FPS for smooth transitions.
 
 **Section sources**
-- [useHighlight.ts](file://src/StkTable/useHighlight.ts#L27-L257)
-- [Highlight.vue](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
+- [useHighlight.ts:27-257](file://src/StkTable/useHighlight.ts#L27-L257)
+- [Highlight.vue:1-76](file://docs-demo/advanced/highlight/Highlight.vue#L1-L76)
+
+### Example: Empty Data State Handling
+- When dataSource becomes empty, selection state is automatically cleared.
+- Prevents visual artifacts and maintains consistent user experience.
+- Works with both simple cell selection and comprehensive area selection modes.
+
+**Section sources**
+- [Default.vue](file://docs-demo/basic/empty/Default.vue#L16)
+- [NoDataFull.vue](file://docs-demo/basic/empty/NoDataFull.vue#L26)
+- [StkTable.vue:1070-1073](file://src/StkTable/StkTable.vue#L1070-L1073)
+- [useAreaSelection.ts:762-766](file://src/StkTable/features/useAreaSelection.ts#L762-L766)

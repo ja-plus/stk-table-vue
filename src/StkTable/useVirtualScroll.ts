@@ -480,7 +480,7 @@ export function useVirtualScroll(
             // 向左滚动
             Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
         } else {
-            //vue2 向右滚动 优化
+            // vue2 向右滚动优化
             Object.assign(virtualScrollX.value, { endIndex, scrollLeft: sLeft });
             vue2ScrollXTimeout = window.setTimeout(() => {
                 Object.assign(virtualScrollX.value, { startIndex, offsetLeft });
