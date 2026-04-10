@@ -1,7 +1,8 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
-import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
+import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
+import { binarySearch } from './utils';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
 /** 暂存纵向虚拟滚动的数据 */
@@ -39,6 +40,45 @@ export type VirtualScrollXStore = {
     /** 横向滚动位置，用于判断是横向滚动还是纵向 */
     scrollLeft: number;
 };
+
+/** 列宽缓存项 */
+type ColWidthCacheItem = { index: number; cumWidth: number };
+/** 列宽缓存 */
+type ColWidthCache<T> = { cols: T[] | null; nonFixedCols: ColWidthCacheItem[]; leftColWidthSum: number };
+
+/** 横向虚拟滚动列宽缓存，避免每次滚动都 O(n) 构建 */
+function useColWidthCache<T extends { fixed?: StkTableColumn<PrivateRowDT>['fixed'] }>(getColWidth: (col: T) => number) {
+    let colWidthCache: ColWidthCache<T> = { cols: null, nonFixedCols: [], leftColWidthSum: 0 };
+
+    function build(cols: T[]): ColWidthCache<T> {
+        const nonFixedCols: ColWidthCacheItem[] = [];
+        let leftColWidthSum = 0;
+        let cumWidth = 0;
+        for (let i = 0; i < cols.length; i++) {
+            const col = cols[i];
+            const w = getColWidth(col);
+            if (col.fixed === 'left') {
+                leftColWidthSum += w;
+                continue;
+            }
+            cumWidth += w;
+            nonFixedCols.push({ index: i, cumWidth });
+        }
+        colWidthCache = { cols, nonFixedCols, leftColWidthSum };
+        return colWidthCache;
+    }
+
+    function get(cols: T[]): ColWidthCache<T> {
+        if (colWidthCache.cols === cols) return colWidthCache;
+        return build(cols);
+    }
+
+    function clear() {
+        colWidthCache.cols = null;
+    }
+
+    return [get, clear] as const;
+}
 
 /** vue2 优化滚动回收延时 */
 const VUE2_SCROLL_TIMEOUT_MS = 200;
@@ -83,6 +123,8 @@ export function useVirtualScroll(
         offsetLeft: 0,
         scrollLeft: 0,
     });
+
+    const [getColWidthCache, clearColWidthCache] = useColWidthCache<PrivateStkTableColumn<PrivateRowDT>>(getCalculatedColWidth);
 
     const hasExpandCol = computed(() => {
         return tableHeaderLast.value.some(col => col.type === 'expand');
@@ -431,39 +473,33 @@ export function useVirtualScroll(
         const { scrollLeft, containerWidth } = virtualScrollX.value;
         let startIndex = 0;
         let offsetLeft = 0;
-        let colWidthSum = 0;
-        /** 固定左侧列宽 */
-        let leftColWidthSum = 0;
         /** 横向滚动时，第一列的剩余宽度 */
         let leftFirstColRestWidth = 0;
 
-        for (let colIndex = 0; colIndex < headerLength; colIndex++) {
-            const col = tableHeaderLastValue[colIndex];
-            const colWidth = getCalculatedColWidth(col);
-            startIndex++;
-            // fixed left 不进入计算列宽
-            if (col.fixed === 'left') {
-                leftColWidthSum += colWidth;
-                continue;
-            }
-            colWidthSum += colWidth;
-            // 列宽（非固定列）加到超过scrollLeft的时候，表示startIndex从上一个开始下标
-            if (colWidthSum >= sLeft) {
-                offsetLeft = colWidthSum - colWidth;
-                startIndex--;
-                leftFirstColRestWidth = colWidthSum - sLeft;
-                break;
-            }
+        // 使用缓存的累计宽度数组，列配置不变时直接复用
+        const { nonFixedCols, leftColWidthSum } = getColWidthCache(tableHeaderLastValue);
+
+        if (nonFixedCols.length > 0 && sLeft > 0) {
+            // 二分查找：找到第一个累计宽度 >= sLeft 的非固定列
+            const found = binarySearch(nonFixedCols, mid => {
+                return nonFixedCols[mid].cumWidth < sLeft ? -1 : 1;
+            });
+            const idx = Math.min(found, nonFixedCols.length - 1);
+            startIndex = nonFixedCols[idx].index;
+            offsetLeft = idx > 0 ? nonFixedCols[idx - 1].cumWidth : 0;
+            leftFirstColRestWidth = nonFixedCols[idx].cumWidth - sLeft;
+        } else if (nonFixedCols.length > 0) {
+            startIndex = nonFixedCols[0].index;
         }
         // -----
-        colWidthSum = leftFirstColRestWidth;
+        let endColWidthSum = leftFirstColRestWidth;
         const containerW = containerWidth - leftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLastValue[colIndex];
-            colWidthSum += getCalculatedColWidth(col);
+            endColWidthSum += getCalculatedColWidth(col);
             // 列宽大于容器宽度则停止
-            if (colWidthSum >= containerW) {
+            if (endColWidthSum >= containerW) {
                 endIndex = colIndex + 1; // slice endIndex + 1
                 break;
             }
@@ -505,5 +541,6 @@ export function useVirtualScroll(
         updateVirtualScrollX,
         setAutoHeight,
         clearAllAutoHeight,
+        clearColWidthCache,
     ] as const;
 }

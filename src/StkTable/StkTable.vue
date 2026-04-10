@@ -850,6 +850,7 @@ const [
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
+    clearColWidthCache,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -936,6 +937,7 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
     colResizeIndicatorRef,
     colKeyGen,
     fixedCols,
+    clearColWidthCache,
 );
 
 const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen);

@@ -24,6 +24,7 @@ export function useColResize<DT extends Record<string, any>>(
     colResizeIndicatorRef: Ref<HTMLElement | undefined>,
     colKeyGen: ComputedRef<(p: any) => UniqKey>,
     fixedCols: Ref<StkTableColumn<DT>[]>,
+    onColWidthChange?: () => void,
 ) {
     /** 列宽是否在拖动 */
     const isColResizing = ref(false);
@@ -165,6 +166,7 @@ export function useColResize<DT extends Record<string, any>>(
         const curCol = tableHeaderLast.value.find(it => colKey(it) === colKey(lastCol));
         if (curCol) {
             curCol.width = width + 'px';
+            onColWidthChange?.();
             emits('update:columns', props.columns.slice());
             emits('col-resize', { ...curCol });
         }

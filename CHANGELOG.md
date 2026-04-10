@@ -7,6 +7,7 @@
   - Scrollbar prevent memory leaks.
 * Optimize
   - optimize useHighlight code.
+  - optimize virtual-x performance in huge columns.
 
 ## 0.11.7
 * Change:
