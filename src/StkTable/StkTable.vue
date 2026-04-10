@@ -1064,6 +1064,12 @@ function updateDataSource(val: DT[]) {
     }
     initDataSource(val);
     updateMaxRowSpan();
+
+    // #47
+    if (!val.length) {
+        clearSelectedArea();
+    }
+
     // if data length is not change, not init virtual scroll
     if (needInitVirtualScrollY) {
         // wait for table render,initVirtualScrollY has get `dom` operation.

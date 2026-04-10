@@ -1,11 +1,12 @@
 
 ## 0.11.8
 * Change
-  - change: all enum types in TypeScript replaced with const. ("erasableSyntaxOnly": true,)
+  - All enum types in TypeScript replaced with const. ("erasableSyntaxOnly": true)
+  - If dataSource is empty, clear selected area.
 * Bugfix
-  - fix: scrollbar prevent memory leaks
+  - Scrollbar prevent memory leaks.
 * Optimize
-  - optimize useHighlight code
+  - optimize useHighlight code.
 
 ## 0.11.7
 * Change:
