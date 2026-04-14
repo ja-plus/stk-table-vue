@@ -145,6 +145,7 @@ export const zhConfig = defineConfig({
                     { text: '矩阵', link: '/matrix' },
                     { text: '单元格编辑', link: '/cell-edit' },
                     { text: '面板树', link: '/panel-tree' },
+                    { text: '懒加载', link: '/lazy-load' },
                 ]
             }
         },

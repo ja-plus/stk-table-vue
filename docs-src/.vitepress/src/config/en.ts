@@ -117,6 +117,7 @@ export const enConfig = defineConfig({
                     { text: 'Matrix', link: '/matrix' },
                     { text: 'Cell Edit', link: '/cell-edit' },
                     { text: 'Panel Tree', link: '/panel-tree' },
+                    { text: 'Lazy Load', link: '/lazy-load' },
                 ]
             }
         },

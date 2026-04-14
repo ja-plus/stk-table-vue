@@ -117,6 +117,7 @@ export const koConfig = defineConfig({
                     { text: '매트릭스', link: '/matrix' },
                     { text: '셀 편집', link: '/cell-edit' },
                     { text: '패널 트리', link: '/panel-tree' },
+                    { text: '지연 로딩', link: '/lazy-load' },
                 ]
             }
         },

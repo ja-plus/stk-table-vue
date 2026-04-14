@@ -117,6 +117,7 @@ export const jaConfig = defineConfig({
                     { text: 'マトリックス', link: '/matrix' },
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
+                    { text: '遅延ロード', link: '/lazy-load' },
                 ]
             }
         },
