@@ -254,12 +254,13 @@ export type SortConfig<T extends Record<string, any>> = {
     multiSortLimit?: number;
 };
 /** th td type */
-export declare const enum TagType {
-    TH = 0,
-    TD = 1,
+export declare const TagType: {
+    readonly TH: 0;
+    readonly TD: 1;
     /** tfoot */
-    TF = 2
-}
+    readonly TF: 2;
+};
+export type TagType = (typeof TagType)[keyof typeof TagType];
 export type HighlightConfig = {
     /** Duration of the highlight in seconds */
     duration?: number;

@@ -68,3 +68,4 @@ export declare function throttle<T extends (...args: any[]) => any>(fn: T, delay
  * @returns A throttled function that executes on the next animation frame
  */
 export declare function rafThrottle<T extends (...args: any[]) => any>(fn: T): (...args: Parameters<T>) => void;
+export declare function debounce<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void;
