@@ -17,15 +17,18 @@
 - [experimental.md](file://docs-src/main/other/experimental.md)
 - [useWheeling.ts](file://src/StkTable/useWheeling.ts)
 - [useScrollRowByRow.ts](file://src/StkTable/useScrollRowByRow.ts)
+- [useColResize.ts](file://src/StkTable/useColResize.ts)
+- [constRefUtils.ts](file://src/StkTable/utils/constRefUtils.ts)
 </cite>
 
 ## Update Summary
 **Changes Made**
-- Enhanced documentation for recent performance optimizations and bug fixes
-- Updated memory leak prevention documentation for scrollbar system cleanup
-- Added enhanced animation cleanup processes documentation
-- Improved edge case handling documentation for dynamic column management
-- Updated troubleshooting guide with memory leak prevention and animation cleanup considerations
+- Enhanced documentation for recent memory leak prevention improvements
+- Added comprehensive coverage of the new clearColWidthCache function
+- Updated memory management documentation with improved animation cleanup processes
+- Enhanced scrollbar system cleanup documentation with proper event listener removal
+- Added better resource pool management documentation for virtual scrolling
+- Updated troubleshooting guide with memory leak prevention and cleanup considerations
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -46,7 +49,7 @@
 ## Introduction
 This document explains virtual scroll configuration options and best practices for the table component. It focuses on the virtual, virtualX, rowHeight, autoRowHeight, and optimizeVue2Scroll props and their impact on performance. It also details the pageSize calculation logic, how container dimensions affect virtual scrolling thresholds, and the initialization process via initVirtualScroll, initVirtualScrollY, and initVirtualScrollX. The document covers the virtual_on and virtualX_on computed properties that determine when virtual scrolling is active, and explains integration with other table features such as tree data, merge cells, and expandable rows. 
 
-**Updated** Enhanced with recent performance optimizations including improved memory leak prevention in scrollbar system, enhanced animation cleanup processes, and better edge case handling for dynamic column management. These improvements address stability issues and memory usage concerns in production environments.
+**Updated** Enhanced with recent performance optimizations including improved memory leak prevention in scrollbar system, enhanced animation cleanup processes, better resource pool management, and the new clearColWidthCache function to prevent memory leaks during component lifecycle changes. These improvements address stability issues and memory usage concerns in production environments.
 
 Finally, it provides performance benchmarking guidelines, memory usage considerations, and troubleshooting steps for common virtual scrolling issues, along with configuration examples for large datasets, wide tables, and mixed content scenarios.
 
@@ -64,6 +67,8 @@ STK --> EXPAND["useRowExpand.ts"]
 STK --> UTILS["utils/index.ts"]
 STK --> WHEELING["useWheeling.ts"]
 STK --> SRBR["useScrollRowByRow.ts"]
+STK --> COLRESIZE["useColResize.ts"]
+COLRESIZE --> CLEARCACHE["clearColWidthCache"]
 UTILS --> RAF["rafThrottle"]
 UTILS --> THROTTLE["throttle"]
 SCROLLBAR["useScrollbar.ts"] --> CLEANUP["Memory Leak Prevention"]
@@ -76,7 +81,7 @@ TRANSFORM --> ANIMATION["Smooth Animations"]
 ```
 
 **Diagram sources**
-- [StkTable.vue:263-792](file://src/StkTable/StkTable.vue#L263-L792)
+- [StkTable.vue:854-865](file://src/StkTable/StkTable.vue#L854-L865)
 - [useVirtualScroll.ts:60-497](file://src/StkTable/useVirtualScroll.ts#L60-L497)
 - [const.ts:1-51](file://src/StkTable/const.ts#L1-L51)
 - [types/index.ts:54-120](file://src/StkTable/types/index.ts#L54-L120)
@@ -87,18 +92,20 @@ TRANSFORM --> ANIMATION["Smooth Animations"]
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
 - [useWheeling.ts:1-23](file://src/StkTable/useWheeling.ts#L1-L23)
 - [useScrollRowByRow.ts:63-82](file://src/StkTable/useScrollRowByRow.ts#L63-L82)
+- [useColResize.ts:27-28](file://src/StkTable/useColResize.ts#L27-L28)
 
 **Section sources**
-- [StkTable.vue:263-792](file://src/StkTable/StkTable.vue#L263-L792)
+- [StkTable.vue:854-865](file://src/StkTable/StkTable.vue#L854-L865)
 - [useVirtualScroll.ts:60-497](file://src/StkTable/useVirtualScroll.ts#L60-L497)
 
 ## Core Components
-- useVirtualScroll: Provides virtual scroll state and logic for Y and X axes, including initialization, update on scroll, and computed visibility helpers. Now includes experimental CSS transform-based vertical scrolling support with translateY tracking for smooth animations.
-- StkTable.vue: Consumes the hook and renders only visible rows/columns, applying offsets and thresholds. Integrates experimental scrollY feature with transform-based rendering and wheel event handling.
+- useVirtualScroll: Provides virtual scroll state and logic for Y and X axes, including initialization, update on scroll, and computed visibility helpers. Now includes experimental CSS transform-based vertical scrolling support with translateY tracking for smooth animations and enhanced memory management with clearColWidthCache function.
+- StkTable.vue: Consumes the hook and renders only visible rows/columns, applying offsets and thresholds. Integrates experimental scrollY feature with transform-based rendering and wheel event handling. Manages column width cache cleanup through clearColWidthCache function.
 - Types and constants: Define prop shapes, defaults, and constants used by virtual scroll logic, including experimental configuration options with scrollY support.
 - rafThrottle utility: Provides requestAnimationFrame-based throttling for smooth wheel scrolling performance.
 - useScrollbar: Manages custom scrollbar functionality with enhanced memory leak prevention and cleanup processes.
-- Memory leak prevention: Automatic cleanup of event listeners, ResizeObserver instances, and animation frames to prevent memory leaks.
+- Memory leak prevention: Automatic cleanup of event listeners, ResizeObserver instances, animation frames, and proper resource disposal to prevent memory leaks.
+- clearColWidthCache: New function to prevent memory leaks during component lifecycle changes by clearing column width cache when columns are modified or component is unmounted.
 
 Key props and their roles:
 - virtual: Enables vertical virtualization.
@@ -110,12 +117,13 @@ Key props and their roles:
 
 **Section sources**
 - [useVirtualScroll.ts:60-497](file://src/StkTable/useVirtualScroll.ts#L60-L497)
-- [StkTable.vue:282-480](file://src/StkTable/StkTable.vue#L282-L480)
+- [StkTable.vue:854-865](file://src/StkTable/StkTable.vue#L854-L865)
 - [types/index.ts:275-278](file://src/StkTable/types/index.ts#L275-L278)
 - [const.ts:6-8](file://src/StkTable/const.ts#L6-L8)
 - [types/index.ts:320-323](file://src/StkTable/types/index.ts#L320-L323)
 - [index.ts:294-314](file://src/StkTable/utils/index.ts#L294-L314)
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
+- [useColResize.ts:27-28](file://src/StkTable/useColResize.ts#L27-L28)
 
 ## Architecture Overview
 The virtual scroll architecture separates concerns between state management (useVirtualScroll) and rendering (StkTable.vue). The hook computes visible ranges and offsets, while the component applies styles and slices data accordingly. The experimental scrollY feature introduces CSS transform-based vertical scrolling for improved performance, enhanced by rafThrottle for smooth wheel interactions.
@@ -126,6 +134,7 @@ participant User as "User"
 participant Table as "StkTable.vue"
 participant Hook as "useVirtualScroll.ts"
 participant Scrollbar as "useScrollbar.ts"
+participant ColResize as "useColResize.ts"
 participant Utils as "utils/index.ts"
 participant DOM as "DOM Container"
 User->>DOM : Scroll vertically/horizontally
@@ -144,6 +153,9 @@ User->>DOM : Wheel event
 Table->>Table : onTableWheel()
 Table->>Table : rafUpdateVirtualScrollYForWheel(scrollTop + deltaY)
 Table->>Hook : updateVirtualScrollY(scrollTop)
+Note over ColResize : Column resize triggers
+ColResize->>Hook : clearColWidthCache()
+Hook->>Hook : Clear column width cache
 ```
 
 **Diagram sources**
@@ -153,6 +165,7 @@ Table->>Hook : updateVirtualScrollY(scrollTop)
 - [useVirtualScroll.ts:291-296](file://src/StkTable/useVirtualScroll.ts#L291-L296)
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
 - [index.ts:294-314](file://src/StkTable/utils/index.ts#L294-L314)
+- [useColResize.ts:154-190](file://src/StkTable/useColResize.ts#L154-L190)
 
 ## Detailed Component Analysis
 
@@ -187,6 +200,7 @@ Enhanced with recent performance optimizations:
 - Enhanced animation cleanup processes for smoother transitions
 - Better edge case handling for dynamic column management
 - Optimized memory usage through proper resource disposal
+- New clearColWidthCache function to prevent memory leaks during component lifecycle changes
 
 **Updated** Enhanced with experimental CSS transform-based scrolling support. When experimental.scrollY is enabled, the method calculates translateY to position the table content using CSS transforms instead of scrollTop adjustments. The translateY value is computed as -(scrollTop % rowHeight) to maintain smooth animation continuity.
 
@@ -197,6 +211,7 @@ Key behaviors:
 - Experimental transform scrolling: Calculates translateY based on rowHeight remainder for smooth animation.
 - Scroll boundary handling: Maintains scroll position constraints while using transform positioning.
 - Memory optimization: Proper cleanup of temporary resources during scroll operations.
+- Column width cache management: Automatic clearing of column width cache to prevent memory leaks.
 
 ```mermaid
 flowchart TD
@@ -245,6 +260,7 @@ Enhanced with improved edge case handling:
 - Better column count validation to prevent index out of bounds errors
 - Enhanced dynamic column management with proper bounds checking
 - Improved performance for tables with rapidly changing column configurations
+- New column width cache management with automatic cleanup
 
 ```mermaid
 flowchart TD
@@ -255,7 +271,8 @@ FindStart --> ComputeOffset["offsetLeft = accumulated width - current column wid
 ComputeOffset --> ComputeEnd["Accumulate widths until containerWidth reached"]
 ComputeEnd --> FixFixed["Preserve fixed-left/right columns outside viewport"]
 FixFixed --> BoundsCheck["Validate column indices within bounds"]
-BoundsCheck --> OptimizeX{"optimizeVue2Scroll?"}
+BoundsCheck --> CacheCheck["Check column width cache"]
+CacheCheck --> OptimizeX{"optimizeVue2Scroll?"}
 OptimizeX --> |Yes| DeferX["Defer startIndex update with timeout"]
 OptimizeX --> |No| ImmediateX["Immediate state update"]
 DeferX --> EndX(["Render"])
@@ -291,6 +308,7 @@ class useVirtualScroll {
 +initVirtualScrollX()
 +updateVirtualScrollY()
 +updateVirtualScrollX()
++clearColWidthCache()
 }
 class useTree {
 +flatTreeData()
@@ -404,15 +422,23 @@ Configuration examples:
 - **Timeout Cleanup**: Clears scroll optimization timeouts to prevent memory retention.
 - **Resource Pool Management**: Efficient management of temporary resources used during scroll operations.
 
+### Column Width Cache Management
+- **New clearColWidthCache Function**: Prevents memory leaks during component lifecycle changes by clearing column width cache.
+- **Automatic Cache Invalidation**: Called when columns are modified or during component unmount.
+- **Resource Pool Cleanup**: Ensures column width calculation cache doesn't retain references to destroyed DOM elements.
+
 ### Production Stability Improvements
 - **Robust Error Handling**: Enhanced error handling for edge cases in dynamic column management.
 - **Graceful Degradation**: Fallback mechanisms when experimental features encounter compatibility issues.
 - **Memory Monitoring**: Reduced memory footprint through efficient resource disposal.
+- **Component Lifecycle Integration**: Proper cleanup during component mount/unmount cycles.
 
 **Section sources**
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
 - [useScrollbar.ts:148-162](file://src/StkTable/useScrollbar.ts#L148-L162)
 - [useVirtualScroll.ts:390-417](file://src/StkTable/useVirtualScroll.ts#L390-L417)
+- [useVirtualScroll.ts:76-78](file://src/StkTable/useVirtualScroll.ts#L76-L78)
+- [useColResize.ts:154-190](file://src/StkTable/useColResize.ts#L154-L190)
 
 ## Dynamic Column Management Edge Cases
 **New Section** Enhanced handling of dynamic column scenarios to improve stability and prevent runtime errors.
@@ -432,9 +458,15 @@ Configuration examples:
 - **Feature Detection**: Better detection of browser capabilities for experimental features.
 - **Progressive Enhancement**: Gradual enhancement of features based on browser support.
 
+### Column Width Cache Integration
+- **Automatic Cache Clearing**: Column width cache is cleared when columns change to prevent memory leaks.
+- **Cache Invalidation Strategy**: Ensures cached column width calculations don't persist beyond component lifecycle.
+- **Performance Optimization**: Balances cache benefits with memory usage considerations.
+
 **Section sources**
 - [useVirtualScroll.ts:133-137](file://src/StkTable/useVirtualScroll.ts#L133-L137)
 - [useVirtualScroll.ts:156-167](file://src/StkTable/useVirtualScroll.ts#L156-L167)
+- [useColResize.ts:154-190](file://src/StkTable/useColResize.ts#L154-L190)
 
 ## Dependency Analysis
 - useVirtualScroll depends on:
@@ -444,9 +476,11 @@ Configuration examples:
   - Experimental configuration for transform-based scrolling
   - rafThrottle utility for smooth wheel interactions
   - Memory leak prevention utilities for cleanup processes
+  - Column width cache management for performance optimization
 - StkTable.vue composes useVirtualScroll and integrates with useTree, useMergeCells, and useRowExpand.
 - Wheel event handling depends on rafThrottle for performance optimization.
 - useScrollbar manages custom scrollbar functionality with enhanced cleanup processes.
+- useColResize integrates with clearColWidthCache to prevent memory leaks during column resizing operations.
 
 ```mermaid
 graph LR
@@ -459,6 +493,8 @@ Table --> Merge["useMergeCells"]
 Table --> Expand["useRowExpand"]
 Table --> Utils["utils/index.ts"]
 Table --> Scrollbar["useScrollbar"]
+Table --> ColResize["useColResize"]
+ColResize --> ClearCache["clearColWidthCache"]
 Utils --> RAF["rafThrottle"]
 Utils --> THROTTLE["throttle"]
 Utils --> WHEELING["useWheeling"]
@@ -476,6 +512,7 @@ Experimental --> RAF
 - [StkTable.vue:775-792](file://src/StkTable/StkTable.vue#L775-L792)
 - [index.ts:294-314](file://src/StkTable/utils/index.ts#L294-L314)
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
+- [useColResize.ts:27-28](file://src/StkTable/useColResize.ts#L27-L28)
 
 **Section sources**
 - [useVirtualScroll.ts:6-15](file://src/StkTable/useVirtualScroll.ts#L6-L15)
@@ -495,6 +532,8 @@ Experimental --> RAF
 - **Memory Usage**: translateY property reduces layout calculations and improves scroll performance.
 - **Memory Leak Prevention**: Enhanced cleanup processes prevent memory leaks in production environments.
 - **Animation Cleanup**: Proper disposal of animation resources prevents performance degradation over time.
+- **Column Width Cache**: Efficient column width caching with automatic cleanup prevents memory leaks.
+- **Resource Pool Management**: Proper management of temporary resources during scroll operations.
 
 ## Troubleshooting Guide
 Common issues and resolutions:
@@ -511,6 +550,8 @@ Common issues and resolutions:
 - **Memory Leaks**: If experiencing memory growth, ensure proper component unmounting and verify scrollbar cleanup processes.
 - **Animation Performance**: Monitor animation performance and consider disabling experimental features if experiencing stuttering.
 - **Dynamic Column Issues**: For tables with frequently changing columns, ensure proper bounds checking and index validation.
+- **Column Width Cache Issues**: If column width calculations seem incorrect after dynamic changes, verify clearColWidthCache is being called properly.
+- **Scrollbar Memory Leaks**: Ensure useScrollbar cleanup processes are working correctly during component unmount.
 
 **Section sources**
 - [useVirtualScroll.ts:396-405](file://src/StkTable/useVirtualScroll.ts#L396-L405)
@@ -523,7 +564,7 @@ Common issues and resolutions:
 ## Conclusion
 Virtual scrolling dramatically improves performance for large datasets and wide tables by rendering only visible items. Proper configuration of virtual, virtualX, rowHeight, autoRowHeight, and optimizeVue2Scroll, combined with correct initialization and awareness of integrations with tree data, merge cells, and expandable rows, yields a responsive and memory-efficient table experience. The new experimental scrollY feature with CSS transform-based vertical scrolling further enhances performance and provides smoother animations for modern browsers, supported by the rafThrottle utility for optimized wheel interactions.
 
-**Recent Enhancements**: The latest updates focus on production stability with improved memory leak prevention, enhanced animation cleanup processes, and better edge case handling for dynamic column management. These improvements ensure reliable performance in real-world applications while maintaining backward compatibility and graceful degradation when experimental features encounter compatibility issues.
+**Recent Enhancements**: The latest updates focus on production stability with improved memory leak prevention, enhanced animation cleanup processes, better edge case handling for dynamic column management, and the new clearColWidthCache function to prevent memory leaks during component lifecycle changes. These improvements ensure reliable performance in real-world applications while maintaining backward compatibility and graceful degradation when experimental features encounter compatibility issues.
 
 [No sources needed since this section summarizes without analyzing specific files]
 
@@ -536,6 +577,7 @@ Virtual scrolling dramatically improves performance for large datasets and wide 
   - initVirtualScrollX()
   - updateVirtualScrollY(scrollTop)
   - updateVirtualScrollX(scrollLeft)
+  - clearColWidthCache() - New function to prevent memory leaks during component lifecycle changes
 - Computed
   - virtual_on
   - virtualX_on
@@ -563,6 +605,11 @@ Virtual scrolling dramatically improves performance for large datasets and wide 
   - ResizeObserver disconnection
   - Animation frame cleanup
   - Timeout cleanup for scroll optimization
+  - Column width cache cleanup through clearColWidthCache function
+- Column Width Cache Management
+  - useColWidthCache: Manages column width calculation cache
+  - clearColWidthCache: Clears column width cache to prevent memory leaks
+  - Automatic cache invalidation during component lifecycle changes
 
 **Section sources**
 - [useVirtualScroll.ts:195-496](file://src/StkTable/useVirtualScroll.ts#L195-L496)
@@ -572,3 +619,5 @@ Virtual scrolling dramatically improves performance for large datasets and wide 
 - [types/index.ts:320-323](file://src/StkTable/types/index.ts#L320-L323)
 - [index.ts:294-314](file://src/StkTable/utils/index.ts#L294-L314)
 - [useScrollbar.ts:57-62](file://src/StkTable/useScrollbar.ts#L57-L62)
+- [useVirtualScroll.ts:76-78](file://src/StkTable/useVirtualScroll.ts#L76-L78)
+- [useColResize.ts:154-190](file://src/StkTable/useColResize.ts#L154-L190)

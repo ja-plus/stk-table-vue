@@ -20,11 +20,12 @@
 
 ## Update Summary
 **Changes Made**
-- Updated enum modernization section to reflect the conversion from traditional TypeScript enums to const objects with explicit type definitions
+- Updated enum modernization section to reflect the conversion from traditional TypeScript enums to const objects with explicit type definitions for TagType and ScrollCodes
 - Added documentation for the new TagType const object pattern and its benefits
 - Enhanced type safety and performance considerations for the modernized enum usage
 - Updated examples to show both old enum syntax and new const object syntax
 - Added backward compatibility information for existing codebases
+- Updated distribution typings documentation to reflect const object patterns
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -353,6 +354,17 @@ export enum TagType {
   TD = 1,
   TF = 2,
 }
+
+export enum ScrollCodes {
+  ArrowUp = 'ArrowUp',
+  ArrowRight = 'ArrowRight', 
+  ArrowDown = 'ArrowDown',
+  ArrowLeft = 'ArrowLeft',
+  PageUp = 'PageUp',
+  PageDown = 'PageDown',
+  Home = 'Home',
+  End = 'End',
+}
 ```
 
 #### Modern Const Objects with Explicit Types
@@ -365,6 +377,20 @@ export const TagType = {
 } as const;
 
 export type TagType = (typeof TagType)[keyof typeof TagType];
+
+// Modern approach - const object with explicit type
+export const ScrollCodes = {
+  ArrowUp: 'ArrowUp',
+  ArrowRight: 'ArrowRight',
+  ArrowDown: 'ArrowDown',
+  ArrowLeft: 'ArrowLeft',
+  PageUp: 'PageUp',
+  PageDown: 'PageDown',
+  Home: 'Home',
+  End: 'End',
+} as const;
+
+export type ScrollCodes = (typeof ScrollCodes)[keyof typeof ScrollCodes];
 ```
 
 ### Benefits of the Modernization
@@ -417,11 +443,13 @@ The distribution typings reflect the modernized enum pattern:
 
 ```typescript
 // Source: lib/src/StkTable/types/index.d.ts
-export declare const enum TagType {
-  TH = 0,
-  TD = 1,
-  TF = 2
-}
+export declare const TagType: {
+  readonly TH: 0;
+  readonly TD: 1;
+  /** tfoot */
+  readonly TF: 2;
+};
+export type TagType = (typeof TagType)[keyof typeof TagType];
 ```
 
 ### Backward Compatibility Considerations
