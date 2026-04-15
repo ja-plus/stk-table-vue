@@ -1,4 +1,10 @@
 
+## 0.11.9
+* Optimize
+  - Optimize `updateVirtualScrollY`
+* Bugfix
+  - fix: virtual-x endIndex calculate error when it has sticky left fixed columns;
+
 ## 0.11.8
 * Change
   - All enum types in TypeScript replaced with const. ("erasableSyntaxOnly": true)

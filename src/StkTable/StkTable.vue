@@ -136,11 +136,7 @@
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
                 >
-                    <tr
-                        v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive"
-                        :style="`height:${virtualScroll.offsetTop}px`"
-                        class="padding-top-tr"
-                    >
+                    <tr v-if="!isExperimentalScrollY && virtual_on && !isSRBRActive" :style="paddingTopStyle" class="padding-top-tr">
                         <td v-if="virtualX_on && fixedMode && headless" class="vt-x-left"></td>
                         <template v-if="fixedMode && headless">
                             <td v-for="col in virtualX_columnPart" :key="colKeyGen(col)" :style="cellStyleMap[TagType.TD].get(colKeyGen(col))"></td>
@@ -214,8 +210,8 @@
                         <td v-if="virtualX_on" class="vt-x-right"></td>
                     </tr>
                     <template v-if="!isExperimentalScrollY">
-                        <tr v-if="virtual_on && !isSRBRActive" :style="`height: ${virtual_offsetBottom}px`"></tr>
-                        <tr v-if="SRBRBottomHeight" :style="`height: ${SRBRBottomHeight}px`"></tr>
+                        <tr v-if="virtual_on && !isSRBRActive" :style="offsetBottomStyle"></tr>
+                        <tr v-if="SRBRBottomHeight" :style="SRBRBottomStyle"></tr>
                     </template>
                 </tbody>
             </table>
@@ -1138,6 +1134,11 @@ const cellStyleMap = computed(() => {
         [TagType.TF]: tfMap,
     };
 });
+
+/** 缓存的样式字符串，避免模板中重复计算 */
+const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
+const offsetBottomStyle = computed(() => `height: ${virtual_offsetBottom.value}px`);
+const SRBRBottomStyle = computed(() => `height: ${SRBRBottomHeight.value}px`);
 
 function getRowIndex(rowIndex: number) {
     return rowIndex + virtualScroll.value.startIndex;

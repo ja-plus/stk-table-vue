@@ -43,28 +43,30 @@ export type VirtualScrollXStore = {
 
 /** 列宽缓存项 */
 type ColWidthCacheItem = { index: number; cumWidth: number };
+/** 左侧固定列缓存项 */
+type LeftFixedColCacheItem = { index: number; width: number };
 /** 列宽缓存 */
-type ColWidthCache<T> = { cols: T[] | null; nonFixedCols: ColWidthCacheItem[]; leftColWidthSum: number };
+type ColWidthCache<T> = { cols: T[] | null; nonFixedCols: ColWidthCacheItem[]; leftFixedCols: LeftFixedColCacheItem[] };
 
 /** 横向虚拟滚动列宽缓存，避免每次滚动都 O(n) 构建 */
 function useColWidthCache<T extends { fixed?: StkTableColumn<PrivateRowDT>['fixed'] }>(getColWidth: (col: T) => number) {
-    let colWidthCache: ColWidthCache<T> = { cols: null, nonFixedCols: [], leftColWidthSum: 0 };
+    let colWidthCache: ColWidthCache<T> = { cols: null, nonFixedCols: [], leftFixedCols: [] };
 
     function build(cols: T[]): ColWidthCache<T> {
         const nonFixedCols: ColWidthCacheItem[] = [];
-        let leftColWidthSum = 0;
+        const leftFixedCols: LeftFixedColCacheItem[] = [];
         let cumWidth = 0;
         for (let i = 0; i < cols.length; i++) {
             const col = cols[i];
             const w = getColWidth(col);
             if (col.fixed === 'left') {
-                leftColWidthSum += w;
+                leftFixedCols.push({ index: i, width: w });
                 continue;
             }
             cumWidth += w;
             nonFixedCols.push({ index: i, cumWidth });
         }
-        colWidthCache = { cols, nonFixedCols, leftColWidthSum };
+        colWidthCache = { cols, nonFixedCols, leftFixedCols };
         return colWidthCache;
     }
 
@@ -375,6 +377,10 @@ export function useVirtualScroll(
         } else {
             startIndex = Math.floor(sTop / rowHeight);
             endIndex = startIndex + pageSize;
+            if (startIndex === oldStartIndex && endIndex === oldEndIndex) {
+                // Not change: not update
+                return;
+            }
         }
 
         if (maxRowSpan.size) {
@@ -437,10 +443,6 @@ export function useVirtualScroll(
         if (autoRowHeight || hasExpandCol.value) {
             offsetTop = autoRowHeightTop;
         } else {
-            if (oldStartIndex === startIndex && oldEndIndex === endIndex) {
-                // Not change: not update
-                return;
-            }
             offsetTop = startIndex * rowHeight;
         }
 
@@ -477,7 +479,7 @@ export function useVirtualScroll(
         let leftFirstColRestWidth = 0;
 
         // 使用缓存的累计宽度数组，列配置不变时直接复用
-        const { nonFixedCols, leftColWidthSum } = getColWidthCache(tableHeaderLastValue);
+        const { nonFixedCols, leftFixedCols } = getColWidthCache(tableHeaderLastValue);
 
         if (nonFixedCols.length > 0 && sLeft > 0) {
             // 二分查找：找到第一个累计宽度 >= sLeft 的非固定列
@@ -493,7 +495,13 @@ export function useVirtualScroll(
         }
         // -----
         let endColWidthSum = leftFirstColRestWidth;
-        const containerW = containerWidth - leftColWidthSum;
+        // 根据 startIndex 快速计算实际在可视区域内的左侧固定列宽度
+        let actualLeftColWidthSum = 0;
+        for (const leftCol of leftFixedCols) {
+            if (leftCol.index >= startIndex) break;
+            actualLeftColWidthSum += leftCol.width;
+        }
+        const containerW = containerWidth - actualLeftColWidthSum;
         let endIndex = headerLength;
         for (let colIndex = startIndex + 1; colIndex < headerLength; colIndex++) {
             const col = tableHeaderLastValue[colIndex];
