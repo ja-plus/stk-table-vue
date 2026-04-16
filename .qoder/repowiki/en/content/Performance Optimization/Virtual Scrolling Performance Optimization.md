@@ -8,6 +8,7 @@
 - [utils/index.ts](file://src/StkTable/utils/index.ts)
 - [utils/constRefUtils.ts](file://src/StkTable/utils/constRefUtils.ts)
 - [useScrollRowByRow.ts](file://src/StkTable/useScrollRowByRow.ts)
+- [useFixedStyle.ts](file://src/StkTable/useFixedStyle.ts)
 - [virtual.md](file://docs-src/main/table/advanced/virtual.md)
 - [auto-height-virtual.md](file://docs-src/main/table/advanced/auto-height-virtual.md)
 - [vue2-scroll-optimize.md](file://docs-src/main/table/advanced/vue2-scroll-optimize.md)
@@ -20,9 +21,9 @@
 
 ## Update Summary
 **Changes Made**
-- Added new section on Enhanced Column Width Caching with LeftFixedColCacheItem type
+- Added new section on Enhanced Template Rendering Performance with computed style caching
 - Enhanced Performance Optimization Strategies with computed style caching for padding top, offset bottom, and SRBR bottom heights
-- Updated Virtual Scrolling Architecture to include advanced pre-judgment logic
+- Updated Virtual Scrolling Architecture to include advanced pre-judgment logic and template rendering optimizations
 - Added detailed explanation of new caching mechanisms and performance improvements
 - Updated diagrams to reflect new optimization flows and caching systems
 
@@ -41,9 +42,9 @@
 
 Virtual scrolling is a critical performance optimization technique used to render large datasets efficiently by only displaying visible items in the viewport. This document provides comprehensive analysis of the virtual scrolling implementation in the StkTable library, focusing on performance optimization strategies, architectural patterns, and best practices for handling massive datasets.
 
-The implementation leverages several advanced techniques including binary search algorithms, enhanced column width caching with specialized cache types, computed style caching for performance optimization, and sophisticated scroll optimization mechanisms to ensure smooth user experience even with hundreds of thousands of data rows.
+The implementation leverages several advanced techniques including binary search algorithms, enhanced column width caching with specialized cache types, computed style caching for performance optimization, sophisticated scroll optimization mechanisms, and optimized template rendering to ensure smooth user experience even with hundreds of thousands of data rows.
 
-**Updated** Added enhanced column width caching optimization with LeftFixedColCacheItem type for improved horizontal scrolling performance, computed style caching for padding top, offset bottom, and SRBR bottom heights, and enhanced pre-judgment logic for virtual scrolling to prevent unnecessary computations when scroll positions haven't changed.
+**Updated** Added enhanced template rendering performance optimizations with computed style caching for padding top, offset bottom, and SRBR bottom heights, improved template rendering efficiency through computed property caching, and enhanced pre-judgment logic for virtual scrolling to prevent unnecessary computations when scroll positions haven't changed.
 
 ## Virtual Scrolling Architecture
 
@@ -61,6 +62,7 @@ BinSearch[Binary Search]
 RafThrottle[Raf Throttling]
 EarlyExit[Early Exit Optimization]
 ComputedStyle[Computed Style Caching]
+TemplateOpt[Template Rendering Optimization]
 SRBR[Smooth Row By Row]
 end
 subgraph "Core Components"
@@ -68,6 +70,7 @@ Table[StkTable Component]
 DataSource[Data Source Management]
 Render[Render Optimization]
 Events[Event Handling]
+StyleCache[Style Property Caching]
 end
 subgraph "Performance Optimizations"
 Binary[Binary Search]
@@ -76,6 +79,7 @@ Vue2[Vue2 Scroll Optimization]
 AutoHeight[Auto Height Management]
 Guard[Guard Conditions]
 CacheClear[Automatic Cache Clearing]
+TemplateCache[Template Computed Caching]
 end
 VS --> YScroll
 VS --> XScroll
@@ -94,18 +98,21 @@ YScroll --> AutoHeight
 YScroll --> EarlyExit
 YScroll --> Guard
 YScroll --> ComputedStyle
+YScroll --> TemplateOpt
 YScroll --> SRBR
 Cache --> BinSearch
 Cache --> RafThrottle
 Cache --> CacheClear
+TemplateOpt --> StyleCache
+TemplateOpt --> TemplateCache
 ```
 
 **Diagram sources**
-- [useVirtualScroll.ts:1-555](file://src/StkTable/useVirtualScroll.ts#L1-L555)
+- [useVirtualScroll.ts:1-578](file://src/StkTable/useVirtualScroll.ts#L1-L578)
 - [StkTable.vue:250-800](file://src/StkTable/StkTable.vue#L250-L800)
 
 **Section sources**
-- [useVirtualScroll.ts:1-555](file://src/StkTable/useVirtualScroll.ts#L1-L555)
+- [useVirtualScroll.ts:1-578](file://src/StkTable/useVirtualScroll.ts#L1-L578)
 - [StkTable.vue:250-800](file://src/StkTable/StkTable.vue#L250-L800)
 
 ## Core Implementation Components
@@ -252,12 +259,36 @@ ReturnCached --> End([Style Applied])
 ```
 
 **Diagram sources**
-- [StkTable.vue:1138-1141](file://src/StkTable/StkTable.vue#L1138-L1141)
+- [StkTable.vue:937-940](file://src/StkTable/StkTable.vue#L937-L940)
 
 The computed style caching system includes:
 - **paddingTopStyle**: Cached height calculation for virtual scroll offset
 - **offsetBottomStyle**: Cached height calculation for bottom padding
 - **SRBRBottomStyle**: Cached height calculation for smooth row by row bottom spacing
+
+### Enhanced Template Rendering Performance
+
+**New** The template rendering system has been optimized with computed style caching to reduce the computational overhead of style calculations during rendering. The `cellStyleMap` computed property now caches style calculations for table headers, data cells, and footer cells, significantly improving rendering performance for large datasets.
+
+```mermaid
+flowchart TD
+Start([Template Rendering]) --> CheckCellStyleMap{cellStyleMap Cached?}
+CheckCellStyleMap --> |Yes| UseCached[Use Cached Style Map]
+CheckCellStyleMap --> |No| ComputeCellStyleMap[Compute Style Map]
+ComputeCellStyleMap --> CacheCellStyleMap[Cache Style Map]
+CacheCellStyleMap --> UseCached
+UseCached --> ApplyStyles[Apply Styles to Elements]
+ApplyStyles --> End([Rendered Element])
+```
+
+**Diagram sources**
+- [StkTable.vue:1106-1135](file://src/StkTable/StkTable.vue#L1106-L1135)
+
+The enhanced template rendering system includes:
+- **cellStyleMap**: Computed style map for TH, TD, and TF elements
+- **Fixed style caching**: Separate caching for fixed column styles
+- **Dynamic width calculation**: Computed width values for responsive layouts
+- **Min/max width constraints**: Cached min and max width properties
 
 ### Enhanced Binary Search Algorithm Implementation
 
@@ -394,6 +425,8 @@ The enhanced caching system uses a sophisticated strategy:
 - Computed style caching reduces repeated style calculations
 - Fixed column widths are cached separately for optimal performance
 - SRBR bottom height caching improves smooth scrolling performance
+- Template rendering optimizations reduce DOM manipulation overhead
+- Computed property caching minimizes reactive dependency tracking
 
 **Section sources**
 - [HugeData/index.vue:235-237](file://docs-demo/demos/HugeData/index.vue#L235-L237)
@@ -411,6 +444,7 @@ Proper configuration is crucial for optimal virtual scrolling performance. The f
 5. **Monitor Cache Performance**: Use the clearColWidthCache method when column configurations change frequently
 6. **Utilize Computed Style Caching**: Leverage the new computed style caching for better performance
 7. **Enable SRBR Optimization**: Use smooth row-by-row scrolling for improved user experience
+8. **Optimize Template Rendering**: Ensure templates use computed style properties for better performance
 
 ### Performance Benchmarks
 
@@ -424,6 +458,7 @@ Proper configuration is crucial for optimal virtual scrolling performance. The f
 - **Early Exit Effectiveness**: 90%+ reduction in unnecessary computations during rapid scroll operations
 - **LeftFixedColCacheItem Efficiency**: Specialized caching for left-fixed columns improves horizontal scrolling performance
 - **Computed Style Caching**: Reduces style calculation overhead by up to 70%
+- **Template Rendering Optimization**: Improves rendering performance through computed property caching
 - **SRBR Bottom Height Caching**: Improves smooth row-by-row scrolling performance
 
 **Section sources**
@@ -444,6 +479,8 @@ Proper configuration is crucial for optimal virtual scrolling performance. The f
 | Excessive Recalculation | Frequent startIndex/endIndex updates | Check for scroll event listener conflicts |
 | Poor Horizontal Scrolling | Slow left/right scrolling | Verify LeftFixedColCacheItem usage |
 | Style Calculation Overhead | Expensive style computations | Monitor computed style cache effectiveness |
+| Template Rendering Bottlenecks | Slow DOM updates | Verify computed style property usage |
+| Missing Style Caching | Dynamic style recalculation | Check computed style caching implementation |
 
 ### Debugging Techniques
 
@@ -454,6 +491,7 @@ Proper configuration is crucial for optimal virtual scrolling performance. The f
 5. **Test Cache Behavior**: Monitor cache hit rates and clear cache when needed
 6. **Monitor Computed Style Cache**: Track effectiveness of computed style caching
 7. **Debug LeftFixedColCacheItem**: Verify proper caching of left-fixed column widths
+8. **Profile Template Rendering**: Use browser dev tools to identify rendering bottlenecks
 
 **Section sources**
 - [virtual.md:33-69](file://docs-src/main/table/advanced/virtual.md#L33-L69)
@@ -461,7 +499,7 @@ Proper configuration is crucial for optimal virtual scrolling performance. The f
 
 ## Conclusion
 
-The virtual scrolling implementation in StkTable represents a sophisticated approach to handling large datasets efficiently. Through the strategic use of enhanced binary search algorithms, intelligent caching mechanisms with specialized cache types, computed style caching, and platform-specific optimizations, the system achieves exceptional performance even with massive datasets.
+The virtual scrolling implementation in StkTable represents a sophisticated approach to handling large datasets efficiently. Through the strategic use of enhanced binary search algorithms, intelligent caching mechanisms with specialized cache types, computed style caching, template rendering optimizations, and platform-specific optimizations, the system achieves exceptional performance even with massive datasets.
 
 **Updated** Key achievements include:
 - **Linear Performance Scaling**: Memory and CPU usage scale linearly with visible items
@@ -470,11 +508,15 @@ The virtual scrolling implementation in StkTable represents a sophisticated appr
 - **Flexible Configuration**: Extensive customization options for different use cases and performance requirements
 - **Enhanced Column Width Caching**: Advanced caching system with LeftFixedColCacheItem type for optimal performance
 - **Computed Style Caching**: Intelligent caching of frequently accessed style properties
+- **Template Rendering Optimization**: Efficient template rendering through computed property caching
 - **Binary Search Efficiency**: O(log n) column width calculations using enhanced binary search algorithms
 - **Early Exit Optimization**: Prevents unnecessary computations when scroll positions haven't changed, reducing CPU usage by up to 90% during rapid scroll operations
 - **SRBR Bottom Height Caching**: Improves smooth row-by-row scrolling performance
 - **Modular Architecture**: Enhanced caching system with automatic cache clearing for optimal resource management
+- **Template Performance**: Optimized template rendering reduces DOM manipulation overhead
 
 The modular architecture ensures maintainability and extensibility while the comprehensive testing framework provides confidence in performance across various scenarios. This implementation serves as a model for high-performance virtual scrolling solutions in modern web applications.
 
-The new enhancements make the virtual scrolling system particularly suitable for complex data visualization applications and large-scale data processing interfaces where users may perform rapid scrolling operations or where scroll events are triggered frequently. The combination of enhanced column width caching, computed style caching, and improved pre-judgment logic provides significant performance improvements over previous versions while maintaining backward compatibility and ease of use.
+The new enhancements make the virtual scrolling system particularly suitable for complex data visualization applications and large-scale data processing interfaces where users may perform rapid scrolling operations or where scroll events are triggered frequently. The combination of enhanced column width caching, computed style caching, template rendering optimizations, and improved pre-judgment logic provides significant performance improvements over previous versions while maintaining backward compatibility and ease of use.
+
+The computed style caching system, template rendering optimizations, and enhanced early exit conditions represent the most significant performance improvements, providing substantial gains in rendering speed and scroll responsiveness for large datasets. These optimizations work together to create a seamless virtual scrolling experience that scales efficiently with dataset size and complexity.
