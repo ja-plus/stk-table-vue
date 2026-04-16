@@ -26,9 +26,13 @@ export function useMergeCells(
     /** click current row , which rowspan cells should be highlight */
     const activeMergedCells = ref(new Set<string>());
 
+    /** column index cache */
+    let colIndexCache: Map<UniqKey, number> | null = null;
+
     watch([virtual_dataSourcePart, tableHeaderLast], () => {
         hiddenCellMap.value = null;
         hoverRowMap.value = {};
+        colIndexCache = null;
     });
 
     /**
@@ -37,9 +41,16 @@ export function useMergeCells(
     function hideCells(rowKey: UniqKey, colKey: UniqKey, colspan: number, isSelfRow = false, mergeCellKey: string) {
         const headers = tableHeaderLast.value;
         const colKeyGenValue = colKeyGen.value;
-        const startIndex = headers.findIndex(item => colKeyGenValue(item) === colKey);
 
-        if (startIndex === -1) return;
+        // use columns cache to avoid repeat findIndex
+        let startIndex = colIndexCache?.get(colKey);
+        if (startIndex === void 0) {
+            startIndex = headers.findIndex(item => colKeyGenValue(item) === colKey);
+            if (startIndex < 0) return;
+
+            if (!colIndexCache) colIndexCache = new Map();
+            colIndexCache.set(colKey, startIndex);
+        }
 
         // Initialize maps if needed
         if (!hoverRowMap.value[rowKey]) {
@@ -97,17 +108,13 @@ export function useMergeCells(
         if (colspan === 1 && rowspan === 1) return;
 
         const rowKey = rowKeyGen(row);
-
-        const curRowIndex = virtual_dataSourcePart.value.findIndex(item => rowKeyGen(item) === rowKey);
-        if (curRowIndex < 0) return;
-
         const colKey = colKeyGen.value(col);
         const mergedCellKey = pureCellKeyGen(rowKey, colKey);
 
-        for (let i = curRowIndex; i < curRowIndex + rowspan; i++) {
-            const row = virtual_dataSourcePart.value[i];
-            if (!row) break;
-            hideCells(rowKeyGen(row), colKey, colspan, i === curRowIndex, mergedCellKey);
+        for (let i = rowIndex; i < rowIndex + rowspan; i++) {
+            const targetRow = virtual_dataSourcePart.value[i];
+            if (!targetRow) break;
+            hideCells(rowKeyGen(targetRow), colKey, colspan, i === rowIndex, mergedCellKey);
         }
 
         return { colspan, rowspan };

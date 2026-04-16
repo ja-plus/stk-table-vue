@@ -1,7 +1,9 @@
 
 ## 0.11.9
 * Optimize
-  - Optimize `updateVirtualScrollY`
+  - optimize `updateVirtualScrollY`.
+  - use cache to optimize `useMergeCells`.
+  - optimize `StkTable` v-bind style value object to string.
 * Bugfix
   - fix: virtual-x endIndex calculate error when it has sticky left fixed columns;
 

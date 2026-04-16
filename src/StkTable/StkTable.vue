@@ -106,7 +106,7 @@
                     :is="footerTagName"
                     v-if="footerData && footerData.length > 0"
                     class="stk-footer"
-                    :style="isFooterTop ? { top: tableHeaderHeight + 'px' } : {}"
+                    :style="isFooterTop ? `top:${tableHeaderHeight}px` : ''"
                 >
                     <tr v-for="(footRow, footRowIndex) in footerData" :key="footRowIndex">
                         <td v-if="virtualX_on" class="vt-x-left"></td>
@@ -131,7 +131,7 @@
 
                 <tbody
                     class="stk-tbody-main"
-                    :style="{ transform: isExperimentalScrollY ? `translateY(${virtualScroll.translateY}px)` : '' }"
+                    :style="isExperimentalScrollY ? `transform:translateY(${virtualScroll.translateY}px)` : ''"
                     @click="onCellClick"
                     @mousedown="onCellMouseDown"
                     @mouseover="onCellMouseOver"
@@ -161,7 +161,7 @@
                         <template v-else>
                             <template v-for="(col, colIndex) in virtualX_columnPart">
                                 <td
-                                    v-if="!hiddenCellMap || !hiddenCellMap[rowKeyGen(row)]?.has(colKeyGen(col))"
+                                    v-if="!shouldHideCell(row, col)"
                                     :key="colKeyGen(col)"
                                     v-bind="getTDProps(row, col, rowIndex, colIndex)"
                                     @mouseenter="onCellMouseEnter"
@@ -218,10 +218,7 @@
             <div
                 v-if="scrollbarOptions.enabled && showScrollbar.y"
                 class="stk-sb-thumb vertical"
-                :style="{
-                    height: `${scrollbar.h}px`,
-                    transform: `translateY(${scrollbar.t}px)`,
-                }"
+                :style="`height:${scrollbar.h}px;transform:translateY(${scrollbar.t}px)`"
                 @mousedown="onVerticalScrollbarMouseDown"
                 @touchstart="onVerticalScrollbarMouseDown"
             ></div>
@@ -233,10 +230,7 @@
         <div
             v-if="scrollbarOptions.enabled && showScrollbar.x"
             class="stk-sb-thumb horizontal"
-            :style="{
-                width: `${scrollbar.w}px`,
-                transform: `translateX(${scrollbar.l}px)`,
-            }"
+            :style="`width:${scrollbar.w}px;transform:translateX(${scrollbar.l}px)`"
             @mousedown="onHorizontalScrollbarMouseDown"
             @touchstart="onHorizontalScrollbarMouseDown"
         ></div>
@@ -940,6 +934,11 @@ const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowK
 
 const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits);
 
+/** style cache */
+const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
+const offsetBottomStyle = computed(() => `height:${virtual_offsetBottom.value}px`);
+const SRBRBottomStyle = computed(() => `height:${SRBRBottomHeight.value}px`);
+
 watch(
     () => props.columns,
     () => {
@@ -1135,13 +1134,13 @@ const cellStyleMap = computed(() => {
     };
 });
 
-/** 缓存的样式字符串，避免模板中重复计算 */
-const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
-const offsetBottomStyle = computed(() => `height: ${virtual_offsetBottom.value}px`);
-const SRBRBottomStyle = computed(() => `height: ${SRBRBottomHeight.value}px`);
-
 function getRowIndex(rowIndex: number) {
     return rowIndex + virtualScroll.value.startIndex;
+}
+
+function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>): boolean | undefined {
+    if (!hiddenCellMap.value || !row) return;
+    return hiddenCellMap.value[rowKeyGen(row)]?.has(colKeyGen.value(col));
 }
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
@@ -1247,7 +1246,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         classList.push('active');
     }
 
-    // 单元格拖选选区样式
+    // area selection style
     if (areaSelectionConfig.value.enabled) {
         const absRowIndex = getRowIndex(rowIndex);
         classList.push(...getAreaSelectionClasses(cellKey, absRowIndex, colKey));
@@ -1370,7 +1369,6 @@ function onCellMouseOver(e: MouseEvent) {
 function onCellMouseDown(e: MouseEvent) {
     const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
-    // 单元格拖选
     if (areaSelectionConfig.value.enabled) {
         onSelectionMouseDown(e);
     }
@@ -1460,7 +1458,7 @@ function onTableScroll(e: Event) {
             if (virtualX_on.value) {
                 updateVirtualScrollX(scrollLeft);
             } else {
-                // 非虚拟滚动也记录一下滚动条位置。用于判断isXScroll
+                // en: Record the scroll position. Used to determine isXScroll
                 virtualScrollX.value.scrollLeft = scrollLeft;
             }
             updateFixedShadow(virtualScrollX);

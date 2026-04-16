@@ -16,10 +16,11 @@
 
 ## Update Summary
 **Changes Made**
-- Enhanced horizontal virtual scrolling with improved column width caching implementation using useColWidthCache function
-- Added better memory management with clearColWidthCache function for optimized cache lifecycle
-- Improved column rendering logic with enhanced boundary condition handling
-- Updated viewport calculation algorithm with more robust cache validation and rebuild mechanisms
+- Enhanced horizontal virtual scrolling with improved column width caching system featuring dedicated left-fixed column caching
+- Bug fix in end index calculation algorithm with better viewport boundary management
+- Structural improvements to column width cache from {cols, nonFixedCols, leftColWidthSum} to {cols, nonFixedCols, leftFixedCols}
+- Enhanced left-fixed column processing with width tracking for improved viewport calculations
+- Improved memory management with better cache lifecycle handling
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -37,7 +38,7 @@
 13. [Conclusion](#conclusion)
 
 ## Introduction
-This document explains the enhanced horizontal virtual scrolling implementation in Stk Table Vue. The system now features sophisticated performance optimizations including an improved column width caching mechanism and better memory management strategies. The enhanced implementation provides more reliable cache validation, optimized memory usage, and improved boundary condition handling for extremely large numbers of columns while maintaining smooth user experience. It covers the implementation of rendering only visible columns within the viewport, column width calculation, horizontal scroll position tracking, viewport boundary management, and the new caching mechanisms that dramatically improve performance for datasets with thousands of columns.
+This document explains the enhanced horizontal virtual scrolling implementation in Stk Table Vue. The system now features sophisticated performance optimizations including an improved column width caching mechanism with dedicated left-fixed column tracking and better memory management strategies. The enhanced implementation provides more reliable cache validation, optimized memory usage, and improved boundary condition handling for extremely large numbers of columns while maintaining smooth user experience. It covers the implementation of rendering only visible columns within the viewport, column width calculation, horizontal scroll position tracking, viewport boundary management, and the new caching mechanisms that dramatically improve performance for datasets with thousands of columns.
 
 ## Project Structure
 The horizontal virtual scrolling feature spans several modules with enhanced performance infrastructure:
@@ -125,7 +126,7 @@ Key responsibilities with enhancements:
 ## Architecture Overview
 The enhanced horizontal virtual scrolling pipeline incorporates improved caching, memory management, and boundary handling optimizations:
 - Initialization: initVirtualScrollX reads containerWidth and scrollWidth, then calls updateVirtualScrollX with current scrollLeft.
-- Enhanced column width caching: useColWidthCache builds and maintains cumulative width arrays for non-fixed columns with improved cache validation.
+- Enhanced column width caching: useColWidthCache builds and maintains cumulative width arrays for non-fixed columns with improved cache validation and dedicated left-fixed column tracking.
 - Memory management: clearColWidthCache provides explicit cache invalidation for optimal memory usage.
 - Binary search: binarySearch finds the starting column index using cached cumulative widths with enhanced performance.
 - Scroll handling: updateVirtualScrollX uses cached data to compute startIndex, endIndex, and offsetLeft efficiently with improved boundary conditions.
@@ -141,7 +142,7 @@ participant UTILS as "Binary Search"
 DOM->>STK : "scroll" event
 STK->>VSC : "updateVirtualScrollX(scrollLeft)"
 VSC->>CACHE : "getColWidthCache(columns)"
-CACHE-->>VSC : "cached nonFixedCols + leftColWidthSum"
+CACHE-->>VSC : "cached nonFixedCols + leftFixedCols"
 VSC->>UTILS : "binarySearch(nonFixedCols, compare)"
 UTILS-->>VSC : "optimized startIndex"
 VSC->>VSC : "accumulate widths to find endIndex with boundary checks"
@@ -169,8 +170,8 @@ The new enhanced column width caching mechanism provides improved reliability an
 flowchart TD
 Start(["Enhanced useColWidthCache Function"]) --> Init["Initialize colWidthCache with null cols reference"]
 Init --> Build["build(cols) - Create nonFixedCols array with cumWidth"]
-Build --> Sum["Calculate leftColWidthSum for fixed-left columns"]
-Sum --> Store["Store in colWidthCache with cols reference"]
+Build --> LeftFixed["Process left-fixed columns with width tracking"]
+LeftFixed --> Store["Store in colWidthCache with cols reference"]
 Store --> Return["Return get/clear functions"]
 Return --> Get["get(cols) - Check cache.match(cols)"]
 Get --> |Match| ReturnCache["Return cached colWidthCache"]
@@ -183,10 +184,11 @@ Rebuild --> ReturnCache
 
 ### Enhanced Cache Structure and Benefits
 - **ColWidthCacheItem**: `{ index: number; cumWidth: number }` - stores cumulative width for each non-fixed column with improved indexing
-- **leftColWidthSum**: Total width of all fixed-left columns for viewport calculations with enhanced summation
+- **LeftFixedColCacheItem**: `{ index: number; width: number }` - stores width for each left-fixed column with precise tracking
 - **Cache Validation**: Improved cache matching using reference comparison (`colWidthCache.cols === cols`) for better reliability
 - **Performance Impact**: Eliminates O(n) rebuild on every scroll event, reduces CPU usage significantly, and prevents memory leaks
 - **Memory Efficiency**: Automatic cache invalidation prevents accumulation of stale cache data
+- **Bug Fix**: Enhanced end index calculation algorithm with better viewport boundary management
 
 **Section sources**
 - [useVirtualScroll.ts:44-81](file://src/StkTable/useVirtualScroll.ts#L44-L81)
@@ -199,8 +201,8 @@ The enhanced memory management system provides explicit cache control for optima
 ```mermaid
 flowchart TD
 Start(["clearColWidthCache Function"]) --> Invalidate["Set colWidthCache.cols = null"]
-Invalidate --> Release["Release cached nonFixedCols array"]
-Release --> Reset["Reset leftColWidthSum = 0"]
+Invalidate --> Release["Release cached nonFixedCols and leftFixedCols arrays"]
+Release --> Reset["Reset leftFixedCols = []"]
 Reset --> Cleanup["Memory cleanup complete"]
 Cleanup --> End(["Cache invalidated successfully"])
 ```
@@ -255,8 +257,8 @@ The enhanced boundary condition handling provides more robust column range valid
 
 ```mermaid
 flowchart TD
-Start(["Enhanced Boundary Handling"]) --> Init["Initialize startIndex=0, offsetLeft=0,<br/>colWidthSum=0, leftColWidthSum=0,<br/>leftFirstColRestWidth=0"]
-Init --> Cache["Get cached nonFixedCols + leftColWidthSum"]
+Start(["Enhanced Boundary Handling"]) --> Init["Initialize startIndex=0, offsetLeft=0,<br/>colWidthSum=0, actualLeftColWidthSum=0,<br/>leftFirstColRestWidth=0"]
+Init --> Cache["Get cached nonFixedCols + leftFixedCols"]
 Cache --> Binary["Binary search for first cumWidth >= sLeft"]
 Binary --> Found["Set startIndex = found.index,<br/>offsetLeft = prev.cumWidth,<br/>leftFirstColRestWidth = cumWidth - sLeft"]
 Found --> ValidStart["Apply min/max bounds:<br/>validStartIndex = Math.min(startIndex, maxIndex)"]
@@ -283,8 +285,8 @@ The algorithm now uses enhanced cached cumulative widths, improved binary search
 
 ```mermaid
 flowchart TD
-Start(["Entry: updateVirtualScrollX(sLeft)"]) --> Init["Initialize startIndex=0, offsetLeft=0,<br/>colWidthSum=0, leftColWidthSum=0,<br/>leftFirstColRestWidth=0"]
-Init --> Cache["Get cached nonFixedCols + leftColWidthSum"]
+Start(["Entry: updateVirtualScrollX(sLeft)"]) --> Init["Initialize startIndex=0, offsetLeft=0,<br/>colWidthSum=0, actualLeftColWidthSum=0,<br/>leftFirstColRestWidth=0"]
+Init --> Cache["Get cached nonFixedCols + leftFixedCols"]
 Cache --> Binary["Binary search for first cumWidth >= sLeft"]
 Binary --> Found["Set startIndex = found.index,<br/>offsetLeft = prev.cumWidth,<br/>leftFirstColRestWidth = cumWidth - sLeft"]
 Found --> ValidStart["Apply min/max bounds:<br/>validStartIndex = Math.min(startIndex, maxIndex)"]
@@ -327,11 +329,11 @@ Dyn --> RSp["Right Spacer<br/>width=virtualX_offsetRight"]
   - getCalculatedColWidth uses __WIDTH__ stored on columns after flattening with enhanced validation.
   - getColWidth prefers minWidth or width, falling back to default with improved fallback logic.
 - Fixed columns:
-  - Fixed-left columns are excluded from width accumulation but included in the final rendered list with better preservation.
+  - Fixed-left columns are processed separately with width tracking for enhanced viewport calculations.
   - Fixed-right columns are preserved after endIndex to keep them visible with enhanced boundary handling.
 - Enhanced cached processing:
   - Non-fixed columns are processed for cumulative width calculation with improved validation.
-  - Fixed-left columns contribute to leftColWidthSum for viewport calculations with better summation.
+  - Left-fixed columns contribute to actualLeftColWidthSum for viewport calculations with better precision.
 
 ```mermaid
 classDiagram
@@ -344,7 +346,7 @@ class Column {
 }
 class EnhancedCacheSystem {
 +nonFixedCols : ColWidthCacheItem[]
-+leftColWidthSum : number
++leftFixedCols : LeftFixedColCacheItem[]
 +cols : T[] | null
 +build(cols)
 +get(cols)
@@ -496,9 +498,9 @@ UTILS --> BSEARCH["Enhanced binarySearch"]
 - **Enhanced Vue2 scroll optimization**:
   - Defers startIndex/offsetLeft updates on fast horizontal scrolls to reduce re-renders.
   - Enhanced cached data ensures smooth scrolling even with thousands of columns.
-- **Improved Fixed columns handling**:
+- **Enhanced Fixed columns handling**:
   - Better preservation logic ensures fixed columns remain visible with enhanced boundary validation.
-  - Fixed-left width sum is cached separately for quick viewport calculations with improved accuracy.
+  - Left-fixed columns are tracked separately for precise viewport calculations with improved accuracy.
 - **Enhanced Defaults and fallbacks**:
   - When width is not set with virtualX, columns fall back to a default width, potentially increasing total width and triggering virtualX prematurely.
   - Improved fallback logic prevents unexpected behavior during column width resolution.
@@ -532,4 +534,4 @@ UTILS --> BSEARCH["Enhanced binarySearch"]
 - [useScrollbar.ts:116-129](file://src/StkTable/useScrollbar.ts#L116-L129)
 
 ## Conclusion
-Stk Table Vue's enhanced horizontal virtual scrolling efficiently renders only the visible columns by tracking scrollLeft, utilizing enhanced cached cumulative column widths, employing binary search algorithms for optimal performance, and implementing improved memory management strategies. The new enhanced column width caching mechanism, better cache validation, and explicit cache clearing provide more reliable performance even with extremely large datasets containing thousands of columns. The improved boundary condition handling and memory management ensure stable operation during dynamic column updates while maintaining smooth scrolling performance. The modular design keeps viewport computation decoupled from rendering, facilitating maintainability and extensibility while providing significant performance improvements over previous implementations.
+Stk Table Vue's enhanced horizontal virtual scrolling efficiently renders only the visible columns by tracking scrollLeft, utilizing enhanced cached cumulative column widths, employing binary search algorithms for optimal performance, and implementing improved memory management strategies. The new enhanced column width caching mechanism with dedicated left-fixed column tracking, better cache validation, and explicit cache clearing provide more reliable performance even with extremely large datasets containing thousands of columns. The improved boundary condition handling and memory management ensure stable operation during dynamic column updates while maintaining smooth scrolling performance. The modular design keeps viewport computation decoupled from rendering, facilitating maintainability and extensibility while providing significant performance improvements over previous implementations.
