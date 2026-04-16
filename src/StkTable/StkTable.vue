@@ -241,7 +241,7 @@
 /**
  * @author japlus
  */
-import { CSSProperties, computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
+import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import type { FilterStatus } from './components/Filter/types';
 import SortIcon from './components/SortIcon.vue';
@@ -1116,15 +1116,12 @@ const cellStyleMap = computed(() => {
         for (let i = 0, colsLen = cols.length; i < colsLen; i++) {
             const col = cols[i];
             const width = virtualX ? getCalculatedColWidth(col) + 'px' : transformWidthToStr(col.width);
-            const style: CSSProperties = {
-                '--cw': width, // --cw : cell-width
-                minWidth: transformWidthToStr(col.minWidth),
-                maxWidth: transformWidthToStr(col.maxWidth),
-            };
+            // en: Use string instead of object to reduce patchStyle overhead
+            const styleStr = `--cw:${width};min-width:${transformWidthToStr(col.minWidth)};max-width:${transformWidthToStr(col.maxWidth)}`;
             const colKey = colKeyGenValue(col);
-            thMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TH, col, depth)));
-            tdMap.set(colKey, Object.assign({}, style, getFixedStyle(TagType.TD, col, depth)));
-            tfMap.set(colKey, Object.assign({ position: 'sticky' }, style, getFixedStyle(TagType.TF, col, depth)));
+            thMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TH, col, depth));
+            tdMap.set(colKey, styleStr + ';' + getFixedStyle(TagType.TD, col, depth));
+            tfMap.set(colKey, 'position:sticky;' + styleStr + ';' + getFixedStyle(TagType.TF, col, depth));
         }
     }
     return {

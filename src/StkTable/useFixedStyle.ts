@@ -1,4 +1,4 @@
-import { CSSProperties, ComputedRef, Ref } from 'vue';
+import { ComputedRef, Ref } from 'vue';
 import { StkTableColumn, TagType } from './types';
 import { VirtualScrollStore, VirtualScrollXStore } from './useVirtualScroll';
 
@@ -23,46 +23,47 @@ export function useFixedStyle<DT extends Record<string, any>>(
     virtualX_offsetRight: Ref<number>,
 ) {
     /**
-     * 固定列的style
+     * fixed columns style
      * @param tagType 1-th 2-td
      * @param col
-     * @param depth 深度。tagType = 1时使用
+     * @param depth tagType = 1时使用
      */
-    function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): CSSProperties | null {
+    function getFixedStyle(tagType: TagType, col: StkTableColumn<DT>, depth = 0): string {
         const { fixed } = col;
-        if ((tagType === TagType.TD || tagType === TagType.TF) && !fixed) return null;
+        if ((tagType === TagType.TD || tagType === TagType.TF) && !fixed) return '';
 
-        const style: CSSProperties = {};
         const { headerRowHeight, rowHeight } = props;
         const isFixedLeft = fixed === 'left';
         const { scrollLeft, scrollWidth, offsetLeft, containerWidth } = virtualScrollX.value;
         const scrollRight = scrollWidth - containerWidth - scrollLeft;
 
+        let style = '';
+
         if (tagType === TagType.TH) {
             if (!isRelativeMode.value) {
                 if (depth) {
-                    style.top = depth * (headerRowHeight ?? rowHeight) + 'px';
+                    style += `top:${depth * (headerRowHeight ?? rowHeight)}px;`;
                 }
             } else {
-                style.top = virtualScroll.value.scrollTop + 'px';
+                style += `top:${virtualScroll.value.scrollTop}px;`;
             }
         } else if (tagType === TagType.TF) {
-            style.bottom = '0px';
+            style += 'bottom:0;';
         }
 
         if (fixed) {
             if (!isRelativeMode.value) {
                 const lr = getFixedColPosition.value(col) + 'px';
                 if (isFixedLeft) {
-                    style.left = lr;
+                    style += `left:${lr};`;
                 } else {
-                    style.right = lr;
+                    style += `right:${lr};`;
                 }
             } else {
                 if (isFixedLeft) {
-                    style.left = scrollLeft - (virtualX_on.value ? offsetLeft : 0) + 'px';
+                    style += `left:${scrollLeft - (virtualX_on.value ? offsetLeft : 0)}px;`;
                 } else {
-                    style.right = Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0) + 'px';
+                    style += `right:${Math.max(scrollRight - (virtualX_on.value ? virtualX_offsetRight.value : 0), 0)}px;`;
                 }
             }
         }
