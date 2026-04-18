@@ -930,9 +930,9 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
     clearColWidthCache,
 );
 
-const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen, initVirtualScrollY);
+const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen, onDataSourceChange);
 
-const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits, initVirtualScrollY);
+const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits, onDataSourceChange);
 
 /** style cache */
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
@@ -979,12 +979,6 @@ watch(
         updateDataSource(val);
     },
 );
-watch(
-    () => dataSourceCopy.value,
-    () => {
-        nextTick(updateCustomScrollbar);
-    },
-);
 
 watch(
     () => props.fixedColShadow,
@@ -1000,6 +994,12 @@ onMounted(() => {
     updateFixedShadow();
     dealDefaultSorter();
 });
+
+async function onDataSourceChange() {
+    await nextTick();
+    initVirtualScrollY();
+    updateCustomScrollbar();
+}
 
 function initDataSource(v = props.dataSource, option?: { forceSort?: boolean }) {
     let dataSourceTemp = v.slice(); // shallow copy
@@ -1072,6 +1072,7 @@ function updateDataSource(val: DT[]) {
         // wait for table render,initVirtualScrollY has get `dom` operation.
         nextTick(() => initVirtualScrollY());
     }
+    nextTick(updateCustomScrollbar);
 }
 
 /** tr key */

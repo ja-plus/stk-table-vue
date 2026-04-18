@@ -3,7 +3,7 @@ import { EXPANDED_ROW_KEY_PREFIX } from './const';
 import { PrivateRowDT, RowKeyGen, StkTableColumn, UniqKey } from './types';
 type DT = PrivateRowDT;
 
-export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, initVirtualScrollY?: () => void) {
+export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, onDataSourceChange: () => void) {
     const expandedKey = '__EXP__';
 
     function isExpanded(row: DT, col?: StkTableColumn<DT>) {
@@ -71,7 +71,7 @@ export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKe
         }
 
         dataSourceCopy.value = tempData;
-        nextTick(() => initVirtualScrollY?.());
+        onDataSourceChange();
         if (!data?.silent) {
             emits('toggle-row-expand', { expanded: Boolean(expand), row, col });
         }
