@@ -418,13 +418,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     })) | (UniqKey | (PrivateRowDT & {
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
-        expand
-        /**
-         * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
-         */
-        ? /**
-         * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
-         */: boolean;
+        expand?: boolean;
     }) => void;
     /**
      * 获取拖选选中的单元格信息
