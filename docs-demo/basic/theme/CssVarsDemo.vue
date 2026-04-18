@@ -202,7 +202,13 @@ const varList = ref([
 
 const controlColumns: StkTableColumn<any>[] = [
     { type: 'tree-node', title: '说明', dataIndex: 'label', sorter: true },
-    { title: 'CSS Var', dataIndex: 'key', sorter: true },
+    {
+        title: 'CSS Var',
+        dataIndex: 'key',
+        sorter: true,
+        width: 240,
+        customCell: ({ row, cellValue }) => (row.children ? '' : cellValue),
+    },
     {
         title: 'Value',
         dataIndex: 'value',
@@ -210,6 +216,7 @@ const controlColumns: StkTableColumn<any>[] = [
         width: 150,
         customCell: ({ row }) => {
             const children = [];
+            if (row.children) return '';
             if (row.type === 'color') {
                 children.push(
                     h('input', {
@@ -275,6 +282,9 @@ const controlColumns: StkTableColumn<any>[] = [
             cell-active
             cell-hover
             scrollbar
+            :tree-config="{
+                defaultExpandAll: true,
+            }"
             :columns="controlColumns"
             :data-source="varList"
         />
