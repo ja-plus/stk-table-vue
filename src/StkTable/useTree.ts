@@ -1,9 +1,9 @@
-import { ShallowRef } from 'vue';
+import { ShallowRef, nextTick } from 'vue';
 import { PrivateRowDT, RowKeyGen, TreeConfig, UniqKey } from './types';
 
 type DT = PrivateRowDT & { children?: DT[] };
 
-export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, emits: any) {
+export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, emits: any, initVirtualScrollY?: () => void) {
     const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = props.treeConfig;
     /** It used to check if it is first load. To execute defaultExpandXXX */
     let isFirstLoad = true;
@@ -61,6 +61,7 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
         }
 
         dataSourceCopy.value = tempData;
+        nextTick(() => initVirtualScrollY?.());
     }
 
     function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean }) {

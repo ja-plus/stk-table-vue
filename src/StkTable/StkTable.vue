@@ -930,9 +930,9 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
     clearColWidthCache,
 );
 
-const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen);
+const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen, initVirtualScrollY);
 
-const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits);
+const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits, initVirtualScrollY);
 
 /** style cache */
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);

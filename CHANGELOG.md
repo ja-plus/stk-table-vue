@@ -1,4 +1,8 @@
 
+## 0.11.10
+* Bugfix
+  - fix: tree expand not work correctly when virtual mode.
+
 ## 0.11.9
 * Optimize
   - optimize `updateVirtualScrollY`.
