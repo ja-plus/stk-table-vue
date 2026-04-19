@@ -18,7 +18,7 @@ npm install stk-table-vue
 ```typescript
 import { StkTable } from 'stk-table-vue';
 import type { StkTableColumn, Order, SortConfig, SortState } from 'stk-table-vue';
-import 'stk-table-vue/lib/style.css';
+import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局) 引入一次。
 ```
 
 其他可导出项：
