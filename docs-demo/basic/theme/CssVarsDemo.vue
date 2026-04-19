@@ -3,6 +3,9 @@ import { ref, computed, h, watch } from 'vue';
 import StkTable from '../../StkTable.vue';
 import { StkTableColumn } from '../../../src/StkTable/index';
 import { useData } from 'vitepress';
+import { useI18n } from '../../hooks/useI18n';
+
+const { t } = useI18n();
 
 const { isDark } = useData();
 
@@ -75,6 +78,44 @@ const darkDefaults = {
 };
 
 const cssVars = ref({ ...lightDefaults });
+const copyMessage = ref('');
+
+const getDefaults = () => (isDark.value ? darkDefaults : lightDefaults);
+
+const modifiedVars = computed(() => {
+    const defaults = getDefaults();
+    const modified: Record<string, string> = {};
+    for (const [key, value] of Object.entries(cssVars.value)) {
+        if (value !== defaults[key as keyof typeof defaults]) {
+            modified[key] = value;
+        }
+    }
+    return modified;
+});
+
+const copyModifiedStyles = async () => {
+    const vars = modifiedVars.value;
+    if (Object.keys(vars).length === 0) {
+        copyMessage.value = t('cssVars.noModifications');
+        setTimeout(() => {
+            copyMessage.value = '';
+        }, 1500);
+        return;
+    }
+    const cssString = Object.entries(vars)
+        .map(([key, value]) => `    ${key}: ${value};`)
+        .join('\n');
+    const fullCss = `.stk-table {\n${cssString}\n}`;
+    try {
+        await navigator.clipboard.writeText(fullCss);
+        copyMessage.value = t('cssVars.copied');
+    } catch {
+        copyMessage.value = t('cssVars.failed');
+    }
+    setTimeout(() => {
+        copyMessage.value = '';
+    }, 1500);
+};
 
 const resetToDefaults = () => {
     cssVars.value = { ...(isDark.value ? darkDefaults : lightDefaults) };
@@ -98,119 +139,223 @@ const tableStyle = computed(() => {
 
 const varList = ref([
     {
-        label: '尺寸',
+        label: t('cssVars.size'),
         key: '1',
         children: [
-            { label: '行高', key: '--row-height', type: 'number', unit: 'px' },
-            { label: '表头行高', key: '--header-row-height', type: 'text' },
-            { label: '表尾行高', key: '--footer-row-height', type: 'text' },
-            { label: '单元格垂直内边距', key: '--cell-padding-y', type: 'number', unit: 'px' },
-            { label: '单元格水平内边距', key: '--cell-padding-x', type: 'number', unit: 'px' },
-            { label: '列宽调整手柄宽度', key: '--resize-handle-width', type: 'number', unit: 'px' },
+            {
+                label: t('cssVars.rowHeight'),
+                key: '--row-height',
+                type: 'number',
+                unit: 'px',
+            },
+            {
+                label: t('cssVars.headerRowHeight'),
+                key: '--header-row-height',
+                type: 'text',
+            },
+            {
+                label: t('cssVars.footerRowHeight'),
+                key: '--footer-row-height',
+                type: 'text',
+            },
+            {
+                label: t('cssVars.cellPaddingY'),
+                key: '--cell-padding-y',
+                type: 'number',
+                unit: 'px',
+            },
+            {
+                label: t('cssVars.cellPaddingX'),
+                key: '--cell-padding-x',
+                type: 'number',
+                unit: 'px',
+            },
+            {
+                label: t('cssVars.resizeHandleWidth'),
+                key: '--resize-handle-width',
+                type: 'number',
+                unit: 'px',
+            },
         ],
     },
     {
-        label: '边框',
+        label: t('cssVars.border'),
         key: '2',
         children: [
-            { label: '边框颜色', key: '--border-color', type: 'color' },
-            { label: '边框宽度', key: '--border-width', type: 'number', unit: 'px' },
+            { label: t('cssVars.borderColor'), key: '--border-color', type: 'color' },
+            {
+                label: t('cssVars.borderWidth'),
+                key: '--border-width',
+                type: 'number',
+                unit: 'px',
+            },
         ],
     },
     {
-        label: '单元格',
+        label: t('cssVars.cell'),
         key: '3',
         children: [
-            { label: '单元格背景色', key: '--td-bgc', type: 'color' },
-            { label: '单元格悬停色', key: '--td-hover-color', type: 'color' },
-            { label: '单元格激活色', key: '--td-active-color', type: 'color' },
+            { label: t('cssVars.tdBgc'), key: '--td-bgc', type: 'color' },
+            {
+                label: t('cssVars.tdHoverColor'),
+                key: '--td-hover-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.tdActiveColor'),
+                key: '--td-active-color',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '表头/表尾',
+        label: t('cssVars.headerFooter'),
         key: '4',
         children: [
-            { label: '表头背景色', key: '--th-bgc', type: 'color' },
-            { label: '表尾背景色', key: '--tf-bgc', type: 'color' },
-            { label: '表头文字色', key: '--th-color', type: 'color' },
+            { label: t('cssVars.thBgc'), key: '--th-bgc', type: 'color' },
+            { label: t('cssVars.tfBgc'), key: '--tf-bgc', type: 'color' },
+            { label: t('cssVars.thColor'), key: '--th-color', type: 'color' },
         ],
     },
     {
-        label: '行状态',
+        label: t('cssVars.rowState'),
         key: '5',
         children: [
-            { label: '行悬停背景色', key: '--tr-hover-bgc', type: 'color' },
-            { label: '行激活背景色', key: '--tr-active-bgc', type: 'color' },
-            { label: '斑马纹背景色', key: '--stripe-bgc', type: 'color' },
+            {
+                label: t('cssVars.trHoverBgc'),
+                key: '--tr-hover-bgc',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.trActiveBgc'),
+                key: '--tr-active-bgc',
+                type: 'color',
+            },
+            { label: t('cssVars.stripeBgc'), key: '--stripe-bgc', type: 'color' },
         ],
     },
     {
-        label: '排序',
+        label: t('cssVars.sort'),
         key: '6',
         children: [
-            { label: '排序箭头颜色', key: '--sort-arrow-color', type: 'color' },
-            { label: '排序箭头悬停色', key: '--sort-arrow-hover-color', type: 'color' },
-            { label: '排序箭头激活色', key: '--sort-arrow-active-color', type: 'color' },
-            { label: '排序箭头激活次要颜色', key: '--sort-arrow-active-sub-color', type: 'color' },
+            {
+                label: t('cssVars.sortArrowColor'),
+                key: '--sort-arrow-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.sortArrowHoverColor'),
+                key: '--sort-arrow-hover-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.sortArrowActiveColor'),
+                key: '--sort-arrow-active-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.sortArrowActiveSubColor'),
+                key: '--sort-arrow-active-sub-color',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '图标',
+        label: t('cssVars.icon'),
         key: '7',
         children: [
-            { label: '折叠图标颜色', key: '--fold-icon-color', type: 'color' },
-            { label: '折叠图标悬停色', key: '--fold-icon-hover-color', type: 'color' },
+            {
+                label: t('cssVars.foldIconColor'),
+                key: '--fold-icon-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.foldIconHoverColor'),
+                key: '--fold-icon-hover-color',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '列宽调整',
+        label: t('cssVars.colResize'),
         key: '8',
         children: [
-            { label: '列宽调整指示器颜色', key: '--col-resize-indicator-color', type: 'color' },
+            {
+                label: t('cssVars.colResizeIndicatorColor'),
+                key: '--col-resize-indicator-color',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '固定列',
+        label: t('cssVars.fixedCol'),
         key: '9',
         children: [
-            { label: '固定列阴影起始颜色', key: '--fixed-col-shadow-color-from', type: 'color' },
-            { label: '固定列阴影结束颜色', key: '--fixed-col-shadow-color-to', type: 'color' },
+            {
+                label: t('cssVars.fixedColShadowColorFrom'),
+                key: '--fixed-col-shadow-color-from',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.fixedColShadowColorTo'),
+                key: '--fixed-col-shadow-color-to',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '拖拽行',
+        label: t('cssVars.dragRow'),
         key: '10',
-        children: [{ label: '拖拽手柄悬停颜色', key: '--drag-handle-hover-color', type: 'color' }],
+        children: [
+            {
+                label: t('cssVars.dragHandleHoverColor'),
+                key: '--drag-handle-hover-color',
+                type: 'color',
+            },
+        ],
     },
     {
-        label: '滚动条',
+        label: t('cssVars.scrollbar'),
         key: '11',
         children: [
-            { label: '滚动条颜色', key: '--sb-thumb-color', type: 'color' },
-            { label: '滚动条悬停色', key: '--sb-thumb-hover-color', type: 'color' },
+            {
+                label: t('cssVars.sbThumbColor'),
+                key: '--sb-thumb-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.sbThumbHoverColor'),
+                key: '--sb-thumb-hover-color',
+                type: 'color',
+            },
         ],
     },
     {
-        label: '选区',
+        label: t('cssVars.selection'),
         key: '12',
         children: [
-            { label: '选区背景色', key: '--cs-bgc', type: 'color' },
-            { label: '选区边框色', key: '--cs-bc', type: 'color' },
+            { label: t('cssVars.csBgc'), key: '--cs-bgc', type: 'color' },
+            { label: t('cssVars.csBc'), key: '--cs-bc', type: 'color' },
         ],
     },
 ]);
 
 const controlColumns: StkTableColumn<any>[] = [
-    { type: 'tree-node', title: '说明', dataIndex: 'label', sorter: true },
     {
-        title: 'CSS Var',
+        type: 'tree-node',
+        title: t('cssVars.description'),
+        dataIndex: 'label',
+        sorter: true,
+    },
+    {
+        title: t('cssVars.cssVar'),
         dataIndex: 'key',
         sorter: true,
         width: 240,
         customCell: ({ row, cellValue }) => (row.children ? '' : cellValue),
     },
     {
-        title: 'Value',
+        title: t('cssVars.value'),
         dataIndex: 'value',
         align: 'right',
         width: 150,
@@ -262,19 +407,58 @@ const controlColumns: StkTableColumn<any>[] = [
             return h('div', { class: 'control-cell' }, children);
         },
     },
+    {
+        title: '',
+        dataIndex: 'action',
+        width: 40,
+        align: 'center',
+        customHeaderCell: () => {
+            return h(
+                'button',
+                {
+                    class: 'row-reset-btn',
+                    title: t('cssVars.resetAll'),
+                    onClick: () => {
+                        resetToDefaults();
+                    },
+                },
+                '↺',
+            );
+        },
+        customCell: ({ row }) => {
+            if (row.children) return '';
+            const defaults = getDefaults();
+            const defaultVal = defaults[row.key as keyof typeof defaults];
+            const currentVal = cssVars.value[row.key as keyof typeof cssVars.value];
+            const isModified = currentVal !== defaultVal;
+            return h(
+                'button',
+                {
+                    class: 'row-reset-btn',
+                    disabled: !isModified,
+                    onClick: () => {
+                        cssVars.value[row.key as keyof typeof cssVars.value] = defaultVal;
+                    },
+                },
+                '↺',
+            );
+        },
+    },
 ];
 </script>
 
 <template>
     <div class="css-vars-demo">
         <div class="demo-header">
-            <button class="reset-btn" @click="resetToDefaults">Reset</button>
+            <button class="copy-btn" @click="copyModifiedStyles">
+                {{ copyMessage || t('cssVars.copyModified') }}
+            </button>
         </div>
         <StkTable
             ref="stkTableRef"
             row-key="key"
             class="control-table"
-            style="height: 500px"
+            style="height: 600px"
             :style="tableStyle"
             virtual
             stripe
@@ -300,10 +484,12 @@ const controlColumns: StkTableColumn<any>[] = [
 .demo-header {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
     padding: 8px 12px;
 }
 
-.reset-btn {
+.reset-btn,
+.copy-btn {
     padding: 3px 12px;
     border: 1px solid var(--vp-c-divider);
     border-radius: 4px;
@@ -316,6 +502,12 @@ const controlColumns: StkTableColumn<any>[] = [
 }
 
 .reset-btn:hover {
+    background: var(--vp-button-alt-hover-bg);
+    color: var(--vp-button-alt-hover-text);
+    border-color: var(--vp-c-divider);
+}
+
+.copy-btn:hover {
     background: var(--vp-button-alt-hover-bg);
     color: var(--vp-button-alt-hover-text);
     border-color: var(--vp-c-divider);
@@ -395,5 +587,30 @@ const controlColumns: StkTableColumn<any>[] = [
 .css-vars-demo :deep(.text-input):focus {
     outline: none;
     border-color: var(--vp-c-brand);
+}
+
+:deep(.row-reset-btn) {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--border-color, #e8e8f4);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--vp-c-text-2);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+:deep(.row-reset-btn):hover {
+    background: var(--vp-button-alt-hover-bg);
+    color: var(--vp-c-text-1);
+    border-color: var(--vp-c-divider);
+}
+
+:deep(.reset-indicator) {
+    color: var(--vp-c-brand);
+    font-size: 10px;
 }
 </style>
