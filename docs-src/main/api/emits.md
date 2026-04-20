@@ -191,7 +191,7 @@
 行拖拽选区变更事件。
 
 ```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
 ```
 
 ### update:columns

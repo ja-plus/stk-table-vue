@@ -1,6 +1,7 @@
 # Row Drag Selection <Badge type="tip" text="^0.12.0" /> <Badge type="warning" text="Need Register" />
 Enable drag-to-select contiguous rows with `props.rowDragSelection`.
 - Supports dragging upward and downward.
+- Hold `Ctrl` / `Command` to add multiple non-contiguous ranges.
 - Automatically scrolls when the cursor reaches the table edge.
 - Useful for batch actions and pre-selecting export ranges.
 
@@ -29,4 +30,5 @@ registerFeature(useRowDragSelection);
 
 ## Exposed
 - [getSelectedRows](/en/main/api/expose.md#getselectedrows)
+- [setSelectedRows](/en/main/api/expose.md#setselectedrows)
 - [clearSelectedRows](/en/main/api/expose.md#clearselectedrows)

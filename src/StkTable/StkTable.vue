@@ -676,9 +676,9 @@ const emits = defineEmits<{
     /**
      * 行拖拽选区变更事件
      *
-     * ```(range: RowDragSelectionRange | null, data: { rows: DT[] })```
+     * ```(range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] })```
      */
-    (e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+    (e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
     /**
      * 筛选变更触发(Beta)
      *
@@ -924,9 +924,10 @@ const {
     onMD: onRowDragSelectionMouseDown,
     getClass: getRowDragSelectionClasses,
     get: getSelectedRows,
+    set: setSelectedRows,
     clear: clearSelectedRows,
     consumeClick: consumeRowDragSelectionClick,
-} = ON_DEMAND_FEATURE[useRowDragSelectionName](props, emits, tableContainerRef, dataSourceCopy, scrollTo, virtualScroll);
+} = ON_DEMAND_FEATURE[useRowDragSelectionName](props, emits, tableContainerRef, dataSourceCopy, rowKeyGen, scrollTo, virtualScroll);
 
 /** 键盘箭头滚动 */
 useKeyboardArrowScroll(tableContainerRef, props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on, areaSelectionConfig);
@@ -1773,6 +1774,13 @@ defineExpose({
      * @see {@link getSelectedRows}
      */
     getSelectedRows,
+    /**
+     * 设置拖拽选中的行
+     *
+     * en: Set selected rows (rowDragSelection=true)
+     * @see {@link setSelectedRows}
+     */
+    setSelectedRows,
     /**
      * 清空拖拽选中的行
      *

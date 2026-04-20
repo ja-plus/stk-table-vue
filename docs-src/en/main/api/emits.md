@@ -191,7 +191,7 @@ Area selection change event.
 Triggered when row drag selection changes.
 
 ```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
 ```
 
 ### update:columns

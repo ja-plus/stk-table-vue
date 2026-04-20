@@ -1,6 +1,7 @@
 # 拖拽选中行 <Badge type="tip" text="^0.12.0" /> <Badge type="warning" text="Need Register" />
 通过 `props.rowDragSelection` 启用鼠标拖拽连续选择多行。
 - 支持向上、向下拖拽选择。
+- 支持按住 `Ctrl` / `Command` 追加选择多个不连续区间。
 - 拖拽到表格边缘时会自动滚动。
 - 适合批量操作、批量高亮、批量导出前置选择。
 
@@ -29,4 +30,5 @@ registerFeature(useRowDragSelection);
 
 ## Exposed
 - [getSelectedRows](/main/api/expose.md#getselectedrows)
+- [setSelectedRows](/main/api/expose.md#setselectedrows)
 - [clearSelectedRows](/main/api/expose.md#clearselectedrows)

@@ -191,7 +191,7 @@
 行ドラッグ選択範囲が変更されたときに発火します。
 
 ```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
 ```
 
 ### update:columns

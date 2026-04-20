@@ -212,7 +212,15 @@ Get selected rows from row drag selection
 function getSelectedRows(): {
     rows: DT[];
     range: RowDragSelectionRange | null;
+    ranges: RowDragSelectionRange[];
 }
+```
+
+### setSelectedRows
+Set selected rows for row drag selection. Non-contiguous rows are supported and will be stored as multiple continuous ranges.
+
+```ts
+function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
 ```
 
 ### clearSelectedRows

@@ -1,6 +1,7 @@
 # 行ドラッグ選択 <Badge type="tip" text="^0.12.0" /> <Badge type="warning" text="登録が必要" />
 `props.rowDragSelection` で連続した行のドラッグ選択を有効にします。
 - 上下方向のドラッグ選択をサポートします。
+- `Ctrl` / `Command` を押しながら複数の非連続範囲を追加選択できます。
 - カーソルが表の端に来ると自動スクロールします。
 - 一括操作やエクスポート前の範囲選択に便利です。
 
@@ -29,4 +30,5 @@ registerFeature(useRowDragSelection);
 
 ## Exposed
 - [getSelectedRows](/ja/main/api/expose.md#getselectedrows)
+- [setSelectedRows](/ja/main/api/expose.md#setselectedrows)
 - [clearSelectedRows](/ja/main/api/expose.md#clearselectedrows)

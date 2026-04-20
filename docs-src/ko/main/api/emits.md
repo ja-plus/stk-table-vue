@@ -191,7 +191,7 @@
 행 드래그 선택 영역 변경 이벤트.
 
 ```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
 ```
 
 ### update:columns

@@ -1,7 +1,7 @@
 <template>
     <div style="padding: 16px">
         <div class="toolbar">
-            <span>按住鼠标左键上下拖拽，选择连续多行。</span>
+            <span>按住鼠标左键拖拽可选择连续多行，按住 Ctrl / Command 可追加不连续区间。</span>
             <button class="btn" @click="clearSelection">clearSelectedRows()</button>
         </div>
         <StkTable
@@ -53,13 +53,18 @@ const rows = Array.from({ length: 80 }, (_, index) => ({
 
 const currentSelection = ref({
     range: null as null | { startRowIndex: number; endRowIndex: number },
+    ranges: [] as { startRowIndex: number; endRowIndex: number }[],
     count: 0,
     rowIds: [] as number[],
 });
 
-function onSelectionChange(range: { startRowIndex: number; endRowIndex: number } | null, data: { rows: Row[] }) {
+function onSelectionChange(
+    range: { startRowIndex: number; endRowIndex: number } | null,
+    data: { rows: Row[]; ranges: { startRowIndex: number; endRowIndex: number }[] }
+) {
     currentSelection.value = {
         range,
+        ranges: data.ranges,
         count: data.rows.length,
         rowIds: data.rows.map(row => row.id),
     };
@@ -69,6 +74,7 @@ function clearSelection() {
     stkTableRef.value?.clearSelectedRows();
     currentSelection.value = {
         range: null,
+        ranges: [],
         count: 0,
         rowIds: [],
     };

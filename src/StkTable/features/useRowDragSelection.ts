@@ -1,5 +1,5 @@
 import { Ref, ShallowRef, computed, onBeforeUnmount, ref } from 'vue';
-import { RowDragSelectionConfig, RowDragSelectionRange } from '../types';
+import { RowDragSelectionConfig, RowDragSelectionRange, RowKeyGen, UniqKey } from '../types';
 import { VirtualScrollStore } from '../useVirtualScroll';
 import { getClosestTrIndex } from '../utils';
 import { MY_FN_NAME } from './const';
@@ -14,6 +14,7 @@ export function useRowDragSelection<DT extends Record<string, any>>(
     emits: any,
     tableContainerRef: Ref<HTMLDivElement | undefined>,
     dataSourceCopy: ShallowRef<DT[]>,
+    rowKeyGen: RowKeyGen,
     scrollTo: (top: number | null, left: number | null) => void,
     virtualScroll: Ref<VirtualScrollStore>,
 ) {
@@ -25,9 +26,11 @@ export function useRowDragSelection<DT extends Record<string, any>>(
     const ROW_RANGE_START = 'row-range-start';
     const ROW_RANGE_END = 'row-range-end';
 
+    const selectionRanges = ref<RowDragSelectionRange[]>([]) as Ref<RowDragSelectionRange[]>;
     const selectionRange = ref<RowDragSelectionRange | null>(null) as Ref<RowDragSelectionRange | null>;
     const isSelecting = ref(false);
     let anchorRowIndex: number | null = null;
+    let isAdditiveSelection = false;
 
     let autoScrollRafId = 0;
     let lastMouseClientX = 0;
@@ -42,10 +45,12 @@ export function useRowDragSelection<DT extends Record<string, any>>(
         return { enabled: true, ...props.rowDragSelection };
     });
 
-    const normalizedRange = computed(() => {
-        const range = selectionRange.value;
-        if (!range) return null;
-        return normalizeRange(range);
+    const displayRanges = computed(() => {
+        const ranges = [...selectionRanges.value];
+        if (selectionRange.value) {
+            ranges.push(selectionRange.value);
+        }
+        return mergeRanges(ranges);
     });
 
     onBeforeUnmount(() => {
@@ -65,6 +70,67 @@ export function useRowDragSelection<DT extends Record<string, any>>(
         };
     }
 
+    function denormalizeRange(range: { minRow: number; maxRow: number }): RowDragSelectionRange {
+        return {
+            startRowIndex: range.minRow,
+            endRowIndex: range.maxRow,
+        };
+    }
+
+    function mergeRanges(ranges: RowDragSelectionRange[]) {
+        if (!ranges.length) return [];
+        const sortedRanges = ranges.map(normalizeRange).sort((a, b) => a.minRow - b.minRow);
+
+        const merged = [sortedRanges[0]];
+        for (let i = 1; i < sortedRanges.length; i++) {
+            const current = sortedRanges[i];
+            const last = merged[merged.length - 1];
+            if (current.minRow <= last.maxRow + 1) {
+                last.maxRow = Math.max(last.maxRow, current.maxRow);
+            } else {
+                merged.push({ ...current });
+            }
+        }
+        return merged.map(denormalizeRange);
+    }
+
+    function getNormalizedRanges() {
+        return mergeRanges(selectionRanges.value).map(normalizeRange);
+    }
+
+    function getPrimaryRange() {
+        const ranges = mergeRanges(selectionRanges.value);
+        return ranges.length === 1 ? ranges[0] : null;
+    }
+
+    function getSelectedRowsFromRanges(ranges: RowDragSelectionRange[]) {
+        return mergeRanges(ranges).flatMap(range => {
+            const { minRow, maxRow } = normalizeRange(range);
+            return dataSourceCopy.value.slice(minRow, maxRow + 1);
+        });
+    }
+
+    function buildRangesFromIndices(rowIndexList: number[]) {
+        if (!rowIndexList.length) return [];
+        const sortedRowIndexList = [...new Set(rowIndexList)].sort((a, b) => a - b);
+        const ranges: RowDragSelectionRange[] = [];
+        let start = sortedRowIndexList[0];
+        let end = start;
+
+        for (let i = 1; i < sortedRowIndexList.length; i++) {
+            const current = sortedRowIndexList[i];
+            if (current === end + 1) {
+                end = current;
+                continue;
+            }
+            ranges.push({ startRowIndex: start, endRowIndex: end });
+            start = current;
+            end = current;
+        }
+        ranges.push({ startRowIndex: start, endRowIndex: end });
+        return ranges;
+    }
+
     function calculateAutoScrollDelta(mouseY: number, rect: DOMRect) {
         const { top, bottom } = rect;
         if (mouseY < top + EDGE_ZONE) {
@@ -78,17 +144,50 @@ export function useRowDragSelection<DT extends Record<string, any>>(
         return 0;
     }
 
+    function isRowIndexSelected(rowIndex: number): boolean {
+        return getNormalizedRanges().some(({ minRow, maxRow }) => rowIndex >= minRow && rowIndex <= maxRow);
+    }
+
+    function removeRowIndexFromRanges(rowIndex: number) {
+        const normalizedRanges = getNormalizedRanges();
+        const newRanges: { minRow: number; maxRow: number }[] = [];
+        for (const { minRow, maxRow } of normalizedRanges) {
+            if (rowIndex < minRow || rowIndex > maxRow) {
+                newRanges.push({ minRow, maxRow });
+            } else if (rowIndex === minRow && rowIndex === maxRow) {
+                // single-row range, remove entirely
+            } else if (rowIndex === minRow) {
+                newRanges.push({ minRow: minRow + 1, maxRow });
+            } else if (rowIndex === maxRow) {
+                newRanges.push({ minRow, maxRow: maxRow - 1 });
+            } else {
+                newRanges.push({ minRow, maxRow: rowIndex - 1 });
+                newRanges.push({ minRow: rowIndex + 1, maxRow });
+            }
+        }
+        selectionRanges.value = newRanges.map(denormalizeRange);
+    }
+
     function onSelectionMouseDown(e: MouseEvent) {
         if (!config.value.enabled || e.button !== 0) return false;
         const rowIndex = getClosestTrIndex(e.target as HTMLElement);
         if (Number.isNaN(rowIndex) || rowIndex < 0) return false;
+
+        isAdditiveSelection = e.ctrlKey || e.metaKey;
+
+        // Ctrl+click on already-selected row: toggle off
+        if (isAdditiveSelection && !e.shiftKey && isRowIndexSelected(rowIndex)) {
+            removeRowIndexFromRanges(rowIndex);
+            preventNextClick = true;
+            emitSelectionChange();
+            return true;
+        }
 
         if (e.shiftKey && anchorRowIndex !== null) {
             selectionRange.value = {
                 startRowIndex: anchorRowIndex,
                 endRowIndex: rowIndex,
             };
-            preventNextClick = true;
         } else {
             anchorRowIndex = rowIndex;
             selectionRange.value = {
@@ -96,6 +195,12 @@ export function useRowDragSelection<DT extends Record<string, any>>(
                 endRowIndex: rowIndex,
             };
         }
+
+        if (!isAdditiveSelection) {
+            selectionRanges.value = [];
+        }
+
+        preventNextClick = isAdditiveSelection || e.shiftKey;
 
         isSelecting.value = true;
         hasDragged = false;
@@ -213,48 +318,95 @@ export function useRowDragSelection<DT extends Record<string, any>>(
             preventNextClick = true;
         }
 
+        commitSelection();
         emitSelectionChange();
     }
 
+    function commitSelection() {
+        if (!selectionRange.value) return;
+        selectionRanges.value = mergeRanges([...selectionRanges.value, selectionRange.value]);
+        selectionRange.value = null;
+    }
+
     function emitSelectionChange() {
-        const range = selectionRange.value;
-        if (!range) {
-            emits('row-drag-selection-change', null, { rows: [] });
+        const ranges = mergeRanges(selectionRanges.value);
+        const range = ranges.length === 1 ? ranges[0] : null;
+        if (!ranges.length) {
+            emits('row-drag-selection-change', null, { rows: [], ranges: [] });
             return;
         }
-        const { minRow, maxRow } = normalizeRange(range);
         emits('row-drag-selection-change', range, {
-            rows: dataSourceCopy.value.slice(minRow, maxRow + 1),
+            rows: getSelectedRowsFromRanges(ranges),
+            ranges,
         });
     }
 
     function getRowSelectionClasses(absoluteRowIndex: number): string[] {
-        const range = normalizedRange.value;
-        if (!range || absoluteRowIndex < range.minRow || absoluteRowIndex > range.maxRow) return [];
-
-        const classes = [ROW_RANGE_SELECTED];
-        if (absoluteRowIndex === range.minRow) classes.push(ROW_RANGE_START);
-        if (absoluteRowIndex === range.maxRow) classes.push(ROW_RANGE_END);
-        return classes;
+        const ranges = displayRanges.value;
+        for (let i = 0; i < ranges.length; i++) {
+            const { minRow, maxRow } = normalizeRange(ranges[i]);
+            if (absoluteRowIndex < minRow || absoluteRowIndex > maxRow) continue;
+            const classes = [ROW_RANGE_SELECTED];
+            if (absoluteRowIndex === minRow) classes.push(ROW_RANGE_START);
+            if (absoluteRowIndex === maxRow) classes.push(ROW_RANGE_END);
+            return classes;
+        }
+        return [];
     }
 
     function getSelectedRows() {
-        const range = selectionRange.value;
-        if (!range) return { rows: [] as DT[], range: null };
-
-        const { minRow, maxRow } = normalizeRange(range);
+        const ranges = mergeRanges(selectionRanges.value);
         return {
-            rows: dataSourceCopy.value.slice(minRow, maxRow + 1),
-            range: { ...range },
+            rows: getSelectedRowsFromRanges(ranges),
+            range: getPrimaryRange(),
+            ranges,
         };
     }
 
+    function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option: { silent?: boolean } = {}) {
+        if (!rowKeyOrRows?.length) {
+            clearSelectedRows();
+            if (!option.silent) {
+                emits('row-drag-selection-change', null, { rows: [] });
+            }
+            return;
+        }
+
+        const rowIndexList = rowKeyOrRows
+            .map(item => {
+                if (typeof item === 'string' || typeof item === 'number') {
+                    return dataSourceCopy.value.findIndex(row => rowKeyGen(row) === item);
+                }
+                return dataSourceCopy.value.indexOf(item as DT);
+            })
+            .filter(index => index >= 0);
+
+        if (!rowIndexList.length) {
+            console.warn('setSelectedRows failed.rows:', rowKeyOrRows);
+            return;
+        }
+
+        selectionRanges.value = buildRangesFromIndices(rowIndexList);
+        selectionRange.value = null;
+        anchorRowIndex = rowIndexList[rowIndexList.length - 1] ?? null;
+        isSelecting.value = false;
+        hasDragged = false;
+        preventNextClick = false;
+        isAdditiveSelection = false;
+
+        if (!option.silent) {
+            emitSelectionChange();
+        }
+    }
+
     function clearSelectedRows() {
+        selectionRanges.value = [];
         selectionRange.value = null;
         isSelecting.value = false;
         anchorRowIndex = null;
         hasDragged = false;
         preventNextClick = false;
+        isAdditiveSelection = false;
     }
 
     function consumeClick() {
@@ -269,6 +421,7 @@ export function useRowDragSelection<DT extends Record<string, any>>(
         onMD: onSelectionMouseDown,
         getClass: getRowSelectionClasses,
         get: getSelectedRows,
+        set: setSelectedRows,
         clear: clearSelectedRows,
         consumeClick,
     };

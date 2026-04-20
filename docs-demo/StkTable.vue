@@ -27,6 +27,8 @@ defineExpose({
         baseStkTableRef.value?.setSelectedCell(...p),
     getSelectedRows: (...p: Parameters<BaseStkTableType['getSelectedRows']>) =>
         baseStkTableRef.value?.getSelectedRows(...p),
+    setSelectedRows: (...p: Parameters<BaseStkTableType['setSelectedRows']>) =>
+        baseStkTableRef.value?.setSelectedRows(...p),
     clearSelectedRows: (...p: Parameters<BaseStkTableType['clearSelectedRows']>) =>
         baseStkTableRef.value?.clearSelectedRows(...p),
     getSortColumns: (...p: Parameters<BaseStkTableType['getSortColumns']>) =>
