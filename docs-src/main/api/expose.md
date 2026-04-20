@@ -203,3 +203,16 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+获取拖拽选中的行信息
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+}
+```
+
+### clearSelectedRows
+清除拖拽选中的行

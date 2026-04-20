@@ -203,3 +203,16 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+행 드래그 선택으로 선택된 행 정보를 가져옵니다
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+}
+```
+
+### clearSelectedRows
+행 드래그 선택으로 선택된 행을 비웁니다

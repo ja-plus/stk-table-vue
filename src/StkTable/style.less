@@ -56,6 +56,9 @@
     /** 单元格选区 */
     --cs-bgc: #d3eafd;
     --cs-bc: #2196f3;
+    /** 行拖拽选区 */
+    --rs-bgc: #e8f3ff;
+    --rs-bc: #2a7ee4;
 
 
     // contain: layout paint size;
@@ -107,6 +110,8 @@
 
         --cs-bgc: #2a3f6b;
         --cs-bc: #386ccc;
+        --rs-bgc: #223555;
+        --rs-bc: #4b8ef0;
 
         /* background-color: var(--table-bgc); */
         /* ⭐这里加background-color会导致表格出滚动白屏*/
@@ -220,6 +225,18 @@
         background-color: var(--tr-active-bgc);
     }
 
+    .stk-tbody-main tr.row-range-selected {
+        background-color: var(--rs-bgc);
+    }
+
+    .stk-tbody-main tr.row-range-start td {
+        box-shadow: inset 0 2px 0 0 var(--rs-bc);
+    }
+
+    .stk-tbody-main tr.row-range-end td {
+        box-shadow: inset 0 -2px 0 0 var(--rs-bc);
+    }
+
     /* 单元格悬浮 */
     &.cell-hover tbody td:hover {
         box-shadow: inset 0 0 0 2px var(--td-hover-color);
@@ -232,6 +249,10 @@
 
     /* 单元格拖选中禁止选中文字 */
     &.is-area-selecting {
+        user-select: none;
+    }
+
+    &.is-row-drag-selecting {
         user-select: none;
     }
 

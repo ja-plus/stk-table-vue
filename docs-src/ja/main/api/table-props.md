@@ -279,6 +279,17 @@ areaSelection?: boolean | {
 };
 ```
 
+### rowDragSelection
+
+マウスドラッグによる行選択を有効にします
+
+```ts
+rowDragSelection?: boolean | {
+  /** default: true */
+  enabled?: boolean;
+};
+```
+
 ### headerDrag
 
 ヘッダーをドラッグできるか。コールバック関数をサポート。

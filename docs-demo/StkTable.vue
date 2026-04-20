@@ -3,12 +3,12 @@
  * support vitepress env
  */
 import { useData } from 'vitepress';
-import { StkTable as StkTableBase, registerFeature, useAreaSelection } from '../src/StkTable';
+import { StkTable as StkTableBase, registerFeature, useAreaSelection, useRowDragSelection } from '../src/StkTable';
 import { useTemplateRef } from 'vue';
 const { isDark } = useData();
 const baseStkTableRef = useTemplateRef('stkTableRef');
 
-registerFeature(useAreaSelection);
+registerFeature([useAreaSelection, useRowDragSelection]);
 
 type BaseStkTableType = InstanceType<typeof StkTableBase>;
 
@@ -25,6 +25,10 @@ defineExpose({
         baseStkTableRef.value?.setCurrentRow(...p),
     setSelectedCell: (...p: Parameters<BaseStkTableType['setSelectedCell']>) =>
         baseStkTableRef.value?.setSelectedCell(...p),
+    getSelectedRows: (...p: Parameters<BaseStkTableType['getSelectedRows']>) =>
+        baseStkTableRef.value?.getSelectedRows(...p),
+    clearSelectedRows: (...p: Parameters<BaseStkTableType['clearSelectedRows']>) =>
+        baseStkTableRef.value?.clearSelectedRows(...p),
     getSortColumns: (...p: Parameters<BaseStkTableType['getSortColumns']>) =>
         baseStkTableRef.value?.getSortColumns(...p),
     sortStates: typeof baseStkTableRef.value?.sortStates,

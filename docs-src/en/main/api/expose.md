@@ -204,3 +204,16 @@ Copy selected area content to clipboard. Returns the copied text content (TSV fo
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+Get selected rows from row drag selection
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+}
+```
+
+### clearSelectedRows
+Clear selected rows from row drag selection

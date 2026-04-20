@@ -186,6 +186,14 @@ Area selection change event.
 (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
 ```
 
+### row-drag-selection-change
+
+Triggered when row drag selection changes.
+
+```ts
+(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[] }): void;
+```
+
 ### update:columns
 
 Update width when v-model:columns col is resized.

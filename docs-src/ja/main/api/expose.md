@@ -204,3 +204,16 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+行ドラッグ選択された行情報を取得します
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+}
+```
+
+### clearSelectedRows
+行ドラッグ選択された行をクリアします
