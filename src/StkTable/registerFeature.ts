@@ -1,8 +1,9 @@
 import { computed, ref } from 'vue';
-import { useAreaSelection, useAreaSelectionName } from './features';
+import { useAreaSelection, useAreaSelectionName, useRowDragSelection, useRowDragSelectionName } from './features';
 
 type OnDemandFeature = {
     [useAreaSelectionName]: typeof useAreaSelection<any>;
+    [useRowDragSelectionName]: typeof useRowDragSelection<any>;
 };
 
 export const ON_DEMAND_FEATURE: OnDemandFeature = {
@@ -18,6 +19,18 @@ export const ON_DEMAND_FEATURE: OnDemandFeature = {
             copy: () => '',
         };
     }) as typeof useAreaSelection<any>,
+    [useRowDragSelectionName]: (() => {
+        return {
+            config: computed(() => ({ enabled: false })),
+            isSelecting: ref(false),
+            onMD: () => false,
+            getClass: () => [],
+            get: () => ({ rows: [], range: null, ranges: [] }),
+            set: () => {},
+            clear: () => {},
+            consumeClick: () => false,
+        };
+    }) as typeof useRowDragSelection<any>,
 };
 
 type Feature = OnDemandFeature[keyof OnDemandFeature];

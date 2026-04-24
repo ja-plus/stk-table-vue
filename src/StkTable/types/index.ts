@@ -376,6 +376,18 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
     keyboard?: boolean;
 };
 
+/** 行拖拽选区范围 */
+export type RowDragSelectionRange = {
+    startRowIndex: number;
+    endRowIndex: number;
+};
+
+/** 行拖拽选区配置 */
+export type RowDragSelectionConfig = {
+    /** default: true */
+    enabled?: boolean;
+};
+
 /** 实验性功能配置 */
 export type ExperimentalConfig = {
     /** use transform to simulate scroll */

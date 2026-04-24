@@ -26,6 +26,7 @@
             'scroll-row-by-row': isSRBRActive,
             'scrollbar-on': scrollbarOptions.enabled,
             'is-area-selecting': isAreaSelecting,
+            'is-row-drag-selecting': isRowDragSelecting,
             'exp-scroll-y': isExperimentalScrollY,
         }"
         :tabindex="areaSelectionConfig.enabled ? 0 : void 0"
@@ -262,7 +263,7 @@ import {
     DEFAULT_SORT_CONFIG,
     IS_LEGACY_MODE,
 } from './const';
-import { useAreaSelectionName } from './features';
+import { useAreaSelectionName, useRowDragSelectionName } from './features';
 import { ON_DEMAND_FEATURE } from './registerFeature';
 import {
     AreaSelectionConfig,
@@ -279,6 +280,8 @@ import {
     PrivateRowDT,
     PrivateStkTableColumn,
     RowActiveOption,
+    RowDragSelectionConfig,
+    RowDragSelectionRange,
     SeqConfig,
     SortConfig,
     StkTableColumn,
@@ -392,6 +395,8 @@ const props = withDefaults(
         selectedCellRevokable?: boolean;
         /** 是否启用单元格范围选中（拖拽选区） */
         areaSelection?: boolean | AreaSelectionConfig;
+        /** 是否启用鼠标拖拽选择行 */
+        rowDragSelection?: boolean | RowDragSelectionConfig;
         /** 表头是否可拖动。支持回调函数。 */
         headerDrag?: boolean | HeaderDragConfig<DT>;
         /**
@@ -510,6 +515,7 @@ const props = withDefaults(
         cellActive: false,
         selectedCellRevokable: true,
         areaSelection: false,
+        rowDragSelection: false,
         headerDrag: () => false,
         rowClassName: () => '',
         colResizable: () => false,
@@ -675,6 +681,12 @@ const emits = defineEmits<{
      * ```(range: AreaSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
      */
     (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+    /**
+     * 行拖拽选区变更事件
+     *
+     * ```(range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] })```
+     */
+    (e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
     /**
      * 筛选变更触发(Beta)
      *
@@ -913,6 +925,17 @@ const {
     virtualScroll,
     virtualScrollX,
 );
+
+const {
+    config: rowDragSelectionConfig,
+    isSelecting: isRowDragSelecting,
+    onMD: onRowDragSelectionMouseDown,
+    getClass: getRowDragSelectionClasses,
+    get: getSelectedRows,
+    set: setSelectedRows,
+    clear: clearSelectedRows,
+    consumeClick: consumeRowDragSelectionClick,
+} = ON_DEMAND_FEATURE[useRowDragSelectionName](props, emits, tableContainerRef, dataSourceCopy, rowKeyGen, scrollTo, virtualScroll);
 
 /** 键盘箭头滚动 */
 useKeyboardArrowScroll(tableContainerRef, props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on, areaSelectionConfig);
@@ -1162,19 +1185,24 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const rowIndex = getRowIndex(index);
     const rowKey = rowKeyGen(row);
 
-    let classStr = props.rowClassName(row, rowIndex) || '' + ' ' + (row?.__EXP__ ? 'expanded' : '') + ' ' + (row?.__EXP_R__ ? 'expanded-row' : '');
+    const classList = [props.rowClassName(row, rowIndex), row?.__EXP__ ? 'expanded' : '', row?.__EXP_R__ ? 'expanded-row' : ''];
+
+    if (rowDragSelectionConfig.value.enabled) {
+        classList.push(...getRowDragSelectionClasses(rowIndex));
+    }
+
     if (currentRowKey.value === rowKey || row === currentRow.value) {
-        classStr += ' active';
+        classList.push('active');
     }
     if (props.showTrHoverClass && (rowKey === currentHoverRowKey.value || row === currentHoverRow)) {
-        classStr += ' hover';
+        classList.push('hover');
     }
 
     const result: Record<string, number | string | null> = {
         id: stkTableId + '-' + rowKey,
         'data-row-key': rowKey,
         'data-row-i': rowIndex,
-        class: classStr,
+        class: classList.filter(Boolean).join(' '),
         style: null,
     };
 
@@ -1277,6 +1305,7 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
 }
 
 function onRowClick(e: MouseEvent) {
+    if (consumeRowDragSelectionClick()) return;
     const rowIndex = getClosestTrIndex(e.target as HTMLElement);
     const row = dataSourceCopy.value[rowIndex];
     if (!row) return;
@@ -1375,7 +1404,9 @@ function onCellMouseOver(e: MouseEvent) {
 function onCellMouseDown(e: MouseEvent) {
     const { row, col, rowIndex } = getCellEventData(e);
     emits('cell-mousedown', e, row, col, { rowIndex });
-    if (areaSelectionConfig.value.enabled) {
+
+    const rowDragSelectionHandled = rowDragSelectionConfig.value.enabled ? onRowDragSelectionMouseDown(e) : false;
+    if (!rowDragSelectionHandled && areaSelectionConfig.value.enabled) {
         onSelectionMouseDown(e);
     }
 }
@@ -1744,6 +1775,27 @@ defineExpose({
      * @see {@link copySelectedArea}
      */
     copySelectedArea,
+    /**
+     * 获取拖拽选中的行信息
+     *
+     * en: Get selected rows info (rowDragSelection=true)
+     * @see {@link getSelectedRows}
+     */
+    getSelectedRows,
+    /**
+     * 设置拖拽选中的行
+     *
+     * en: Set selected rows (rowDragSelection=true)
+     * @see {@link setSelectedRows}
+     */
+    setSelectedRows,
+    /**
+     * 清空拖拽选中的行
+     *
+     * en: Clear selected rows (rowDragSelection=true)
+     * @see {@link clearSelectedRows}
+     */
+    clearSelectedRows,
     /*
      * 设置筛选状态
      *

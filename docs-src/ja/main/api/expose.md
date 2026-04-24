@@ -204,3 +204,24 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+行ドラッグ選択された行情報を取得します
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+    ranges: RowDragSelectionRange[];
+}
+```
+
+### setSelectedRows
+行ドラッグ選択の行を設定します。連続していない行もサポートし、内部では複数の連続範囲として保持します。
+
+```ts
+function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
+```
+
+### clearSelectedRows
+行ドラッグ選択された行をクリアします

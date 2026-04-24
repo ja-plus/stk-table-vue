@@ -1,29 +1,29 @@
 <template>
-    <div class="toolbar">
-        <span>按住鼠标左键拖拽可选择连续多行，按住 Ctrl / Command 可追加不连续区间。</span>
-        <button class="btn" @click="clearSelection">clearSelectedRows()</button>
-    </div>
-    <StkTable
-        ref="stkTableRef"
-        style="height: 360px"
-        row-key="id"
-        :row-active="false"
-        :columns="columns"
-        :data-source="rows"
-        stripe
-        row-drag-selection
-        @row-drag-selection-change="onSelectionChange"
-    />
-    <div class="result-panel">
-        <pre>{{ JSON.stringify(currentSelection, null, 2) }}</pre>
+    <div style="padding: 16px">
+        <div class="toolbar">
+            <span>按住鼠标左键拖拽可选择连续多行，按住 Ctrl / Command 可追加不连续区间。</span>
+            <button class="btn" @click="clearSelection">clearSelectedRows()</button>
+        </div>
+        <StkTable
+            ref="stkTableRef"
+            style="height: 360px"
+            row-key="id"
+            :row-active="false"
+            :columns="columns"
+            :data-source="rows"
+            :row-drag-selection="true"
+            @row-drag-selection-change="onSelectionChange"
+        />
+        <div class="result-panel">
+            <pre>{{ JSON.stringify(currentSelection, null, 2) }}</pre>
+        </div>
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
-import { registerFeature, StkTable, StkTableColumn, useRowDragSelection } from '../src/StkTable/index';
-
-registerFeature(useRowDragSelection);
+import StkTable from '../../StkTable.vue';
+import type { StkTableColumn } from '../../../src/StkTable';
 
 type Row = {
     id: number;
@@ -82,14 +82,26 @@ function clearSelection() {
 </script>
 
 <style scoped>
-.stk-table-parent {
-    width: 800px;
-    height: 500px;
-    margin-bottom: 20px;
+.toolbar {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
 }
-.stk-table {
-    flex: 1;
+
+.btn {
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.result-panel {
+    margin-top: 12px;
+}
+
+pre {
+    margin: 0;
+    padding: 12px;
+    white-space: pre-wrap;
 }
 </style>

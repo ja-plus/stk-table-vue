@@ -1,8 +1,8 @@
 /**
- * name: stk-table-vue
- * version: v0.11.9
+ * name: @jutze/stk-table-vue
+ * version: v0.11.11
  * description: High performance realtime virtual table for vue3 and vue2.7
- * author: japlus
+ * author: bypanghu
  * homepage: https://ja-plus.github.io/stk-table-vue/
  * license: MIT
  */
@@ -144,6 +144,8 @@
   --sb-thumb-hover-color:#a8a8c1;
   --cs-bgc:#d3eafd;
   --cs-bc:#2196f3;
+  --rs-bgc:#e8f3ff;
+  --rs-bc:#2a7ee4;
   position:relative;
   overflow:auto;
   display:flex;
@@ -181,6 +183,8 @@
   --sb-thumb-hover-color:#727782;
   --cs-bgc:#2a3f6b;
   --cs-bc:#386ccc;
+  --rs-bgc:#223555;
+  --rs-bc:#4b8ef0;
   color:#d1d1e0;
 }
 .stk-table.dark .cell-range-selected{
@@ -247,6 +251,15 @@
 .stk-table.row-active .stk-tbody-main tr.active{
   background-color:var(--tr-active-bgc);
 }
+.stk-table .stk-tbody-main tr.row-range-selected{
+  background-color:var(--rs-bgc);
+}
+.stk-table .stk-tbody-main tr.row-range-start td{
+  box-shadow:inset 0 2px 0 0 var(--rs-bc);
+}
+.stk-table .stk-tbody-main tr.row-range-end td{
+  box-shadow:inset 0 -2px 0 0 var(--rs-bc);
+}
 .stk-table.cell-hover tbody td:hover{
   box-shadow:inset 0 0 0 2px var(--td-hover-color);
 }
@@ -254,6 +267,11 @@
   box-shadow:inset 0 0 0 2px var(--td-active-color);
 }
 .stk-table.is-area-selecting{
+  -webkit-user-select:none;
+     -moz-user-select:none;
+          user-select:none;
+}
+.stk-table.is-row-drag-selecting{
   -webkit-user-select:none;
      -moz-user-select:none;
           user-select:none;

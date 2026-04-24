@@ -203,3 +203,24 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+행 드래그 선택으로 선택된 행 정보를 가져옵니다
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+    ranges: RowDragSelectionRange[];
+}
+```
+
+### setSelectedRows
+행 드래그 선택의 선택된 행을 설정합니다. 연속되지 않은 행도 지원하며, 내부적으로는 여러 개의 연속 범위로 저장됩니다.
+
+```ts
+function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
+```
+
+### clearSelectedRows
+행 드래그 선택으로 선택된 행을 비웁니다

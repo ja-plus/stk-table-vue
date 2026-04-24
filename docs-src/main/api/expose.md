@@ -203,3 +203,24 @@ function getSelectedArea(): {
 ```ts
 function copySelectedArea(): string
 ```
+
+### getSelectedRows
+获取拖拽选中的行信息
+
+```ts
+function getSelectedRows(): {
+    rows: DT[];
+    range: RowDragSelectionRange | null;
+    ranges: RowDragSelectionRange[];
+}
+```
+
+### setSelectedRows
+设置拖拽选中的行。支持传入多个不连续的行，内部会自动转换为多个连续范围。
+
+```ts
+function setSelectedRows(rowKeyOrRows?: (UniqKey | DT)[], option?: { silent?: boolean })
+```
+
+### clearSelectedRows
+清除拖拽选中的行
