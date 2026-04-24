@@ -2,6 +2,7 @@
 ## 0.11.10
 * Bugfix
   - fix: tree expand not work correctly when virtual mode.
+  - vue2 support fix
 
 ## 0.11.9
 * Optimize

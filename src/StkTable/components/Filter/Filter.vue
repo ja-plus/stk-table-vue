@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CustomHeaderCellProps } from '@/StkTable/types';
+import { CustomHeaderCellProps } from '../../types';
 import { computed } from 'vue';
 import { getDropdownIns } from './Dropdown/index';
 import { FilterOption } from './types';

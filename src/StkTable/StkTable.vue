@@ -154,7 +154,7 @@
                         <td v-if="row && row.__EXP_R__" :colspan="virtualX_columnPart.length">
                             <div class="table-cell-wrapper">
                                 <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                    {{ row.__EXP_R__?.[row.__EXP_C__!.dataIndex] ?? '' }}
+                                    {{ (row.__EXP_R__ && row.__EXP_C__ && row.__EXP_R__[row.__EXP_C__.dataIndex]) || '' }}
                                 </slot>
                             </div>
                         </td>
@@ -187,7 +187,7 @@
                                         </template>
                                     </component>
                                     <div v-else-if="!col.type" class="table-cell-wrapper" :title="row[col.dataIndex] || ''">
-                                        {{ (row && row[col.dataIndex]) ?? getEmptyCellText(col, row) }}
+                                        {{ (row && row[col.dataIndex]) !== void 0 ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
                                     </div>
                                     <div v-else-if="col.type === 'seq'" class="table-cell-wrapper">
                                         {{ (props.seqConfig.startIndex || 0) + getRowIndex(rowIndex) + 1 }}
@@ -236,6 +236,13 @@
         ></div>
     </div>
 </template>
+
+<!-- Vue 2.7 compatible: add component name -->
+<script lang="ts">
+export default {
+    name: 'StkTable',
+};
+</script>
 
 <script setup lang="ts">
 /**
@@ -308,7 +315,8 @@ type DT = any & PrivateRowDT;
 /** generate table instance id */
 const stkTableId = createStkTableId();
 
-defineOptions({ name: 'StkTable' });
+// Vue 2.7 compatible: use export default instead of defineOptions
+// defineOptions({ name: 'StkTable' });
 /**
  * props cannot be placed in a separate file. It will cause compilation errors with vue 2.7 compiler.
  */
@@ -347,9 +355,9 @@ const props = withDefaults(
          */
         rowCurrentRevokable?: boolean;
         /** 表头行高。default = rowHeight */
-        headerRowHeight?: number | string | null;
+        headerRowHeight?: number | string;
         /** 表尾行高。default = rowHeight */
-        footerRowHeight?: number | string | null;
+        footerRowHeight?: number | string;
         /** 虚拟滚动 */
         virtual?: boolean;
         /** x轴虚拟滚动(必须设置列宽)*/
