@@ -3,6 +3,8 @@
 - クリップボードへのコピーをサポート（Ctrl/Cmd + C）。
 - Esc で選択をキャンセル
 - キーボード選択をサポート（矢印キー、Shift、Tab）。
+- Ctrl 複数選択をサポート（設定可能）
+- Shift 拡張選択をサポート（設定可能）
 
 ::: tip 登録が必要です 
 この機能を使用する前に登録が必要です。
@@ -23,6 +25,9 @@ registerFeature(useAreaSelection);
 ```
 
 <demo vue="advanced/area-selection/AreaSelection.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/area-selection/AreaSelection.vue"></demo>
+
+## Props
+- [`areaSelection`](/ja/main/api/table-props.md#areaselection)
 
 ## Emit
 - [エリア選択が変更されたときにトリガー - area-selection-change](/ja/main/api/emits.html#area-selection-change) 

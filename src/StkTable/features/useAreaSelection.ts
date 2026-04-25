@@ -67,10 +67,19 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const config = computed<AreaSelectionConfig>(() => {
         if (typeof props.areaSelection === 'boolean') {
             const b = props.areaSelection;
-            return { enabled: b, keyboard: b };
+            return { enabled: b, keyboard: b, ctrl: b, shift: b };
         }
-        return { enabled: true, ...props.areaSelection };
+        return { enabled: true, ctrl: true, shift: true, ...props.areaSelection };
     });
+
+    /** 是否启用键盘控制选区移动 */
+    const keyboardEnabled = computed(() => config.value.keyboard);
+
+    /** 是否启用 Ctrl 多选 */
+    const ctrlEnabled = computed(() => config.value.ctrl);
+
+    /** 是否启用 Shift 扩选 */
+    const shiftEnabled = computed(() => config.value.shift);
 
     /** colKey → absolute index 映射 */
     const colKeyToIndexMap = computed(() => {
@@ -315,7 +324,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             },
         };
         // Shift 扩选：从锚点扩展到当前位置，更新最后一个区域
-        if (e.shiftKey && anchorCell) {
+        if (e.shiftKey && anchorCell && shiftEnabled.value) {
             const ranges = selectionRanges.value.slice();
             const shiftRange: AreaSelectionRange = {
                 index: {
@@ -331,7 +340,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
             selectionRanges.value = ranges;
         } else {
             anchorCell = { rowIndex, colIndex };
-            if (ctrlKey) {
+            if (ctrlKey && ctrlEnabled.value) {
                 // Ctrl multiple
                 selectionRanges.value = selectionRanges.value.concat([range]);
             } else {
@@ -505,11 +514,6 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return typeof cfg.formatCellForClipboard === 'function' ? cfg.formatCellForClipboard : null;
     }
 
-    /** 是否启用键盘控制选区移动 */
-    const keyboardEnabled = computed(() => {
-        return config.value.keyboard;
-    });
-
     /**
      * 复制选区内容到剪贴板,只复制最后一个选区
      * en: Copy selected area content to clipboard, only copy the last selected area
@@ -613,7 +617,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const [rowDelta, colDelta] = getMovementDelta(key, e.shiftKey);
 
         // Shift 扩展选区，否则移动单格选区
-        if (e.shiftKey && isArrowKey) {
+        if (e.shiftKey && isArrowKey && shiftEnabled.value) {
             // 扩展选区：更新最后一个区域的 endRow/endCol
             const ranges = [...selectionRanges.value];
             const range = ranges.length > 0 ? ranges[ranges.length - 1] : null;

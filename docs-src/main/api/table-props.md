@@ -260,22 +260,16 @@ selectedCellRevokable?: boolean;
 
 ```ts
 areaSelection?: boolean | {
-  /**
-   * 复制时的单元格文本格式化回调。
-   * 如果你使用了 customCell 自定义渲染，应该提供此回调以确保复制内容与展示内容一致。
-   * @param row 行数据
-   * @param col 列配置
-   * @param rawValue row[col.dataIndex] 的原始值
-   * @returns 复制到剪贴板的文本
-   */
-  formatCellForClipboard?: (row: DT, col: StkTableColumn<DT>, rawValue: any) => string;
-  /**
-   * 是否启用键盘控制选区移动。
-   * 启用后，方向键/Tab/Shift+Tab 可控制选区移动，类似 Excel 行为。
-   * 启用此功能后，原有的键盘滚动行为将失效。
-   * @default false
-   */
-  keyboard?: boolean;
+    /** 是否启用区域选择，默认: true */
+    enabled?: boolean;
+    /** 复制时的单元格文本格式化回调 */
+    formatCellForClipboard?: (row, col, rawValue) => string;
+    /** 是否启用键盘控制选区移动，默认: true */
+    keyboard?: boolean;
+    /** 是否启用 Ctrl 多选功能，默认: true */
+    ctrl?: boolean;
+    /** 是否启用 Shift 扩选功能，默认: true */
+    shift?: boolean;
 };
 ```
 

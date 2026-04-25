@@ -374,6 +374,18 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
      * @default false
      */
     keyboard?: boolean;
+    /**
+     * 是否启用 Ctrl 多选功能。
+     * 启用后，按住 Ctrl/Cmd 键点击可以选择多个不连续的区域。
+     * @default true
+     */
+    ctrl?: boolean;
+    /**
+     * 是否启用 Shift 扩选功能。
+     * 启用后，按住 Shift 键点击可以从锚点扩展到当前位置。
+     * @default true
+     */
+    shift?: boolean;
 };
 
 /** 行拖拽选区范围 */

@@ -1,13 +1,21 @@
 <template>
     <div style="padding: 16px">
         <CheckItem v-model="keyboard" :text="t('keyboardSelect') + `(v0.11.0)`"></CheckItem>
+        <CheckItem v-model="ctrlEnabled" text="启用 Ctrl 多选 (v0.11.10)"></CheckItem>
+        <CheckItem v-model="shiftEnabled" text="启用 Shift 扩选 (v0.11.10)"></CheckItem>
         <StkTable
             style="height: 400px"
             row-key="id"
             :row-active="false"
             :data-source="rows"
             :columns="cols"
-            :area-selection="{ enabled: true, formatCellForClipboard: formatCell, keyboard }"
+            :area-selection="{
+                enabled: true,
+                formatCellForClipboard: formatCell,
+                keyboard,
+                ctrl: ctrlEnabled,
+                shift: shiftEnabled,
+            }"
             @area-selection-change="onSelectionChange"
         />
         <div style="margin-top: 12px">
@@ -27,6 +35,8 @@ const { t } = useI18n();
 type Row = { id: number; name: string; age: number; city: string };
 
 const keyboard = ref(true);
+const ctrlEnabled = ref(true);
+const shiftEnabled = ref(true);
 
 const cols = [
     { title: 'ID', dataIndex: 'id', fixed: 'left', width: 50 },
