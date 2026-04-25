@@ -191,7 +191,7 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 function getSelectedArea(): {
     rows: DT[];
     cols: StkTableColumn<DT>[];
-    range: AreaSelectionRange
+    ranges: AreaSelectionRange[]
 }
 ```
 

@@ -14,7 +14,7 @@ export const ON_DEMAND_FEATURE: OnDemandFeature = {
             isSelecting: ref(false),
             onMD: () => {},
             getClass: () => [],
-            get: () => ({ rows: [], cols: [], range: null }),
+            get: () => ({ rows: [], cols: [], ranges: [] }),
             clear: () => {},
             copy: () => '',
         };

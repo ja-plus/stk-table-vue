@@ -11,7 +11,7 @@
             @area-selection-change="onSelectionChange"
         />
         <div style="margin-top: 12px">
-            <pre style="white-space: pre-wrap">{{ JSON.stringify(currentRange, null, 2) }}</pre>
+            <pre style="white-space: pre-wrap">{{ formatCurrentRange(currentRange) }}</pre>
         </div>
     </div>
 </template>
@@ -48,16 +48,20 @@ const rows = Array.from({ length: 100 }, (_, i) => ({
 
 const currentRange = ref(null as any);
 
-function onSelectionChange(range: any, data: any) {
-    currentRange.value = {
-        range,
-        rows: data.rows?.length ?? 0,
-        cols: data.cols?.length ?? 0,
-    };
+function onSelectionChange(ranges: any) {
+    currentRange.value = ranges;
 }
 
 function formatCell(row: Row, col: any, raw: any) {
     return raw === null ? '' : String(raw);
+}
+
+function formatCurrentRange(ranges: any) {
+    if (!ranges) return '';
+    const rangesStr = ranges?.map((r: any) => '    ' + JSON.stringify(r)).join(',\n') || '[]';
+    return `[
+${rangesStr}
+]`;
 }
 </script>
 

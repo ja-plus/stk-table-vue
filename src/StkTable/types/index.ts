@@ -348,10 +348,10 @@ export type RowActiveOption<DT> = {
 
 /** 单元格选区范围 */
 export type AreaSelectionRange = {
-    startRowIndex: number;
-    startColIndex: number;
-    endRowIndex: number;
-    endColIndex: number;
+    index: {
+        x: [number, number];
+        y: [number, number];
+    };
 };
 
 /** 单元格选区配置 */

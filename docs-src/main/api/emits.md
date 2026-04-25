@@ -183,7 +183,7 @@
 单元格选区变更事件。
 
 ```ts
-(e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+(e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
 ### row-drag-selection-change

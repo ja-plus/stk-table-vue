@@ -183,7 +183,7 @@
 エリア選択変更イベント。
 
 ```ts
-(e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+(e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
 ### row-drag-selection-change

@@ -50,16 +50,17 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const CELL_RANGE_LEFT = 'cell-range-l';
     const CELL_RANGE_RIGHT = 'cell-range-r';
 
-    /** 当前选区范围 */
-    const selectionRange = ref<AreaSelectionRange | null>(null) as Ref<AreaSelectionRange | null>;
-    /** 是否正在拖选 */
+    const selectionRanges = ref<AreaSelectionRange[]>([]);
     const isSelecting = ref(false);
-    /** 锚点（拖选起点 / Shift扩选起点） */
+    /** start cell */
     let anchorCell: { rowIndex: number; colIndex: number } | null = null;
 
-    /** 自动滚动 rAF id */
+    /** auto scroll rAF id */
     let autoScrollRafId = 0;
-    /** 最后一次鼠标位置（用于边界自动滚动计算） */
+    /**
+     * 最后一次鼠标位置（用于边界自动滚动计算）
+     * en: Last mouse position (for boundary auto scroll calculation)
+     */
     let lastMouseClientX = 0;
     let lastMouseClientY = 0;
 
@@ -135,36 +136,30 @@ export function useAreaSelection<DT extends Record<string, any>>(
         };
     });
 
-    /** 根据 selectionRange 计算选区内所有 cellKey 的集合 */
+    /** 根据 selectionRanges 计算所有选区内 cellKey 的并集 */
     const selectedCellKeys = computed<Set<string>>(() => {
-        const range = selectionRange.value;
-        if (!range) return new Set();
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return new Set();
 
-        const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
         const keys = new Set<string>();
         const cols = tableHeaderLast.value;
         const data = dataSourceCopy.value;
-        for (let r = minRow; r <= maxRow; r++) {
-            const row = data[r];
-            if (!row) continue;
-            for (let c = minCol; c <= maxCol; c++) {
-                const col = cols[c];
-                if (col) {
-                    keys.add(cellKeyGen(row, col));
+        for (const range of ranges) {
+            const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
+            for (let r = minRow; r <= maxRow; r++) {
+                const row = data[r];
+                if (!row) continue;
+                for (let c = minCol; c <= maxCol; c++) {
+                    const col = cols[c];
+                    if (col) {
+                        keys.add(cellKeyGen(row, col));
+                    }
                 }
             }
         }
         return keys;
     });
 
-    /** 获取归一化的选区信息，用于样式判断 */
-    const normalizedRange = computed(() => {
-        const range = selectionRange.value;
-        if (!range) return null;
-        return normalizeRange(range);
-    });
-
-    // 生命周期：在表格容器上注册 keydown
     onMounted(() => {
         addListener();
     });
@@ -192,12 +187,14 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
     /** 获取归一化（min/max）后的选区范围 */
     function normalizeRange(range: AreaSelectionRange) {
-        const { startRowIndex, endRowIndex, startColIndex, endColIndex } = range;
+        const { index } = range;
+        const [x1, x2] = index.x;
+        const [y1, y2] = index.y;
         return {
-            minRow: Math.min(startRowIndex, endRowIndex),
-            maxRow: Math.max(startRowIndex, endRowIndex),
-            minCol: Math.min(startColIndex, endColIndex),
-            maxCol: Math.max(startColIndex, endColIndex),
+            minRow: Math.min(y1, y2),
+            maxRow: Math.max(y1, y2),
+            minCol: Math.min(x1, x2),
+            maxCol: Math.max(x1, x2),
         };
     }
 
@@ -243,7 +240,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 colDelta = 1;
                 break;
             case KEY_TAB:
-                // Tab: 向右移动；Shift+Tab: 向左移动
+                // Tab: right; Shift+Tab: left
                 colDelta = shiftKey ? -1 : 1;
                 break;
         }
@@ -309,23 +306,38 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         if (rowIndex < 0 || colIndex < 0) return;
 
-        // Shift 扩选：从锚点到当前位置
+        const ctrlKey = e.ctrlKey || e.metaKey;
+
+        const range: AreaSelectionRange = {
+            index: {
+                x: [colIndex, colIndex],
+                y: [rowIndex, rowIndex],
+            },
+        };
+        // Shift 扩选：从锚点扩展到当前位置，更新最后一个区域
         if (e.shiftKey && anchorCell) {
-            selectionRange.value = {
-                startRowIndex: anchorCell.rowIndex,
-                startColIndex: anchorCell.colIndex,
-                endRowIndex: rowIndex,
-                endColIndex: colIndex,
+            const ranges = selectionRanges.value.slice();
+            const shiftRange: AreaSelectionRange = {
+                index: {
+                    x: [anchorCell.colIndex, colIndex],
+                    y: [anchorCell.rowIndex, rowIndex],
+                },
             };
+            if (ranges.length) {
+                ranges[ranges.length - 1] = shiftRange;
+            } else {
+                ranges.push(shiftRange);
+            }
+            selectionRanges.value = ranges;
         } else {
-            // 普通点击：新建锚点，单格选区
             anchorCell = { rowIndex, colIndex };
-            selectionRange.value = {
-                startRowIndex: rowIndex,
-                startColIndex: colIndex,
-                endRowIndex: rowIndex,
-                endColIndex: colIndex,
-            };
+            if (ctrlKey) {
+                // Ctrl multiple
+                selectionRanges.value = selectionRanges.value.concat([range]);
+            } else {
+                // normal click
+                selectionRanges.value = [range];
+            }
         }
 
         isSelecting.value = true;
@@ -333,6 +345,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         lastMouseClientY = e.clientY;
 
         // 防止拖选时选中文字
+        // en: Prevent text selection during drag
         document.addEventListener('mousemove', onDocumentMouseMove);
         document.addEventListener('mouseup', onDocumentMouseUp);
     }
@@ -366,15 +379,22 @@ export function useAreaSelection<DT extends Record<string, any>>(
         updateSelectionEnd(rowIndex, colIndex);
     }
 
-    /** 更新选区的终点 */
+    /** 更新最后一个选区的终点（拖拽过程中） */
     function updateSelectionEnd(endRowIndex: number, endColIndex: number) {
         if (!anchorCell) return;
-        selectionRange.value = {
-            startRowIndex: anchorCell.rowIndex,
-            startColIndex: anchorCell.colIndex,
-            endRowIndex,
-            endColIndex,
+        const newRange: AreaSelectionRange = {
+            index: {
+                x: [anchorCell.colIndex, endColIndex],
+                y: [anchorCell.rowIndex, endRowIndex],
+            },
         };
+        const ranges = [...selectionRanges.value];
+        if (ranges.length > 0) {
+            ranges[ranges.length - 1] = newRange;
+        } else {
+            ranges.push(newRange);
+        }
+        selectionRanges.value = ranges;
     }
 
     // ---- 边界自动滚动 ----
@@ -475,19 +495,8 @@ export function useAreaSelection<DT extends Record<string, any>>(
         emitSelectionChange();
     }
 
-    /** 发出 area-selection-change 事件 */
     function emitSelectionChange() {
-        const range = selectionRange.value;
-        if (!range) {
-            emits('area-selection-change', null, { rows: [], cols: [] });
-            return;
-        }
-        const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
-        const data = dataSourceCopy.value;
-        const cols = tableHeaderLast.value;
-        const rows = data.slice(minRow, maxRow + 1);
-        const selectedCols = cols.slice(minCol, maxCol + 1);
-        emits('area-selection-change', range, { rows, cols: selectedCols });
+        emits('area-selection-change', selectionRanges.value);
     }
 
     /** 获取 areaSelection 配置中的格式化回调 */
@@ -502,13 +511,15 @@ export function useAreaSelection<DT extends Record<string, any>>(
     });
 
     /**
-     * 复制选区内容到剪贴板
-     * @returns 复制的文本内容
+     * 复制选区内容到剪贴板,只复制最后一个选区
+     * en: Copy selected area content to clipboard, only copy the last selected area
+     * @returns {string} text
      */
     function copySelectedArea(): string {
-        if (!selectionRange.value) return '';
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return '';
 
-        const range = selectionRange.value;
+        const range = ranges[ranges.length - 1];
         const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
         const data = dataSourceCopy.value;
         const cols = tableHeaderLast.value;
@@ -541,18 +552,18 @@ export function useAreaSelection<DT extends Record<string, any>>(
     }
 
     /**
-     * Ctrl+C / Cmd+C 复制选区内容
-     * Esc 取消选区
-     * Arrow keys / Tab 移动选区（keyboard=true时）
+     * Ctrl+C / Cmd+C copy
+     * Esc ：cancel
+     * Arrow keys / Tab move (when keyboard=true)
      **/
     function onKeydown(e: KeyboardEvent) {
         if (!config.value.enabled) return;
 
         const key = e.key;
 
-        // Esc 键：取消当前选区
+        // Esc ：cancel
         if (key === KEY_ESCAPE || key === KEY_ESC) {
-            if (selectionRange.value) {
+            if (selectionRanges.value.length) {
                 clearSelectedArea();
                 emitSelectionChange();
                 e.preventDefault();
@@ -560,14 +571,13 @@ export function useAreaSelection<DT extends Record<string, any>>(
             return;
         }
 
-        // Ctrl/Cmd+C 复制选区
-        if ((e.ctrlKey || e.metaKey) && key === KEY_C && selectionRange.value) {
+        // Ctrl/Cmd+C  copy
+        if ((e.ctrlKey || e.metaKey) && key === KEY_C && selectionRanges.value.length) {
             copySelectedArea();
             e.preventDefault();
             return;
         }
 
-        // 键盘导航（需要启用 keyboard 选项）
         if (!keyboardEnabled.value) return;
 
         const isArrowKey = [KEY_ARROW_UP, KEY_ARROW_DOWN, KEY_ARROW_LEFT, KEY_ARROW_RIGHT].includes(key);
@@ -583,14 +593,17 @@ export function useAreaSelection<DT extends Record<string, any>>(
         if (rowCount === 0 || colCount === 0) return;
 
         // 如果没有选区，默认从第一个单元格开始
-        if (!selectionRange.value) {
+        // en: If no selection, start from the first cell
+        if (!selectionRanges.value.length) {
             anchorCell = { rowIndex: 0, colIndex: 0 };
-            selectionRange.value = {
-                startRowIndex: 0,
-                startColIndex: 0,
-                endRowIndex: 0,
-                endColIndex: 0,
-            };
+            selectionRanges.value = [
+                {
+                    index: {
+                        x: [0, 0],
+                        y: [0, 0],
+                    },
+                },
+            ];
             emitSelectionChange();
             scrollToCell(0, 0);
             return;
@@ -601,29 +614,36 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         // Shift 扩展选区，否则移动单格选区
         if (e.shiftKey && isArrowKey) {
-            // 扩展选区：更新 endRow/endCol
-            const range = selectionRange.value;
-            let newEndRow = range.endRowIndex + rowDelta;
-            let newEndCol = range.endColIndex + colDelta;
+            // 扩展选区：更新最后一个区域的 endRow/endCol
+            const ranges = [...selectionRanges.value];
+            const range = ranges.length > 0 ? ranges[ranges.length - 1] : null;
+            if (!range) return;
+            const { index } = range;
+            let newEndRow = index.y[1] + rowDelta;
+            let newEndCol = index.x[1] + colDelta;
 
             // 边界检查
             newEndRow = clamp(newEndRow, 0, rowCount - 1);
             newEndCol = clamp(newEndCol, 0, colCount - 1);
 
-            selectionRange.value = {
-                ...range,
-                endRowIndex: newEndRow,
-                endColIndex: newEndCol,
+            ranges[ranges.length - 1] = {
+                index: {
+                    x: [index.x[0], newEndCol],
+                    y: [index.y[0], newEndRow],
+                },
             };
+            selectionRanges.value = ranges;
 
             scrollToCell(newEndRow, newEndCol);
         } else {
             // 移动单格选区
-            // 取当前 end 位置作为基础（这样多次移动时，方向一致）
-            const range = selectionRange.value;
-            const { minRow, minCol } = normalizeRange(range);
-            let newRow = minRow + rowDelta;
-            let newCol = minCol + colDelta;
+            // 取最后一个区域的 end 位置作为基础，清空旧选区重建
+            const ranges = selectionRanges.value;
+            const range = ranges.length > 0 ? ranges[ranges.length - 1] : null;
+            const baseRow = range ? normalizeRange(range).minRow : 0;
+            const baseCol = range ? normalizeRange(range).minCol : 0;
+            let newRow = baseRow + rowDelta;
+            let newCol = baseCol + colDelta;
 
             // 边界检查（先检查，避免越界）
             newRow = clamp(newRow, 0, rowCount - 1);
@@ -632,20 +652,22 @@ export function useAreaSelection<DT extends Record<string, any>>(
             // Tab 换行逻辑：如果到达行尾/行首，换行
             if (isTabKey) {
                 // 计算原始未 clamp 的值
-                const rawCol = minCol + colDelta;
-                const [tabRow, tabCol] = handleTabWrap(minRow, newCol, rawCol, rowCount, colCount);
+                const rawCol = baseCol + colDelta;
+                const [tabRow, tabCol] = handleTabWrap(baseRow, newCol, rawCol, rowCount, colCount);
                 newRow = tabRow;
                 newCol = tabCol;
             }
 
-            // 更新锚点和选区
+            // 更新锚点和选区（移动单格时清空其他区域，仅保留新位置）
             anchorCell = { rowIndex: newRow, colIndex: newCol };
-            selectionRange.value = {
-                startRowIndex: newRow,
-                startColIndex: newCol,
-                endRowIndex: newRow,
-                endColIndex: newCol,
-            };
+            selectionRanges.value = [
+                {
+                    index: {
+                        x: [newCol, newCol],
+                        y: [newRow, newRow],
+                    },
+                },
+            ];
 
             scrollToCell(newRow, newCol);
         }
@@ -729,39 +751,59 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * @returns 样式类名数组
      */
     function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
-        const nr = normalizedRange.value;
-        if (!nr || !selectedCellKeys.value.has(cellKey)) return [];
+        if (!selectedCellKeys.value.has(cellKey)) return [];
 
         const colIndex = colKeyToIndexMap.value.get(colKey);
         if (colIndex === void 0 || colIndex < 0) return [];
 
         const classes: string[] = [CELL_RANGE_SELECTED];
-        if (absoluteRowIndex === nr.minRow) classes.push(CELL_RANGE_TOP);
-        if (absoluteRowIndex === nr.maxRow) classes.push(CELL_RANGE_BOTTOM);
-        if (colIndex === nr.minCol) classes.push(CELL_RANGE_LEFT);
-        if (colIndex === nr.maxCol) classes.push(CELL_RANGE_RIGHT);
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return classes;
+
+        // 只对最后一个区域（最后操作的区域）添加边界边框
+        const lastRange = normalizeRange(ranges[ranges.length - 1]);
+        const { minRow, maxRow, minCol, maxCol } = lastRange;
+
+        // 判断当前单元格是否在最后一个区域内
+        const isInLastRange = absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow && colIndex >= minCol && colIndex <= maxCol;
+
+        if (isInLastRange) {
+            if (absoluteRowIndex === minRow) classes.push(CELL_RANGE_TOP);
+            if (absoluteRowIndex === maxRow) classes.push(CELL_RANGE_BOTTOM);
+            if (colIndex === minCol) classes.push(CELL_RANGE_LEFT);
+            if (colIndex === maxCol) classes.push(CELL_RANGE_RIGHT);
+        }
+
         return classes;
     }
 
-    // 暴露方法
+    // expose function
 
     /** 获取选中的单元格信息 */
     function getSelectedArea() {
-        const range = selectionRange.value;
-        if (!range) return { rows: [] as DT[], cols: [] as StkTableColumn<DT>[], range: null };
-        const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return { rows: [] as DT[], cols: [] as StkTableColumn<DT>[], ranges: [] as AreaSelectionRange[] };
         const data = dataSourceCopy.value;
         const cols = tableHeaderLast.value;
+        // 收集所有区域的行和列
+        const rowSet = new Set<number>();
+        const colSet = new Set<number>();
+        for (const range of ranges) {
+            const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
+            for (let r = minRow; r <= maxRow; r++) rowSet.add(r);
+            for (let c = minCol; c <= maxCol; c++) colSet.add(c);
+        }
+        const sortedRows = [...rowSet].sort((a, b) => a - b);
+        const sortedCols = [...colSet].sort((a, b) => a - b);
         return {
-            rows: data.slice(minRow, maxRow + 1),
-            cols: cols.slice(minCol, maxCol + 1),
-            range: { ...range },
+            rows: sortedRows.map(i => data[i]).filter(Boolean),
+            cols: sortedCols.map(i => cols[i]).filter(Boolean),
+            ranges: ranges.map(r => ({ ...r })),
         };
     }
 
-    /** 清空选区 */
     function clearSelectedArea() {
-        selectionRange.value = null;
+        selectionRanges.value = [];
         isSelecting.value = false;
     }
 

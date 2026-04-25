@@ -3,6 +3,11 @@
 * Bugfix
   - fix: tree expand not work correctly when virtual mode.
   - vue2 support fix
+* Breaking Changes
+  - `propps.areaSelection`
+    - **AreaSelectionRange type structure changed**: Changed `AreaSelectionRange` from `{ startRowIndex, startColIndex, endRowIndex, endColIndex }` to `{ index: { x: [number, number], y: [number, number] } }` for more intuitive coordinate representation. 
+    - The `area-selection-change` event now emits the new structure.
+    - The `area-selection-change` remove the second value in callback.
 
 ## 0.11.9
 * Optimize

@@ -183,7 +183,7 @@ Triggered when clicking to expand a tree row.
 Area selection change event.
 
 ```ts
-(e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+(e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
 ### row-drag-selection-change

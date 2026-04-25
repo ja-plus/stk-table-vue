@@ -678,9 +678,9 @@ const emits = defineEmits<{
     /**
      * 单元格选区变更事件
      *
-     * ```(range: AreaSelectionRange | null, data: { rows: DT[], cols: StkTableColumn<DT>[] })```
+     * ```(ranges: AreaSelectionRange[])```
      */
-    (e: 'area-selection-change', range: AreaSelectionRange | null, data: { rows: DT[]; cols: StkTableColumn<DT>[] }): void;
+    (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
     /**
      * 行拖拽选区变更事件
      *

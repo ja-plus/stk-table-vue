@@ -191,7 +191,7 @@ Get selected cells information
 function getSelectedArea(): {
     rows: DT[];
     cols: StkTableColumn<DT>[];
-    range: AreaSelectionRange
+    ranges: AreaSelectionRange[]
 }
 ```
 
