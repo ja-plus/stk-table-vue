@@ -386,6 +386,21 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
      * @default true
      */
     shift?: boolean;
+    /**
+     * 高亮配置
+     */
+    highlight?: {
+        /**
+         * 是否启用单元格高亮与选中边框。
+         * @default true
+         */
+        cell?: boolean;
+        /**
+         * 是否启用行高亮（单元格跨越的整行都会高亮）。
+         * @default false
+         */
+        row?: boolean;
+    };
 };
 
 /** 行拖拽选区范围 */

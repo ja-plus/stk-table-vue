@@ -81,6 +81,12 @@ export function useAreaSelection<DT extends Record<string, any>>(
     /** 是否启用 Shift 扩选 */
     const shiftEnabled = computed(() => config.value.shift);
 
+    /** 是否启用单元格高亮 */
+    const highlightCellEnabled = computed(() => config.value.highlight?.cell);
+
+    /** 是否启用行高亮 */
+    const highlightRowEnabled = computed(() => config.value.highlight?.row);
+
     /** colKey → absolute index 映射 */
     const colKeyToIndexMap = computed(() => {
         const headers = tableHeaderLast.value;
@@ -755,6 +761,9 @@ export function useAreaSelection<DT extends Record<string, any>>(
      * @returns 样式类名数组
      */
     function getAreaSelectionClasses(cellKey: string, absoluteRowIndex: number, colKey: UniqKey): string[] {
+        // 如果禁用了单元格高亮，则不返回任何 class
+        if (!highlightCellEnabled.value) return [];
+
         if (!selectedCellKeys.value.has(cellKey)) return [];
 
         const colIndex = colKeyToIndexMap.value.get(colKey);
@@ -779,6 +788,29 @@ export function useAreaSelection<DT extends Record<string, any>>(
         }
 
         return classes;
+    }
+
+    /**
+     * 判断一行的选区样式类名（行高亮）
+     * @param absoluteRowIndex 行在 dataSourceCopy 中的绝对索引
+     * @returns 样式类名数组
+     */
+    function getAreaSelectionRowClasses(absoluteRowIndex: number): string[] {
+        // 如果禁用了行高亮，则不返回任何 class
+        if (!highlightRowEnabled.value) return [];
+
+        const ranges = selectionRanges.value;
+        if (!ranges.length) return [];
+
+        // 检查该行是否在任何选区内
+        for (const range of ranges) {
+            const { minRow, maxRow } = normalizeRange(range);
+            if (absoluteRowIndex >= minRow && absoluteRowIndex <= maxRow) {
+                return ['row-range-selected'];
+            }
+        }
+
+        return [];
     }
 
     // expose function
@@ -815,6 +847,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
         config,
         isSelecting,
         getClass: getAreaSelectionClasses,
+        getRowClass: getAreaSelectionRowClasses,
         get: getSelectedArea,
         clear: clearSelectedArea,
         copy: copySelectedArea,

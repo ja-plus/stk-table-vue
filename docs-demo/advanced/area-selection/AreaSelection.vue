@@ -3,6 +3,8 @@
         <CheckItem v-model="keyboard" :text="t('keyboardSelect') + `(v0.11.0)`"></CheckItem>
         <CheckItem v-model="ctrlEnabled" text="启用 Ctrl 多选 (v0.11.10)"></CheckItem>
         <CheckItem v-model="shiftEnabled" text="启用 Shift 扩选 (v0.11.10)"></CheckItem>
+        <CheckItem v-model="highlightCell" text="单元格高亮 (v0.11.10)"></CheckItem>
+        <CheckItem v-model="highlightRow" text="行高亮 (v0.11.10)"></CheckItem>
         <StkTable
             style="height: 400px"
             row-key="id"
@@ -15,6 +17,10 @@
                 keyboard,
                 ctrl: ctrlEnabled,
                 shift: shiftEnabled,
+                highlight: {
+                    cell: highlightCell,
+                    row: highlightRow,
+                },
             }"
             @area-selection-change="onSelectionChange"
         />
@@ -37,6 +43,8 @@ type Row = { id: number; name: string; age: number; city: string };
 const keyboard = ref(true);
 const ctrlEnabled = ref(true);
 const shiftEnabled = ref(true);
+const highlightCell = ref(true);
+const highlightRow = ref(false);
 
 const cols = [
     { title: 'ID', dataIndex: 'id', fixed: 'left', width: 50 },

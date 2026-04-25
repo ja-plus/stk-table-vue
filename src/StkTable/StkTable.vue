@@ -910,6 +910,7 @@ const {
     isSelecting: isAreaSelecting,
     onMD: onSelectionMouseDown,
     getClass: getAreaSelectionClasses,
+    getRowClass: getAreaSelectionRowClass,
     get: getSelectedArea,
     clear: clearSelectedArea,
     copy: copySelectedArea,
@@ -1189,6 +1190,11 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
 
     if (rowDragSelectionConfig.value.enabled) {
         classList.push(...getRowDragSelectionClasses(rowIndex));
+    }
+
+    // area selection row highlight
+    if (areaSelectionConfig.value.enabled) {
+        classList.push(...getAreaSelectionRowClass(rowIndex));
     }
 
     if (currentRowKey.value === rowKey || row === currentRow.value) {
