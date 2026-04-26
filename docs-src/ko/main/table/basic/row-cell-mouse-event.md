@@ -15,6 +15,9 @@
 ## 선택된 셀 설정 
 컴포넌트 메서드 [expose setSelectedCell](/ko/main/api/expose.html#setselectedcell)을 호출하여 현재 셀을 선택할 수 있습니다
 
+## 셀 및 행 다중 선택
+**셀 다중 선택** 또는 **행 다중 선택** 기능을 구현하려면 [영역 선택 (Area Selection)](/ko/main/table/advanced/area-selection.html) 문서를 참조하세요.
+영역 선택 기능은 드래그 선택, Ctrl/Shift 다중 선택 등 고급 상호작용을 지원합니다.
 
 ## API
 ### 관련 Props:

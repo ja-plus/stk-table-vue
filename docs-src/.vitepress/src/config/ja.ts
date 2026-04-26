@@ -73,7 +73,6 @@ export const jaConfig = defineConfig({
                                     { text: '仮想リスト（大量データ）', link: '/table/advanced/virtual' },
                                     { text: '可変行高仮想リスト', link: '/table/advanced/auto-height-virtual' },
                                     { text: 'エリア選択', link: '/table/advanced/area-selection' },
-                                    { text: '行ドラッグ選択', link: '/table/advanced/row-drag-selection' },
                                     { text: '列幅変更', link: '/table/advanced/column-resize' },
                                     { text: '列ドラッグ並べ替え', link: '/table/advanced/header-drag' },
                                     { text: '行ドラッグ並べ替え', link: '/table/advanced/row-drag' },

@@ -15,6 +15,9 @@
 ## 選択セルを設定
 [expose setSelectedCell](/ja/main/api/expose.html#setselectedcell) コンポーネントメソッドを呼び出して現在セルを選択できます。
 
+## セルと行のマルチ選択
+**セルのマルチ選択**または**行のマルチ選択**機能を実装する場合は、[エリア選択 (Area Selection)](/ja/main/table/advanced/area-selection.html) ドキュメントを参照してください。
+エリア選択機能は、ドラッグ選択、Ctrl/Shift マルチ選択などの高度なインタラクションをサポートしています。
 
 ## API
 ### 関連 Props:

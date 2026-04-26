@@ -273,17 +273,6 @@ areaSelection?: boolean | {
 };
 ```
 
-### rowDragSelection
-
-是否启用鼠标拖拽选择行
-
-```ts
-rowDragSelection?: boolean | {
-  /** default: true */
-  enabled?: boolean;
-};
-```
-
 ### headerDrag
 
 表头是否可拖动。支持回调函数。

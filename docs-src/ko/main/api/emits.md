@@ -186,14 +186,6 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
-### row-drag-selection-change
-
-행 드래그 선택 영역 변경 이벤트.
-
-```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
-```
-
 ### update:columns
 
 v-model:columns col resize 시 너비 업데이트.

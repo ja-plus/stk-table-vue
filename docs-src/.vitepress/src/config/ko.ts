@@ -73,7 +73,6 @@ export const koConfig = defineConfig({
                                     { text: '가상 리스트 (대량 데이터)', link: '/table/advanced/virtual' },
                                     { text: '가변 행 높이 가상 리스트', link: '/table/advanced/auto-height-virtual' },
                                     { text: '영역 선택', link: '/table/advanced/area-selection' },
-                                    { text: '행 드래그 선택', link: '/table/advanced/row-drag-selection' },
                                     { text: '열 너비 변경', link: '/table/advanced/column-resize' },
                                     { text: '열 드래그 정렬', link: '/table/advanced/header-drag' },
                                     { text: '행 드래그 정렬', link: '/table/advanced/row-drag' },

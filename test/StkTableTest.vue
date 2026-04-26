@@ -21,9 +21,7 @@
 
 <script lang="ts" setup>
 import { ref, useTemplateRef } from 'vue';
-import { registerFeature, StkTable, StkTableColumn, useRowDragSelection } from '../src/StkTable/index';
-
-registerFeature(useRowDragSelection);
+import { registerFeature, StkTable, StkTableColumn } from '../src/StkTable/index';
 
 type Row = {
     id: number;
@@ -60,7 +58,7 @@ const currentSelection = ref({
 
 function onSelectionChange(
     range: { startRowIndex: number; endRowIndex: number } | null,
-    data: { rows: Row[]; ranges: { startRowIndex: number; endRowIndex: number }[] }
+    data: { rows: Row[]; ranges: { startRowIndex: number; endRowIndex: number }[] },
 ) {
     currentSelection.value = {
         range,

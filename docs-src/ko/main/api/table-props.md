@@ -279,17 +279,6 @@ areaSelection?: boolean | {
 };
 ```
 
-### rowDragSelection
-
-마우스 드래그로 행 선택을 활성화합니다
-
-```ts
-rowDragSelection?: boolean | {
-  /** default: true */
-  enabled?: boolean;
-};
-```
-
 ### headerDrag
 
 헤더 드래그 가능 여부. 콜백 함수 지원.

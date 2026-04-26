@@ -186,14 +186,6 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
-### row-drag-selection-change
-
-行ドラッグ選択範囲が変更されたときに発火します。
-
-```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
-```
-
 ### update:columns
 
 v-model:columns列のサイズ変更時に幅を更新します。

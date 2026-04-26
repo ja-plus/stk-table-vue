@@ -1,5 +1,8 @@
 
 ## 0.11.10
+* Feature
+  - feat: `AreaSelectionConfig` add `highlight` config. `highlight.cell` controls cell highlight and border (default: true), `highlight.row` controls row highlight (default: false).
+  - feat: `AreaSelectionConfig` add `ctrl` and `shift` config. `ctrl` enables Ctrl/Cmd multi-selection (default: true), `shift` enables Shift extend selection (default: true).
 * Bugfix
   - fix: tree expand not work correctly when virtual mode.
   - vue2 support fix

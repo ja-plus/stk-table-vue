@@ -15,6 +15,9 @@
 ## 设置选中的单元格 
 可通过调用组件方法[expose setSelectedCell](/main/api/expose.html#setselectedcell)选中当前单元格
 
+## 多选单元格与多选行
+如需实现**多选单元格**或**多选行**功能,请参阅 [区域选择 (Area Selection)](/main/table/advanced/area-selection.html) 文档。
+区域选择功能支持拖拽选区、Ctrl/Shift 多选等高级交互行为。
 
 ## API
 ### 相关 Props:

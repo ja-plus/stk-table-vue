@@ -186,14 +186,6 @@ Area selection change event.
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
-### row-drag-selection-change
-
-Triggered when row drag selection changes.
-
-```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
-```
-
 ### update:columns
 
 Update width when v-model:columns col is resized.

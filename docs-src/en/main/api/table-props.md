@@ -279,17 +279,6 @@ areaSelection?: boolean | {
 };
 ```
 
-### rowDragSelection
-
-Enable mouse drag row selection
-
-```ts
-rowDragSelection?: boolean | {
-  /** default: true */
-  enabled?: boolean;
-};
-```
-
 ### headerDrag
 
 Whether header can be dragged. Supports callback function.

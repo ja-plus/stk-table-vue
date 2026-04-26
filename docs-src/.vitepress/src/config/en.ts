@@ -73,7 +73,6 @@ export const enConfig = defineConfig({
                                     { text: 'Virtual List (Large Data)', link: '/table/advanced/virtual' },
                                     { text: 'Variable Row Height Virtual List', link: '/table/advanced/auto-height-virtual' },
                                     { text: 'Area Selection', link: '/table/advanced/area-selection' },
-                                    { text: 'Row Drag Selection', link: '/table/advanced/row-drag-selection' },
                                     { text: 'Column Resize', link: '/table/advanced/column-resize' },
                                     { text: 'Column Drag Reorder', link: '/table/advanced/header-drag' },
                                     { text: 'Row Drag Reorder', link: '/table/advanced/row-drag' },

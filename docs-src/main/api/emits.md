@@ -186,14 +186,6 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
-### row-drag-selection-change
-
-行拖拽选区变更事件。
-
-```ts
-(e: 'row-drag-selection-change', range: RowDragSelectionRange | null, data: { rows: DT[]; ranges: RowDragSelectionRange[] }): void;
-```
-
 ### update:columns
 
 v-model:columns col resize 时更新宽度。

@@ -15,6 +15,9 @@ You can select the current row by calling the component method [expose setCurren
 ## Setting Selected Cell
 You can select the current cell by calling the component method [expose setSelectedCell](/en/main/api/expose.html#setselectedcell)
 
+## Multi-Select Cells and Rows
+To implement **multi-select cells** or **multi-select rows** functionality, please refer to the [Area Selection](/en/main/table/advanced/area-selection.html) documentation.
+The Area Selection feature supports advanced interactions such as drag selection, Ctrl/Shift multi-select, and more.
 
 ## API
 ### Related Props:
