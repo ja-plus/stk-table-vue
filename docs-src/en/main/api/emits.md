@@ -186,6 +186,28 @@ Area selection change event.
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
+#### AreaSelectionRange
+
+Cell selection range type. Each range describes the cells covered in the table via the `index` field.
+
+```ts
+type AreaSelectionRange = {
+    index: {
+        /** Column index range [startCol, endCol] (both ends inclusive) */
+        x: [number, number];
+        /** Row index range [startRow, endRow] (both ends inclusive) */
+        y: [number, number];
+    };
+};
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| index.x | `[number, number]` | Column index range covered by the selection, `[startCol, endCol]`, both ends inclusive |
+| index.y | `[number, number]` | Row index range covered by the selection, `[startRow, endRow]`, both ends inclusive |
+
+When using Ctrl multi-select or Shift range-select, `ranges` may contain multiple selection ranges.
+
 ### update:columns
 
 Update width when v-model:columns col is resized.

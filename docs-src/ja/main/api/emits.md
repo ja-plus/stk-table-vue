@@ -186,6 +186,28 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
+#### AreaSelectionRange
+
+セル選択範囲の型。各選択範囲は `index` フィールドでテーブル内のセル範囲を表します。
+
+```ts
+type AreaSelectionRange = {
+    index: {
+        /** 列インデックス範囲 [開始列, 終了列]（両端を含む） */
+        x: [number, number];
+        /** 行インデックス範囲 [開始行, 終了行]（両端を含む） */
+        y: [number, number];
+    };
+};
+```
+
+| フィールド | 型 | 説明 |
+| --- | --- | --- |
+| index.x | `[number, number]` | 選択範囲が覆う列インデックス範囲、`[開始列, 終了列]`、両端を含む |
+| index.y | `[number, number]` | 選択範囲が覆う行インデックス範囲、`[開始行, 終了行]`、両端を含む |
+
+Ctrl 複数選択または Shift 範囲選択を使用する場合、`ranges` には複数の選択範囲が含まれる可能性があります。
+
 ### update:columns
 
 v-model:columns列のサイズ変更時に幅を更新します。

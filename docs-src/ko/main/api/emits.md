@@ -186,6 +186,28 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
+#### AreaSelectionRange
+
+셀 선택 영역 타입. 각 선택 영역은 `index` 필드를 통해 테이블 내에서 덮는 셀 범위를 설명합니다.
+
+```ts
+type AreaSelectionRange = {
+    index: {
+        /** 열 인덱스 범위 [시작 열, 끝 열] (양쪽 끝 포함) */
+        x: [number, number];
+        /** 행 인덱스 범위 [시작 행, 끝 행] (양쪽 끝 포함) */
+        y: [number, number];
+    };
+};
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| index.x | `[number, number]` | 선택 영역이 덮는 열 인덱스 범위, `[시작 열, 끝 열]`, 양쪽 끝 포함 |
+| index.y | `[number, number]` | 선택 영역이 덮는 행 인덱스 범위, `[시작 행, 끝 행]`, 양쪽 끝 포함 |
+
+Ctrl 다중 선택 또는 Shift 범위 선택을 사용할 때 `ranges`에는 여러 선택 영역이 포함될 수 있습니다.
+
 ### update:columns
 
 v-model:columns col resize 시 너비 업데이트.

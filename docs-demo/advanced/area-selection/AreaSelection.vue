@@ -11,6 +11,7 @@
         <StkTable
             style="height: 400px"
             row-key="id"
+            stripe
             :row-active="false"
             :data-source="rows"
             :columns="cols"

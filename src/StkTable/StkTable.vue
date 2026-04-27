@@ -25,6 +25,7 @@
             'auto-row-height': props.autoRowHeight,
             'scroll-row-by-row': isSRBRActive,
             'scrollbar-on': scrollbarOptions.enabled,
+            'area-selection': areaSelectionConfig.enabled,
             'is-area-selecting': isAreaSelecting,
             'exp-scroll-y': isExperimentalScrollY,
         }"

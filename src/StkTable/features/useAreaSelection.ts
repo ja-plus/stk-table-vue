@@ -67,9 +67,20 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const config = computed<AreaSelectionConfig>(() => {
         if (typeof props.areaSelection === 'boolean') {
             const b = props.areaSelection;
-            return { enabled: b, keyboard: b, ctrl: b, shift: b };
+            return { enabled: b, keyboard: b, ctrl: b, shift: b, highlight: { cell: b, row: false } };
         }
-        return { enabled: true, ctrl: true, shift: true, ...props.areaSelection };
+        const { highlight: userHighlight, ...restConfig } = props.areaSelection || {};
+        return {
+            enabled: true,
+            ctrl: true,
+            shift: true,
+            highlight: {
+                cell: true,
+                row: false,
+                ...userHighlight,
+            },
+            ...restConfig,
+        };
     });
 
     /** 是否启用键盘控制选区移动 */

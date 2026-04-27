@@ -186,6 +186,28 @@
 (e: 'area-selection-change', ranges: AreaSelectionRange[]): void;
 ```
 
+#### AreaSelectionRange
+
+单元格选区范围类型。每个选区通过 `index` 字段描述在表格中覆盖的单元格范围。
+
+```ts
+type AreaSelectionRange = {
+    index: {
+        /** 列索引范围 [起始列, 结束列]（包含两端） */
+        x: [number, number];
+        /** 行索引范围 [起始行, 结束行]（包含两端） */
+        y: [number, number];
+    };
+};
+```
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| index.x | `[number, number]` | 选区覆盖的列索引范围，`[起始列, 结束列]`，包含两端 |
+| index.y | `[number, number]` | 选区覆盖的行索引范围，`[起始行, 结束行]`，包含两端 |
+
+当使用 Ctrl 多选或 Shift 扩选时，`ranges` 可能包含多个选区。
+
 ### update:columns
 
 v-model:columns col resize 时更新宽度。
