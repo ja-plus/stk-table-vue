@@ -1,10 +1,13 @@
 <template>
     <div style="padding: 16px">
-        <CheckItem v-model="keyboard" :text="t('keyboardSelect') + `(v0.11.0)`"></CheckItem>
-        <CheckItem v-model="ctrlEnabled" text="启用 Ctrl 多选 (v0.11.10)"></CheckItem>
-        <CheckItem v-model="shiftEnabled" text="启用 Shift 扩选 (v0.11.10)"></CheckItem>
-        <CheckItem v-model="highlightCell" text="单元格高亮 (v0.11.10)"></CheckItem>
-        <CheckItem v-model="highlightRow" text="行高亮 (v0.11.10)"></CheckItem>
+        <CheckItem v-model="keyboard" :text="t('keyboardSelect') + ` (v0.11.0)`"></CheckItem>
+        <CheckItem v-model="ctrlEnabled" :text="t('ctrlMultiSelect') + ` (v0.11.10)`"></CheckItem>
+        <CheckItem
+            v-model="shiftEnabled"
+            :text="t('shiftExpandSelect') + ` (v0.11.10)`"
+        ></CheckItem>
+        <CheckItem v-model="highlightCell" :text="t('cellHighlight') + ` (v0.11.10)`"></CheckItem>
+        <CheckItem v-model="highlightRow" :text="t('rowHighlight') + ` (v0.11.10)`"></CheckItem>
         <StkTable
             style="height: 400px"
             row-key="id"
