@@ -99,7 +99,7 @@ const dataSource = ref<RowData[]>([
 | Prop               | 类型                               | 默认值                                  | 说明             |
 | ------------------ | -------------------------------- | ------------------------------------ | -------------- |
 | `rowHover`         | `boolean`                        | `true`                               | hover 高亮行      |
-| `rowActive`        | `boolean \| RowActiveOption<DT>` | `{ enabled: true, revokable: true }` | 点击选中行高亮        |
+| `rowActive`        | `boolean \| RowActiveOption<DT>` | `true`  | 点击选中行高亮        |
 | `rowClassName`     | `(row: DT, i: number) => string` | `() => ''`                           | 行 className 回调 |
 | `showTrHoverClass` | `boolean`                        | `false`                              | 行 hover class  |
 
@@ -356,9 +356,23 @@ type TreeConfig = {
 };
 
 type AreaSelectionConfig<T> = {
+  /** 是否启用区域选择 */
   enabled?: boolean;
+  /** 复制时的单元格文本格式化回调（配合 customCell 使用） */
   formatCellForClipboard?: (row: T, col: StkTableColumn<T>, rawValue: any) => string;
+  /** 是否启用键盘控制选区移动（方向键/Tab，类似 Excel） */
   keyboard?: boolean;
+  /** 是否启用 Ctrl/Cmd 多选不连续区域 */
+  ctrl?: boolean;
+  /** 是否启用 Shift 扩选功能 */
+  shift?: boolean;
+  /** 高亮配置 */
+  highlight?: {
+    /** 是否启用单元格高亮与选中边框（默认 true） */
+    cell?: boolean;
+    /** 是否启用行高亮（单元格跨越的整行高亮，默认 false） */
+    row?: boolean;
+  };
 };
 
 type HeaderDragConfig<T> = {
@@ -615,6 +629,44 @@ tableRef.value?.setHighlightDimCell('row-key-1', 'age');
 tableRef.value?.setHighlightDimRow(['row-key-1', 'row-key-2']);
 ```
 
+### 12.1 行选中配置
+
+```vue
+<template>
+  <StkTable
+    row-key="id"
+    :row-active="{ enabled: true, revokable: true, disabled: row => row.locked }"
+    :columns="columns"
+    :data-source="dataSource"
+    @current-change="onCurrentChange"
+  />
+</template>
+
+<script setup>
+// 禁用某些行的选中
+columns = [
+  { title: 'ID', dataIndex: 'id' },
+  { title: '名称', dataIndex: 'name' },
+  { title: '状态', dataIndex: 'status' },
+];
+
+dataSource = [
+  { id: 1, name: '张三', status: 'active' },
+  { id: 2, name: '李四', status: 'locked', locked: true }, // 此行不能被点击选中
+];
+
+function onCurrentChange(event, row, { select }) {
+  console.log('当前行:', row);
+  console.log('选中状态:', select); // true=选中, false=取消选中
+}
+</script>
+```
+
+> **提示**: 
+> - `rowActive` 设为 `false` 仅隐藏内部样式，`tr` 上仍会添加 `active` 类，方便自定义样式。
+> - `rowActive.disabled` 禁用的行仍可通过 `setCurrentRow()` 方法选中。
+> - `revokable: true` 表示再次点击当前行可以取消选中。
+
 ### 13. 单元格选区(Area Selection)
 
 ```vue
@@ -626,6 +678,47 @@ tableRef.value?.setHighlightDimRow(['row-key-1', 'row-key-2']);
   @area-selection-change="onSelection"
 />
 ```
+
+#### 完整配置示例：
+
+```vue
+<StkTable
+  row-key="id"
+  :area-selection="{
+    enabled: true,
+    keyboard: true,
+    ctrl: true,
+    shift: true,
+    formatCellForClipboard: (row, col, rawValue) => {
+      // 如果有 customCell 自定义渲染，需要提供此回调确保复制内容一致
+      if (col.dataIndex === 'status') {
+        return rawValue === 1 ? '正常' : '异常';
+      }
+      return String(rawValue);
+    },
+    highlight: {
+      cell: true,  // 单元格高亮与边框（默认 true）
+      row: false,  // 整行高亮（默认 false）
+    }
+  }"
+  :columns="columns"
+  :data-source="dataSource"
+/>
+```
+
+#### 配置参数说明：
+
+| 参数 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `enabled` | `boolean` | `false` | 是否启用区域选择 |
+| `keyboard` | `boolean` | `false` | 是否启用键盘导航（方向键/Tab/Shift+Tab） |
+| `ctrl` | `boolean` | `true` | 是否启用 Ctrl/Cmd 多选不连续区域 |
+| `shift` | `boolean` | `true` | 是否启用 Shift 扩选功能 |
+| `formatCellForClipboard` | `Function` | `undefined` | 复制到剪贴板时的格式化回调 |
+| `highlight.cell` | `boolean` | `true` | 是否启用单元格高亮与选中边框 |
+| `highlight.row` | `boolean` | `false` | 是否启用整行高亮 |
+
+> **提示**: Area Selection 支持拖拽选区、Ctrl/Shift 多选单元格、键盘导航、复制选区到剪贴板等高级交互。
 
 ### 14. 序号列
 
