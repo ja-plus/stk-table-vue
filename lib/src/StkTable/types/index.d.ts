@@ -319,10 +319,10 @@ export type RowActiveOption<DT> = {
 };
 /** 单元格选区范围 */
 export type AreaSelectionRange = {
-    startRowIndex: number;
-    startColIndex: number;
-    endRowIndex: number;
-    endColIndex: number;
+    index: {
+        x: [number, number];
+        y: [number, number];
+    };
 };
 /** 单元格选区配置 */
 export type AreaSelectionConfig<T extends Record<string, any> = any> = {
@@ -344,16 +344,33 @@ export type AreaSelectionConfig<T extends Record<string, any> = any> = {
      * @default false
      */
     keyboard?: boolean;
-};
-/** 行拖拽选区范围 */
-export type RowDragSelectionRange = {
-    startRowIndex: number;
-    endRowIndex: number;
-};
-/** 行拖拽选区配置 */
-export type RowDragSelectionConfig = {
-    /** default: true */
-    enabled?: boolean;
+    /**
+     * 是否启用 Ctrl 多选功能。
+     * 启用后，按住 Ctrl/Cmd 键点击可以选择多个不连续的区域。
+     * @default true
+     */
+    ctrl?: boolean;
+    /**
+     * 是否启用 Shift 扩选功能。
+     * 启用后，按住 Shift 键点击可以从锚点扩展到当前位置。
+     * @default true
+     */
+    shift?: boolean;
+    /**
+     * 高亮配置
+     */
+    highlight?: {
+        /**
+         * 是否启用单元格高亮与选中边框。
+         * @default true
+         */
+        cell?: boolean;
+        /**
+         * 是否启用行高亮（单元格跨越的整行都会高亮）。
+         * @default false
+         */
+        row?: boolean;
+    };
 };
 /** 实验性功能配置 */
 export type ExperimentalConfig = {

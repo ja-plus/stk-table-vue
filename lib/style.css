@@ -1,8 +1,8 @@
 /**
- * name: @jutze/stk-table-vue
- * version: v0.11.11
+ * name: stk-table-vue
+ * version: v0.11.10
  * description: High performance realtime virtual table for vue3 and vue2.7
- * author: bypanghu
+ * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
  * license: MIT
  */
@@ -238,6 +238,9 @@
 }
 .stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
   background-color:var(--stripe-bgc);
+}
+.stk-table.stripe.area-selection .stk-tbody-main tr.row-range-selected{
+  background-color:var(--rs-bgc);
 }
 .stk-table.stripe.row-hover .stk-tbody-main tr:hover{
   background-color:var(--tr-hover-bgc);

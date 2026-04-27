@@ -1,53 +1,8 @@
 import { FilterStatus } from './components/Filter/types';
-import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, RowDragSelectionConfig, RowDragSelectionRange, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
-/** Generic stands for DataType */
-type DT = any & PrivateRowDT;
-declare function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: {
-    remote?: boolean;
-}): void;
-/**
- * 选中一行
- *
- * en: Select a row
- * @param {string} rowKeyOrRow selected rowKey, undefined to unselect
- * @param {boolean} option.silent if set true not emit `current-change`. default:false
- * @param {boolean} option.deep if set true, deep search in children. default:false
- */
-declare function setCurrentRow(rowKeyOrRow: string | undefined | DT, option?: {
-    silent?: boolean;
-    deep?: boolean;
-}): void;
-/**
- * set highlight active cell (props.cellActive=true)
- * @param row row if undefined, clear highlight
- * @param col column
- * @param option.silent if emit current-change. default:false(not emit `current-change`)
- */
-declare function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option?: {
-    silent: boolean;
-}): void;
-/**
- * set scroll bar position
- * @param top null to not change
- * @param left null to not change
- */
-declare function scrollTo(top?: number | null, left?: number | null): void;
-/** get current table data */
-declare function getTableData(): any[];
-declare function __VLS_template(): {
-    tableHeader?(_: {
-        col: PrivateStkTableColumn<PrivateRowDT>;
-    }): any;
-    expand?(_: {
-        row: any;
-        col: StkTableColumn<any> | undefined;
-    }): any;
-    empty?(_: {}): any;
-    customBottom?(_: {}): any;
-};
-declare const __VLS_component: import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
+declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
     /** 表格宽度*/
     width?: string;
     /** 最小表格宽度 @deprecated*/
@@ -71,35 +26,35 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * 是否可变行高
      * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
      */
-    autoRowHeight?: boolean | AutoRowHeightConfig<DT>;
+    autoRowHeight?: boolean | AutoRowHeightConfig<any>;
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean | RowActiveOption<DT>;
+    rowActive?: boolean | RowActiveOption<any>;
     /**
      * @deprecated
      */
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | string | null;
+    headerRowHeight?: number | string;
     /** 表尾行高。default = rowHeight */
-    footerRowHeight?: number | string | null;
+    footerRowHeight?: number | string;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
     virtualX?: boolean;
     /** 表格列配置 */
-    columns?: StkTableColumn<DT>[];
+    columns?: StkTableColumn<any>[];
     /** 表格数据源 */
-    dataSource?: DT[];
+    dataSource?: any[];
     /** 行唯一键 （行唯一值不能为undefined） */
     rowKey?: UniqKeyProp;
     /** 列唯一键 */
     colKey?: UniqKeyProp;
     /** 空值展示文字 */
     emptyCellText?: string | ((option: {
-        row: DT;
-        col: StkTableColumn<DT>;
+        row: any;
+        col: StkTableColumn<any>;
     }) => string);
     /** 暂无数据兜底高度是否撑满 */
     noDataFull?: boolean;
@@ -121,22 +76,20 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     selectedCellRevokable?: boolean;
     /** 是否启用单元格范围选中（拖拽选区） */
     areaSelection?: boolean | AreaSelectionConfig;
-    /** 是否启用鼠标拖拽选择行 */
-    rowDragSelection?: boolean | RowDragSelectionConfig;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: boolean | HeaderDragConfig<DT>;
+    headerDrag?: boolean | HeaderDragConfig<any>;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
-    rowClassName?: (row: DT, i: number) => string | undefined;
+    rowClassName?: (row: any, i: number) => string | undefined;
     /**
      * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | ColResizableConfig<DT>;
+    colResizable?: boolean | ColResizableConfig<any>;
     /** 可拖动至最小的列宽 */
     colMinWidth?: number;
     /**
@@ -158,7 +111,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean;
     /** 排序配置 */
-    sortConfig?: SortConfig<DT>;
+    sortConfig?: SortConfig<any>;
     /** 隐藏头部title。可传入colKey数组 */
     hideHeaderTitle?: boolean | string[];
     /** 高亮配置 */
@@ -204,7 +157,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      */
     experimental?: ExperimentalConfig;
     /** 表格底部合计行数据 */
-    footerData?: DT[];
+    footerData?: any[];
     /** 表格底部配置 */
     footerConfig?: FooterConfig;
 }>, {
@@ -240,7 +193,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellActive: boolean;
     selectedCellRevokable: boolean;
     areaSelection: boolean;
-    rowDragSelection: boolean;
     headerDrag: () => false;
     rowClassName: () => "";
     colResizable: () => false;
@@ -296,14 +248,19 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en：select a row
      * @see {@link setCurrentRow}
      */
-    setCurrentRow: typeof setCurrentRow;
+    setCurrentRow: (rowKeyOrRow: string | undefined | any, option?: {
+        silent?: boolean;
+        deep?: boolean;
+    }) => void;
     /**
      * 取消选中单元格
      *
      * en: set highlight active cell (props.cellActive=true)
      * @see {@link setSelectedCell}
      */
-    setSelectedCell: typeof setSelectedCell;
+    setSelectedCell: (row?: any, col?: StkTableColumn<any>, option?: {
+        silent: boolean;
+    }) => void;
     /**
      * 设置高亮单元格
      *
@@ -378,14 +335,14 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * en: Scroll to
      * @see {@link scrollTo}
      */
-    scrollTo: typeof scrollTo;
+    scrollTo: (top?: number | null, left?: number | null) => void;
     /**
      * 获取表格数据
      *
      * en: Get table data
      * @see {@link getTableData}
      */
-    getTableData: typeof getTableData;
+    getTableData: () => any[];
     /**
      * 设置展开的行
      *
@@ -432,16 +389,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     getSelectedArea: () => {
         rows: any[];
         cols: StkTableColumn<any>[];
-        range: null;
-    } | {
-        rows: any[];
-        cols: StkTableColumn<any>[];
-        range: {
-            startRowIndex: number;
-            startColIndex: number;
-            endRowIndex: number;
-            endColIndex: number;
-        };
+        ranges: AreaSelectionRange[];
     };
     /**
      * 清空拖选选区
@@ -458,33 +406,14 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      */
     copySelectedArea: () => string;
     /**
-     * 获取拖拽选中的行信息
+     * 设置筛选状态
      *
-     * en: Get selected rows info (rowDragSelection=true)
-     * @see {@link getSelectedRows}
+     * en: Set filter status
+     * @see {@link setFilter}
      */
-    getSelectedRows: () => {
-        rows: any[];
-        range: RowDragSelectionRange | null;
-        ranges: RowDragSelectionRange[];
-    };
-    /**
-     * 设置拖拽选中的行
-     *
-     * en: Set selected rows (rowDragSelection=true)
-     * @see {@link setSelectedRows}
-     */
-    setSelectedRows: (rowKeyOrRows?: any[] | undefined, option?: {
-        silent?: boolean;
+    setFilter: (status: Record<UniqKey, FilterStatus> | null, option?: {
+        remote?: boolean;
     }) => void;
-    /**
-     * 清空拖拽选中的行
-     *
-     * en: Clear selected rows (rowDragSelection=true)
-     * @see {@link clearSelectedRows}
-     */
-    clearSelectedRows: () => void;
-    setFilter: typeof setFilter;
 }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     "sort-change": (col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => void;
     "row-click": (ev: MouseEvent, row: any, data: {
@@ -495,8 +424,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => void;
     "cell-selected": (ev: MouseEvent | null, data: {
         select: boolean;
-        row: DT | undefined;
-        col: StkTableColumn<DT> | undefined;
+        row: any | undefined;
+        col: StkTableColumn<any> | undefined;
     }) => void;
     "row-dblclick": (ev: MouseEvent, row: any, data: {
         rowIndex: number;
@@ -527,22 +456,15 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     "col-resize": (col: StkTableColumn<any>) => void;
     "toggle-row-expand": (data: {
         expanded: boolean;
-        row: DT;
-        col: StkTableColumn<DT> | null;
+        row: any;
+        col: StkTableColumn<any> | null;
     }) => void;
     "toggle-tree-expand": (data: {
         expanded: boolean;
-        row: DT;
-        col: StkTableColumn<DT> | null;
+        row: any;
+        col: StkTableColumn<any> | null;
     }) => void;
-    "area-selection-change": (range: AreaSelectionRange | null, data: {
-        rows: DT[];
-        cols: StkTableColumn<DT>[];
-    }) => void;
-    "row-drag-selection-change": (range: RowDragSelectionRange | null, data: {
-        rows: DT[];
-        ranges: RowDragSelectionRange[];
-    }) => void;
+    "area-selection-change": (ranges: AreaSelectionRange[]) => void;
     "filter-change": (status: Record<UniqKey, FilterStatus>) => void;
     "update:columns": (cols: StkTableColumn<any>[]) => void;
 }, string, import('vue').PublicProps, Readonly<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
@@ -569,35 +491,35 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      * 是否可变行高
      * - 设置为 `true` 时, `props.rowHeight` 将表示为期望行高，用于计算。不再影响实际行高。
      */
-    autoRowHeight?: boolean | AutoRowHeightConfig<DT>;
+    autoRowHeight?: boolean | AutoRowHeightConfig<any>;
     /** 是否高亮鼠标悬浮的行 */
     rowHover?: boolean;
     /** 是否高亮选中的行 */
-    rowActive?: boolean | RowActiveOption<DT>;
+    rowActive?: boolean | RowActiveOption<any>;
     /**
      * @deprecated
      */
     rowCurrentRevokable?: boolean;
     /** 表头行高。default = rowHeight */
-    headerRowHeight?: number | string | null;
+    headerRowHeight?: number | string;
     /** 表尾行高。default = rowHeight */
-    footerRowHeight?: number | string | null;
+    footerRowHeight?: number | string;
     /** 虚拟滚动 */
     virtual?: boolean;
     /** x轴虚拟滚动(必须设置列宽)*/
     virtualX?: boolean;
     /** 表格列配置 */
-    columns?: StkTableColumn<DT>[];
+    columns?: StkTableColumn<any>[];
     /** 表格数据源 */
-    dataSource?: DT[];
+    dataSource?: any[];
     /** 行唯一键 （行唯一值不能为undefined） */
     rowKey?: UniqKeyProp;
     /** 列唯一键 */
     colKey?: UniqKeyProp;
     /** 空值展示文字 */
     emptyCellText?: string | ((option: {
-        row: DT;
-        col: StkTableColumn<DT>;
+        row: any;
+        col: StkTableColumn<any>;
     }) => string);
     /** 暂无数据兜底高度是否撑满 */
     noDataFull?: boolean;
@@ -619,22 +541,20 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     selectedCellRevokable?: boolean;
     /** 是否启用单元格范围选中（拖拽选区） */
     areaSelection?: boolean | AreaSelectionConfig;
-    /** 是否启用鼠标拖拽选择行 */
-    rowDragSelection?: boolean | RowDragSelectionConfig;
     /** 表头是否可拖动。支持回调函数。 */
-    headerDrag?: boolean | HeaderDragConfig<DT>;
+    headerDrag?: boolean | HeaderDragConfig<any>;
     /**
      * 给行附加className<br>
      * FIXME: 是否需要优化，因为不传此prop会使表格行一直执行空函数，是否有影响
      */
-    rowClassName?: (row: DT, i: number) => string | undefined;
+    rowClassName?: (row: any, i: number) => string | undefined;
     /**
      * 列宽是否可拖动(需要设置v-model:columns)<br>
      * **不要设置**列minWidth，**必须**设置width<br>
      * 列宽拖动时，每一列都必须要有width，且minWidth/maxWidth不生效。table width会变为"fit-content"。
      * - 会自动更新props.columns中的with属性
      */
-    colResizable?: boolean | ColResizableConfig<DT>;
+    colResizable?: boolean | ColResizableConfig<any>;
     /** 可拖动至最小的列宽 */
     colMinWidth?: number;
     /**
@@ -656,7 +576,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     /** 优化vue2 滚动 */
     optimizeVue2Scroll?: boolean;
     /** 排序配置 */
-    sortConfig?: SortConfig<DT>;
+    sortConfig?: SortConfig<any>;
     /** 隐藏头部title。可传入colKey数组 */
     hideHeaderTitle?: boolean | string[];
     /** 高亮配置 */
@@ -702,7 +622,7 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
      */
     experimental?: ExperimentalConfig;
     /** 表格底部合计行数据 */
-    footerData?: DT[];
+    footerData?: any[];
     /** 表格底部配置 */
     footerConfig?: FooterConfig;
 }>, {
@@ -738,7 +658,6 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellActive: boolean;
     selectedCellRevokable: boolean;
     areaSelection: boolean;
-    rowDragSelection: boolean;
     headerDrag: () => false;
     rowClassName: () => "";
     colResizable: () => false;
@@ -771,20 +690,13 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
         startIndex: number;
         endIndex: number;
     }) => any) | undefined;
-    "onArea-selection-change"?: ((range: AreaSelectionRange | null, data: {
-        rows: DT[];
-        cols: StkTableColumn<DT>[];
-    }) => any) | undefined;
-    "onRow-drag-selection-change"?: ((range: RowDragSelectionRange | null, data: {
-        rows: DT[];
-        ranges: RowDragSelectionRange[];
-    }) => any) | undefined;
+    "onArea-selection-change"?: ((ranges: AreaSelectionRange[]) => any) | undefined;
     "onUpdate:columns"?: ((cols: StkTableColumn<any>[]) => any) | undefined;
     "onCol-resize"?: ((col: StkTableColumn<any>) => any) | undefined;
     "onToggle-row-expand"?: ((data: {
         expanded: boolean;
-        row: DT;
-        col: StkTableColumn<DT> | null;
+        row: any;
+        col: StkTableColumn<any> | null;
     }) => any) | undefined;
     "onSort-change"?: ((col: StkTableColumn<any> | null, order: Order, data: any[], sortConfig: SortConfig<any>) => any) | undefined;
     "onTh-drag-start"?: ((dragStartKey: string) => any) | undefined;
@@ -793,8 +705,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     "onRow-order-change"?: ((dragStartKey: string, targetRowKey: string) => any) | undefined;
     "onToggle-tree-expand"?: ((data: {
         expanded: boolean;
-        row: DT;
-        col: StkTableColumn<DT> | null;
+        row: any;
+        col: StkTableColumn<any> | null;
     }) => any) | undefined;
     "onRow-click"?: ((ev: MouseEvent, row: any, data: {
         rowIndex: number;
@@ -804,8 +716,8 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     }) => any) | undefined;
     "onCell-selected"?: ((ev: MouseEvent | null, data: {
         select: boolean;
-        row: DT | undefined;
-        col: StkTableColumn<DT> | undefined;
+        row: any | undefined;
+        col: StkTableColumn<any> | undefined;
     }) => any) | undefined;
     "onRow-dblclick"?: ((ev: MouseEvent, row: any, data: {
         rowIndex: number;
@@ -830,29 +742,29 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     width: string;
     minWidth: string;
     maxWidth: string;
-    sortConfig: SortConfig<DT>;
+    sortConfig: SortConfig<any>;
     colKey: UniqKeyProp;
     rowHeight: number;
     headless: boolean;
-    autoRowHeight: boolean | AutoRowHeightConfig<DT>;
+    autoRowHeight: boolean | AutoRowHeightConfig<any>;
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
-    headerRowHeight: number | string | null;
+    headerRowHeight: number | string;
     scrollbar: boolean | ScrollbarOptions;
     fixedMode: boolean;
     theme: "light" | "dark";
     rowHover: boolean;
-    rowActive: boolean | RowActiveOption<DT>;
+    rowActive: boolean | RowActiveOption<any>;
     rowCurrentRevokable: boolean;
-    footerRowHeight: number | string | null;
+    footerRowHeight: number | string;
     virtual: boolean;
     virtualX: boolean;
-    columns: StkTableColumn<DT>[];
-    dataSource: DT[];
+    columns: StkTableColumn<any>[];
+    dataSource: any[];
     emptyCellText: string | ((option: {
-        row: DT;
-        col: StkTableColumn<DT>;
+        row: any;
+        col: StkTableColumn<any>;
     }) => string);
     noDataFull: boolean;
     showNoData: boolean;
@@ -864,10 +776,9 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     cellActive: boolean;
     selectedCellRevokable: boolean;
     areaSelection: boolean | AreaSelectionConfig;
-    rowDragSelection: boolean | RowDragSelectionConfig;
-    headerDrag: boolean | HeaderDragConfig<DT>;
-    rowClassName: (row: DT, i: number) => string | undefined;
-    colResizable: boolean | ColResizableConfig<DT>;
+    headerDrag: boolean | HeaderDragConfig<any>;
+    rowClassName: (row: any, i: number) => string | undefined;
+    colResizable: boolean | ColResizableConfig<any>;
     colMinWidth: number;
     bordered: boolean | "h" | "v" | "body-v" | "body-h";
     autoResize: boolean | (() => void);
@@ -882,10 +793,19 @@ declare const __VLS_component: import('vue').DefineComponent<import('vue').Extra
     smoothScroll: boolean;
     scrollRowByRow: boolean | "scrollbar";
     experimental: ExperimentalConfig;
-    footerData: DT[];
+    footerData: any[];
     footerConfig: FooterConfig;
-}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>;
-declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, ReturnType<typeof __VLS_template>>;
+}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>, {
+    tableHeader?(_: {
+        col: PrivateStkTableColumn<PrivateRowDT>;
+    }): any;
+    expand?(_: {
+        row: any;
+        col: StkTableColumn<any> | undefined;
+    }): any;
+    empty?(_: {}): any;
+    customBottom?(_: {}): any;
+}>;
 export default _default;
 type __VLS_NonUndefinedable<T> = T extends undefined ? never : T;
 type __VLS_TypePropsToRuntimeProps<T> = {
