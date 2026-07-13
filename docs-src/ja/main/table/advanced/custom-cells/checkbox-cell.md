@@ -6,20 +6,13 @@ CheckboxCell は、セルレベルで全選択/半選択機能をサポートす
 
 `createCheckboxCell` ファクトリ関数を使用して `CheckboxCell` と `CheckboxAllCell` コンポーネントを作成し、それぞれ `customCell` と `customHeaderCell` として使用します。
 
-<demo vue="advanced/custom-cells/Checkbox/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/Checkbox/index.vue"></demo>
+<demo vue="advanced/custom-cells/CheckboxCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.vue"></demo>
 
 ### サードパーティコンポーネントの使用
 
 `checkboxComponent` にUIライブラリの Checkbox コンポーネントを渡して、プロジェクト全体のスタイルを統一することができます。
 
-```ts
-import { ElCheckbox } from 'element-plus';
-
-const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({
-    field: '_isChecked',
-    checkboxComponent: ElCheckbox,
-});
-```
+<demo vue="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue"></demo>
 
 ### createCheckboxCell オプション
 

@@ -6,20 +6,13 @@ CheckboxCell 是一个内置的多选框单元格组件，支持单元格级别�
 
 通过 `createCheckboxCell` 工厂函数创建 `CheckboxCell` 和 `CheckboxAllCell` 组件，分别用于 `customCell` 和 `customHeaderCell`。
 
-<demo vue="advanced/custom-cells/Checkbox/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/Checkbox/index.vue"></demo>
+<demo vue="advanced/custom-cells/CheckboxCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.vue"></demo>
 
 ### 使用第三方组件
 
 可以通过 `checkboxComponent` 传入 UI 库的 Checkbox 组件，以保持项目整体样式统一。
 
-```ts
-import { ElCheckbox } from 'element-plus';
-
-const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({
-    field: '_isChecked',
-    checkboxComponent: ElCheckbox,
-});
-```
+<demo vue="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue"></demo>
 
 ### createCheckboxCell 选项
 

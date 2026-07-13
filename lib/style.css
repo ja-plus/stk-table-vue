@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v1.0.0-beta.4
+ * version: v1.0.0-beta.5
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -119,6 +119,7 @@
   width:100%;
   font-size:inherit;
   line-height:inherit;
+  font-family:inherit;
   box-sizing:border-box;
   outline:none;
   padding:0 4px;

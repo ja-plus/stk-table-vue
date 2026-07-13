@@ -1,7 +1,7 @@
 /* eslint-disable vue/one-component-per-file */
 import type { CustomCellProps } from '../../types';
 import { computed, defineComponent, getCurrentInstance, h, markRaw } from 'vue';
-import CheckboxVue from './Checkbox.vue';
+import CheckboxVue from './CheckboxCell.vue';
 
 /** createCheckboxCell 配置选项 */
 export interface createCheckboxCellOptions<T = any> {

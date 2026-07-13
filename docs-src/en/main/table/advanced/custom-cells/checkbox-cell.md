@@ -6,20 +6,13 @@ CheckboxCell is a built-in checkbox cell component that supports select-all and 
 
 Create `CheckboxCell` and `CheckboxAllCell` components via the `createCheckboxCell` factory function, and use them as `customCell` and `customHeaderCell` respectively.
 
-<demo vue="advanced/custom-cells/Checkbox/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/Checkbox/index.vue"></demo>
+<demo vue="advanced/custom-cells/CheckboxCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.vue"></demo>
 
 ### Using Third-party Components
 
 You can pass a UI library's Checkbox component via `checkboxComponent` to maintain consistent styling.
 
-```ts
-import { ElCheckbox } from 'element-plus';
-
-const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({
-    field: '_isChecked',
-    checkboxComponent: ElCheckbox,
-});
-```
+<demo vue="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.vue"></demo>
 
 ### createCheckboxCell Options
 
