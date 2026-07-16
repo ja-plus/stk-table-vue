@@ -1,4 +1,8 @@
 
+## 1.0.1
+* Bugfix:
+  - fix: table border-left not effected by `--border-width`
+
 ## 1.0.0
 * Feature
   - feat: Multi-level headers support horizontal virtual list (`props.virtualX`).
