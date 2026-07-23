@@ -43,6 +43,7 @@ export const zhConfig = defineConfig({
             { text: '主页', link: '/' },
             { text: '文档', link: '/main/start/start' },
             { text: '示例', link: '/demos/huge-data' },
+            { text: 'React版本', link: 'https://ja-plus.github.io/stk-table-react/' },
             { text: '赞助', link: '/main/other/sponsor' },
         ],
         sidebar: {

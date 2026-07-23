@@ -18,6 +18,7 @@ export const jaConfig = defineConfig({
             { text: 'ホーム', link: '/ja/' },
             { text: 'ドキュメント', link: '/ja/main/start/start' },
             { text: 'デモ', link: '/ja/demos/huge-data' },
+            { text: 'React版', link: 'https://ja-plus.github.io/stk-table-react/' },
             { text: 'スポンサー', link: '/ja/main/other/sponsor' }
         ],
         sidebar: {

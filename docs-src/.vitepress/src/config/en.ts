@@ -18,6 +18,7 @@ export const enConfig = defineConfig({
             { text: 'Home', link: '/en/' },
             { text: 'Documentation', link: '/en/main/start/start' },
             { text: 'Demos', link: '/en/demos/huge-data' },
+            { text: 'React', link: 'https://ja-plus.github.io/stk-table-react/' },
             { text: 'Sponsor', link: '/en/main/other/sponsor' }
         ],
         sidebar: {
