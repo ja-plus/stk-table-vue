@@ -68,8 +68,13 @@ function handleSortChange(
     sortConfig: SortConfig<DataType>,
 ) {
     dataSource.value = tableSort(col, order, data, sortConfig);
-    tableSortStore.dataIndex = col.dataIndex;
-    tableSortStore.order = order;
+    // order 为 null 时回退到 defaultSort，确保 tableSortStore 与实际排序状态一致
+    const effectiveOrder = order || sortConfig.defaultSort?.order;
+    const effectiveIndex = order
+        ? (col.dataIndex as keyof DataType)
+        : sortConfig.defaultSort?.dataIndex;
+    tableSortStore.dataIndex = effectiveIndex || (col.dataIndex as keyof DataType);
+    tableSortStore.order = effectiveOrder || null;
 }
 let count = dataSource.value.length;
 function addRow() {
