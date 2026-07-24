@@ -86,6 +86,8 @@ export const jaConfig = defineConfig({
                                             { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell フィルター', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell チェックボックス', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 数値フォーマット', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 騰落セル', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]

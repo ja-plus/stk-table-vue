@@ -86,6 +86,8 @@ export const koConfig = defineConfig({
                                             { text: 'EditableCell 편집 가능 셀', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell 필터', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell 체크박스', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 숫자 포맷', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 등락 셀', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]

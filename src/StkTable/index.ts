@@ -10,5 +10,11 @@ export { createEditableCell } from './custom-cells/EditableCell/index';
 export type { CreateEditableCellOptions } from './custom-cells/EditableCell/index';
 export { createCheckboxCell } from './custom-cells/CheckboxCell/index';
 export type { createCheckboxCellOptions } from './custom-cells/CheckboxCell/index';
+export { createNumberCell } from './custom-cells/NumberCell/index';
+export type { CreateNumberCellOptions } from './custom-cells/NumberCell/index';
+export { createChangeCell } from './custom-cells/ChangeCell/index';
+export type { CreateChangeCellOptions } from './custom-cells/ChangeCell/index';
+export { formatNumber } from './custom-cells/utils/formatNumber';
+export type { FormatNumberOptions } from './custom-cells/utils/formatNumber';
 
 import './style.less';

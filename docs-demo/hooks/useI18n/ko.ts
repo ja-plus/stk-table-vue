@@ -222,4 +222,9 @@ export const ko = {
     techDept: '기술부',
     productDept: '제품부',
     opsDept: '운영부',
+    price: '현재가',
+    volume: '거래량',
+    turnover: '거래대금',
+    change: '등락액',
+    changePercent: '등락률',
 };

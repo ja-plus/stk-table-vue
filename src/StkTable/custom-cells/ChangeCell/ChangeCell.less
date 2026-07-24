@@ -1,0 +1,34 @@
+.stk-change-cell {
+    // 默认（浅色）配色：涨红跌绿为 A 股习惯，颜色方向由组件按 colorReverse 决定
+    --stk-change-red: #e02020;
+    --stk-change-green: #00a870;
+    --stk-change-flat: #666;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+
+    &--red {
+        color: var(--stk-change-red);
+    }
+
+    &--green {
+        color: var(--stk-change-green);
+    }
+
+    &--flat {
+        color: var(--stk-change-flat);
+    }
+
+    &__arrow {
+        font-size: 0.85em;
+        line-height: 1;
+    }
+}
+
+// 暗色主题下适当提亮，跟随表格根节点 .stk-table.dark
+.stk-table.dark .stk-change-cell {
+    --stk-change-red: #ff5c5c;
+    --stk-change-green: #26c281;
+    --stk-change-flat: #aaa;
+}
