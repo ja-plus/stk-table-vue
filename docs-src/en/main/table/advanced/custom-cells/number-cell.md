@@ -1,4 +1,4 @@
-# NumberCell <Badge type="tip" text="NEW" />
+# NumberCell <Badge type="tip" text="^1.0.1" />
 
 NumberCell is a built-in display-only cell that formats numeric values into readable text. It supports decimal places, thousands separators, prefix/suffix, sign display, percentages, unit abbreviation (万/亿, K/M/B) and empty-value placeholders. It is commonly used for market quotes, monetary amounts and statistical data.
 
@@ -8,14 +8,12 @@ Create a NumberCell component via the `createNumberCell` factory function and us
 
 <demo vue="advanced/custom-cells/NumberCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/NumberCell/index.vue"></demo>
 
-The factory also returns a matching `formatCopyText`. Attaching it to the column keeps the text obtained from area selection / copy consistent with what is displayed (otherwise the copied value is the raw, unformatted number).
-
 ```ts
-const { NumberCell, formatCopyText } = createNumberCell({ decimals: 2 });
+const { NumberCell } = createNumberCell({ decimals: 2 });
 const NumberCellComp = NumberCell(); // the factory returns a component constructor; call it once
 
 const columns = [
-    { title: 'Price', dataIndex: 'price', align: 'right', customCell: NumberCellComp, formatCopyText },
+    { title: 'Price', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
 ];
 ```
 

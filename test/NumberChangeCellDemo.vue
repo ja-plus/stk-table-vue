@@ -8,24 +8,24 @@ const theme = ref<'light' | 'dark'>('light');
 const colorReverse = ref(false);
 
 // ── 单元格工厂：每种格式建一个实例（与库内置工厂用法一致） ──
-const { NumberCell: PriceCtor, formatCopyText: priceCopy } = createNumberCell({ decimals: 2 });
+const { NumberCell: PriceCtor } = createNumberCell({ decimals: 2 });
 const priceCell = PriceCtor();
 
-const { NumberCell: VolCtor, formatCopyText: volCopy } = createNumberCell({ abbr: 'cn' });
+const { NumberCell: VolCtor } = createNumberCell({ abbr: 'cn' });
 const volumeCell = VolCtor();
 
-const { NumberCell: AmountCtor, formatCopyText: amountCopy } = createNumberCell({ abbr: 'cn', prefix: '¥' });
+const { NumberCell: AmountCtor } = createNumberCell({ abbr: 'cn', prefix: '¥' });
 const amountCell = AmountCtor();
 
 // ChangeCell 依赖 colorReverse.value，用 getter 让切换即时生效
 function buildChangeCells() {
-    const { ChangeCell: ChangeCtor, formatCopyText: changeCopy } = createChangeCell({
+    const { ChangeCell: ChangeCtor } = createChangeCell({
         decimals: 2,
         showSign: true,
         arrow: true,
         colorReverse: colorReverse.value,
     });
-    const { ChangeCell: PctCtor, formatCopyText: pctCopy } = createChangeCell({
+    const { ChangeCell: PctCtor } = createChangeCell({
         percent: true,
         decimals: 2,
         showSign: true,
@@ -34,9 +34,7 @@ function buildChangeCells() {
     });
     return {
         changeCell: ChangeCtor(),
-        changeCopy,
         pctCell: PctCtor(),
-        pctCopy,
     };
 }
 
@@ -45,15 +43,15 @@ const changeCells = ref(buildChangeCells());
 const columns = ref<StkTableColumn<any>[]>([]);
 
 function rebuildColumns() {
-    const { changeCell, changeCopy, pctCell, pctCopy } = changeCells.value;
+    const { changeCell, pctCell } = changeCells.value;
     columns.value = [
         { title: '代码', dataIndex: 'code', width: 90, fixed: 'left' },
         { title: '名称', dataIndex: 'name', width: 110, fixed: 'left' },
-        { title: '现价', dataIndex: 'price', width: 100, align: 'right', customCell: priceCell, formatCopyText: priceCopy },
-        { title: '涨跌额', dataIndex: 'change', width: 110, align: 'right', customCell: changeCell, formatCopyText: changeCopy },
-        { title: '涨跌幅', dataIndex: 'changePct', width: 110, align: 'right', customCell: pctCell, formatCopyText: pctCopy },
-        { title: '成交量', dataIndex: 'volume', width: 110, align: 'right', customCell: volumeCell, formatCopyText: volCopy },
-        { title: '成交额', dataIndex: 'amount', width: 130, align: 'right', customCell: amountCell, formatCopyText: amountCopy },
+        { title: '现价', dataIndex: 'price', width: 100, align: 'right', customCell: priceCell },
+        { title: '涨跌额', dataIndex: 'change', width: 110, align: 'right', customCell: changeCell },
+        { title: '涨跌幅', dataIndex: 'changePct', width: 110, align: 'right', customCell: pctCell },
+        { title: '成交量', dataIndex: 'volume', width: 110, align: 'right', customCell: volumeCell },
+        { title: '成交额', dataIndex: 'amount', width: 130, align: 'right', customCell: amountCell },
     ];
 }
 rebuildColumns();

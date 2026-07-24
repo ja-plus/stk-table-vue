@@ -1,4 +1,4 @@
-# ChangeCell 涨跌单元格 <Badge type="tip" text="NEW" />
+# ChangeCell 涨跌单元格 <Badge type="tip" text="^1.0.1" />
 
 ChangeCell 在 NumberCell 的格式化能力之上，叠加涨跌染色与箭头：按单元格值的正负自动染成上涨 / 下跌 / 平盘色，可在 A 股（涨红跌绿）与国际（涨绿跌红）两种配色间切换，并可显示 ▲/▼ 箭头。染色会自动适配表格的明暗主题。
 
@@ -9,11 +9,11 @@ ChangeCell 在 NumberCell 的格式化能力之上，叠加涨跌染色与箭头
 <demo vue="advanced/custom-cells/ChangeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/ChangeCell/index.vue"></demo>
 
 ```ts
-const { ChangeCell, formatCopyText } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
 const ChangeCellComp = ChangeCell(); // 工厂返回组件构造函数，使用时调用一次
 
 const columns = [
-    { title: '涨跌额', dataIndex: 'change', align: 'right', customCell: ChangeCellComp, formatCopyText },
+    { title: '涨跌额', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
 ];
 ```
 

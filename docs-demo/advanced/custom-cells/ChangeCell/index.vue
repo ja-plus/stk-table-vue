@@ -16,11 +16,11 @@ const { NumberCell: PriceCtor } = createNumberCell({ decimals: 2 });
 const priceCell = PriceCtor();
 
 // 涨跌额：带符号 + 箭头，默认 A 股涨红跌绿
-const { ChangeCell: ChangeCtor, formatCopyText: changeCopy } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+const { ChangeCell: ChangeCtor } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
 const changeCell = ChangeCtor();
 
 // 涨跌幅：百分比 + 符号 + 箭头
-const { ChangeCell: PctCtor, formatCopyText: pctCopy } = createChangeCell({ percent: true, decimals: 2, showSign: true, arrow: true });
+const { ChangeCell: PctCtor } = createChangeCell({ percent: true, decimals: 2, showSign: true, arrow: true });
 const pctCell = PctCtor();
 
 interface RowData {
@@ -33,8 +33,8 @@ interface RowData {
 const columns: StkTableColumn<RowData>[] = [
     { title: t('code'), dataIndex: 'code', width: 100 },
     { title: t('price'), dataIndex: 'price', width: 100, align: 'right', customCell: priceCell },
-    { title: t('change'), dataIndex: 'change', width: 120, align: 'right', customCell: changeCell, formatCopyText: changeCopy },
-    { title: t('changePercent'), dataIndex: 'changePct', width: 120, align: 'right', customCell: pctCell, formatCopyText: pctCopy },
+    { title: t('change'), dataIndex: 'change', width: 120, align: 'right', customCell: changeCell },
+    { title: t('changePercent'), dataIndex: 'changePct', width: 120, align: 'right', customCell: pctCell },
 ];
 
 const dataSource = ref<RowData[]>([

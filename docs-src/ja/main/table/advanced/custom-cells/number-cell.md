@@ -1,4 +1,4 @@
-# NumberCell 数値フォーマットセル <Badge type="tip" text="NEW" />
+# NumberCell 数値フォーマットセル <Badge type="tip" text="^1.0.1" />
 
 NumberCell は組み込みの表示専用セルで、数値を読みやすいテキストにフォーマットします。小数点以下の桁数、桁区切り、接頭辞・接尾辞、符号表示、パーセント、単位の短縮（万/億、K/M/B）、および空値のプレースホルダーに対応します。市場気配値・金額・統計データの表示によく使われます。
 
@@ -8,14 +8,12 @@ NumberCell は組み込みの表示専用セルで、数値を読みやすいテ
 
 <demo vue="advanced/custom-cells/NumberCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/NumberCell/index.vue"></demo>
 
-ファクトリは対応する `formatCopyText` も返します。これを列に設定すると、範囲選択 / コピーで得られるテキストが表示内容と一致します（設定しない場合、コピーされるのはフォーマット前の生の値です）。
-
 ```ts
-const { NumberCell, formatCopyText } = createNumberCell({ decimals: 2 });
+const { NumberCell } = createNumberCell({ decimals: 2 });
 const NumberCellComp = NumberCell(); // ファクトリはコンポーネントのコンストラクタを返すため、一度呼び出して使用します
 
 const columns = [
-    { title: '現在値', dataIndex: 'price', align: 'right', customCell: NumberCellComp, formatCopyText },
+    { title: '現在値', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
 ];
 ```
 

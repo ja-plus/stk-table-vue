@@ -9,18 +9,21 @@ import StkTable from '../../../StkTable.vue';
 import { createNumberCell, type StkTableColumn } from '../../../../src/StkTable';
 import { useI18n } from '../../../hooks/useI18n/index';
 
-const { t } = useI18n();
+const { t, isZH } = useI18n();
 
 // 现价：2 位小数 + 千分位
-const { NumberCell: PriceCtor, formatCopyText: priceCopy } = createNumberCell({ decimals: 2 });
+const { NumberCell: PriceCtor } = createNumberCell({ decimals: 2 });
 const priceCell = PriceCtor();
 
 // 成交量：万/亿 单位缩放
-const { NumberCell: VolCtor } = createNumberCell({ abbr: 'cn' });
+const { NumberCell: VolCtor } = createNumberCell({ abbr: isZH.value ? 'cn' : 'en' });
 const volumeCell = VolCtor();
 
 // 成交额：万/亿 缩放 + 货币前缀
-const { NumberCell: AmountCtor } = createNumberCell({ abbr: 'cn', prefix: '¥' });
+const { NumberCell: AmountCtor } = createNumberCell({
+    abbr: isZH.value ? 'cn' : 'en',
+    prefix: '¥',
+});
 const amountCell = AmountCtor();
 
 interface RowData {
@@ -32,9 +35,15 @@ interface RowData {
 
 const columns: StkTableColumn<RowData>[] = [
     { title: t('code'), dataIndex: 'code', width: 100 },
-    { title: t('price'), dataIndex: 'price', width: 110, align: 'right', customCell: priceCell, formatCopyText: priceCopy },
+    { title: t('price'), dataIndex: 'price', width: 110, align: 'right', customCell: priceCell },
     { title: t('volume'), dataIndex: 'volume', width: 120, align: 'right', customCell: volumeCell },
-    { title: t('turnover'), dataIndex: 'turnover', width: 140, align: 'right', customCell: amountCell },
+    {
+        title: t('turnover'),
+        dataIndex: 'turnover',
+        width: 140,
+        align: 'right',
+        customCell: amountCell,
+    },
 ];
 
 const dataSource = ref<RowData[]>([

@@ -1,4 +1,4 @@
-import type { CustomCellProps, StkTableColumn } from '../../types';
+import type { CustomCellProps } from '../../types';
 import { defineComponent, h, markRaw } from 'vue';
 import { formatNumber, type FormatNumberOptions } from '../utils/formatNumber';
 
@@ -34,16 +34,14 @@ function resolveDir(rawValue: any): ChangeDir {
  * 数字对齐请在列配置上设置 `align: 'right'`。
  *
  * @param options 格式化 + 染色/箭头选项
- * @returns
- * - `ChangeCell` 组件构造函数，使用时需调用一次：`customCell: ChangeCell()`
- * - `formatCopyText` 配套的复制文本格式化回调
+ * @returns `ChangeCell` 组件构造函数，使用时需调用一次：`customCell: ChangeCell()`
  *
  * @example
  * ```ts
- * const { ChangeCell, formatCopyText } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+ * const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
  * const ChangeCellComp = ChangeCell();
  * const columns = [
- *   { title: '涨跌额', dataIndex: 'change', align: 'right', customCell: ChangeCellComp, formatCopyText },
+ *   { title: '涨跌额', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
  * ];
  * ```
  */
@@ -70,7 +68,7 @@ export function createChangeCell(options: CreateChangeCellOptions = {}) {
                         const customColor = dir === 'rise' ? riseColor : dir === 'fall' ? fallColor : flatColor;
 
                         // 箭头：涨 ▲ / 跌 ▼，平及空值不显示
-                        const arrowChar = arrow && dir !== 'flat' ? (dir === 'rise' ? '▲' : '▼') : '';
+                        const arrowChar = arrow && dir !== 'flat' ? (dir === 'rise' ? '▲' : '▼') : ''; // TODO: 支持自定义箭头
 
                         return h(
                             'span',
@@ -86,13 +84,7 @@ export function createChangeCell(options: CreateChangeCellOptions = {}) {
         );
     }
 
-    /** 复制文本格式化：保证区域选取/复制得到的文本与展示一致 */
-    function formatCopyText(_row: Record<string, any>, _col: StkTableColumn<any>, rawValue: any) {
-        return formatNumber(rawValue, options);
-    }
-
     return {
         ChangeCell,
-        formatCopyText,
     };
 }

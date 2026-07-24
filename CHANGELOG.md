@@ -1,5 +1,7 @@
 
 ## 1.0.1
+* Feature
+  - feat: add `NumberCell` & `ChangeCell`
 * Bugfix:
   - fix: table border-left not effected by `--border-width`
 

@@ -1,4 +1,4 @@
-# NumberCell 数字格式化单元格 <Badge type="tip" text="NEW" />
+# NumberCell 数字格式化单元格 <Badge type="tip" text="^1.0.1" />
 
 NumberCell 是一个内置的纯展示单元格，将数值格式化为易读文本，支持小数位、千分位、前后缀、正负号、百分比、单位缩放（万/亿、K/M/B）以及空值占位。常用于金融行情、金额与统计数据展示。
 
@@ -8,14 +8,12 @@ NumberCell 是一个内置的纯展示单元格，将数值格式化为易读文
 
 <demo vue="advanced/custom-cells/NumberCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/NumberCell/index.vue"></demo>
 
-工厂同时返回配套的 `formatCopyText`，将其挂到列上可保证区域选取 / 复制得到的文本与展示内容一致（否则复制到的是未格式化的原始值）。
-
 ```ts
-const { NumberCell, formatCopyText } = createNumberCell({ decimals: 2 });
+const { NumberCell } = createNumberCell({ decimals: 2 });
 const NumberCellComp = NumberCell(); // 工厂返回组件构造函数，使用时调用一次
 
 const columns = [
-    { title: '现价', dataIndex: 'price', align: 'right', customCell: NumberCellComp, formatCopyText },
+    { title: '现价', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
 ];
 ```
 

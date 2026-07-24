@@ -40,11 +40,27 @@ const ABBR_UNITS: Record<'cn' | 'en', Array<[number, string]>> = {
 /**
  * 给数字字符串的整数部分添加千分位分隔符。
  * @param numStr 不含符号的正数字符串（可含小数部分）
+ *
+ * 用手动分组代替先读正则 `\B(?=(\d{3})+(?!\d))`：
+ * 后者在长数字上开销随位数非线性增长，且 split('.') 会额外分配数组。
  */
 function addThousandsSeparator(numStr: string): string {
-    const [intPart, decPart] = numStr.split('.');
-    const withSep = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return decPart != null ? `${withSep}.${decPart}` : withSep;
+    // 用 indexOf/slice 分离整数与小数部分，避免 split 分配数组
+    const dotIndex = numStr.indexOf('.');
+    const intPart = dotIndex === -1 ? numStr : numStr.slice(0, dotIndex);
+    const len = intPart.length;
+
+    // 三位以内无需分隔，直接返回原串
+    if (len <= 3) return numStr;
+
+    // 首组长度：不足三位的高位余数
+    const firstGroupLen = len % 3 || 3;
+    let withSep = intPart.slice(0, firstGroupLen);
+    for (let i = firstGroupLen; i < len; i += 3) {
+        withSep += ',' + intPart.slice(i, i + 3);
+    }
+
+    return dotIndex === -1 ? withSep : withSep + numStr.slice(dotIndex);
 }
 
 /**
@@ -57,7 +73,17 @@ function addThousandsSeparator(numStr: string): string {
  * @returns 格式化后的字符串；空值或非数字返回 placeholder
  */
 export function formatNumber(value: unknown, options: FormatNumberOptions = {}): string {
-    const { decimals, thousands = true, prefix = '', suffix = '', showSign = false, percent = false, abbr, abbrDecimals, placeholder = '--' } = options;
+    const {
+        decimals,
+        thousands = true,
+        prefix = '',
+        suffix = '',
+        showSign = false,
+        percent = false,
+        abbr,
+        abbrDecimals,
+        placeholder = '--',
+    } = options;
 
     // 空值判断（注意：Number('') === 0，必须先拦掉空字符串）
     if (value === null || value === undefined || value === '') {
@@ -80,10 +106,13 @@ export function formatNumber(value: unknown, options: FormatNumberOptions = {}):
     // 单位缩放（与百分比互斥）
     let unit = '';
     if (abbr && !percent) {
-        for (const [threshold, label] of ABBR_UNITS[abbr]) {
+        // 用索引 for 遍历阈值表，避免 for...of 的迭代器与数组解构开销
+        const units = ABBR_UNITS[abbr];
+        for (let i = 0; i < units.length; i++) {
+            const threshold = units[i][0];
             if (work >= threshold) {
                 work = work / threshold;
-                unit = label;
+                unit = units[i][1];
                 break;
             }
         }

@@ -1,4 +1,4 @@
-# ChangeCell 騰落セル <Badge type="tip" text="NEW" />
+# ChangeCell 騰落セル <Badge type="tip" text="^1.0.1" />
 
 ChangeCell は NumberCell のフォーマット機能に、騰落の色分けと矢印を追加します。セル値の符号に応じて上昇 / 下落 / 変わらずの色を自動で付け、A 株方式（上昇=赤、下落=緑）と国際方式（上昇=緑、下落=赤）を切り替えられ、▲/▼ の矢印も表示できます。色分けはテーブルのライト / ダークテーマに自動で適応します。
 
@@ -9,11 +9,11 @@ ChangeCell は NumberCell のフォーマット機能に、騰落の色分けと
 <demo vue="advanced/custom-cells/ChangeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/ChangeCell/index.vue"></demo>
 
 ```ts
-const { ChangeCell, formatCopyText } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
 const ChangeCellComp = ChangeCell(); // ファクトリはコンポーネントのコンストラクタを返すため、一度呼び出して使用します
 
 const columns = [
-    { title: '騰落額', dataIndex: 'change', align: 'right', customCell: ChangeCellComp, formatCopyText },
+    { title: '騰落額', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
 ];
 ```
 

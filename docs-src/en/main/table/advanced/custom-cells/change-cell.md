@@ -1,4 +1,4 @@
-# ChangeCell <Badge type="tip" text="NEW" />
+# ChangeCell <Badge type="tip" text="^1.0.1" />
 
 On top of NumberCell's formatting, ChangeCell adds rise/fall coloring and arrows: it colors the value as rise / fall / flat based on its sign, can switch between A-share coloring (rise red, fall green) and international coloring (rise green, fall red), and can show ▲/▼ arrows. The coloring adapts automatically to the table's light/dark theme.
 
@@ -9,11 +9,11 @@ Create a ChangeCell component via the `createChangeCell` factory function and us
 <demo vue="advanced/custom-cells/ChangeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/ChangeCell/index.vue"></demo>
 
 ```ts
-const { ChangeCell, formatCopyText } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
 const ChangeCellComp = ChangeCell(); // the factory returns a component constructor; call it once
 
 const columns = [
-    { title: 'Change', dataIndex: 'change', align: 'right', customCell: ChangeCellComp, formatCopyText },
+    { title: 'Change', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
 ];
 ```
 

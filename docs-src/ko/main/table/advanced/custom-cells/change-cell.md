@@ -1,4 +1,4 @@
-# ChangeCell 등락 셀 <Badge type="tip" text="NEW" />
+# ChangeCell 등락 셀 <Badge type="tip" text="^1.0.1" />
 
 ChangeCell 은 NumberCell 의 포맷 기능 위에 등락 색상과 화살표를 더합니다. 셀 값의 부호에 따라 상승 / 하락 / 보합 색상을 자동으로 적용하고, A주 방식(상승=빨강, 하락=초록)과 국제 방식(상승=초록, 하락=빨강)을 전환할 수 있으며 ▲/▼ 화살표도 표시할 수 있습니다. 색상은 테이블의 라이트 / 다크 테마에 자동으로 적응합니다.
 
@@ -9,11 +9,11 @@ ChangeCell 은 NumberCell 의 포맷 기능 위에 등락 색상과 화살표를
 <demo vue="advanced/custom-cells/ChangeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/ChangeCell/index.vue"></demo>
 
 ```ts
-const { ChangeCell, formatCopyText } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
+const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true });
 const ChangeCellComp = ChangeCell(); // 팩토리는 컴포넌트 생성자를 반환하므로 한 번 호출하여 사용합니다
 
 const columns = [
-    { title: '등락액', dataIndex: 'change', align: 'right', customCell: ChangeCellComp, formatCopyText },
+    { title: '등락액', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
 ];
 ```
 

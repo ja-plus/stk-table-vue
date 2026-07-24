@@ -1,4 +1,4 @@
-import type { CustomCellProps, StkTableColumn } from '../../types';
+import type { CustomCellProps } from '../../types';
 import { defineComponent, h, markRaw } from 'vue';
 import { formatNumber, type FormatNumberOptions } from '../utils/formatNumber';
 
@@ -12,16 +12,14 @@ export interface CreateNumberCellOptions extends FormatNumberOptions {}
  * 数字对齐请在列配置上设置 `align: 'right'`。
  *
  * @param options 格式化选项
- * @returns
- * - `NumberCell` 组件构造函数，使用时需调用一次：`customCell: NumberCell()`
- * - `formatCopyText` 配套的复制文本格式化回调，挂到列上以保证复制内容与展示一致
+ * @returns `NumberCell` 组件构造函数，使用时需调用一次：`customCell: NumberCell()`
  *
  * @example
  * ```ts
- * const { NumberCell, formatCopyText } = createNumberCell({ decimals: 2 });
+ * const { NumberCell } = createNumberCell({ decimals: 2 });
  * const NumberCellComp = NumberCell();
  * const columns = [
- *   { title: '现价', dataIndex: 'price', align: 'right', customCell: NumberCellComp, formatCopyText },
+ *   { title: '现价', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
  * ];
  * ```
  */
@@ -39,13 +37,7 @@ export function createNumberCell(options?: CreateNumberCellOptions) {
         );
     }
 
-    /** 复制文本格式化：保证区域选取/复制得到的文本与展示一致 */
-    function formatCopyText(_row: Record<string, any>, _col: StkTableColumn<any>, rawValue: any) {
-        return formatNumber(rawValue, options);
-    }
-
     return {
         NumberCell,
-        formatCopyText,
     };
 }

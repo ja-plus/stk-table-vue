@@ -1,4 +1,4 @@
-# NumberCell 숫자 포맷 셀 <Badge type="tip" text="NEW" />
+# NumberCell 숫자 포맷 셀 <Badge type="tip" text="^1.0.1" />
 
 NumberCell 은 숫자 값을 읽기 쉬운 텍스트로 포맷하는 내장 표시 전용 셀입니다. 소수점 자릿수, 천 단위 구분 기호, 접두사·접미사, 부호 표시, 백분율, 단위 축약(만/억, K/M/B), 빈 값 플레이스홀더를 지원합니다. 시세, 금액, 통계 데이터 표시에 자주 사용됩니다.
 
@@ -8,14 +8,12 @@ NumberCell 은 숫자 값을 읽기 쉬운 텍스트로 포맷하는 내장 표�
 
 <demo vue="advanced/custom-cells/NumberCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/NumberCell/index.vue"></demo>
 
-팩토리는 대응하는 `formatCopyText` 도 반환합니다. 이를 열에 연결하면 영역 선택 / 복사로 얻는 텍스트가 표시 내용과 일치합니다(연결하지 않으면 복사되는 값은 포맷되지 않은 원본 값입니다).
-
 ```ts
-const { NumberCell, formatCopyText } = createNumberCell({ decimals: 2 });
+const { NumberCell } = createNumberCell({ decimals: 2 });
 const NumberCellComp = NumberCell(); // 팩토리는 컴포넌트 생성자를 반환하므로 한 번 호출하여 사용합니다
 
 const columns = [
-    { title: '현재가', dataIndex: 'price', align: 'right', customCell: NumberCellComp, formatCopyText },
+    { title: '현재가', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
 ];
 ```
 
