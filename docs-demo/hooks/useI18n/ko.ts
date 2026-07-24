@@ -227,4 +227,8 @@ export const ko = {
     turnover: '거래대금',
     change: '등락액',
     changePercent: '등락률',
+    mergeCells: '셀 병합',
+    splitCells: '셀 분할',
+    realtimeMergeTip: '여러 셀을 드래그 선택한 후 우클릭하여 셀을 병합/분할할 수 있습니다',
+    mergedRegions: '병합된 영역 수',
 };

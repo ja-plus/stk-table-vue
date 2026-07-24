@@ -218,4 +218,8 @@ export const en = {
     turnover: 'Turnover',
     change: 'Change',
     changePercent: 'Change %',
+    mergeCells: 'Merge Cells',
+    splitCells: 'Split Cells',
+    realtimeMergeTip: 'Drag to select multiple cells, then right-click to merge/split cells',
+    mergedRegions: 'Merged regions',
 };

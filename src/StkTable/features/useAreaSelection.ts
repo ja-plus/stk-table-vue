@@ -54,13 +54,25 @@ export function useAreaSelection<DT extends Record<string, any>>(
     const KEY_ESC = 'Esc';
     const KEY_C = 'c';
 
-    // CSS
-    const CELL_RANGE_SELECTED = 'cell-range-selected';
-    const CELL_RANGE_TOP = 'cell-range-t';
-    const CELL_RANGE_BOTTOM = 'cell-range-b';
-    const CELL_RANGE_LEFT = 'cell-range-l';
-    const CELL_RANGE_RIGHT = 'cell-range-r';
-    const ROW_RANGE_SELECTED = 'row-range-selected';
+    // 选区样式通过 data-* 属性（而非 classList）应用。
+    // 原因：合并单元格的 td 存在响应式 class 绑定（cell-hover/cell-active），
+    // hover 时 Vue 的 patchClass 会用 `el.className = value` 整体覆盖 className，
+    // 从而抹掉命令式添加的选区 class，导致选区高亮/边框在鼠标经过合并单元格时消失。
+    // data-* 属性不在 vnode props 中，Vue 不会清除它们，可稳定保留选区样式。
+    // en: Apply selection styles via data-* attributes instead of classList, so Vue's
+    // reactive class patching on merged cells (cell-hover/cell-active) won't wipe them.
+    //  const CELL_RANGE_SELECTED = 'cell-range-selected';
+    // const CELL_RANGE_TOP = 'cell-range-t';
+    // const CELL_RANGE_BOTTOM = 'cell-range-b';
+    // const CELL_RANGE_LEFT = 'cell-range-l';
+    // const CELL_RANGE_RIGHT = 'cell-range-r';
+    // const ROW_RANGE_SELECTED = 'row-range-selected';
+    const ATTR_CELL_SELECTED = 'data-cs-s';
+    const ATTR_CELL_TOP = 'data-cs-t';
+    const ATTR_CELL_BOTTOM = 'data-cs-b';
+    const ATTR_CELL_LEFT = 'data-cs-l';
+    const ATTR_CELL_RIGHT = 'data-cs-r';
+    const ATTR_ROW_SELECTED = 'data-rs-s';
 
     const selectionRanges = ref<AreaSelectionRange[]>([]);
     const isSelecting = ref(false);
@@ -199,15 +211,19 @@ export function useAreaSelection<DT extends Record<string, any>>(
         const cellHighlight = highlightCellEnabled.value;
         const rowHighlight = highlightRowEnabled.value;
 
-        // 1. 清除所有旧的选区 class
-        const oldSelectedCells = container.querySelectorAll(`.${CELL_RANGE_SELECTED}`);
+        // 1. 清除所有旧的选区属性
+        const oldSelectedCells = container.querySelectorAll(`[${ATTR_CELL_SELECTED}]`);
         for (let i = 0; i < oldSelectedCells.length; i++) {
             const el = oldSelectedCells[i] as HTMLElement;
-            el.classList.remove(CELL_RANGE_SELECTED, CELL_RANGE_TOP, CELL_RANGE_BOTTOM, CELL_RANGE_LEFT, CELL_RANGE_RIGHT);
+            el.removeAttribute(ATTR_CELL_SELECTED);
+            el.removeAttribute(ATTR_CELL_TOP);
+            el.removeAttribute(ATTR_CELL_BOTTOM);
+            el.removeAttribute(ATTR_CELL_LEFT);
+            el.removeAttribute(ATTR_CELL_RIGHT);
         }
-        const oldSelectedRows = container.querySelectorAll(`.${ROW_RANGE_SELECTED}`);
+        const oldSelectedRows = container.querySelectorAll(`[${ATTR_ROW_SELECTED}]`);
         for (let i = 0; i < oldSelectedRows.length; i++) {
-            (oldSelectedRows[i] as HTMLElement).classList.remove(ROW_RANGE_SELECTED);
+            (oldSelectedRows[i] as HTMLElement).removeAttribute(ATTR_ROW_SELECTED);
         }
 
         // 2. 重算 selectedCellKeys
@@ -225,7 +241,7 @@ export function useAreaSelection<DT extends Record<string, any>>(
                 const { minRow, maxRow } = normalizeRange(range);
                 for (let r = minRow; r <= maxRow; r++) {
                     const tr = tbody.querySelector(`tr[data-row-i="${r}"]`) as HTMLElement | null;
-                    if (tr) tr.classList.add(ROW_RANGE_SELECTED);
+                    if (tr) tr.setAttribute(ATTR_ROW_SELECTED, '');
                 }
             }
         }
@@ -268,15 +284,18 @@ export function useAreaSelection<DT extends Record<string, any>>(
                     const ck = cellKeyGen(row, cols[colIndex]);
                     if (!selectedCellKeys.has(ck)) continue;
 
-                    td.classList.add(CELL_RANGE_SELECTED);
+                    td.setAttribute(ATTR_CELL_SELECTED, '');
 
-                    // 判断是否在最后一个区域的边界
+                    // 判断是否在最后一个区域的边界（考虑合并单元格的 rowspan/colspan）
                     const isInLastRange = rowIndex >= lrMinRow && rowIndex <= lrMaxRow && colIndex >= lrMinCol && colIndex <= lrMaxCol;
                     if (isInLastRange) {
-                        if (rowIndex === lrMinRow) td.classList.add(CELL_RANGE_TOP);
-                        if (rowIndex === lrMaxRow) td.classList.add(CELL_RANGE_BOTTOM);
-                        if (colIndex === lrMinCol) td.classList.add(CELL_RANGE_LEFT);
-                        if (colIndex === lrMaxCol) td.classList.add(CELL_RANGE_RIGHT);
+                        // 合并单元格的实际结束行/列
+                        const effEndRow = rowIndex + (parseInt(td.getAttribute('rowspan') || '1', 10) || 1) - 1;
+                        const effEndCol = colIndex + (parseInt(td.getAttribute('colspan') || '1', 10) || 1) - 1;
+                        if (rowIndex === lrMinRow) td.setAttribute(ATTR_CELL_TOP, '');
+                        if (effEndRow === lrMaxRow) td.setAttribute(ATTR_CELL_BOTTOM, '');
+                        if (colIndex === lrMinCol) td.setAttribute(ATTR_CELL_LEFT, '');
+                        if (effEndCol === lrMaxCol) td.setAttribute(ATTR_CELL_RIGHT, '');
                     }
                 }
             }
@@ -413,6 +432,115 @@ export function useAreaSelection<DT extends Record<string, any>>(
         return colKeyToIndexMap.value.get(colKey) ?? -1;
     }
 
+    // ---- 合并单元格支持 ----
+
+    /** 获取指定单元格的合并信息 [rowspan, colspan]，无合并返回 [1, 1] */
+    function getMergeSpan(rowIndex: number, colIndex: number): [number, number] {
+        const data = dataSourceCopy.value;
+        const cols = tableHeaderLast.value;
+        const row = data[rowIndex];
+        const col = cols[colIndex];
+        if (!row || !col || !col.mergeCells) return [1, 1];
+        const { rowspan = 1, colspan = 1 } = col.mergeCells({ row, col, rowIndex, colIndex }) || {};
+        return [rowspan || 1, colspan || 1];
+    }
+
+    /**
+     * 扩展选区范围，使其完整覆盖边界上部分选中的合并单元格
+     * en: Expand selection range to fully cover merged cells that are partially selected at boundaries
+     */
+    function expandRangeToCoverMergedCells(range: AreaSelectionRange): AreaSelectionRange {
+        const { minRow, maxRow, minCol, maxCol } = normalizeRange(range);
+        const data = dataSourceCopy.value;
+        const cols = tableHeaderLast.value;
+        const rowCount = data.length;
+        const colCount = cols.length;
+
+        // 预计算含 mergeCells 的列索引
+        const mergeColIndices: number[] = [];
+        for (let c = 0; c < colCount; c++) {
+            if (cols[c]?.mergeCells) mergeColIndices.push(c);
+        }
+        if (!mergeColIndices.length) return range;
+
+        let [eMinRow, eMaxRow, eMinCol, eMaxCol] = [minRow, maxRow, minCol, maxCol];
+
+        // 迭代扩展直到稳定（级联合并需要多轮）
+        let changed = true;
+        let guard = 0;
+        while (changed && guard++ < 100) {
+            changed = false;
+
+            // 下边界：最后一行中的单元格 rowspan 是否超出边界
+            for (const c of mergeColIndices) {
+                if (c < eMinCol || c > eMaxCol) continue;
+                const [rs] = getMergeSpan(eMaxRow, c);
+                if (rs > 1 && eMaxRow + rs - 1 < rowCount && eMaxRow + rs - 1 > eMaxRow) {
+                    eMaxRow = eMaxRow + rs - 1;
+                    changed = true;
+                }
+            }
+
+            // 右边界：最后一列中的单元格 colspan 是否超出边界
+            for (let r = eMinRow; r <= eMaxRow; r++) {
+                const [, cs] = getMergeSpan(r, eMaxCol);
+                if (cs > 1 && eMaxCol + cs - 1 < colCount && eMaxCol + cs - 1 > eMaxCol) {
+                    eMaxCol = eMaxCol + cs - 1;
+                    changed = true;
+                }
+            }
+
+            // 上边界：检查 minRow 上方的单元格是否延伸进选区
+            for (const c of mergeColIndices) {
+                if (c < eMinCol || c > eMaxCol) continue;
+                for (let r = eMinRow - 1; r >= 0 && r > eMinRow - 500; r--) {
+                    const [rs] = getMergeSpan(r, c);
+                    if (rs <= 1) continue;
+                    const endRow = r + rs - 1;
+                    if (endRow >= eMinRow) {
+                        // 合并单元格延伸进选区，扩展上边界
+                        if (r < eMinRow) {
+                            eMinRow = r;
+                            changed = true;
+                        }
+                    } else {
+                        // 该合并单元格未到达当前边界，更上方的也不会到达，停止扫描此列
+                        break;
+                    }
+                }
+            }
+
+            // 左边界：检查 minCol 左侧的单元格是否延伸进选区
+            for (let r = eMinRow; r <= eMaxRow; r++) {
+                for (let c = eMinCol - 1; c >= 0 && c > eMinCol - 500; c--) {
+                    const [, cs] = getMergeSpan(r, c);
+                    if (cs <= 1) continue;
+                    const endCol = c + cs - 1;
+                    if (endCol >= eMinCol) {
+                        if (c < eMinCol) {
+                            eMinCol = c;
+                            changed = true;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (eMinRow === minRow && eMaxRow === maxRow && eMinCol === minCol && eMaxCol === maxCol) {
+            return range;
+        }
+
+        // 保持 begin/end 的原始方向
+        const { begin, end } = range.index;
+        const newBeginRow = begin.row < end.row || begin.row === end.row ? eMinRow : eMaxRow;
+        const newEndRow = begin.row < end.row || begin.row === end.row ? eMaxRow : eMinRow;
+        const newBeginCol = begin.col <= end.col ? eMinCol : eMaxCol;
+        const newEndCol = begin.col <= end.col ? eMaxCol : eMinCol;
+        return makeRange(newBeginRow, newBeginCol, newEndRow, newEndCol);
+    }
+
     /** 获取列的左边距和宽度
      * @param colIndex 列的绝对索引
      * @returns [left, width]
@@ -506,11 +634,14 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         const ctrlKey = e.ctrlKey || e.metaKey;
 
-        const range: AreaSelectionRange = makeRange(rowIndex, colIndex, rowIndex, colIndex);
+        // 立即扩展以完整覆盖合并单元格（修复 mousedown 合并单元格时边框显示不全）
+        const range: AreaSelectionRange = expandRangeToCoverMergedCells(makeRange(rowIndex, colIndex, rowIndex, colIndex));
         // Shift 扩选：从锚点扩展到当前位置，更新最后一个区域
         if (e.shiftKey && anchorCell && shiftEnabled.value) {
             const ranges = selectionRanges.value.slice();
-            const shiftRange: AreaSelectionRange = makeRange(anchorCell.rowIndex, anchorCell.colIndex, rowIndex, colIndex);
+            const shiftRange: AreaSelectionRange = expandRangeToCoverMergedCells(
+                makeRange(anchorCell.rowIndex, anchorCell.colIndex, rowIndex, colIndex),
+            );
             if (ranges.length) {
                 ranges[ranges.length - 1] = shiftRange;
             } else {
@@ -570,7 +701,10 @@ export function useAreaSelection<DT extends Record<string, any>>(
     /** 更新最后一个选区的终点（拖拽过程中） */
     function updateSelectionEnd(endRowIndex: number, endColIndex: number) {
         if (!anchorCell) return;
-        const newRange: AreaSelectionRange = makeRange(anchorCell.rowIndex, anchorCell.colIndex, endRowIndex, endColIndex);
+        // 拖拽过程中即扩展，使选区实时覆盖合并单元格的完整边界
+        const newRange: AreaSelectionRange = expandRangeToCoverMergedCells(
+            makeRange(anchorCell.rowIndex, anchorCell.colIndex, endRowIndex, endColIndex),
+        );
         const ranges = [...selectionRanges.value];
         if (ranges.length > 0) {
             ranges[ranges.length - 1] = newRange;
@@ -673,6 +807,17 @@ export function useAreaSelection<DT extends Record<string, any>>(
 
         document.removeEventListener('mousemove', onDocumentMouseMove);
         document.removeEventListener('mouseup', onDocumentMouseUp);
+
+        // 扩展最后一个选区，使其完整覆盖合并单元格
+        const ranges = selectionRanges.value;
+        if (ranges.length) {
+            const expanded = expandRangeToCoverMergedCells(ranges[ranges.length - 1]);
+            if (expanded !== ranges[ranges.length - 1]) {
+                const newRanges = [...ranges];
+                newRanges[newRanges.length - 1] = expanded;
+                selectionRanges.value = newRanges;
+            }
+        }
 
         // 发出事件
         emitSelectionChange();

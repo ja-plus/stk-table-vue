@@ -227,4 +227,8 @@ export const zh = {
     turnover: '成交额',
     change: '涨跌额',
     changePercent: '涨跌幅',
+    mergeCells: '合并单元格',
+    splitCells: '拆分单元格',
+    realtimeMergeTip: '拖选多个单元格后右键，可合并/拆分单元格',
+    mergedRegions: '已合并区域数',
 };

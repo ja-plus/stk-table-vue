@@ -4,6 +4,9 @@
   - feat: add `NumberCell` & `ChangeCell`
 * Bugfix:
   - fix: table border-left not effected by `--border-width`
+  - fix: `useAreaSelection` apply selection styles via `data-*` attributes instead of `classList`, so Vue's class patching on merged cells (`cell-hover`/`cell-active`) no longer wipes the selection highlight and border.
+  - fix: `useAreaSelection` expand the range to fully cover merged cells on `mousedown` and during dragging (previously only on `mouseup`), fixing the incorrect border on merged cells and the range not reaching the merged cell boundary while dragging.
+  - fix: `useAreaSelection` selection background is no longer overridden by the hover/active background on merged cells.
 
 ## 1.0.0
 * Feature

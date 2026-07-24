@@ -130,6 +130,7 @@ export const jaConfig = defineConfig({
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
                     { text: '遅延ロード', link: '/lazy-load' },
+                    { text: 'リアルタイムセル結合(✨NEW)', link: '/realtime-merge-cells' },
                 ]
             }
         },
