@@ -1,9 +1,22 @@
 :root {
+    /* VitePress 品牌色覆盖为 Vue 绿色 */
+    --vp-c-brand-1: #42b883;
+    --vp-c-brand-2: #36a573;
+    --vp-c-brand-3: #2b9163;
+    --vp-c-brand-soft: rgba(66, 184, 131, 0.14);
+
     /* --vp-home-hero-name-color: rgb(0, 47,167) ; */
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #42b883, #f09797);
     --vp-home-hero-image-background-image: -webkit-linear-gradient(120deg, rgba(66, 184, 131, 0.5) 50%, rgba(253, 126, 126, 0.5) 50%, rgba(253, 126, 126, 0.5));
     --vp-home-hero-image-filter: blur(72px);
+}
+
+.dark {
+    --vp-c-brand-1: #42b883;
+    --vp-c-brand-2: #4fc08d;
+    --vp-c-brand-3: #36a573;
+    --vp-c-brand-soft: rgba(66, 184, 131, 0.16);
 }
 
 .no-aside-padding .VPContent.has-sidebar {
@@ -26,4 +39,15 @@
 
 .input:focus {
     border: 1px solid var(--vp-c-brand);
+}
+
+/* 首页“React 版本”按钮文字前注入 React logo（data URI 内联，不受 base 路径影响） */
+.VPHero .actions a[href*='stk-table-react']::before {
+    content: '';
+    display: inline-block;
+    width: 1.25em;
+    height: 1.25em;
+    margin-right: 6px;
+    vertical-align: -0.3em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-11.5 -10.23174 23 20.46348'%3E%3Ccircle cx='0' cy='0' r='2.05' fill='%2361dafb'/%3E%3Cg stroke='%2361dafb' stroke-width='1' fill='none'%3E%3Cellipse rx='11' ry='4.2'/%3E%3Cellipse rx='11' ry='4.2' transform='rotate(60)'/%3E%3Cellipse rx='11' ry='4.2' transform='rotate(120)'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
 }
