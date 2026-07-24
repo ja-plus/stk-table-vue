@@ -213,4 +213,9 @@ export const ja = {
     techDept: '技術部',
     productDept: '製品部',
     opsDept: '運営部',
+    price: '現在値',
+    volume: '出来高',
+    turnover: '売買代金',
+    change: '騰落額',
+    changePercent: '騰落率',
 };

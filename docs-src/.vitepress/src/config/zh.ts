@@ -113,6 +113,8 @@ export const zhConfig = defineConfig({
                                             { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell 筛选', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell 多选框', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell 数字格式化', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell 涨跌单元格', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]

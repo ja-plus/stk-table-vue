@@ -213,4 +213,9 @@ export const en = {
     techDept: 'Tech Dept',
     productDept: 'Product Dept',
     opsDept: 'Operations Dept',
+    price: 'Price',
+    volume: 'Volume',
+    turnover: 'Turnover',
+    change: 'Change',
+    changePercent: 'Change %',
 };

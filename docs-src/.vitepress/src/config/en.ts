@@ -87,6 +87,8 @@ export const enConfig = defineConfig({
                                             { text: 'EditableCell', link: '/table/advanced/custom-cells/editable-cell' },
                                             { text: 'FilterCell', link: '/table/advanced/custom-cells/filter-cell' },
                                             { text: 'CheckboxCell', link: '/table/advanced/custom-cells/checkbox-cell' },
+                                            { text: 'NumberCell', link: '/table/advanced/custom-cells/number-cell' },
+                                            { text: 'ChangeCell', link: '/table/advanced/custom-cells/change-cell' },
                                         ],
                                     },
                                 ]

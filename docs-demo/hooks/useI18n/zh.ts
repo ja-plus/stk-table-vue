@@ -222,4 +222,9 @@ export const zh = {
     techDept: '技术部',
     productDept: '产品部',
     opsDept: '运营部',
+    price: '现价',
+    volume: '成交量',
+    turnover: '成交额',
+    change: '涨跌额',
+    changePercent: '涨跌幅',
 };
