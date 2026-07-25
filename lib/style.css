@@ -139,6 +139,32 @@
   cursor:pointer;
   vertical-align:middle;
 }
+.stk-change-cell{
+  --stk-change-red:#e02020;
+  --stk-change-green:#00a870;
+  --stk-change-flat:#666;
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+}
+.stk-change-cell--red{
+  color:var(--stk-change-red);
+}
+.stk-change-cell--green{
+  color:var(--stk-change-green);
+}
+.stk-change-cell--flat{
+  color:var(--stk-change-flat);
+}
+.stk-change-cell__arrow{
+  font-size:0.85em;
+  line-height:1;
+}
+.stk-table.dark .stk-change-cell{
+  --stk-change-red:#ff5c5c;
+  --stk-change-green:#26c281;
+  --stk-change-flat:#aaa;
+}
 @keyframes stk-table-dim{
   from{
     background-color:var(--highlight-color);
@@ -226,7 +252,7 @@
   --rs-bc:#4b8ef0;
   color:#d1d1e0;
 }
-.stk-table.dark .cell-range-selected{
+.stk-table.dark td[data-cs-s]{
   background-blend-mode:normal;
 }
 .stk-table.scrollbar-on{
@@ -255,7 +281,7 @@
   pointer-events:none;
 }
 .stk-table.bordered{
-  border-left:1px solid var(--border-color);
+  border-left:var(--border-width) solid var(--border-color);
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
 .stk-table.bordered th,
@@ -286,7 +312,7 @@
 .stk-table.stripe.vt-on .stk-tbody-main tr:nth-child(odd){
   background-color:var(--stripe-bgc);
 }
-.stk-table.stripe.area-selection .stk-tbody-main tr.row-range-selected{
+.stk-table.stripe.area-selection .stk-tbody-main tr[data-rs-s]{
   background-color:var(--rs-bgc);
 }
 .stk-table.stripe.row-hover .stk-tbody-main tr:hover{
@@ -301,7 +327,7 @@
 .stk-table.row-active .stk-tbody-main tr.active{
   background-color:var(--tr-active-bgc);
 }
-.stk-table .stk-tbody-main tr.row-range-selected{
+.stk-table .stk-tbody-main tr[data-rs-s]{
   background-color:var(--rs-bgc);
 }
 .stk-table .stk-tbody-main tr.row-range-start td{
@@ -495,22 +521,26 @@
 .stk-table .fixed-cell{
   background-color:inherit;
 }
-.stk-table .cell-range-selected{
+.stk-table td[data-cs-s]{
   background-blend-mode:multiply;
   background-color:var(--cs-bgc);
   box-shadow:inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc), inset 0 0 0 0 var(--cs-bc);
   box-shadow:inset 0 var(--cs-t, 0) 0 0 var(--cs-bc), inset 0 var(--cs-b, 0) 0 0 var(--cs-bc), inset var(--cs-l, 0) 0 0 0 var(--cs-bc), inset var(--cs-r, 0) 0 0 0 var(--cs-bc);
 }
-.stk-table .cell-range-t{
+.stk-table td[data-cs-t]{
   --cs-t:2px;
 }
-.stk-table .cell-range-b{
+.stk-table td[data-cs-s].cell-hover,
+.stk-table td[data-cs-s].cell-active{
+  background-color:var(--cs-bgc);
+}
+.stk-table td[data-cs-b]{
   --cs-b:-2px;
 }
-.stk-table .cell-range-l{
+.stk-table td[data-cs-l]{
   --cs-l:2px;
 }
-.stk-table .cell-range-r{
+.stk-table td[data-cs-r]{
   --cs-r:-2px;
 }
 .stk-table .highlight-cell{
