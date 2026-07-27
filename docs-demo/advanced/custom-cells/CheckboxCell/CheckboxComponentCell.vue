@@ -10,16 +10,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, h, markRaw, defineComponent } from 'vue';
-import { ElCheckbox } from 'element-plus';
-import 'element-plus/es/components/checkbox/style/css';
+import { Checkbox as ArcoCheckbox } from '@arco-design/web-vue';
+// 不要引入 '@arco-design/web-vue/es/checkbox/style/css'：
+// 它会连带引入 es/style/index.css（内含 normalize.css，构建时会被 vitepress 合并进全站 style.css，污染全局样式）
+import '@arco-design/web-vue/es/checkbox/style/index.css';
+// 仅引入主题 CSS 变量（不含 normalize.css）
+import '@arco-design/web-vue/es/style/theme/css-variables.less';
 import { Checkbox as AntCheckbox } from 'ant-design-vue';
 import 'ant-design-vue/es/checkbox/style/index.js';
-import { Checkbox as ArcoCheckbox } from '@arco-design/web-vue';
-import '@arco-design/web-vue/es/checkbox/style/css';
+import { ElCheckbox } from 'element-plus';
+import 'element-plus/es/components/checkbox/style/css';
 import { NCheckbox as NaiveCheckbox } from 'naive-ui';
-import StkTable from '../../../StkTable.vue';
+import { ref } from 'vue';
 import { createCheckboxCell } from '../../../../src/StkTable/index';
+import StkTable from '../../../StkTable.vue';
 
 // Element Plus - checkbox 列（用于行选择）
 const { CheckboxCell: ElCheckboxCell, CheckboxAllCell: ElCheckboxAllCell } = createCheckboxCell({
