@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: docs_site
+title: StkTableVue 文档站点（VitePress）
+scope:
+    - docs-src/
+source_files: []
+depends_on: []
+related_to: []

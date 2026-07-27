@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: build_output
+title: stk-table-vue 构建产物（lib 发布包）
+scope:
+    - lib/
+source_files: []
+depends_on: []
+related_to: []

@@ -1,0 +1,8 @@
+schema_version: 1
+module_path: core_library
+title: StkTable 表格与 VirtualTree 树形组件库
+scope:
+    - src/
+source_files: []
+depends_on: []
+related_to: []

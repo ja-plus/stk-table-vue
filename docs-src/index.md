@@ -22,6 +22,9 @@ hero:
     - theme: alt
       text: React 版本
       link: https://ja-plus.github.io/stk-table-react/
+    - theme: alt
+      text: Svelte 版本
+      link: https://ja-plus.github.io/stk-table-svelte/
 
 features:
   - icon: 💡

@@ -1,0 +1,29 @@
+schema_version: 1
+module_path: ""
+title: stk-table-vue 组件库根工程
+scope:
+    - README.md
+    - TODO.md
+    - .gitignore
+    - .eslintrc.cjs
+    - .prettierrc.cjs
+    - .eslintignore
+    - .prettierignore
+    - package.json
+    - vite.config.ts
+    - tsconfig.json
+    - vitest.workspace.ts
+    - postcss.config.js
+    - index.html
+    - App.vue
+    - index.js
+    - CHANGELOG.md
+    - LICENSE
+    - jsconfig.json
+    - pnpm-lock.yaml
+    - watchPropsColumns.drawio
+    - zIndex.drawio
+    - 虚拟滚动表格开发.md
+source_files: []
+depends_on: []
+related_to: []

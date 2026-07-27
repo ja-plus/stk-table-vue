@@ -18,7 +18,13 @@ export const koConfig = defineConfig({
             { text: '홈', link: '/ko/' },
             { text: '문서', link: '/ko/main/start/start' },
             { text: '데모', link: '/ko/demos/huge-data' },
-            { text: 'React 버전', link: 'https://ja-plus.github.io/stk-table-react/' },
+            {
+                text: '다른 버전',
+                items: [
+                    { text: 'React 버전', link: 'https://ja-plus.github.io/stk-table-react/' },
+                    { text: 'Svelte 버전', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                ],
+            },
             { text: '스폰서', link: '/ko/main/other/sponsor' }
         ],
         sidebar: {

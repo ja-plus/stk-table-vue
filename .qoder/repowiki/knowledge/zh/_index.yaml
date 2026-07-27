@@ -1,0 +1,97 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: zh-CN
+branch: master
+nodes_managed: true
+exported_at: "2026-07-26T04:16:32Z"
+modules:
+    "":
+        dir_name: stk-table-vue 组件库根工程
+        title: stk-table-vue 组件库根工程
+        scope:
+            - README.md
+            - TODO.md
+            - .gitignore
+            - .eslintrc.cjs
+            - .prettierrc.cjs
+            - .eslintignore
+            - .prettierignore
+            - package.json
+            - vite.config.ts
+            - tsconfig.json
+            - vitest.workspace.ts
+            - postcss.config.js
+            - index.html
+            - App.vue
+            - index.js
+            - CHANGELOG.md
+            - LICENSE
+            - jsconfig.json
+            - pnpm-lock.yaml
+            - watchPropsColumns.drawio
+            - zIndex.drawio
+            - 虚拟滚动表格开发.md
+        source_files: []
+        children:
+            - build_output
+            - core_library
+            - demos
+            - docs_site
+            - history
+            - tests
+        depends_on: []
+        related_to: []
+    build_output:
+        dir_name: stk-table-vue 构建产物（lib 发布包）
+        title: stk-table-vue 构建产物（lib 发布包）
+        scope:
+            - lib/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    core_library:
+        dir_name: StkTable 表格与 VirtualTree 树形组件库
+        title: StkTable 表格与 VirtualTree 树形组件库
+        scope:
+            - src/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    demos:
+        dir_name: StkTable 文档演示与示例集
+        title: StkTable 文档演示与示例集
+        scope:
+            - docs-demo/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    docs_site:
+        dir_name: StkTableVue 文档站点（VitePress）
+        title: StkTableVue 文档站点（VitePress）
+        scope:
+            - docs-src/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    history:
+        dir_name: StkTable 历史版本表格组件
+        title: StkTable 历史版本表格组件
+        scope:
+            - history/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    tests:
+        dir_name: StkTable 组件测试与演示套件
+        title: StkTable 组件测试与演示套件
+        scope:
+            - test/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
