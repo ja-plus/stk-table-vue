@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: master
 nodes_managed: true
-exported_at: "2026-07-26T04:16:32Z"
+exported_at: "2026-07-27T10:55:48Z"
 modules:
     "":
-        dir_name: stk-table-vue 组件库根工程
-        title: stk-table-vue 组件库根工程
+        dir_name: StkTable Vue 组件库根工程
+        title: StkTable Vue 组件库根工程
         scope:
             - README.md
             - TODO.md
@@ -49,7 +49,8 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: core_library
     core_library:
         dir_name: StkTable 表格与 VirtualTree 树形组件库
         title: StkTable 表格与 VirtualTree 树形组件库
@@ -58,16 +59,22 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: build_output
+            - path: demos
+            - path: history
+            - path: tests
     demos:
-        dir_name: StkTable 文档演示与示例集
-        title: StkTable 文档演示与示例集
+        dir_name: StkTable 文档演示站点
+        title: StkTable 文档演示站点
         scope:
             - docs-demo/
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: core_library
+            - path: docs_site
     docs_site:
         dir_name: StkTableVue 文档站点（VitePress）
         title: StkTableVue 文档站点（VitePress）
@@ -76,7 +83,8 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: demos
     history:
         dir_name: StkTable 历史版本表格组件
         title: StkTable 历史版本表格组件
@@ -85,7 +93,8 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: core_library
     tests:
         dir_name: StkTable 组件测试与演示套件
         title: StkTable 组件测试与演示套件
@@ -94,4 +103,5 @@ modules:
         source_files: []
         children: []
         depends_on: []
-        related_to: []
+        related_to:
+            - path: core_library

@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: stk-table-vue 组件库根工程
+title: StkTable Vue 组件库根工程
 scope:
     - README.md
     - TODO.md

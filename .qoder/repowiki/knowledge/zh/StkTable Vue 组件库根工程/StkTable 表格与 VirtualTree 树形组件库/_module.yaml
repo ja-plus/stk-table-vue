@@ -5,4 +5,8 @@ scope:
     - src/
 source_files: []
 depends_on: []
-related_to: []
+related_to:
+    - path: build_output
+    - path: demos
+    - path: history
+    - path: tests
