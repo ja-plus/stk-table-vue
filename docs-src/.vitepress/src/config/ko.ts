@@ -23,6 +23,7 @@ export const koConfig = defineConfig({
                 items: [
                     { text: 'React 버전', link: 'https://ja-plus.github.io/stk-table-react/' },
                     { text: 'Svelte 버전', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid 버전', link: 'https://ja-plus.github.io/stk-table-solid/' },
                 ],
             },
             { text: '스폰서', link: '/ko/main/other/sponsor' }

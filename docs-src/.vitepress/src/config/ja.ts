@@ -23,6 +23,7 @@ export const jaConfig = defineConfig({
                 items: [
                     { text: 'React版', link: 'https://ja-plus.github.io/stk-table-react/' },
                     { text: 'Svelte版', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid版', link: 'https://ja-plus.github.io/stk-table-solid/' },
                 ],
             },
             { text: 'スポンサー', link: '/ja/main/other/sponsor' }

@@ -24,6 +24,8 @@ Support Vue3 and Vue2.7
 ## Documentation
 ### [Stk Table Vue Official](https://ja-plus.github.io/stk-table-vue/)
 ### [Stk Table React Official](https://ja-plus.github.io/stk-table-react/)
+### [Stk Table Svelte Official](https://ja-plus.github.io/stk-table-svelte/)
+### [Stk Table Solid Official](https://ja-plus.github.io/stk-table-solid/)
 
 
 ## Repo: 

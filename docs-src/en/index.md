@@ -25,6 +25,9 @@ hero:
     - theme: alt
       text: Svelte Version
       link: https://ja-plus.github.io/stk-table-svelte/
+    - theme: alt
+      text: Solid Version
+      link: https://ja-plus.github.io/stk-table-solid/
 
 features:
   - icon: 💡

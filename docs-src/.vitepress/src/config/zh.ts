@@ -48,6 +48,7 @@ export const zhConfig = defineConfig({
                 items: [
                     { text: 'React 版本', link: 'https://ja-plus.github.io/stk-table-react/' },
                     { text: 'Svelte 版本', link: 'https://ja-plus.github.io/stk-table-svelte/' },
+                    { text: 'Solid 版本', link: 'https://ja-plus.github.io/stk-table-solid/' },
                 ],
             },
             { text: '赞助', link: '/main/other/sponsor' },
