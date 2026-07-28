@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: StkTable Vue 组件库根工程
+title: StkTable Vue 组件库单仓（Monorepo）
 scope:
     - README.md
     - TODO.md
