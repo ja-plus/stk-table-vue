@@ -29,6 +29,26 @@ To calculate the adsorption position of **fixed columns** using column widths, a
 As in the table above, all columns before the `Gender` column must have widths set. The same applies to fixed right columns.
 :::
 
+::: warning Right fixed column "not working"?
+Fixed columns are implemented with `position: sticky`, so **they only stick when the table's total width exceeds the container and horizontal scrolling appears**.
+
+If a middle column (such as the `url` column below) has no `width` set, under the default `table-layout: auto` the browser will **stretch that column to fill the remaining space**, so the table width always equals the container width, no horizontal overflow occurs, and the right fixed column therefore appears "not to work" (it actually sits at the far right; there is just no scrollable content to demonstrate the sticking).
+
+```typescript
+const columns: StkTableColumn<any>[] = [
+    { title: 'Name', dataIndex: 'name', width: 100 },
+    { title: 'Stream URL', dataIndex: 'url' }, // ❌ No width, fills the remaining space, table does not overflow
+    { title: 'Operation', dataIndex: '_action', fixed: 'right', width: 150 },
+];
+```
+
+Solutions (choose one):
+
+- Give the width-less column a `width` or `minWidth` (recommended `minWidth`, which is both flexible and ensures the total width can exceed the container): `{ title: 'Stream URL', dataIndex: 'url', minWidth: 200 }`;
+- Enable `props.virtual-x` (horizontal virtual list); columns without a width are then forced to 100px;
+- Use `props.fixedMode` (`table-layout: fixed`) together with the table `width` so column widths are strictly respected.
+:::
+
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>
 
 You can see that when scrolling horizontally, the `Gender` column automatically adsorbs to the left.
