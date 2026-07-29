@@ -30,10 +30,16 @@ import 'stk-table-vue/lib/style.css'; // 引入样式，一般在 main.js(全局
 
 ```typescript
 // 工具函数
-import { tableSort, insertToOrderedArray, strCompare, binarySearch } from 'stk-table-vue';
+import { tableSort, insertToOrderedArray, strCompare, binarySearch, formatNumber } from 'stk-table-vue';
 // 按需特性（Area Selection 需先注册再使用）
-import { useAreaSelection, registerFeature, createFilterCell, createEditableCell } from 'stk-table-vue';
-import type { FilterStatus, CreateFilterOptions, CreateEditableCellOptions } from 'stk-table-vue';
+import { useAreaSelection, registerFeature } from 'stk-table-vue';
+// 内置自定义单元格工厂函数
+import { createFilterCell, createEditableCell, createCheckboxCell, createNumberCell, createChangeCell } from 'stk-table-vue';
+import type {
+  FilterStatus, FilterOption, CreateFilterCellOption,
+  CreateEditableCellOptions, createCheckboxCellOptions,
+  CreateNumberCellOptions, CreateChangeCellOptions, FormatNumberOptions,
+} from 'stk-table-vue';
 ```
 
 ***
@@ -441,6 +447,79 @@ type FooterConfig = { position?: 'bottom' | 'top' };
 type ExperimentalConfig = { scrollY?: boolean };
 
 type UniqKey = string | number;
+
+// ===== FilterCell 相关类型 =====
+
+/** 筛选选项 */
+type FilterOption = {
+  label: string;
+  value: any;
+  selected?: boolean;
+};
+
+/** 筛选状态 */
+type FilterStatus = {
+  value: FilterOption['value'][];
+  /** 自定义筛选逻辑，返回 true 保留记录 */
+  filter?: (args: { row: any; cellValue: any; filterValues: FilterOption['value'][] }) => boolean;
+};
+
+/** FilterComponent 配置（传给 Filter() 的第一个参数） */
+type FilterComponentConfig = {
+  options?: FilterOption[];
+  filter?: FilterStatus['filter'];
+  /** 是否自动从数据中提取筛选选项，默认 false */
+  autoOptions?: boolean;
+};
+
+/** createFilterCell 选项 */
+type CreateFilterCellOption = {
+  /** 是否远程筛选 */
+  remote?: boolean;
+  /** 筛选状态改变时触发 */
+  onChange?: (data: { colKey: UniqKey; status: FilterStatus }) => void;
+};
+
+// ===== 内置单元格工厂函数选项 =====
+
+type CreateEditableCellOptions = {
+  trigger?: 'dblclick' | 'click';  // 默认 'dblclick'
+  onChange?: (newValue: any, row: Record<string, any>, dataIndex: string) => void;
+};
+
+type createCheckboxCellOptions<T = any> = {
+  /** 行数据中选中状态字段名，默认 '_isChecked' */
+  field?: string;
+  /** 自定义 checkbox 组件（如 Element Plus / Ant Design Vue 的 Checkbox），不传用原生 input */
+  checkboxComponent?: any;
+  onChange?: (checked: boolean, row: T) => void;
+  onSelectAll?: (checked: boolean) => void;
+};
+
+/** NumberCell 选项（等同于 FormatNumberOptions） */
+type CreateNumberCellOptions = FormatNumberOptions;
+
+type CreateChangeCellOptions = FormatNumberOptions & {
+  /** 涨跌颜色反转：false=A股(涨红跌绿，默认)，true=国际(涨绿跌红) */
+  colorReverse?: boolean;
+  /** 显示涨跌箭头 ▲/▼，默认 false */
+  arrow?: boolean;
+  riseColor?: string;   // 自定义上涨颜色
+  fallColor?: string;   // 自定义下跌颜色
+  flatColor?: string;   // 自定义平盘颜色
+};
+
+type FormatNumberOptions = {
+  decimals?: number;        // 小数位数
+  thousands?: boolean;      // 千分位，默认 true
+  prefix?: string;          // 前缀
+  suffix?: string;          // 后缀
+  showSign?: boolean;       // 正数显示'+'，默认 false
+  percent?: boolean;        // 百分比模式，与 abbr 互斥
+  abbr?: 'cn' | 'en';      // 单位缩放（万/亿 或 K/M/B）
+  abbrDecimals?: number;    // 缩放后小数位，默认 2
+  placeholder?: string;     // 空值占位符，默认 '--'
+};
 ```
 
 ***
@@ -655,6 +734,115 @@ const columns: StkTableColumn<RowData>[] = [
     { title: '年龄', dataIndex: 'age', customCell: EditableCell },
 ];
 ```
+
+### 方式五：使用内置 createCheckboxCell 工厂函数
+
+快速创建多选框单元格（含表头全选）：
+
+```typescript
+import { createCheckboxCell } from 'stk-table-vue';
+import type { StkTableColumn } from 'stk-table-vue';
+
+const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({
+    field: '_isChecked', // 行数据中表示选中状态的字段名，默认 '_isChecked'
+    // checkboxComponent: ElCheckbox, // 可选：自定义 checkbox 组件（如 Element Plus / Ant Design Vue），不传使用原生 input
+    onChange: (checked, row) => {
+        console.log(`行 ${row.id} 选中状态: ${checked}`);
+    },
+    onSelectAll: (checked) => {
+        console.log(`全选: ${checked}`);
+    },
+});
+
+const columns: StkTableColumn<RowData>[] = [
+    {
+        dataIndex: 'checkbox',
+        width: 50,
+        customCell: CheckboxCell,
+        customHeaderCell: CheckboxAllCell, // 表头全选（自动处理半选状态）
+    },
+    { title: '名称', dataIndex: 'name' },
+];
+```
+
+> **说明**：
+> - `CheckboxAllCell` 会自动查找最近的 StkTable 实例，基于 `dataSource` 计算全选/半选状态。
+> - 点击全选时会直接修改 `dataSource` 中所有行的 `field` 字段。
+> - 支持通过 `checkboxComponent` 传入第三方 UI 库的 Checkbox 组件。
+
+### 方式六：使用内置 createNumberCell 工厂函数
+
+快速创建数字格式化单元格：
+
+```typescript
+import { createNumberCell } from 'stk-table-vue';
+import type { StkTableColumn } from 'stk-table-vue';
+
+const { NumberCell } = createNumberCell({ decimals: 2, thousands: true });
+const NumberCellComp = NumberCell(); // 注意：需调用一次获取组件
+
+const columns: StkTableColumn<RowData>[] = [
+    { title: '现价', dataIndex: 'price', align: 'right', customCell: NumberCellComp },
+];
+```
+
+### 方式七：使用内置 createChangeCell 工厂函数
+
+快速创建涨跌染色单元格（金融场景）：
+
+```typescript
+import { createChangeCell } from 'stk-table-vue';
+import type { StkTableColumn } from 'stk-table-vue';
+
+const { ChangeCell } = createChangeCell({
+    decimals: 2,
+    showSign: true,    // 正数显示 '+'
+    arrow: true,       // 显示涨跌箭头 ▲/▼
+    // colorReverse: true, // 国际配色（涨绿跌红），默认 A 股配色（涨红跌绿）
+    // riseColor: '#ff4d4f',  // 自定义上涨颜色
+    // fallColor: '#52c41a',  // 自定义下跌颜色
+    // flatColor: '#999',     // 自定义平盘颜色
+});
+const ChangeCellComp = ChangeCell(); // 注意：需调用一次获取组件
+
+const columns: StkTableColumn<RowData>[] = [
+    { title: '涨跌额', dataIndex: 'change', align: 'right', customCell: ChangeCellComp },
+    { title: '涨跌幅', dataIndex: 'changePercent', align: 'right', customCell: ChangeCellComp },
+];
+```
+
+> **说明**：涨跌方向按 `cellValue` 正负判断：正数=涨，负数=跌，0/空值=平盘。
+
+### 工具函数：formatNumber
+
+`formatNumber` 是 NumberCell / ChangeCell 共享的数字格式化纯函数，也可独立使用：
+
+```typescript
+import { formatNumber } from 'stk-table-vue';
+
+formatNumber(1234567.891);                          // '1,234,567.891'
+formatNumber(1234567.891, { decimals: 2 });         // '1,234,567.89'
+formatNumber(0.156, { percent: true, decimals: 1 }); // '15.6%'
+formatNumber(356000000, { abbr: 'cn' });            // '3.56亿'
+formatNumber(3560000, { abbr: 'en' });              // '3.56M'
+formatNumber(42, { prefix: '+', showSign: true });  // '+42'
+formatNumber(null);                                  // '--'
+formatNumber(null, { placeholder: 'N/A' });         // 'N/A'
+```
+
+**FormatNumberOptions 配置：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `decimals` | `number` | 不强制 | 小数位数（四舍五入） |
+| `thousands` | `boolean` | `true` | 千分位分隔符 |
+| `prefix` | `string` | `''` | 前缀，如 '¥'、'$' |
+| `suffix` | `string` | `''` | 后缀，如 '元'、'股' |
+| `showSign` | `boolean` | `false` | 正数强制显示 '+' 号 |
+| `percent` | `boolean` | `false` | 百分比模式（值×100追加'%'），与 abbr 互斥 |
+| `abbr` | `'cn' \| 'en'` | 不缩放 | 单位缩放：'cn'=万/亿，'en'=K/M/B，与 percent 互斥 |
+| `abbrDecimals` | `number` | `2` | 缩放后保留小数位 |
+| `placeholder` | `string` | `'--'` | 空值/非数字占位符 |
 
 ### 重要注意事项
 
@@ -1123,3 +1311,5 @@ StkTable 支持通过 CSS 变量自定义表格的样式外观：
 10. **展开行在虚拟滚动下需设置** **`expandConfig.height`** 指定展开区域高度。
 11. **Area Selection 需先注册**：`registerFeature(useAreaSelection)` 后再使用 `areaSelection` prop。
 12. **`CustomCellProps` 等类型未从包导出**，SFC 组件中需自行定义 props 或使用泛型推导。
+13. **内置单元格工厂函数**：`createNumberCell`/`createChangeCell` 返回的组件构造函数需调用一次（如 `NumberCell()`）才能赋给 `customCell`；`createCheckboxCell`/`createEditableCell` 返回的可直接作为 `customCell` 使用。
+14. **`formatNumber` 可独立使用**，是 NumberCell/ChangeCell 的格式化内核，支持千分位、百分比、万亿/KMB 缩放等。

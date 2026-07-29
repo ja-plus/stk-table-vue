@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: master
 nodes_managed: true
-exported_at: "2026-07-28T09:10:35Z"
+exported_at: "2026-07-29T04:44:50Z"
 modules:
     "":
-        dir_name: StkTable Vue 组件库单仓（Monorepo）
-        title: StkTable Vue 组件库单仓（Monorepo）
+        dir_name: StkTable Vue 表格组件库单仓
+        title: StkTable Vue 表格组件库单仓
         scope:
             - README.md
             - TODO.md
