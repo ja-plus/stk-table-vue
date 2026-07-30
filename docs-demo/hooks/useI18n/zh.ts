@@ -1,6 +1,9 @@
 export const zh = {
     abbreviation: '简称',
     dataAmount: '数据量',
+    mockDataCost: '创建mock数据耗时',
+    sortDataCost: '排序耗时',
+    renderCost: '渲染耗时',
     simulateUpdateData: '模拟更新数据',
     start: '开始',
     stop: '停止',

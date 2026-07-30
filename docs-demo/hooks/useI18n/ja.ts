@@ -1,6 +1,9 @@
 export const ja = {
     abbreviation: '略称',
     dataAmount: 'データ量',
+    mockDataCost: 'モックデータ生成時間',
+    sortDataCost: 'ソート時間',
+    renderCost: 'レンダリング時間',
     simulateUpdateData: 'データ更新をシミュレート',
     start: '開始',
     stop: '停止',

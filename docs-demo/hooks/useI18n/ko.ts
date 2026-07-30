@@ -1,6 +1,9 @@
 export const ko = {
     abbreviation: '약칭',
     dataAmount: '데이터량',
+    mockDataCost: '목 데이터 생성 시간',
+    sortDataCost: '정렬 시간',
+    renderCost: '렌더링 시간',
     simulateUpdateData: '데이터 업데이트 시뮬레이션',
     start: '시작',
     stop: '중지',

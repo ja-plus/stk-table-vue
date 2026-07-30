@@ -46,6 +46,13 @@ const columns = ref(columnsRaw());
 const dataSource = shallowRef<DataType[]>([]);
 const footerData = ref<Record<string, any>[]>([]);
 
+/** Mock data cost time  */
+const mockDataCost = ref(0);
+/** Table render cost time */
+const renderCost = ref(0);
+/** Table sort cost time */
+const sortDataCost = ref(0);
+
 const RATING_OPTIONS = ['AAA', 'AA+', 'AA-', 'AA', 'B+', 'B'];
 const CODE_BASE = 10_000_000;
 const createData = (i: number) => {
@@ -73,6 +80,8 @@ function initDataSource() {
     const curDate = new Date();
     const curHour = curDate.getHours();
     const curMinute = curDate.getMinutes();
+
+    let timeStart = performance.now();
     const dataSourceTemp = Array.from({ length: dataSize.value }).map((_, index) => {
         const data = Object.assign({}, mockDataResult, createData(index)) as any;
         data.bestTime =
@@ -85,15 +94,24 @@ function initDataSource() {
             String(Random.integer(0, 999)).padStart(3, '0');
         return data;
     });
+    mockDataCost.value = Math.floor(performance.now() - timeStart); // Mock data cost time
 
-    dataSource.value = tableSort(
+    timeStart = performance.now();
+    const sortData = tableSort(
         { dataIndex: 'bestTime', sorter: true },
         'desc',
         dataSourceTemp,
         sortConfig,
     );
+    sortDataCost.value = Math.floor(performance.now() - timeStart);
 
+    dataSource.value = sortData;
     calculateFootData();
+
+    timeStart = performance.now();
+    nextTick(() => {
+        renderCost.value = Math.floor(performance.now() - timeStart);
+    });
 }
 
 function handleToggleExpand(row: DataType) {
@@ -289,6 +307,9 @@ function handleColSpan(v: boolean) {
             style="width: 70px; margin-left: 6px"
             @change="handleDataSizeChange"
         />
+        <span style="margin-left: 8px">{{ t('mockDataCost') }}: {{ mockDataCost }}ms</span>
+        <span style="margin-left: 8px">{{ t('sortDataCost') }}: {{ sortDataCost }}ms</span>
+        <span style="margin-left: 8px">{{ t('renderCost') }}: {{ renderCost }}ms</span>
     </div>
     <button class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
         {{ t('simulateUpdateData') }}({{ timeout ? t('stop') : t('start') }})
@@ -349,6 +370,7 @@ function handleColSpan(v: boolean) {
 <style scoped lang="less">
 .row {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .stack {

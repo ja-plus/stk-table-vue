@@ -1,6 +1,9 @@
 export const en = {
     abbreviation: 'Abbreviation',
     dataAmount: 'Data Amount',
+    mockDataCost: 'Mock Data Creation Cost',
+    sortDataCost: 'Sort Data Cost',
+    renderCost: 'Render Cost',
     simulateUpdateData: 'Simulate Update Data',
     start: 'start',
     stop: 'stop',
