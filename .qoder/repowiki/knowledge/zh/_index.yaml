@@ -3,7 +3,7 @@ schema_version: 1
 locale: zh-CN
 branch: master
 nodes_managed: true
-exported_at: "2026-07-31T01:11:26Z"
+exported_at: "2026-07-31T01:41:00Z"
 modules:
     "":
         dir_name: StkTable Vue 组件库单仓（Monorepo）
@@ -52,8 +52,8 @@ modules:
         related_to:
             - path: core_library
     core_library:
-        dir_name: StkTable 虚拟表格与 VirtualTree 树形组件库
-        title: StkTable 虚拟表格与 VirtualTree 树形组件库
+        dir_name: StkTable 虚拟表格与 VirtualTree 组件库
+        title: StkTable 虚拟表格与 VirtualTree 组件库
         scope:
             - src/
         source_files: []

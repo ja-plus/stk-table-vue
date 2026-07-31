@@ -184,6 +184,19 @@
         thead tr:first-child th {
             background-image: var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
         }
+
+        /**
+        * 单元格的左边框由左侧相邻单元格的 border-right 提供。
+        * 右固定列吸附遮挡内容后，与左侧单元格不再相邻，因此需要自行绘制 border-left。
+        */
+        th.fixed-cell--border-left,
+        td.fixed-cell--border-left {
+            background-image: var(--bg-border-left), var(--bg-border-right), var(--bg-border-bottom);
+        }
+
+        thead tr:first-child th.fixed-cell--border-left {
+            background-image: var(--bg-border-left), var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+        }
     }
 
     &.bordered-h {
@@ -206,6 +219,7 @@
     &.bordered-body-h {
         tbody {
             --bg-border-right: linear-gradient(transparent, transparent);
+            --bg-border-left: linear-gradient(transparent, transparent);
         }
     }
 

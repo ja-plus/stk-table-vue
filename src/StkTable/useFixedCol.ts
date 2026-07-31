@@ -21,11 +21,18 @@ export function useFixedCol<DT extends Record<string, any>>(
     /** 正在被固定的列 */
     const fixedCols = shallowRef<StkTableColumn<DT>[]>([]);
 
+    /**
+     * 需要自行绘制左边框的右固定列。
+     * 单元格的左边框由左侧相邻单元格的 border-right 提供，右固定列吸附遮挡内容后两者不再相邻，因此需要自行绘制。
+     */
+    const fixedBorderLeftCols = shallowRef<StkTableColumn<DT>[]>([]);
+
     /** 固定列的class */
     const fixedColClassMap = computed(() => {
         const colMap = new Map();
         const fixedShadowColsValue = fixedShadowCols.value;
         const fixedColsValue = fixedCols.value;
+        const fixedBorderLeftColsValue = fixedBorderLeftCols.value;
         const colKeyFn = colKeyGen.value;
         const fixedColShadow = props.fixedColShadow;
         const headers = tableHeaders.value;
@@ -48,6 +55,9 @@ export function useFixedCol<DT extends Record<string, any>>(
                 }
                 if (showShadow) {
                     classList.push('fixed-cell--shadow');
+                }
+                if (fixed === 'right' && fixedBorderLeftColsValue.includes(col)) {
+                    classList.push('fixed-cell--border-left');
                 }
                 colMap.set(colKeyFn(col), classList);
             }
@@ -147,6 +157,9 @@ export function useFixedCol<DT extends Record<string, any>>(
         if (props.fixedColShadow) {
             fixedShadowCols.value = leftShadowCol.concat(rightShadowCol).filter(Boolean) as StkTableColumn<DT>[];
         }
+
+        // rightShadowCol 是每层最靠左的、已遮挡内容的右固定列，正是需要绘制左边框的列
+        fixedBorderLeftCols.value = rightShadowCol.filter(Boolean) as StkTableColumn<DT>[];
 
         fixedCols.value = fixedColsTemp;
     }
