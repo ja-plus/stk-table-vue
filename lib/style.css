@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v1.0.1
+ * version: v1.0.2
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -291,6 +291,13 @@
 .stk-table.bordered thead tr:first-child th{
   background-image:var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
 }
+.stk-table.bordered th.fixed-cell--border-left,
+.stk-table.bordered td.fixed-cell--border-left{
+  background-image:var(--bg-border-left), var(--bg-border-right), var(--bg-border-bottom);
+}
+.stk-table.bordered thead tr:first-child th.fixed-cell--border-left{
+  background-image:var(--bg-border-left), var(--bg-border-top), var(--bg-border-right), var(--bg-border-bottom);
+}
 .stk-table.bordered-h{
   border-left:none;
   --bg-border-right:linear-gradient(transparent, transparent);
@@ -305,6 +312,7 @@
 }
 .stk-table.bordered-body-h tbody{
   --bg-border-right:linear-gradient(transparent, transparent);
+  --bg-border-left:linear-gradient(transparent, transparent);
 }
 .stk-table.stripe:not(.vt-on) .stk-tbody-main tr:nth-child(even){
   background-color:var(--stripe-bgc);
