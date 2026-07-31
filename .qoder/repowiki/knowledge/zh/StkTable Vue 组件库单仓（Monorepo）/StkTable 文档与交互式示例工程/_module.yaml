@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: demos
-title: StkTable 文档演示站点
+title: StkTable 文档与交互式示例工程
 scope:
     - docs-demo/
 source_files: []

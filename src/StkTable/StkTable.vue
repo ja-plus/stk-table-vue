@@ -911,10 +911,6 @@ const getFixedStyle = useFixedStyle<DT>(props, isRelativeMode, getFixedColPositi
 
 const [highlightSteps, setHighlightDimRow, setHighlightDimCell] = useHighlight(props, stkTableId, tableContainerRef);
 
-if (props.autoResize) {
-    useAutoResize(tableContainerRef, initVirtualScroll, props, 200);
-}
-
 function getRowIndex(row: DT): number {
     const targetKey = rowKeyGen(row);
     return dataSourceCopy.value.findIndex(item => rowKeyGen(item) === targetKey);
@@ -962,6 +958,19 @@ const [fixedCols, fixedColClassMap, updateFixedShadow] = useFixedCol(
     tableHeadersForCalc,
     tableContainerRef,
 );
+
+if (props.autoResize) {
+    useAutoResize(
+        tableContainerRef,
+        () => {
+            initVirtualScroll();
+            // 容器宽度变化后，需重新计算固定列状态
+            updateFixedShadow();
+        },
+        props,
+        200,
+    );
+}
 
 const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
     props,

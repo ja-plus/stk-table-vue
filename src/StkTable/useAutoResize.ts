@@ -3,11 +3,11 @@ import { Ref, onBeforeUnmount, onMounted, watch } from 'vue';
 /**
  * 窗口变化自动重置虚拟滚动
  * @param tableContainerRef
- * @param initVirtualScroll
+ * @param onResize 容器尺寸变化后的重算逻辑（虚拟滚动、固定列等）
  * @param props
  * @param debounceMs
  */
-export function useAutoResize(tableContainerRef: Ref<HTMLElement | undefined>, initVirtualScroll: () => void, props: any, debounceMs: number) {
+export function useAutoResize(tableContainerRef: Ref<HTMLElement | undefined>, onResize: () => void, props: any, debounceMs: number) {
     let resizeObserver: ResizeObserver | null = null;
     let isObserved = false;
     watch(
@@ -76,7 +76,7 @@ export function useAutoResize(tableContainerRef: Ref<HTMLElement | undefined>, i
         }
         debounceTime = window.setTimeout(() => {
             if (props.autoResize) {
-                initVirtualScroll();
+                onResize();
                 if (typeof props.autoResize === 'function') {
                     props.autoResize();
                 }
