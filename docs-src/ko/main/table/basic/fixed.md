@@ -29,24 +29,18 @@ const columns: StkTableColumn<any>[] = [
 위의 표에서 `Gender` 열 앞의 모든 열은 열 너비를 설정해야 합니다. 오른쪽 고정도 동일합니다.
 :::
 
-::: warning 오른쪽 고정 열이 "적용되지 않나요"?
-고정 열은 `position: sticky`로 구현되므로, **테이블 총 너비가 컨테이너를 초과하여 가로 스크롤이 나타날 때만 흡착됩니다**.
+::: warning 오른쪽 고정 열이 "이상"한가요?
+오른쪽 고정 열은 일반적으로 **`columns`의 마지막에 선언합니다**. 이 경우 해당 열들은 열 너비 설정과 무관하게 항상 고정된 상태를 유지합니다.
 
-중간의 어떤 열(아래의 `url` 열 등)에 `width`가 설정되지 않으면, 기본 `table-layout: auto`에서 브라우저가 해당 열을 **남은 공간을 채우도록 늘리기** 때문에 테이블 총 너비가 항상 컨테이너 너비와 같아져 가로 오버플로가 발생하지 않으며, 그 결과 오른쪽 고정 열이 "적용되지 않는" 것처럼 보입니다(사실 가장 오른쪽에 붙어 있으며, 흡착을 보여줄 스크롤 가능한 콘텐츠가 없을 뿐입니다).
+단, **흡착 효과**(열이 가시 영역을 벗어날 때만 흡착되는 효과 및 고정 열 그림자)가 필요하다면 **모든 열에 너비를 지정해야 합니다**. 흡착 위치는 각 열의 너비를 누적해 계산하기 때문에, 중간의 어떤 열(아래의 `url` 열 등)에 `width`가 없으면 계산 결과가 실제 렌더링 너비와 달라져 흡착 시점이 이상해집니다.
 
 ```typescript
 const columns: StkTableColumn<any>[] = [
     { title: 'Name', dataIndex: 'name', width: 100 },
-    { title: 'Stream URL', dataIndex: 'url' }, // ❌ 너비 미설정, 남은 공간을 채워 테이블이 오버플로되지 않음
+    { title: 'Stream URL', dataIndex: 'url' }, // ❌ 너비 미설정, 흡착 계산이 부정확해짐
     { title: 'Operation', dataIndex: '_action', fixed: 'right', width: 150 },
 ];
 ```
-
-해결 방법(하나 선택):
-
-- 너비가 없는 열에 `width` 또는 `minWidth`를 지정하세요(`minWidth` 권장, 자동 적응하면서도 총 너비가 컨테이너를 초과할 수 있음): `{ title: 'Stream URL', dataIndex: 'url', minWidth: 200 }`;
-- `props.virtual-x`(가로 가상 리스트)를 활성화하세요(이 경우 너비가 없는 열은 100px로 강제 설정됩니다);
-- `props.fixedMode`(`table-layout: fixed`)를 테이블 `width`와 함께 사용하여 열 너비를 엄격하게 준수하도록 하세요.
 :::
 
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>

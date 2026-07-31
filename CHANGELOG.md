@@ -2,6 +2,7 @@
 ## 1.0.2
 * Bugfix:
   - fix: `autoResize` now recalculates fixed columns state (active/shadow) on container resize, not only virtual scroll.
+  - fix: right fixed column not work properly.
 
 ## 1.0.1
 * Feature

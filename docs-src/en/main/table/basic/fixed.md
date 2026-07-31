@@ -29,24 +29,18 @@ To calculate the adsorption position of **fixed columns** using column widths, a
 As in the table above, all columns before the `Gender` column must have widths set. The same applies to fixed right columns.
 :::
 
-::: warning Right fixed column "not working"?
-Fixed columns are implemented with `position: sticky`, so **they only stick when the table's total width exceeds the container and horizontal scrolling appears**.
+::: warning Right fixed column behaving "abnormally"?
+Fixed right columns are normally **declared at the end of `columns`**. In that case they always stay fixed, regardless of column width configuration.
 
-If a middle column (such as the `url` column below) has no `width` set, under the default `table-layout: auto` the browser will **stretch that column to fill the remaining space**, so the table width always equals the container width, no horizontal overflow occurs, and the right fixed column therefore appears "not to work" (it actually sits at the far right; there is just no scrollable content to demonstrate the sticking).
+However, if you need the **sticking effect** (columns sticking only once they exceed the visible area, plus the fixed column shadow), you **must specify widths for all columns**. The sticking position is computed by accumulating each column's width, so when a middle column (such as the `url` column below) has no `width`, the computed result does not match the actual rendered width and the sticking timing becomes abnormal.
 
 ```typescript
 const columns: StkTableColumn<any>[] = [
     { title: 'Name', dataIndex: 'name', width: 100 },
-    { title: 'Stream URL', dataIndex: 'url' }, // ❌ No width, fills the remaining space, table does not overflow
+    { title: 'Stream URL', dataIndex: 'url' }, // ❌ No width, sticking calculation becomes inaccurate
     { title: 'Operation', dataIndex: '_action', fixed: 'right', width: 150 },
 ];
 ```
-
-Solutions (choose one):
-
-- Give the width-less column a `width` or `minWidth` (recommended `minWidth`, which is both flexible and ensures the total width can exceed the container): `{ title: 'Stream URL', dataIndex: 'url', minWidth: 200 }`;
-- Enable `props.virtual-x` (horizontal virtual list); columns without a width are then forced to 100px;
-- Use `props.fixedMode` (`table-layout: fixed`) together with the table `width` so column widths are strictly respected.
 :::
 
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>

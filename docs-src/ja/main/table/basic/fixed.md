@@ -29,24 +29,18 @@ const columns: StkTableColumn<any>[] = [
 上記のテーブルのように、`性別` 列より前のすべての列はwidthが設定されている必要があります。右固定列也同样です。
 :::
 
-::: warning 右固定列が「効かない」？
-固定列は `position: sticky` で実装されているため、**テーブルの総幅がコンテナを超えて横スクロールが発生した場合にのみ吸着します**。
+::: warning 右固定列が「異常」？
+右固定列は通常**`columns` の末尾に宣言します**。この場合、これらの列は列幅の設定に依存せず、常に固定されたままになります。
 
-中間のある列（下記の `url` 列など）に `width` が設定されていない場合、デフォルトの `table-layout: auto` ではブラウザがその列を**残りのスペースいっぱいに引き伸ばす**ため、テーブルの総幅が常にコンテナ幅と等しくなり、横方向のオーバーフローが発生せず、右固定列が「効かない」ように見えます（実際には一番右に貼り付いており、吸着を示すスクロール可能なコンテンツがないだけです）。
+ただし、**吸着効果**（列が可視領域を超えたときにのみ吸着する効果、および固定列シャドウ）が必要な場合は、**すべての列に列幅を指定する必要があります**。吸着位置は各列の列幅を累積して計算するため、中間のある列（下記の `url` 列など）に `width` がないと、計算結果が実際のレンダリング幅と一致せず、吸着のタイミングが異常になります。
 
 ```typescript
 const columns: StkTableColumn<any>[] = [
     { title: '名前', dataIndex: 'name', width: 100 },
-    { title: '配信URL', dataIndex: 'url' }, // ❌ width未設定。残りのスペースを埋め、テーブルがオーバーフローしない
+    { title: '配信URL', dataIndex: 'url' }, // ❌ width未設定。吸着の計算が不正確になる
     { title: '操作', dataIndex: '_action', fixed: 'right', width: 150 },
 ];
 ```
-
-解決方法（いずれか一つ）：
-
-- width未設定の列に `width` または `minWidth` を設定する（`minWidth` 推奨。自適応しつつ総幅がコンテナを超えられる）：`{ title: '配信URL', dataIndex: 'url', minWidth: 200 }`；
-- `props.virtual-x`（横方向仮想リスト）を有効にする（この場合、width未設定の列は強制的に100pxになります）；
-- `props.fixedMode`（`table-layout: fixed`）をテーブルの `width` と組み合わせて使用し、列幅を厳密に遵守させる。
 :::
 
 <demo vue="basic/fixed/Fixed.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed/Fixed.vue"></demo>

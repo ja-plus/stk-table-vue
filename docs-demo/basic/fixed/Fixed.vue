@@ -15,8 +15,8 @@ const columns: StkTableColumn<any>[] = [
     { title: t('address'), dataIndex: 'address', width: 200 },
     { title: t('gender'), dataIndex: 'gender', width: 70, fixed: 'left' },
     { title: t('email'), dataIndex: 'email', width: 200 },
-    { title: t('phone'), dataIndex: 'phone', width: 100 },
-    { title: t('company'), dataIndex: 'company', width: 200 },
+    { title: t('phone'), dataIndex: 'phone', fixed: 'right', minWidth: 100 },
+    { title: t('company'), dataIndex: 'company', width: 100 },
     { title: t('operate'), dataIndex: 'operation', fixed: 'right', width: 100 },
 ];
 const dataSource = ref([
