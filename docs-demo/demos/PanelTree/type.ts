@@ -1,6 +1,7 @@
 export type RowDataType = {
     key: string;
     id: string;
+    level?: number;
     name?: string;
     age?: number;
     address?: string;
@@ -8,5 +9,5 @@ export type RowDataType = {
     phone?: string;
     website?: string;
     company?: string;
-    children?: RowDataType[]
+    children?: RowDataType[];
 };
