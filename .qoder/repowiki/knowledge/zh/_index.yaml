@@ -3,7 +3,7 @@ schema_version: 1
 locale: zh-CN
 branch: master
 nodes_managed: true
-exported_at: "2026-07-31T02:12:07Z"
+exported_at: "2026-08-01T13:57:43Z"
 modules:
     "":
         dir_name: StkTable Vue 表格组件库单仓
@@ -42,8 +42,8 @@ modules:
         depends_on: []
         related_to: []
     build_output:
-        dir_name: stk-table-vue 构建产物（ESM 包）
-        title: stk-table-vue 构建产物（ESM 包）
+        dir_name: stk-table-vue 构建产物（浏览器 ESM 包）
+        title: stk-table-vue 构建产物（浏览器 ESM 包）
         scope:
             - lib/
         source_files: []
@@ -52,8 +52,8 @@ modules:
         related_to:
             - path: core_library
     core_library:
-        dir_name: StkTable 虚拟滚动表格与 VirtualTree 组件库
-        title: StkTable 虚拟滚动表格与 VirtualTree 组件库
+        dir_name: StkTable 虚拟滚动表格与虚拟树组件库
+        title: StkTable 虚拟滚动表格与虚拟树组件库
         scope:
             - src/
         source_files: []
@@ -76,8 +76,8 @@ modules:
             - path: core_library
             - path: docs_site
     docs_site:
-        dir_name: StkTableVue 多语言文档站点
-        title: StkTableVue 多语言文档站点
+        dir_name: StkTableVue 多语言文档站点（VitePress）
+        title: StkTableVue 多语言文档站点（VitePress）
         scope:
             - docs-src/
         source_files: []

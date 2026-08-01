@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: docs_site
-title: StkTableVue 多语言文档站点
+title: StkTableVue 多语言文档站点（VitePress）
 scope:
     - docs-src/
 source_files: []
