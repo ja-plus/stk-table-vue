@@ -3,18 +3,19 @@
         <button class="btn" @click="updateRow">Update Row</button>
         <StkTable
             ref="stkTableRef"
+            v-model:columns="columns"
             style="max-height: 350px"
             row-key="key"
-            bordered="h"
+            bordered="body-h"
             show-overflow
+            col-resizable
             :row-active="{
-                disabled: (row: any) => Boolean(row.children),
+                disabled: (row: any) => Boolean(row.children && !row.level),
             }"
-            :row-class-name="(row: any) => (row.children ? 'panel-header-row' : '')"
-            :empty-cell-text="({ row }: any) => (row.children ? '' : '--')"
+            :row-class-name="(row: any) => (row.children && !row.level ? 'panel-header-row' : '')"
+            :empty-cell-text="({ row }: any) => (row.children && !row.level ? '' : '--')"
             :tree-config="{ defaultExpandKeys: ['1'] }"
             :selected-cell-revokable="false"
-            :columns="columns"
             :data-source="tableData"
         />
     </div>
@@ -31,39 +32,46 @@ const { t } = useI18n();
 
 const stkTableRef = useTemplateRef('stkTableRef');
 
-// 定义表格列
-const columns: StkTableColumn<RowDataType>[] = [
+const columns = ref<StkTableColumn<RowDataType>[]>([
     {
         title: 'ID',
         dataIndex: 'id',
-        width: 50,
+        width: 100,
         type: 'tree-node',
         className: 'panel-title',
         fixed: 'left',
         mergeCells({ row }) {
-            if (row.children) {
+            if (row.children && !row.level) {
                 return { colspan: 2 };
             }
         },
     },
     { title: t('name'), dataIndex: 'name', width: 100, fixed: 'left' },
-    { title: t('age'), dataIndex: 'age', width: 80, sorter: true, sortConfig: { sortChildren: true } },
+    {
+        title: t('age'),
+        dataIndex: 'age',
+        width: 80,
+        sorter: true,
+        sortConfig: { sortChildren: true },
+    },
     { title: t('address'), dataIndex: 'address', width: 200 },
     { title: t('email'), dataIndex: 'email', width: 200 },
     { title: t('phone'), dataIndex: 'phone', width: 150 },
     { title: t('website'), dataIndex: 'website', width: 200 },
     { title: t('company'), dataIndex: 'company', width: 200 },
-];
+]);
 
 // 初始化表格数据
 const tableData = ref<RowDataType[]>([
     {
         id: "People's Republic of China",
         key: '1',
+        level: 0,
         children: [
             {
                 key: '1-1',
                 id: '1',
+                level: 1,
                 name: 'Beijing',
                 age: 28,
                 address: 'Beijing',
@@ -71,6 +79,20 @@ const tableData = ref<RowDataType[]>([
                 phone: '13800000000',
                 website: 'www.beijing.com',
                 company: 'Beijing Company',
+                children: [
+                    {
+                        key: '1-1-1',
+                        id: '1-1',
+                        level: 2,
+                        name: 'Haidian District',
+                        age: 28,
+                        address: 'Haidian District, Beijing, China',
+                        email: 'haidian@example.com',
+                        phone: '13800000001',
+                        website: 'www.haidian.com',
+                        company: 'Haidian District Company',
+                    },
+                ],
             },
             {
                 key: '1-2',
