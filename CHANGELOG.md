@@ -1,4 +1,8 @@
 
+## 1.0.3
+* Bugfix:
+  - fix: `props.fixedMode` in multi-header.
+
 ## 1.0.2
 * Bugfix:
   - fix: `autoResize` now recalculates fixed columns state (active/shadow) on container resize, not only virtual scroll.

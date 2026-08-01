@@ -11,3 +11,8 @@
 :::
 
 <demo vue="basic/fixed-mode/FixedMode.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedMode.vue"></demo>
+
+## 多階層ヘッダー <Badge type="tip" text="^1.0.3" />
+多階層ヘッダーのシナリオでも、子列に宣言された `width` は同様に有効になります。親列の幅はすべての子列の幅の合計になります。
+
+<demo vue="basic/fixed-mode/FixedModeMultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedModeMultiHeader.vue"></demo>

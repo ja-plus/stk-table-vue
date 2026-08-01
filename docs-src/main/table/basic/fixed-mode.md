@@ -12,6 +12,11 @@
 
 <demo vue="basic/fixed-mode/FixedMode.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedMode.vue"></demo>
 
+## 多级表头 <Badge type="tip" text="^1.0.3" />
+多级表头场景下，子列声明的 `width` 同样会生效。父列宽度为其所有子列宽度之和。
+
+<demo vue="basic/fixed-mode/FixedModeMultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/fixed-mode/FixedModeMultiHeader.vue"></demo>
+
 
 
 
