@@ -1,9 +1,0 @@
-schema_version: 1
-module_path: docs_site
-title: StkTableVue 多语言文档站点
-scope:
-    - docs-src/
-source_files: []
-depends_on: []
-related_to:
-    - path: demos

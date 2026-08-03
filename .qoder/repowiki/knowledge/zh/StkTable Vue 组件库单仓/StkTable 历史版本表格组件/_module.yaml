@@ -1,9 +1,0 @@
-schema_version: 1
-module_path: history
-title: StkTable 历史版本表格组件
-scope:
-    - history/
-source_files: []
-depends_on: []
-related_to:
-    - path: core_library
