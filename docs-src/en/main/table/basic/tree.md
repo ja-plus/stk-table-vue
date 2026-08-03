@@ -56,7 +56,18 @@ The `Toggle China` button below uses [setTreeExpand()](/en/main/api/expose.html#
 
 ### Manually Expand Nodes
 
-[setTreeExpand](/en/main/api/expose.html#settreeexpand)
+Use the [setTreeExpand](/en/main/api/expose.html#settreeexpand) method to manually control the expand/collapse of nodes.
+
+The example below demonstrates different parameter usages:
+- `Toggle All`: Toggle the expand/collapse state of all root nodes (pass the entire `dataSource` array, `{ all: true }`)
+- `Collapse All`: Collapse all root nodes (pass the entire `dataSource` array, `{ all: true, expand: false }`)
+- `Toggle Asia`: Toggle the expand/collapse state of the Asia node
+- `Expand All Asia`: Expand all descendants of Asia (`{ expand: true, all: true }`)
+- `Collapse All Asia`: Collapse all descendants of Asia (`{ expand: false, all: true }`)
+- `Expand Asia to Level 2`: Expand Asia to level 2 (`{ expand: true, level: 2 }`)
+- `Collapse Asia to Level 1`: Collapse Asia to level 1 (`{ expand: false, level: 1 }`)
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## Virtual List

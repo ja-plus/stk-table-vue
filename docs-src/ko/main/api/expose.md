@@ -212,11 +212,16 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
 트리 구조 확장 행 설정
 ```ts
 /**
- * @param row rowKey or row or row
- * @param option.expand 전달 안 하면 현재 상태 반전
+ * @param row rowKey / row / 또는 그들의 배열
+ * @param option.expand 확장 여부, 미지정 시 현재 상태에 따라 토글
+ * @param option.all 모든 하위 노드를 확장할지 여부, 기본값 false
+ * @param option.level n번째 레벨까지 확장
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
 ```
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
 
 ### getSelectedArea
 선택된 셀 정보 가져오기

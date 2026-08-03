@@ -12,13 +12,26 @@
     </p>
 </p>
 
-Stk Table Vue(Sticky Table) is a high-performance virtual list component based on Vue.
+Stk Table Vue(Sticky Table) is a high-performance virtual scrolling table component based on Vue 3 / Vue 2.7.
 
-Smooth performance with tens of thousands of rows
+Smooth performance with tens of thousands of rows. Designed for real-time data display with built-in highlighting and animation effects.
 
-Used for real-time data display, with data highlighting and dynamic effects.
-
-Support Vue3 and Vue2.7
+- Vue 3 & Vue 2.7 support
+- Virtual scrolling (X & Y axis)
+- CSS `sticky` based fixed columns & fixed header
+- Multi-level header with horizontal virtual scroll
+- Tree table & expandable rows
+- Area selection with keyboard navigation
+- Cell highlighting with Animation API
+- Built-in custom cells: Filter, Editable, Checkbox, Number, Change
+- Column resize, header drag, row drag
+- Merge cells (virtual mode supported)
+- Custom scrollbar
+- Sortable & filterable
+- Theme support (dark / light)
+- CSS variables for easy customization
+- Based on native `<table>` element
+- Zero third-party runtime dependencies
 
 
 ## Documentation
@@ -172,5 +185,5 @@ const dataSource = [
 Compare performance with other vue table [vue-table-compare](https://github.com/ja-plus/vue-table-compare)
 
 
-## Other
-* `$*$`
+## License
+[MIT](LICENSE)

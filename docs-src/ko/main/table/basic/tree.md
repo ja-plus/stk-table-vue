@@ -57,7 +57,18 @@ export const getDataSource = () => [
 
 ### 수동으로 노드 전개
 
-[setTreeExpand](/ko/main/api/expose.html#settreeexpand)
+[setTreeExpand](/ko/main/api/expose.html#settreeexpand) 메서드를 사용하여 노드의 전개/축소를 수동으로 제어합니다.
+
+아래 예시에서는 다양한 매개변수 사용법을 보여줍니다:
+- `Toggle All`: 모든 루트 노드의 전개/축소 상태를 전환합니다 (`dataSource` 배열 전체를 전달, `{ all: true }`)
+- `Collapse All`: 모든 루트 노드를 축소합니다 (`dataSource` 배열 전체를 전달, `{ all: true, expand: false }`)
+- `Toggle Asia`: Asia 노드의 전개/축소 상태를 전환합니다
+- `Expand All Asia`: Asia의 모든 하위 노드를 전개합니다 (`{ expand: true, all: true }`)
+- `Collapse All Asia`: Asia의 모든 하위 노드를 축소합니다 (`{ expand: false, all: true }`)
+- `Expand Asia to Level 2`: Asia를 2번째 레벨까지 전개합니다 (`{ expand: true, level: 2 }`)
+- `Collapse Asia to Level 1`: Asia를 1번째 레벨까지 축소합니다 (`{ expand: false, level: 1 }`)
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## 가상 리스트

@@ -213,11 +213,16 @@ auto-row-heightに保存されたすべての高さをクリア
 ツリー構造展開行を設定
 ```ts
 /**
- * @param row rowKeyまたはrowまたはrow
- * @param option.expand 提供されていない場合、現在の状态に基づいて切り替えられます
+ * @param row rowKey / row / またはその配列
+ * @param option.expand 展開するかどうか、未指定の場合は現在の状態に基づいて切り替え
+ * @param option.all 全ての子ノードを展開するかどうか、デフォルト false
+ * @param option.level n 番目のレベルまで展開
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
 ```
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
 
 ### getSelectedArea
 選択されたセル情報を取得

@@ -56,7 +56,18 @@ export const getDataSource = () => [
 
 ### 手動でノードを展開
 
-[setTreeExpand](/ja/main/api/expose.html#settreeexpand)
+[setTreeExpand](/ja/main/api/expose.html#settreeexpand) メソッドを使用して、ノードの展開/折りたたみを手動で制御します。
+
+以下の例は、さまざまなパラメータの使用方法を示しています：
+- `Toggle All`：すべてのルートノードの展開/折りたたみ状態を切り替えます（`dataSource` 配列全体を渡す、`{ all: true }`）
+- `Collapse All`：すべてのルートノードを折りたたみます（`dataSource` 配列全体を渡す、`{ all: true, expand: false }`）
+- `Toggle Asia`：Asia ノードの展開/折りたたみ状態を切り替えます
+- `Expand All Asia`：Asia のすべての子孫ノードを展開します（`{ expand: true, all: true }`）
+- `Collapse All Asia`：Asia のすべての子孫ノードを折りたたみます（`{ expand: false, all: true }`）
+- `Expand Asia to Level 2`：Asia をレベル 2 まで展開します（`{ expand: true, level: 2 }`）
+- `Collapse Asia to Level 1`：Asia をレベル 1 まで折りたたみます（`{ expand: false, level: 1 }`）
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## 仮想リスト

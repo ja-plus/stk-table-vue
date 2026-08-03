@@ -213,11 +213,16 @@ Clear all heights saved by auto-row-height
 Set tree structure expanded row
 ```ts
 /**
- * @param row rowKey or row or row
- * @param option.expand If not provided, it will toggle based on current state
+ * @param row rowKey / row / or an array of them
+ * @param option.expand Whether to expand, if not provided, it will toggle based on current state
+ * @param option.all Whether to expand all descendants, default false
+ * @param option.level Expand to the nth level
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
 ```
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
 
 ### getSelectedArea
 Get selected cells information

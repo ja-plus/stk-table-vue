@@ -212,11 +212,16 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
 设置树状结构展开行
 ```ts
 /**
- * @param row rowKey or row or row
- * @param option.expand 不传则根据当前状态取反
+ * @param row rowKey / row / 或它们的数组
+ * @param option.expand 是否展开，不传则根据当前状态取反
+ * @param option.all 是否展开所有子节点，默认 false
+ * @param option.level 展开到第几层
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
 ```
+
+- `option.all` <Badge type="tip" text="^1.0.4" />
+- `option.level` <Badge type="tip" text="^1.0.4" />
 
 ### getSelectedArea
 获取选中的单元格信息

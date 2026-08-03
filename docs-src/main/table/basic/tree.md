@@ -57,7 +57,19 @@ export const getDataSource = () => [
 
 ### 手动展开节点
 
-[setTreeExpand](/main/api/expose.html#settreeexpand)
+通过 [setTreeExpand](/main/api/expose.html#settreeexpand) 方法手动控制节点的展开/折叠。
+
+下方示例展示了不同参数的用法：
+
+- `Toggle All`：切换所有根节点的展开/折叠状态（传入整个 `dataSource` 数组，`{ all: true }`）
+- `Collapse All`：折叠所有根节点（传入整个 `dataSource` 数组，`{ all: true, expand: false }`）
+- `Toggle Asia`：切换 Asia 节点的展开/折叠状态
+- `Expand All Asia`：展开 Asia 的所有后代节点（`{ expand: true, all: true }`）
+- `Collapse All Asia`：折叠 Asia 的所有后代节点（`{ expand: false, all: true }`）
+- `Expand Asia to Level 2`：展开 Asia 到第 2 层（`{ expand: true, level: 2 }`）
+- `Collapse Asia to Level 1`：折叠 Asia 到第 1 层（`{ expand: false, level: 1 }`）
+
+<demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
 
 ## 虚拟列表
