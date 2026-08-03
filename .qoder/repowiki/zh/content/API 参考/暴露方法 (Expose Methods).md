@@ -3,9 +3,17 @@
 <cite>
 **本文引用的文件**   
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
+- [useTree.ts](file://src/StkTable/useTree.ts)
 - [index.ts](file://src/StkTable/index.ts)
 - [expose.md](file://docs-src/main/api/expose.md)
 </cite>
+
+## 更新摘要
+**变更内容**   
+- 更新了 `setTreeExpand` 方法的详细文档，包含完整的参数说明、返回值类型和使用示例
+- 增强了程序化树控制功能的相关说明
+- 补充了树形数据展开/收起的编程控制方法
+- 完善了错误处理和性能考虑建议
 
 ## 目录
 1. [简介](#简介)
@@ -20,11 +28,12 @@
 10. [附录](#附录)
 
 ## 简介
-本章节为 StkTable 组件的“暴露方法”API 文档，聚焦通过 ref 或模板引用可调用的一切公共方法。内容覆盖数据操作方法（刷新、排序、筛选）、滚动控制方法、状态查询方法等，并提供参数说明、返回值类型、使用示例与注意事项，帮助开发者以编程方式控制表格行为与状态。
+本章节为 StkTable 组件的"暴露方法"API 文档，聚焦通过 ref 或模板引用可调用的一切公共方法。内容覆盖数据操作方法（刷新、排序、筛选）、滚动控制方法、状态查询方法等，并提供参数说明、返回值类型、使用示例与注意事项，帮助开发者以编程方式控制表格行为与状态。
 
 ## 项目结构
 StkTable 的核心实现位于 src/StkTable 目录，其中：
 - StkTable.vue 是主组件，负责组合各项能力并对外暴露方法。
+- useTree.ts 处理树形数据的展开/收起逻辑。
 - index.ts 作为导出入口，通常用于统一导出组件与类型。
 - docs-src/main/api/expose.md 为官方文档中关于暴露方法的说明页面，可作为参考。
 
@@ -47,11 +56,11 @@ A --> O["useColResize.ts<br/>列宽调整"]
 A --> P["const.ts / types / utils<br/>常量/类型/工具"]
 ```
 
-图表来源
+**图表来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 - [index.ts](file://src/StkTable/index.ts)
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 - [index.ts](file://src/StkTable/index.ts)
 
@@ -62,9 +71,9 @@ StkTable 通过组合多个 hooks 与内部模块提供完整表格能力，并�
 - 状态查询：获取当前页数据、选中项、排序状态、筛选条件、可见列、滚动信息等
 - 渲染控制：强制重排/重绘、更新列配置、切换主题/尺寸等
 
-注意：具体方法名与签名以实际源码为准。由于本次未直接读取源码文件，以下内容为通用指导，建议结合源码中的 expose 定义进行核对。
+注意：具体方法名与签名以实际源码为准。以下内容为通用指导，建议结合源码中的 expose 定义进行核对。
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ## 架构总览
@@ -78,7 +87,7 @@ class StkTable {
 +filter(columnId, value)
 +select(rowKey, checked)
 +expand(rowKey, expanded)
-+treeToggle(rowKey)
++setTreeExpand(row, option)
 +updateMergeCells(data)
 +scrollTo(indexOrPosition)
 +getSelectedRows()
@@ -105,6 +114,7 @@ class MergeCells {
 }
 class Tree {
 +toggleNode(key)
++setTreeExpand(row, option)
 +getExpandedKeys()
 }
 class RowExpand {
@@ -118,7 +128,7 @@ StkTable --> Tree : "使用"
 StkTable --> RowExpand : "使用"
 ```
 
-图表来源
+**图表来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ## 详细组件分析
@@ -165,13 +175,30 @@ StkTable --> RowExpand : "使用"
   - 性能：展开过多行会影响渲染，建议按需加载。
   - 错误处理：校验 rowKey 合法性。
 
-- 树节点 treeToggle(rowKey)
-  - 作用：切换树节点的展开/收起。
-  - 参数：rowKey（节点键）。
-  - 返回：void。
-  - 调用时机：用户点击树节点或 API 控制。
-  - 性能：深层树展开较多时注意虚拟滚动。
-  - 错误处理：校验节点存在。
+- **树节点 setTreeExpand(row, option)**
+  - 作用：程序化控制树节点的展开/收起状态。
+  - 参数：
+    - row: `(UniqKey | DT) | (UniqKey | DT)[]` - 支持单个行键、行对象或它们的数组
+    - option?: `{ expand?: boolean }` - 可选配置对象
+      - expand: boolean - 指定展开(true)或收起(false)，不传则根据当前状态取反
+  - 返回：void
+  - 调用时机：需要通过代码控制树节点展开状态时
+  - 性能：支持批量操作，对大量节点操作时注意性能优化
+  - 错误处理：当指定的 rowKey 不存在时会输出警告信息
+  - 使用示例：
+    ```typescript
+    // 展开单个节点
+    tableRef.value.setTreeExpand('node-key', { expand: true })
+    
+    // 收起单个节点
+    tableRef.value.setTreeExpand(nodeObject, { expand: false })
+    
+    // 批量操作多个节点
+    tableRef.value.setTreeExpand(['key1', 'key2', 'key3'], { expand: true })
+    
+    // 切换状态（不传 expand 参数）
+    tableRef.value.setTreeExpand('node-key')
+    ```
 
 - 合并单元格 updateMergeCells(data)
   - 作用：更新合并规则。
@@ -181,8 +208,9 @@ StkTable --> RowExpand : "使用"
   - 性能：合并计算复杂度较高，应减少频繁更新。
   - 错误处理：校验规则合法性。
 
-章节来源
-- [StkTable.vue](file://src/StkTable/StkTable.vue)
+**章节来源**
+- [StkTable.vue:1831-1836](file://src/StkTable/StkTable.vue#L1831-L1836)
+- [useTree.ts:67-69](file://src/StkTable/useTree.ts#L67-L69)
 
 ### 滚动控制方法
 - 滚动到 scrollTo(indexOrPosition)
@@ -201,7 +229,7 @@ StkTable --> RowExpand : "使用"
   - 性能：只读属性，无副作用。
   - 错误处理：组件未挂载时返回空对象。
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ### 状态查询方法
@@ -237,7 +265,7 @@ StkTable --> RowExpand : "使用"
   - 性能：轻量读取。
   - 错误处理：无列配置时返回空数组。
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ### 渲染控制方法
@@ -273,7 +301,7 @@ StkTable --> RowExpand : "使用"
   - 性能：影响行高与间距，避免频繁切换。
   - 错误处理：非法尺寸忽略或回退。
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ## 依赖分析
@@ -298,10 +326,10 @@ M --> AR["useAutoResize.ts"]
 M --> CR["useColResize.ts"]
 ```
 
-图表来源
+**图表来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
-章节来源
+**章节来源**
 - [StkTable.vue](file://src/StkTable/StkTable.vue)
 
 ## 性能考虑
@@ -310,6 +338,7 @@ M --> CR["useColResize.ts"]
 - 合并单元格计算复杂，避免频繁更新与过大数据集。
 - 滚动控制在动画或过渡期间暂停调用，防止抖动。
 - 批量更新列配置与主题切换时合并多次调用，降低重排次数。
+- **树节点操作优化**：`setTreeExpand` 支持批量操作，对于大量节点的操作建议使用数组形式传入，减少重复计算。
 
 ## 故障排查指南
 - 方法调用无效
@@ -324,10 +353,15 @@ M --> CR["useColResize.ts"]
 - 选中状态不同步
   - 检查 rowKey 的唯一性与稳定性。
   - 避免在渲染过程中修改选中状态。
+- **树节点操作问题**
+  - 确保传入的 rowKey 存在于当前数据源中。
+  - 检查 treeConfig 配置是否正确启用树形功能。
+  - 验证行对象的 children 属性结构是否符合预期。
 
 ## 结论
-通过 ref 或模板引用调用 StkTable 的暴露方法，可以实现对表格行为的精细控制。建议在理解各方法职责与性能影响的基础上，合理组织调用时机与参数，以获得稳定且高效的交互体验。
+通过 ref 或模板引用调用 StkTable 的暴露方法，可以实现对表格行为的精细控制。建议在理解各方法职责与性能影响的基础上，合理组织调用时机与参数，以获得稳定且高效的交互体验。特别是 `setTreeExpand` 方法提供了强大的程序化树控制能力，支持灵活的展开/收起操作。
 
 ## 附录
 - 官方文档参考：[expose.md](file://docs-src/main/api/expose.md)
 - 组件导出入口：[index.ts](file://src/StkTable/index.ts)
+- 树形功能实现：[useTree.ts](file://src/StkTable/useTree.ts)

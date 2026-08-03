@@ -1,4 +1,4 @@
-import { ShallowRef, nextTick } from 'vue';
+import { ShallowRef } from 'vue';
 import { EXPANDED_ROW_KEY_PREFIX } from './const';
 import { PrivateRowDT, RowKeyGen, StkTableColumn, UniqKey } from './types';
 type DT = PrivateRowDT;
@@ -24,7 +24,7 @@ export function useRowExpand(emits: any, dataSourceCopy: ShallowRef<DT[]>, rowKe
      */
     function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean | null, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
         let rowKey: UniqKey;
-        if (typeof rowKeyOrRow === 'string') {
+        if (typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number') {
             rowKey = rowKeyOrRow;
         } else {
             rowKey = rowKeyGen(rowKeyOrRow);
