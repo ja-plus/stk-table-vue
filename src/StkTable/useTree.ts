@@ -27,7 +27,7 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
         for (let i = 0; i < rowKeyOrRowArr.length; i++) {
             const rowKeyOrRow = rowKeyOrRowArr[i];
             let rowKey: UniqKey;
-            if (typeof rowKeyOrRow === 'string') {
+            if (typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number') {
                 rowKey = rowKeyOrRow;
             } else {
                 rowKey = rowKeyGen(rowKeyOrRow);

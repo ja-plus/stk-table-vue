@@ -32,6 +32,12 @@ export const getDataSource = () => [
 
 ## 기본값 전개 노드
 
+::: warning 
+`props.treeConfig`를 통해 설정된 전개는 테이블이 처음 렌더링될 때만 적용됩니다.
+
+비동기 데이터의 경우 [expose.setTreeExpand()](/ko/main/api/expose.html#settreeexpand) 함수를 사용하여 제어하세요.
+:::
+
 ### 모두 전개
 `treeConfig.defaultExpandAll = true`
 
@@ -45,7 +51,13 @@ export const getDataSource = () => [
 ### 지정 노드 전개
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
+아래 `Toggle China` 버튼은 [setTreeExpand()](/ko/main/api/expose.html#settreeexpand)를 사용하여 `China` 행의 전개/축소를 제어합니다.
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### 수동으로 노드 전개
+
+[setTreeExpand](/ko/main/api/expose.html#settreeexpand)
 
 
 ## 가상 리스트

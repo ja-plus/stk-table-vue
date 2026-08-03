@@ -31,6 +31,12 @@ export const getDataSource = () => [
 
 ## デフォルト展開ノード
 
+::: warning 
+`props.treeConfig` で設定された展開は、テーブルが最初にレンダリングされるときのみ有効です。
+
+非同期データの場合は、[expose.setTreeExpand()](/ja/main/api/expose.html#settreeexpand) 関数を使用して制御してください。
+:::
+
 ### すべて展開
 `treeConfig.defaultExpandAll = true`
 
@@ -44,7 +50,13 @@ export const getDataSource = () => [
 ### 特定ノードを展開
 `treeConfig.defaultExpandedKeys = ['アジア', '中国', '浙江']`
 
+下の `Toggle China` ボタンは、[setTreeExpand()](/ja/main/api/expose.html#settreeexpand) を使用して `China` 行の展開/折りたたみを制御します。
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### 手動でノードを展開
+
+[setTreeExpand](/ja/main/api/expose.html#settreeexpand)
 
 
 ## 仮想リスト

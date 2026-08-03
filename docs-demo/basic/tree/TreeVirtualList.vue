@@ -9,9 +9,30 @@ const { t } = useI18n();
 
 const columns: StkTableColumn<any>[] = [
     { type: 'tree-node', title: t('area'), dataIndex: 'area', width: 200 },
-    { title: t('gdp'), dataIndex: 'gdp', align: 'right', width: 100, sorter: true, sortType: 'number' },
-    { title: t('population'), dataIndex: 'population', align: 'right', width: 100, sorter: true, sortType: 'number' },
-    { title: t('gdpPerCapita'), dataIndex: 'gdpPerCapita', align: 'right', width: 200, sorter: true, sortType: 'number' },
+    {
+        title: t('gdp'),
+        dataIndex: 'gdp',
+        align: 'right',
+        width: 100,
+        sorter: true,
+        sortType: 'number',
+    },
+    {
+        title: t('population'),
+        dataIndex: 'population',
+        align: 'right',
+        width: 100,
+        sorter: true,
+        sortType: 'number',
+    },
+    {
+        title: t('gdpPerCapita'),
+        dataIndex: 'gdpPerCapita',
+        align: 'right',
+        width: 200,
+        sorter: true,
+        sortType: 'number',
+    },
 ];
 const dataSource = shallowRef(getDataSource2());
 
@@ -40,6 +61,9 @@ function updateArea0_0() {
     stkTableRef.value?.setHighlightDimRow([area1_0.area]);
 }
 
+function toggleArea0() {
+    stkTableRef.value?.setTreeExpand(['Area0']);
+}
 function updateArea0_1Cell() {
     const dataSourceTemp = dataSource.value.slice();
     const area0_1 = dataSourceTemp[0].children[1];
@@ -53,6 +77,7 @@ function updateArea0_1Cell() {
     <button class="btn" @click="updateArea0">update Area0</button>
     <button class="btn" @click="updateArea0_0">update Area0-0</button>
     <button class="btn" @click="updateArea0_1Cell">update Area0-1 gdp</button>
+    <button class="btn" @click="toggleArea0">Toggle Area0</button>
     <StkTable
         ref="stkTableRef"
         style="height: 200px"

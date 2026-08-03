@@ -1,4 +1,8 @@
 
+## 1.0.4
+* Bugfix:
+  - fix: `setTreeExpand` & `setRowExpand` not working when `rowKey` is a `number`, now correctly handles both `string` and `number` types.
+
 ## 1.0.3
 * Bugfix:
   - fix: `props.fixedMode` in multi-header.
