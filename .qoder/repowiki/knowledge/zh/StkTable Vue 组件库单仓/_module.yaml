@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: StkTable Vue 表格组件库单仓
+title: StkTable Vue 组件库单仓
 scope:
     - README.md
     - TODO.md

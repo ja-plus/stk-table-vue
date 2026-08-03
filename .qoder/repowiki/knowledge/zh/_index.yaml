@@ -3,11 +3,11 @@ schema_version: 1
 locale: zh-CN
 branch: master
 nodes_managed: true
-exported_at: "2026-08-01T14:27:30Z"
+exported_at: "2026-08-03T11:10:43Z"
 modules:
     "":
-        dir_name: StkTable Vue 表格组件库单仓
-        title: StkTable Vue 表格组件库单仓
+        dir_name: StkTable Vue 组件库单仓
+        title: StkTable Vue 组件库单仓
         scope:
             - README.md
             - TODO.md
@@ -65,8 +65,8 @@ modules:
             - path: history
             - path: tests
     demos:
-        dir_name: StkTable 交互式文档与示例站点
-        title: StkTable 交互式文档与示例站点
+        dir_name: StkTable 文档演示站点
+        title: StkTable 文档演示站点
         scope:
             - docs-demo/
         source_files: []
@@ -76,8 +76,8 @@ modules:
             - path: core_library
             - path: docs_site
     docs_site:
-        dir_name: StkTableVue 多语言文档站点（VitePress）
-        title: StkTableVue 多语言文档站点（VitePress）
+        dir_name: StkTableVue 多语言文档站点
+        title: StkTableVue 多语言文档站点
         scope:
             - docs-src/
         source_files: []
