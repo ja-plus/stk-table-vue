@@ -31,6 +31,12 @@ export const getDataSource = () => [
 
 ## Default Expanded Nodes
 
+::: warning 
+Expansions configured via `props.treeConfig` only take effect when the table is first rendered.
+
+For async data, please use the [expose.setTreeExpand()](/en/main/api/expose.html#settreeexpand) function to control.
+:::
+
 ### Expand All
 `treeConfig.defaultExpandAll = true`
 
@@ -44,7 +50,13 @@ export const getDataSource = () => [
 ### Expand Specific Nodes
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
+The `Toggle China` button below uses [setTreeExpand()](/en/main/api/expose.html#settreeexpand) to control the expand/collapse of the `China` row.
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### Manually Expand Nodes
+
+[setTreeExpand](/en/main/api/expose.html#settreeexpand)
 
 
 ## Virtual List

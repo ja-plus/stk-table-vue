@@ -32,6 +32,12 @@ export const getDataSource = () => [
 
 ## 默认展开节点
 
+::: warning 
+通过 `props.treeConfig` 配置的展开只对第一次渲染表格的时候生效。
+
+异步数据请使用 [expose.setTreeExpand()](/main/api/expose.html#settreeexpand) 函数控制。
+:::
+
 ### 全部展开
 `treeConfig.defaultExpandAll = true`
 
@@ -45,7 +51,13 @@ export const getDataSource = () => [
 ### 展开指定节点
 `treeConfig.defaultExpandedKeys = ['Asia', 'China', 'Zhejiang']`
 
+下方 `Toggle China` 按钮使用 [setTreeExpand()](/main/api/expose.html#settreeexpand) 来控制 `China` 行的展开关闭。
+
 <demo vue="basic/tree/TreeDefaultExpandKeys.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeDefaultExpandKeys.vue"></demo>
+
+### 手动展开节点
+
+[setTreeExpand](/main/api/expose.html#settreeexpand)
 
 
 ## 虚拟列表
