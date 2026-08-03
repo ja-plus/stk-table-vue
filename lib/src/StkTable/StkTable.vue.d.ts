@@ -381,6 +381,8 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         children?: (PrivateRowDT & /*elided*/ any)[];
     }))[], option?: {
         expand?: boolean;
+        all?: boolean;
+        level?: number;
     }) => void;
     /**
      * 获取拖选选中的单元格信息
