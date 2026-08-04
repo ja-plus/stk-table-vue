@@ -68,6 +68,8 @@ export const getDataSource = () => [
 - `Collapse All Asia`：折叠 Asia 的所有后代节点（`{ expand: false, all: true }`）
 - `Expand Asia to Level 2`：展开 Asia 到第 2 层（`{ expand: true, level: 2 }`）
 - `Collapse Asia to Level 1`：折叠 Asia 到第 1 层（`{ expand: false, level: 1 }`）
+- `Expand Parents of Zhejiang`：自动展开 Zhejiang 的所有父节点（Asia → China），Zhejiang 自身因有子节点 Hangzhou 也会一并展开（`{ expand: true, parents: true }`）
+- `Collapse Parents of Zhejiang`：收起 Zhejiang 的所有父节点（`{ expand: false, parents: true }`）
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 

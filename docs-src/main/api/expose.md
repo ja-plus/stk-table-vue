@@ -216,12 +216,17 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
  * @param option.expand 是否展开，不传则根据当前状态取反
  * @param option.all 是否展开所有子节点，默认 false
  * @param option.level 展开到第几层
+ * @param option.parents 将传入 row 视为目标子节点，展开/收起其所有父节点；展开时若目标行自身有子节点则一并展开，仅支持单个 rowKey / row
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+`option.parents` 为 `true` 时，传入深层子节点的 rowKey 即可自动展开其所有父节点使该行可见，若该行自身有子节点也会一并展开（如定位行场景）。若表格当前存在筛选将某个祖先过滤掉，则展开会在该处中断。
+:::
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.0.5" />
 
 ### getSelectedArea
 获取选中的单元格信息

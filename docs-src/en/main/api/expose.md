@@ -217,12 +217,17 @@ Set tree structure expanded row
  * @param option.expand Whether to expand, if not provided, it will toggle based on current state
  * @param option.all Whether to expand all descendants, default false
  * @param option.level Expand to the nth level
+ * @param option.parents Treat the given row as a target child, expand/collapse all its ancestors. The target row itself is also expanded when expanding if it has children. Only a single rowKey / row is supported
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+When `option.parents` is `true`, passing the rowKey of a deep child node will automatically expand all its ancestors to make the row visible, and the row itself is also expanded if it has children (e.g. locating a row). If a filter currently excludes one of the ancestors, the expansion will stop there.
+:::
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.0.5" />
 
 ### getSelectedArea
 Get selected cells information

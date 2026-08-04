@@ -66,6 +66,8 @@ The example below demonstrates different parameter usages:
 - `Collapse All Asia`: Collapse all descendants of Asia (`{ expand: false, all: true }`)
 - `Expand Asia to Level 2`: Expand Asia to level 2 (`{ expand: true, level: 2 }`)
 - `Collapse Asia to Level 1`: Collapse Asia to level 1 (`{ expand: false, level: 1 }`)
+- `Expand Parents of Zhejiang`: Automatically expand all ancestors (Asia → China) of Zhejiang. Zhejiang itself is also expanded since it has a child node Hangzhou (`{ parents: true }`)
+- `Collapse Parents of Zhejiang`: Collapse all ancestors of Zhejiang (`{ parents: true, expand: false }`)
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 

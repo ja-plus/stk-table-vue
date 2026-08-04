@@ -66,6 +66,8 @@ export const getDataSource = () => [
 - `Collapse All Asia`：Asia のすべての子孫ノードを折りたたみます（`{ expand: false, all: true }`）
 - `Expand Asia to Level 2`：Asia をレベル 2 まで展開します（`{ expand: true, level: 2 }`）
 - `Collapse Asia to Level 1`：Asia をレベル 1 まで折りたたみます（`{ expand: false, level: 1 }`）
+- `Expand Parents of Zhejiang`：Zhejiang のすべての親ノード（Asia → China）を自動的に展開します。Zhejiang 自身は子ノード Hangzhou を持つため、合わせて展開されます（`{ parents: true }`）
+- `Collapse Parents of Zhejiang`：Zhejiang のすべての親ノードを折りたたみます（`{ parents: true, expand: false }`）
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 

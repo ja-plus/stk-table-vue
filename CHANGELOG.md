@@ -1,4 +1,8 @@
 
+## 1.0.5
+* Feature
+  - feat: `setTreeExpand` add `parents` option, pass a child node's rowKey to expand/collapse all its ancestors (the target node itself is also expanded when expanding if it has children), making the target row visible/hidden (e.g. locating a row).
+
 ## 1.0.4
 * Feature
   - feat: `setTreeExpand` add `all` option, expand/collapse all descendants of a node.

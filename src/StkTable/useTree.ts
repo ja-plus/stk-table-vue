@@ -23,6 +23,12 @@ type SetTreeExpandOption = {
      * @version 1.0.4
      */
     level?: number;
+    /**
+     * 将传入 row 视为目标子节点，展开/收起其所有父节点；展开时若目标行自身有子节点则一并展开
+     * en: Treat the given row as a target child, expand/collapse all its ancestors. The target row itself is also expanded when expanding if it has children
+     * @version 1.0.5
+     */
+    parents?: boolean;
 };
 
 export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, emits: any, onDataSourceChange: () => void) {
@@ -42,6 +48,7 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
      * @param option.expand expand or collapse
      * @param option.all expand all descendants
      * @param option.level expand to the nth level
+     * @param option.parents expand/collapse all ancestors of the given row, the target row itself is also expanded if it has children
      * @param option.silent if set true, not emit `toggle-tree-expand`, default:false
      */
     function privateSetTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option: SetTreeExpandOption & { col?: any; isClick: boolean }) {
@@ -102,7 +109,52 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
     }
 
     function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) {
+        if (option?.parents) {
+            const rowKeyOrRow = Array.isArray(row) ? row[0] : row;
+            const rowKey = typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number' ? rowKeyOrRow : rowKeyGen(rowKeyOrRow);
+            const path = findPath(props.dataSource || [], rowKey);
+            if (!path) {
+                console.warn('treeExpandRow failed.rowKey:', rowKey);
+                return;
+            }
+            const expanded = option?.expand !== false;
+            const target = path[path.length - 1];
+            const keys = path.slice(0, -1).map(it => rowKeyGen(it));
+            // 展开时若目标行自身有子节点则一并展开；收起时仅处理父节点，目标行自身状态不变
+            // en: when expanding, also expand the target row itself if it has children; when collapsing, only ancestors are handled
+            if (expanded && target.children?.length) keys.push(rowKeyGen(target));
+            if (!keys.length) return;
+            // 展开时从根到目标逐级展开；收起时逆序处理，避免先折叠根节点导致其余节点从可见数据中移除而查找失败
+            // en: expand from root to target; collapse in reverse order, otherwise collapsing the root first removes the rest nodes from visible data
+            if (!expanded) keys.reverse();
+            privateSetTreeExpand(keys, { expand: expanded, isClick: false });
+            return;
+        }
         privateSetTreeExpand(row, { ...option, isClick: false });
+    }
+
+    /**
+     * 在原始树形数据中查找目标节点，返回从根节点到目标节点的完整路径（含目标节点自身）
+     * en: Find target node in raw tree data, return the full path from root to target node (target included)
+     * @returns full path including target, or null if target not found
+     */
+    function findPath(data: DT[], targetKey: UniqKey): DT[] | null {
+        const path: DT[] = [];
+        function dfs(list: DT[]): boolean {
+            for (const item of list) {
+                if (rowKeyGen(item) === targetKey) {
+                    path.push(item);
+                    return true;
+                }
+                if (item.children) {
+                    path.push(item);
+                    if (dfs(item.children)) return true;
+                    path.pop();
+                }
+            }
+            return false;
+        }
+        return dfs(data) ? path : null;
     }
 
     function setNodeExpanded(row: DT, expanded: boolean, level?: number, parent?: DT) {

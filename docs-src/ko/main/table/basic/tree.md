@@ -67,6 +67,8 @@ export const getDataSource = () => [
 - `Collapse All Asia`: Asia의 모든 하위 노드를 축소합니다 (`{ expand: false, all: true }`)
 - `Expand Asia to Level 2`: Asia를 2번째 레벨까지 전개합니다 (`{ expand: true, level: 2 }`)
 - `Collapse Asia to Level 1`: Asia를 1번째 레벨까지 축소합니다 (`{ expand: false, level: 1 }`)
+- `Expand Parents of Zhejiang`: Zhejiang의 모든 부모 노드(Asia → China)를 자동으로 확장합니다. Zhejiang 자체는 자식 노드 Hangzhou를 가지므로 함께 확장됩니다 (`{ parents: true }`)
+- `Collapse Parents of Zhejiang`: Zhejiang의 모든 부모 노드를 축소합니다 (`{ parents: true, expand: false }`)
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 

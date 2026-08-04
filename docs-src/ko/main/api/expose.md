@@ -216,12 +216,17 @@ function setAutoHeight(rowKey: UniqKey, height?: number | null)
  * @param option.expand 확장 여부, 미지정 시 현재 상태에 따라 토글
  * @param option.all 모든 하위 노드를 확장할지 여부, 기본값 false
  * @param option.level n번째 레벨까지 확장
+ * @param option.parents 전달된 row를 대상 자식 노드로 간주하여 그 모든 부모 노드를 확장/축소한다. 확장 시 대상 행 자체가 자식 노드를 가지면 함께 확장된다. 단일 rowKey / row만 지원
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+`option.parents`가 `true`이면 깊은 자식 노드의 rowKey를 전달하는 것만으로 그 모든 부모 노드가 자동으로 확장되어 해당 행이 표시되며, 해당 행 자체가 자식 노드를 가지면 함께 확장됩니다(행 위치 지정 등). 필터에 의해 어떤 부모 노드가 제외된 경우, 확장은 거기서 중단됩니다.
+:::
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.0.5" />
 
 ### getSelectedArea
 선택된 셀 정보 가져오기

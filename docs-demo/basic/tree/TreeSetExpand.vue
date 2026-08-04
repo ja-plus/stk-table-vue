@@ -27,6 +27,12 @@ function handleExpandToLevel2() {
 function handleCollapseToLevel1() {
     tableRef.value?.setTreeExpand(['Asia'], { expand: false, level: 1 });
 }
+function handleExpandZhejiangParents() {
+    tableRef.value?.setTreeExpand(['Zhejiang'], { expand: true, parents: true });
+}
+function handleCollapseZhejiangParents() {
+    tableRef.value?.setTreeExpand(['Zhejiang'], { expand: false, parents: true });
+}
 </script>
 <template>
     <div style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px">
@@ -37,6 +43,10 @@ function handleCollapseToLevel1() {
         <button class="btn" @click="handleCollapseAllAsia">Collapse All Asia</button>
         <button class="btn" @click="handleExpandToLevel2">Expand Asia to Level 2</button>
         <button class="btn" @click="handleCollapseToLevel1">Collapse Asia to Level 1</button>
+        <button class="btn" @click="handleExpandZhejiangParents">Expand Parents of Zhejiang</button>
+        <button class="btn" @click="handleCollapseZhejiangParents">
+            Collapse Parents of Zhejiang
+        </button>
     </div>
     <StkTable
         ref="tableRef"

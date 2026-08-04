@@ -217,12 +217,17 @@ auto-row-heightに保存されたすべての高さをクリア
  * @param option.expand 展開するかどうか、未指定の場合は現在の状態に基づいて切り替え
  * @param option.all 全ての子ノードを展開するかどうか、デフォルト false
  * @param option.level n 番目のレベルまで展開
+ * @param option.parents 渡された row を対象の子ノードとみなし、そのすべての親ノードを展開/折りたたみする。展開時に対象行自身が子ノードを持つ場合は合わせて展開される。単一の rowKey / row のみサポート
  */
-function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number })
+function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean; all?: boolean; level?: number; parents?: boolean })
 ```
+::: tip
+`option.parents` が `true` の場合、深い階層の子ノードの rowKey を渡すだけで、そのすべての親ノードが自動的に展開され、対象行が表示されます。対象行自身が子ノードを持つ場合は合わせて展開されます（行への位置移動など）。フィルタによってある親ノードが除外されている場合、展開はそこで中断されます。
+:::
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
+- `option.parents` <Badge type="tip" text="^1.0.5" />
 
 ### getSelectedArea
 選択されたセル情報を取得
