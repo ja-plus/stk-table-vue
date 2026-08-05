@@ -86,6 +86,13 @@ function useColWidthCache<T extends { fixed?: StkTableColumn<PrivateRowDT>['fixe
 const VUE2_SCROLL_TIMEOUT_MS = 200;
 
 /**
+ * 合并单元格可视范围修正的最大迭代次数。
+ * 合法（不重叠）的合并配置最多 2 轮即收敛（1 轮扩展 + 1 轮验证）；
+ * 此上限仅针对重叠合并区域等病态配置兜底，防止修正循环过长。
+ */
+const MAX_MERGE_RANGE_EXPAND_ITERATIONS = 8;
+
+/**
  * virtual scroll
  * @returns
  */
@@ -255,8 +262,8 @@ export function useVirtualScroll(
         if (mergeRange) {
             const { leftReach, rightEnd } = mergeRange;
             const len = leftReach.length;
-            // 扩展后的范围可能引入新的合并单元格，迭代直到稳定
-            for (let k = 0; k < 8; k++) {
+            // 扩展后的范围可能引入新的合并单元格，迭代直到稳定（合法配置最多 2 轮，上限兜底病态配置）
+            for (let k = 0; k < MAX_MERGE_RANGE_EXPAND_ITERATIONS; k++) {
                 let newStart = startIndex;
                 let newEnd = endIndex;
                 const loopEnd = Math.min(endIndex, len);

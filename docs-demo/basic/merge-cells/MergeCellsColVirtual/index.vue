@@ -15,7 +15,14 @@ const columns: StkTableColumn<any>[] = [
         },
     },
     { title: t('age'), dataIndex: 'age', width: 80 },
-    { title: t('gender'), dataIndex: 'gender', width: 80 },
+    {
+        title: t('gender'),
+        dataIndex: 'gender',
+        width: 80,
+        mergeCells: ({ row }) => {
+            return row.colspan ? { colspan: row.colspan } : void 0;
+        },
+    },
     // 30 个列，撑出横向滚动
     ...new Array(30)
         .fill(0)
@@ -32,6 +39,7 @@ const dataSource = new Array(20).fill(0).map((_, i) => ({
 <template>
     <StkTable
         style="max-height: 300px"
+        virtual
         virtual-x
         cell-hover
         row-key="id"
