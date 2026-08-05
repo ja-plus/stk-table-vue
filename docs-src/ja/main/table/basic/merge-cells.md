@@ -21,6 +21,13 @@ function mergeCells(data: {
 ## 列マージ
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
+### 列マージ仮想リスト <Badge type="tip" text="^1.0.5" />
+<demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+
+::: tip
+横方向仮想リストモードでは、マージセル（colspan）のアンカー列が可視エリア外にスクロールアウトした場合、可視列範囲を自動的に拡張し、マージセルの完全なレンダリングを保証します。
+:::
+
 ## 行マージ
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
@@ -49,9 +56,7 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 仮想リストモードでは、すべてのマージセル（mergeCells関数）が走査されるため、パフォーマンスにある程度の影響を与える可能性があります。
 :::
 ::: warning 注意
-rowspanが非常に大きい場合（例如：1000行）、マージセルはそれでもカバーするすべての行をレンダリングしますTherefore, rowspan is not recommended to be very large.
-
-この機能はまだ **横方向仮想リスト** をサポートしていません。
+rowspanが非常に大きい場合（例如：1000行）、マージセルはそれでもカバーするすべての行をレンダリングしますTherefore, rowspan is not recommended to be very large. 
 :::
 
 #### 不規則マージ

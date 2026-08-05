@@ -872,6 +872,7 @@ const [
     setAutoHeight,
     clearAllAutoHeight,
     clearColWidthCache,
+    updateVirtualXColMerge,
     virtualX_tableHeaders,
     expandRowColspan,
     theadVirtualX,
@@ -1002,6 +1003,7 @@ watch(
     () => {
         handleDealColumns();
         updateMaxRowSpan();
+        updateVirtualXColMerge();
         // nextTick: initVirtualScrollX need get container width。
         nextTick(() => {
             initVirtualScrollX();
@@ -1023,6 +1025,7 @@ watch(
     () => props.virtualX,
     () => {
         handleDealColumns();
+        updateVirtualXColMerge();
         // initVirtualScrollX 需要获取容器滚动宽度等。必须等渲染完成后再调用。因此使用nextTick。
         nextTick(() => {
             initVirtualScrollX();
@@ -1046,6 +1049,7 @@ watch(
 handleDealColumns();
 initDataSource();
 updateMaxRowSpan();
+updateVirtualXColMerge();
 
 onMounted(() => {
     initVirtualScroll();
@@ -1128,6 +1132,7 @@ function updateDataSource(val: DT[]) {
     }
     initDataSource(val);
     updateMaxRowSpan();
+    updateVirtualXColMerge();
 
     // #47
     if (!val.length) {

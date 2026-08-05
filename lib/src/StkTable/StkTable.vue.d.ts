@@ -383,6 +383,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         expand?: boolean;
         all?: boolean;
         level?: number;
+        parents?: boolean;
     }) => void;
     /**
      * 获取拖选选中的单元格信息

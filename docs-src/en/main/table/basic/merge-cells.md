@@ -20,6 +20,13 @@ Return `{ colspan: number, rowspan: number }` to indicate the number of cells to
 ## Column Merging
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
+### Column Merging in Virtual List <Badge type="tip" text="^1.0.5" />
+<demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+
+::: tip
+In horizontal virtual list mode, when the anchor column of a merged cell (colspan) scrolls out of the viewport, the visible column range is automatically expanded so that the merged cell is fully rendered.
+:::
+
 ## Row Merging
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
@@ -49,8 +56,6 @@ In virtual list mode, all merged cells (mergeCells function) will be traversed, 
 :::
 ::: warning Note
 If the rowspan is very large (e.g. 1000 rows), the merged cell will still render all the rows it covers. Therefore, rowspan is not recommended to be very large.
-
-This feature does not support **horizontal virtual list** yet.
 :::
 
 #### Irregular Merging

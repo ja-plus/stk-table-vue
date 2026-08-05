@@ -20,6 +20,13 @@ function mergeCells(data: {
 ## 列合并
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
+### 列合并虚拟列表 <Badge type="tip" text="^1.0.5" />
+<demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+
+::: tip
+横向虚拟列表模式下，合并单元格（colspan）的锚点列滚出可视区域时，会自动扩展可视列范围，保证合并单元格完整渲染。
+:::
+
 ## 行合并
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
@@ -49,8 +56,6 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 :::
 ::: warning 注意
 如果rowspan特别大（比如1000行），则依然会渲染这个合并单元格覆盖的所有行。因此 rowspan 不建议很大。
-
-此功能暂不支持 **横向虚拟列表**。
 :::
 
 #### 不规律合并

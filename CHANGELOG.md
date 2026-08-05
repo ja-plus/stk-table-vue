@@ -2,6 +2,7 @@
 ## 1.0.5
 * Feature
   - feat: `setTreeExpand` add `parents` option, pass a child node's rowKey to expand/collapse all its ancestors (the target node itself is also expanded when expanding if it has children), making the target row visible/hidden (e.g. locating a row).
+  - feat: `mergeCells` colspan now works with `virtualX` (horizontal virtual list). When the anchor column of a merged cell scrolls out of the viewport, the visible column range is automatically expanded so that the merged cell is fully rendered (also works with multi-level headers and vertical virtual list).
 
 ## 1.0.4
 * Feature
