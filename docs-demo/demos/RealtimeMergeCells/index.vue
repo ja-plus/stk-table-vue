@@ -16,16 +16,20 @@ type Row = { id: number; name: string; age: number; city: string; score: number 
 
 const columns: StkTableColumn<Row>[] = [
     { title: 'ID', dataIndex: 'id', width: 60, mergeCells },
-    { title: '', dataIndex: 'name', width: 120, mergeCells },
-    { title: '', dataIndex: 'age', width: 100, mergeCells },
-    { title: '', dataIndex: 'city', width: 120, mergeCells },
-    { title: '', dataIndex: 'score', width: 100, mergeCells },
+    { title: t('name'), dataIndex: 'name', width: 120, mergeCells },
+    { title: t('age'), dataIndex: 'age', width: 100, mergeCells },
+    { title: t('city'), dataIndex: 'city', width: 120, mergeCells },
+    { title: t('score'), dataIndex: 'score', width: 100, mergeCells },
+    ...new Array(20).fill(0).map(
+        (_, i) =>
+            ({
+                title: `Column ${i}`,
+                dataIndex: `column-${i}` as any,
+                width: 100,
+                mergeCells,
+            }) as StkTableColumn<Row>,
+    ),
 ];
-// set title via i18n
-columns[1].title = t('name');
-columns[2].title = t('age');
-columns[3].title = t('city');
-columns[4].title = t('score');
 
 const dataSource = ref<Row[]>(
     Array.from({ length: 50 }, (_, i) => ({
@@ -180,6 +184,7 @@ const mergedCount = computed(() => mergeMap.size);
             style="height: 400px"
             row-key="id"
             virtual
+            virtual-x
             :columns="columns"
             :data-source="dataSource"
             :area-selection="{ enabled: true }"

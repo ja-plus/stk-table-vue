@@ -227,7 +227,7 @@ When `option.parents` is `true`, passing the rowKey of a deep child node will au
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
-- `option.parents` <Badge type="tip" text="^1.0.5" />
+- `option.parents` <Badge type="tip" text="^1.1.0" />
 
 ### getSelectedArea
 Get selected cells information

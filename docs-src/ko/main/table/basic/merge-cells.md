@@ -20,6 +20,13 @@ function mergeCells(data: {
 ## 열 병합
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
+### 열 병합 가상 리스트 <Badge type="tip" text="^1.1.0" />
+<demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+
+::: tip
+가로 방향 가상 리스트 모드에서 병합 셀(colspan)의 앵커 열이 보이는 영역 밖으로 스크롤되면, 보이는 열 범위를 자동으로 확장하여 병합 셀이 완전히 렌더링되도록 보장합니다.
+:::
+
 ## 행 병합
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>
 
@@ -49,9 +56,14 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 :::
 ::: warning 주의
 rowspan가 특히 크면(예: 1000행) 여전히 이 병합 셀이 덮는 모든 행을 렌더링합니다. 따라서 rowspan가 너무 크지 않는 것을 권장합니다.
-
-이 기능은 현재 **가로 방향 가상 리스트**를 지원하지 않습니다.
 :::
 
 #### 불규칙 병합
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+## 행·열 병합 <Badge type="tip" text="^1.1.0" />
+행 병합(`rowspan`)과 열 병합(`colspan`)은 동시에 사용할 수 있으며, `virtual`과 `virtual-x` 가상 스크롤과도 호환됩니다.
+<demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
+
+## 실시간 셀 병합
+사용자 상호작용(영역 선택 + 우클릭 메뉴)으로 셀을 동적으로 병합/분할하려면 [실시간 셀 병합](/ko/demos/realtime-merge-cells)을 참고하세요.

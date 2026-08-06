@@ -86,6 +86,13 @@ function useColWidthCache<T extends { fixed?: StkTableColumn<PrivateRowDT>['fixe
 const VUE2_SCROLL_TIMEOUT_MS = 200;
 
 /**
+ * 合并单元格可视范围修正的最大迭代次数。
+ * 合法（不重叠）的合并配置最多 2 轮即收敛（1 轮扩展 + 1 轮验证）；
+ * 此上限仅针对重叠合并区域等病态配置兜底，防止修正循环过长。
+ */
+const MAX_MERGE_RANGE_EXPAND_ITERATIONS = 8;
+
+/**
  * virtual scroll
  * @returns
  */
@@ -171,23 +178,137 @@ export function useVirtualScroll(
     const isMultiLevelHeader = computed(() => tableHeaders.value.length > 1);
 
     /**
+     * 需要参与可视范围修正的合并列集合。仅依赖 tableHeaderLast（columns 变化），
+     * 缓存后避免在数据更新、纵向滚动换窗等高频调用 buildColMergeRange 时重复收集。
+     * 无需修正时返回 null。
+     */
+    const virtualX_mergeColsInfo = computed(() => {
+        const headers = tableHeaderLast.value;
+        const headerLength = headers.length;
+        // 右固定列始终渲染在可视区末尾，不参与主可视区合并修正
+        let maxColIndex = headerLength;
+        const mergeCols: { col: PrivateStkTableColumn<PrivateRowDT>; index: number }[] = [];
+        for (let i = 0; i < headerLength; i++) {
+            const col = headers[i];
+            if (maxColIndex === headerLength && col.fixed === 'right') maxColIndex = i;
+            // 固定列始终渲染，不需要修正可视范围
+            if (col.mergeCells && !col.fixed) mergeCols.push({ col, index: i });
+        }
+        if (!mergeCols.length || !maxColIndex) return null;
+        return { headerLength, maxColIndex, mergeCols };
+    });
+
+    /**
+     * 收集行集合中的列合并（colspan）区间
+     * @param rows 行数据
+     * @param rowIndexBase mergeCells 入参 rowIndex 的起始值
+     */
+    function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
+        const mergeColsInfo = virtualX_mergeColsInfo.value;
+        if (!mergeColsInfo) return null;
+        const { headerLength, maxColIndex, mergeCols } = mergeColsInfo;
+
+        const leftReach = new Int32Array(headerLength).fill(-1);
+        const rightEnd = new Int32Array(headerLength);
+        for (let r = 0; r < rows.length; r++) {
+            const row = rows[r];
+            for (let m = 0; m < mergeCols.length; m++) {
+                const { col, index } = mergeCols[m];
+                if (index >= maxColIndex) break;
+                const { colspan = 1 } = col.mergeCells!({ row, col, rowIndex: rowIndexBase + r, colIndex: index }) || {};
+                if (colspan > 1) {
+                    const end = Math.min(index + colspan, maxColIndex);
+                    for (let c = index; c < end; c++) {
+                        if (leftReach[c] === -1 || index < leftReach[c]) leftReach[c] = index;
+                        if (end > rightEnd[c]) rightEnd[c] = end;
+                    }
+                }
+            }
+        }
+        return { leftReach, rightEnd };
+    }
+
+    /**
+     * 全量数据的列合并覆盖信息（懒计算）。
+     * 仅在 Y 虚拟滚动未开启（可视行即全量数据）且被消费时才遍历全量数据；
+     * 依赖 dataSourceCopy 与 columns，数据/列变化时自动重算。
+     * virtual + virtualX 模式下消费方走可视行分支，本 computed 直接返回 null，
+     * 避免 O(rows × mergeCols) 的全量 mergeCells 调用浪费。
+     */
+    const virtualX_colMergeRangeFull = computed(() => {
+        if (!virtualX_on.value || virtual_on.value) return null;
+        return buildColMergeRange(dataSourceCopy.value, 0);
+    });
+
+    /**
+     * virtual-x 列合并覆盖信息。
+     * Y 虚拟滚动开启时仅计算可视行（rowIndex 与渲染时 mergeCells 入参保持一致）；
+     * 否则使用全量数据懒计算缓存（此时可视行即全量数据）。
+     */
+    const virtualX_colMergeRange = computed(() => {
+        if (!virtualX_on.value) return null;
+        if (virtual_on.value) {
+            return buildColMergeRange(virtual_dataSourcePart.value, 0);
+        }
+        return virtualX_colMergeRangeFull.value;
+    });
+
+    /**
+     * 经列合并修正后的可视列范围。
+     * 合并单元格的锚点列可能已滚出可视区（但合并区域仍覆盖可视列），
+     * 也可能合并区域超出可视区右边界，需要将范围扩展到能完整渲染合并单元格。
+     */
+    const virtualX_colRange = computed(() => {
+        let { startIndex, endIndex } = virtualScrollX.value;
+        const mergeRange = virtualX_colMergeRange.value;
+        if (mergeRange) {
+            const { leftReach, rightEnd } = mergeRange;
+            const len = leftReach.length;
+            // 扩展后的范围可能引入新的合并单元格，迭代直到稳定（合法配置最多 2 轮，上限兜底病态配置）
+            for (let k = 0; k < MAX_MERGE_RANGE_EXPAND_ITERATIONS; k++) {
+                let newStart = startIndex;
+                let newEnd = endIndex;
+                const loopEnd = Math.min(endIndex, len);
+                for (let i = Math.max(0, startIndex); i < loopEnd; i++) {
+                    const reach = leftReach[i];
+                    if (reach > -1 && reach < newStart) newStart = reach;
+                    if (rightEnd[i] > newEnd) newEnd = rightEnd[i];
+                }
+                if (newStart === startIndex && newEnd === endIndex) break;
+                startIndex = newStart;
+                endIndex = newEnd;
+            }
+        }
+        return { startIndex, endIndex };
+    });
+
+    /**
      * 多级表头横向虚拟滚动参数：以顶层列组为单位计算开始/结束位置。
      * - 只有整个顶层组完全滚出视口时才移除（避免 colSpan 变化导致抖动）。
      * - 单级表头时退化为与 tbody 相同的参数。
+     * - 范围基于列合并修正后的 virtualX_colRange，保证合并单元格完整渲染。
      */
     const theadVirtualX = computed(() => {
-        if (!virtualX_on.value || !isMultiLevelHeader.value) {
-            return {
-                startIndex: virtualScrollX.value.startIndex,
-                endIndex: virtualScrollX.value.endIndex,
-                offsetLeft: virtualScrollX.value.offsetLeft,
-            };
+        if (!virtualX_on.value) {
+            const { startIndex, endIndex, offsetLeft } = virtualScrollX.value;
+            return { startIndex, endIndex, offsetLeft };
         }
-        const { scrollLeft, containerWidth } = virtualScrollX.value;
+
+        const { startIndex, endIndex } = virtualX_colRange.value;
+
+        if (!isMultiLevelHeader.value) {
+            // 单级表头：offsetLeft 为起始列之前所有非固定列宽度之和
+            const { nonFixedCols } = getColWidthCache(tableHeaderLast.value);
+            const found = binarySearch(nonFixedCols, mid => (nonFixedCols[mid].index < startIndex ? -1 : 1));
+            const offsetLeft = found > 0 ? nonFixedCols[found - 1].cumWidth : 0;
+            return { startIndex, endIndex, offsetLeft };
+        }
+
+        // 多级表头：保留与修正后可视范围有交集的顶层列组
         const topLevelCols = tableHeaders.value[0];
         const totalLeafCount = tableHeaderLast.value.length;
 
-        let theadStartIndex = 0;
+        let theadStartIndex = totalLeafCount;
         let theadEndIndex = totalLeafCount;
         let theadOffsetLeft = 0;
         let cumLeft = 0;
@@ -197,25 +318,23 @@ export function useVirtualScroll(
             const col = topLevelCols[i];
             if (col.fixed === 'left' || col.fixed === 'right') continue;
 
+            const groupStart = col.__LF_S__ ?? 0;
+            const groupEnd = col.__LF_E__ ?? groupStart + 1;
             const groupWidth = col.__W__ || getCalculatedColWidth(col);
-            const groupRight = cumLeft + groupWidth;
 
-            if (!foundStart && groupRight > scrollLeft) {
+            if (!foundStart && groupEnd > startIndex) {
                 foundStart = true;
-                theadStartIndex = col.__LF_S__ ?? 0;
+                theadStartIndex = groupStart;
                 theadOffsetLeft = cumLeft;
             }
-            cumLeft = groupRight;
-
-            theadEndIndex = col.__LF_E__ ?? totalLeafCount;
-            if (foundStart && groupRight >= scrollLeft + containerWidth) {
-                // find end
-                break;
+            if (foundStart) {
+                if (groupStart >= endIndex) break;
+                theadEndIndex = groupEnd;
             }
+            cumLeft += groupWidth;
         }
 
         if (!foundStart) {
-            theadStartIndex = totalLeafCount;
             theadOffsetLeft = cumLeft;
         }
 
@@ -225,7 +344,8 @@ export function useVirtualScroll(
     const virtualX_columnPart = computed(() => {
         const tableHeaderLastValue = tableHeaderLast.value;
         if (virtualX_on.value) {
-            const { startIndex, endIndex } = virtualScrollX.value;
+            // 使用列合并修正后的可视范围
+            const { startIndex, endIndex } = virtualX_colRange.value;
             // 将索引钳制到列数组范围内，防止列数减少时越界
             const maxIndex = tableHeaderLastValue.length;
             const validEndIndex = Math.min(endIndex, maxIndex);
@@ -324,8 +444,8 @@ export function useVirtualScroll(
 
     const virtualX_offsetRight = computed(() => {
         if (!virtualX_on.value) return 0;
-        // 多级表头使用 theadEndIndex，单级使用 body endIndex
-        const endIndex = isMultiLevelHeader.value ? theadVirtualX.value.endIndex : virtualScrollX.value.endIndex;
+        // 多级表头使用 theadEndIndex，单级使用列合并修正后的 endIndex
+        const endIndex = isMultiLevelHeader.value ? theadVirtualX.value.endIndex : virtualX_colRange.value.endIndex;
         let width = 0;
         const tableHeaderLastValue = tableHeaderLast.value;
         for (let i = endIndex; i < tableHeaderLastValue.length; i++) {

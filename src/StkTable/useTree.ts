@@ -26,7 +26,7 @@ type SetTreeExpandOption = {
     /**
      * 将传入 row 视为目标子节点，展开/收起其所有父节点；展开时若目标行自身有子节点则一并展开
      * en: Treat the given row as a target child, expand/collapse all its ancestors. The target row itself is also expanded when expanding if it has children
-     * @version 1.0.5
+     * @version 1.1.0
      */
     parents?: boolean;
 };
