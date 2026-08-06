@@ -20,7 +20,7 @@ function mergeCells(data: {
 ## 列合并
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
-### 列合并虚拟列表 <Badge type="tip" text="^1.0.5" />
+### 列合并虚拟列表 <Badge type="tip" text="^1.1.0" />
 <demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
 
 ::: tip
@@ -61,7 +61,7 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 #### 不规律合并
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
 
-## 行列合并 <Badge type="tip" text="^1.0.5" />
+## 行列合并 <Badge type="tip" text="^1.1.0" />
 行合并（`rowspan`）与列合并（`colspan`）可以同时使用，并且兼容 `virtual` 与 `virtual-x` 虚拟滚动。
 <demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
 

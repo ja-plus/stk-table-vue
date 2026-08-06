@@ -20,7 +20,7 @@ Return `{ colspan: number, rowspan: number }` to indicate the number of cells to
 ## Column Merging
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
-### Column Merging in Virtual List <Badge type="tip" text="^1.0.5" />
+### Column Merging in Virtual List <Badge type="tip" text="^1.1.0" />
 <demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
 
 ::: tip
@@ -61,7 +61,7 @@ If the rowspan is very large (e.g. 1000 rows), the merged cell will still render
 #### Irregular Merging
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
 
-## Row and Column Merging <Badge type="tip" text="^1.0.5" />
+## Row and Column Merging <Badge type="tip" text="^1.1.0" />
 Row merging (`rowspan`) and column merging (`colspan`) can be used together, and are compatible with `virtual` and `virtual-x` virtual scrolling.
 <demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
 

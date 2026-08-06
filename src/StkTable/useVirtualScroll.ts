@@ -178,19 +178,11 @@ export function useVirtualScroll(
     const isMultiLevelHeader = computed(() => tableHeaders.value.length > 1);
 
     /**
-     * 列合并覆盖信息（全量数据预计算缓存，virtual-x 下用于修正可视列范围）
-     * - colMergeLeftReach[i]: 覆盖第 i 列的合并单元格锚点列索引，-1 表示无覆盖
-     * - colMergeRightEnd[i]: 覆盖第 i 列的合并单元格结束列索引（不含）
+     * 需要参与可视范围修正的合并列集合。仅依赖 tableHeaderLast（columns 变化），
+     * 缓存后避免在数据更新、纵向滚动换窗等高频调用 buildColMergeRange 时重复收集。
+     * 无需修正时返回 null。
      */
-    let colMergeLeftReach: Int32Array | null = null;
-    let colMergeRightEnd: Int32Array | null = null;
-
-    /**
-     * 收集行集合中的列合并（colspan）区间
-     * @param rows 行数据
-     * @param rowIndexBase mergeCells 入参 rowIndex 的起始值
-     */
-    function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
+    const virtualX_mergeColsInfo = computed(() => {
         const headers = tableHeaderLast.value;
         const headerLength = headers.length;
         // 右固定列始终渲染在可视区末尾，不参与主可视区合并修正
@@ -203,6 +195,18 @@ export function useVirtualScroll(
             if (col.mergeCells && !col.fixed) mergeCols.push({ col, index: i });
         }
         if (!mergeCols.length || !maxColIndex) return null;
+        return { headerLength, maxColIndex, mergeCols };
+    });
+
+    /**
+     * 收集行集合中的列合并（colspan）区间
+     * @param rows 行数据
+     * @param rowIndexBase mergeCells 入参 rowIndex 的起始值
+     */
+    function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
+        const mergeColsInfo = virtualX_mergeColsInfo.value;
+        if (!mergeColsInfo) return null;
+        const { headerLength, maxColIndex, mergeCols } = mergeColsInfo;
 
         const leftReach = new Int32Array(headerLength).fill(-1);
         const rightEnd = new Int32Array(headerLength);
@@ -224,30 +228,29 @@ export function useVirtualScroll(
         return { leftReach, rightEnd };
     }
 
-    /** 数据/列变化时重新计算全量列合并覆盖信息（仅 virtualX 开启时需要） */
-    function updateVirtualXColMerge() {
-        if (!props.virtualX) {
-            colMergeLeftReach = null;
-            colMergeRightEnd = null;
-            return;
-        }
-        const result = buildColMergeRange(dataSourceCopy.value, 0);
-        colMergeLeftReach = result?.leftReach ?? null;
-        colMergeRightEnd = result?.rightEnd ?? null;
-    }
+    /**
+     * 全量数据的列合并覆盖信息（懒计算）。
+     * 仅在 Y 虚拟滚动未开启（可视行即全量数据）且被消费时才遍历全量数据；
+     * 依赖 dataSourceCopy 与 columns，数据/列变化时自动重算。
+     * virtual + virtualX 模式下消费方走可视行分支，本 computed 直接返回 null，
+     * 避免 O(rows × mergeCols) 的全量 mergeCells 调用浪费。
+     */
+    const virtualX_colMergeRangeFull = computed(() => {
+        if (!virtualX_on.value || virtual_on.value) return null;
+        return buildColMergeRange(dataSourceCopy.value, 0);
+    });
 
     /**
      * virtual-x 列合并覆盖信息。
      * Y 虚拟滚动开启时仅计算可视行（rowIndex 与渲染时 mergeCells 入参保持一致）；
-     * 否则使用全量数据预计算缓存（此时可视行即全量数据）。
+     * 否则使用全量数据懒计算缓存（此时可视行即全量数据）。
      */
     const virtualX_colMergeRange = computed(() => {
         if (!virtualX_on.value) return null;
         if (virtual_on.value) {
             return buildColMergeRange(virtual_dataSourcePart.value, 0);
         }
-        if (!colMergeLeftReach || !colMergeRightEnd) return null;
-        return { leftReach: colMergeLeftReach, rightEnd: colMergeRightEnd };
+        return virtualX_colMergeRangeFull.value;
     });
 
     /**
@@ -802,7 +805,6 @@ export function useVirtualScroll(
         setAutoHeight,
         clearAllAutoHeight,
         clearColWidthCache,
-        updateVirtualXColMerge,
         virtualX_tableHeaders,
         expandRowColspan,
         theadVirtualX,
