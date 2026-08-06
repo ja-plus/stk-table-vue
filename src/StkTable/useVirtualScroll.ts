@@ -256,8 +256,7 @@ export function useVirtualScroll(
      * 也可能合并区域超出可视区右边界，需要将范围扩展到能完整渲染合并单元格。
      */
     const virtualX_colRange = computed(() => {
-        let startIndex = virtualScrollX.value.startIndex;
-        let endIndex = virtualScrollX.value.endIndex;
+        let { startIndex, endIndex } = virtualScrollX.value;
         const mergeRange = virtualX_colMergeRange.value;
         if (mergeRange) {
             const { leftReach, rightEnd } = mergeRange;
@@ -288,11 +287,8 @@ export function useVirtualScroll(
      */
     const theadVirtualX = computed(() => {
         if (!virtualX_on.value) {
-            return {
-                startIndex: virtualScrollX.value.startIndex,
-                endIndex: virtualScrollX.value.endIndex,
-                offsetLeft: virtualScrollX.value.offsetLeft,
-            };
+            const { startIndex, endIndex, offsetLeft } = virtualScrollX.value;
+            return { startIndex, endIndex, offsetLeft };
         }
 
         const { startIndex, endIndex } = virtualX_colRange.value;

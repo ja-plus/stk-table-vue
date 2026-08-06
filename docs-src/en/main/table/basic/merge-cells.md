@@ -60,3 +60,10 @@ If the rowspan is very large (e.g. 1000 rows), the merged cell will still render
 
 #### Irregular Merging
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+## Row and Column Merging <Badge type="tip" text="^1.0.5" />
+Row merging (`rowspan`) and column merging (`colspan`) can be used together, and are compatible with `virtual` and `virtual-x` virtual scrolling.
+<demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
+
+## Realtime Merge Cells
+If you need to dynamically merge/split cells through user interaction (area selection + context menu), refer to [Realtime Merge Cells](/en/demos/realtime-merge-cells).

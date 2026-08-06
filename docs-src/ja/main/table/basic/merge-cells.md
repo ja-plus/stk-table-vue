@@ -61,3 +61,10 @@ rowspanが非常に大きい場合（例如：1000行）、マージセルはそ
 
 #### 不規則マージ
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+## 行・列マージ <Badge type="tip" text="^1.0.5" />
+行マージ（`rowspan`）と列マージ（`colspan`）は同時に使用でき、`virtual` と `virtual-x` の仮想スクロールにも対応しています。
+<demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
+
+## リアルタイムセル結合
+ユーザー操作（範囲選択 + 右クリックメニュー）でセルを動的に結合/分割したい場合は、[リアルタイムセル結合](/ja/demos/realtime-merge-cells)をご参照ください。

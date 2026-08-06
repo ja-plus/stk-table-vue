@@ -61,3 +61,10 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
 #### 不规律合并
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
 
+## 行列合并 <Badge type="tip" text="^1.0.5" />
+行合并（`rowspan`）与列合并（`colspan`）可以同时使用，并且兼容 `virtual` 与 `virtual-x` 虚拟滚动。
+<demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
+
+## 实时合并单元格
+如需通过用户交互（区域选取 + 右键菜单）动态合并/拆分单元格，请参考[实时合并单元格](/demos/realtime-merge-cells)。
+
