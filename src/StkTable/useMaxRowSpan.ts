@@ -24,7 +24,11 @@ export function useMaxRowSpan(
         const data = dataSourceCopy.value;
         const columns = tableHeaderLast.value;
 
-        const columnsWithMerge = columns.filter(col => col.mergeCells);
+        // 收集带 mergeCells 的列及其真实列索引（保证 colIndex 入参与其他调用处一致）
+        const columnsWithMerge: { col: PrivateStkTableColumn<any>; index: number }[] = [];
+        for (let i = 0; i < columns.length; i++) {
+            if (columns[i].mergeCells) columnsWithMerge.push({ col: columns[i], index: i });
+        }
         if (!columnsWithMerge.length) return;
 
         const dataLength = data.length;
@@ -36,8 +40,8 @@ export function useMaxRowSpan(
             let currentMax = maxRowSpan.get(rowKey) || 0;
 
             for (let colIndex = 0; colIndex < mergeColumnsLength; colIndex++) {
-                const col = columnsWithMerge[colIndex];
-                const { rowspan = 1 } = col.mergeCells!({ row, col, rowIndex, colIndex }) || {};
+                const { col, index } = columnsWithMerge[colIndex];
+                const { rowspan = 1 } = col.mergeCells!({ row, col, rowIndex, colIndex: index }) || {};
 
                 if (rowspan > 1 && rowspan > currentMax) {
                     currentMax = rowspan;

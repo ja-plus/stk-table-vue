@@ -183,8 +183,12 @@
                         </td>
                         <template v-else>
                             <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <template v-for="(col, _colIdx) in virtualX_columnPart" :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : colKeyGen(col)">
+                            <template
+                                v-for="(col, _colIdx) in getBodyColumns(row, rowIndex)"
+                                :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : col.__VT_PH__ ? `ph-${_colIdx}` : colKeyGen(col)"
+                            >
                                 <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
+                                <td v-else-if="col.__VT_PH__" class="vt-above-viewport-ph" :colspan="col.__VT_PH__"></td>
                                 <td
                                     v-else-if="!shouldHideCell(row, col)"
                                     v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
@@ -318,6 +322,7 @@ import { useGetFixedColPosition } from './useGetFixedColPosition';
 import { useHighlight } from './useHighlight';
 import { useKeyboardArrowScroll } from './useKeyboardArrowScroll';
 import { useMaxRowSpan } from './useMaxRowSpan';
+import { createMergeCellsCache } from './mergeCellsCache';
 import { useMergeCells } from './useMergeCells';
 import { useRowExpand } from './useRowExpand';
 import { useScrollbar, type ScrollbarOptions } from './useScrollbar';
@@ -855,6 +860,13 @@ const [onTrDragStart, onTrDragEnter, onTrDragOver, onTrDrop, onTrDragEnd] = useT
 
 const [maxRowSpan, updateMaxRowSpan] = useMaxRowSpan(props, tableHeaderLast, rowKeyGen, dataSourceCopy);
 
+/**
+ * mergeCells 结果共享缓存：useVirtualScroll（可视列范围修正）与 useMergeCells
+ * （hidden map 构建 / 视口上方占位 / 渲染）共用，同一单元格只调用一次用户回调，
+ * 且可跨滚动帧复用（数据/列变化时才清空）。
+ */
+const mergeCellsCache = createMergeCellsCache();
+
 const [
     virtualScroll,
     virtualScrollX,
@@ -887,6 +899,7 @@ const [
     maxRowSpan,
     scrollbarOptions,
     isExperimentalScrollY,
+    mergeCellsCache,
 );
 
 /** requestAnimationFrame throttled version of updateVirtualScrollY for smoother wheel scrolling */
@@ -902,12 +915,24 @@ const [scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrol
     isExperimentalScrollY,
 );
 
-const [hiddenCellMap, mergeCellsWrapper, hoverMergedCells, updateHoverMergedCells, activeMergedCells, updateActiveMergedCells] = useMergeCells(
+const [
+    hiddenCellMap,
+    mergeCellsWrapper,
+    hoverMergedCells,
+    updateHoverMergedCells,
+    activeMergedCells,
+    updateActiveMergedCells,
+    aboveViewportColumnMap,
+] = useMergeCells(
     rowActiveProp,
     tableHeaderLast,
     rowKeyGen,
     colKeyGen,
     virtual_dataSourcePart,
+    virtualScroll,
+    virtualX_columnPart,
+    dataSourceCopy,
+    mergeCellsCache,
 );
 
 const getFixedColPosition = useGetFixedColPosition(tableHeadersForCalc, colKeyGen);
@@ -1221,6 +1246,25 @@ function getAbsoluteRowIndex(rowIndex: number) {
 function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColumn<PrivateRowDT>): boolean | undefined {
     if (!hiddenCellMap.value || !row) return;
     return hiddenCellMap.value[rowKeyGen(row)]?.has(colKeyGen.value(col));
+}
+
+/**
+ * Get the column list for a body row.
+ * - Above-viewport rows: returns a modified list with placeholder entries (__VT_PH__) to reduce DOM nodes.
+ * - Below-viewport rows: returns [] (tr already has height via CSS, no td needed).
+ */
+function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
+    if (!row || !virtual_on.value) return virtualX_columnPart.value;
+    const { startIndex, viewportStartIndex, viewportEndIndex } = virtualScroll.value;
+    const aboveCount = viewportStartIndex - startIndex;
+    if (aboveCount > 0 && rowIndex < aboveCount) {
+        return (aboveViewportColumnMap.value.get(rowKeyGen(row)) || virtualX_columnPart.value) as PrivateStkTableColumn<PrivateRowDT>[];
+    }
+    // Below-viewport rows: no td needed
+    if (startIndex + rowIndex > viewportEndIndex) {
+        return [];
+    }
+    return virtualX_columnPart.value;
 }
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {

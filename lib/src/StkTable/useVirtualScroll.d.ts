@@ -21,6 +21,8 @@ export type VirtualScrollStore = {
     /** 总滚动高度 */
     scrollHeight: number;
     translateY: number;
+    /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
+    viewportStartIndex: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -51,6 +53,7 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
     scrollTop: number;
     scrollHeight: number;
     translateY: number;
+    viewportStartIndex: number;
 }, VirtualScrollStore | {
     containerHeight: number;
     pageSize: number;
@@ -61,6 +64,7 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
     scrollTop: number;
     scrollHeight: number;
     translateY: number;
+    viewportStartIndex: number;
 }>, Ref<{
     containerWidth: number;
     scrollWidth: number;

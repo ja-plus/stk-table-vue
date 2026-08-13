@@ -51,19 +51,25 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
     rowspan: { continent: 12, country: 6, }
 }
 ```
-::: tip 性能
+::: tip mergeCells性能
 虚拟列表模式下，会遍历**所有**的合并单元格(mergeCells函数)，对性能有一定影响。
-:::
-::: warning 注意
-如果rowspan特别大（比如1000行），则依然会渲染这个合并单元格覆盖的所有行。因此 rowspan 不建议很大。
 :::
 
 #### 不规律合并
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
 
+#### 超长 rowspan
+当 `rowspan` 非常大（如 1000~2000 行）时，虚拟列表仍会渲染该合并单元格覆盖的所有行，可能导致性能下降。以下示例展示了这种极端场景。
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue"></demo>
+
+::: tip 性能优化
+如果有很大的rowspan或colspan, 可以考虑用 **普通单元格** + **隐藏border** 的方式，来**模拟**合并单元格的效果。
+::: 
+
 ## 行列合并 <Badge type="tip" text="^1.1.0" />
 行合并（`rowspan`）与列合并（`colspan`）可以同时使用，并且兼容 `virtual` 与 `virtual-x` 虚拟滚动。
 <demo vue="basic/merge-cells/MergeCellsRowColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowColVirtual/index.vue"></demo>
+
 
 ## 实时合并单元格
 如需通过用户交互（区域选取 + 右键菜单）动态合并/拆分单元格，请参考[实时合并单元格](/demos/realtime-merge-cells)。

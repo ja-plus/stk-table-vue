@@ -171,6 +171,12 @@ export type PrivateStkTableColumn<T extends Record<string, any>> = StkTableColum
      * @private
      */
     __VT_C_SP__?: number;
+    /**
+     * Above-viewport placeholder colspan. Marks a placeholder td for rows
+     * above the viewport that only need structural colspan, not real content.
+     * @private
+     */
+    __VT_PH__?: number;
 };
 /** private row keys */
 export type PrivateRowDT = {

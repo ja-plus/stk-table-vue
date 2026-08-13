@@ -51,15 +51,20 @@ This allows you to directly define merge counts in the data without additional j
     rowspan: { continent: 12, country: 6, }
 }
 ```
-::: tip Performance
+::: tip mergeCells Performance
 In virtual list mode, all merged cells (mergeCells function) will be traversed, which may have a certain impact on performance.
-:::
-::: warning Note
-If the rowspan is very large (e.g. 1000 rows), the merged cell will still render all the rows it covers. Therefore, rowspan is not recommended to be very large.
 :::
 
 #### Irregular Merging
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+#### Huge Rowspan
+When `rowspan` is very large (e.g. 1000~2000 rows), the virtual list still renders all rows covered by the merged cell, which may cause performance degradation. The following example demonstrates this extreme scenario.
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue"></demo>
+
+::: tip Performance Optimization
+If you have a very large rowspan or colspan, consider using **regular cells** + **hidden borders** to **simulate** the merged cell effect.
+:::
 
 ## Row and Column Merging <Badge type="tip" text="^1.1.0" />
 Row merging (`rowspan`) and column merging (`colspan`) can be used together, and are compatible with `virtual` and `virtual-x` virtual scrolling.

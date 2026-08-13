@@ -44,22 +44,27 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
     return { rowspan: row.rowspan[col.dataIndex] || 1 };
 }
 ```
-이렇게 하면 데이터에서 직접 병합 수량을 정의할 수 있으며, `mergeCells` 함수에서 判断할 필요가 없습니다.
+이렇게 하면 데이터에서 직접 병합 수량을 정의할 수 있으며, `mergeCells` 함수에서 판단할 필요가 없습니다.
 ```ts
 {
     id: '1-1-1', continent: 'Asia', country: 'China', province: 'Beijing',
     rowspan: { continent: 12, country: 6, }
 }
 ```
-::: tip 성능
-가상 리스트 모드에서는 **모든** 병합 셀(mergeCells 함수)을遍歴하여 성능에 일정 영향이 있습니다.
-:::
-::: warning 주의
-rowspan가 특히 크면(예: 1000행) 여전히 이 병합 셀이 덮는 모든 행을 렌더링합니다. 따라서 rowspan가 너무 크지 않는 것을 권장합니다.
+::: tip mergeCells 성능
+가상 리스트 모드에서는 **모든** 병합 셀(mergeCells 함수)을 순회하여 성능에 일정 영향이 있습니다.
 :::
 
 #### 불규칙 병합
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+#### 초대형 rowspan
+`rowspan`이 매우 큰 경우(예: 1000~2000행), 가상 리스트는 병합 셀이 덮는 모든 행을 렌더링하므로 성능이 저하될 수 있습니다. 다음 예시는 이 극단적인 시나리오를 보여줍니다.
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue"></demo>
+
+::: tip 성능 최적화
+rowspan 또는 colspan가 매우 큰 경우, **일반 셀** + **border 숨김** 방식으로 병합 셀 효과를 **모사**하는 것을 고려해 볼 수 있습니다.
+:::
 
 ## 행·열 병합 <Badge type="tip" text="^1.1.0" />
 행 병합(`rowspan`)과 열 병합(`colspan`)은 동시에 사용할 수 있으며, `virtual`과 `virtual-x` 가상 스크롤과도 호환됩니다.

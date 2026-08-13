@@ -1,5 +1,6 @@
 import { Ref, ShallowRef, computed, ref } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
+import { MergeCellsCache } from './mergeCellsCache';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
@@ -24,6 +25,10 @@ export type VirtualScrollStore = {
     /** 总滚动高度 */
     scrollHeight: number;
     translateY: number;
+    /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
+    viewportStartIndex: number;
+    /** 视口实际结束行索引（rowspan 修正前的原始值，用于区分 below-viewport 行） */
+    viewportEndIndex: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -107,6 +112,8 @@ export function useVirtualScroll(
     maxRowSpan: Map<UniqKey, number>,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
     isExperimentalScrollY: Ref<boolean | undefined>,
+    /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
+    mergeCellsCache: MergeCellsCache,
 ) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
@@ -120,6 +127,8 @@ export function useVirtualScroll(
         scrollTop: 0,
         scrollHeight: 0,
         translateY: 0,
+        viewportStartIndex: 0,
+        viewportEndIndex: 0,
     });
 
     // TODO: init pageSize
@@ -215,7 +224,8 @@ export function useVirtualScroll(
             for (let m = 0; m < mergeCols.length; m++) {
                 const { col, index } = mergeCols[m];
                 if (index >= maxColIndex) break;
-                const { colspan = 1 } = col.mergeCells!({ row, col, rowIndex: rowIndexBase + r, colIndex: index }) || {};
+                // 走共享缓存：与 buildHiddenCellMap / 渲染期的 mergeCells 调用复用同一份结果
+                const { colspan } = mergeCellsCache.getMergeCellsResult(row, col, rowIndexBase + r, index);
                 if (colspan > 1) {
                     const end = Math.min(index + colspan, maxColIndex);
                     for (let c = index; c < end; c++) {
@@ -242,13 +252,13 @@ export function useVirtualScroll(
 
     /**
      * virtual-x 列合并覆盖信息。
-     * Y 虚拟滚动开启时仅计算可视行（rowIndex 与渲染时 mergeCells 入参保持一致）；
+     * Y 虚拟滚动开启时仅计算可视行（rowIndex 传入绝对行索引，与渲染时 mergeCells 入参保持一致）；
      * 否则使用全量数据懒计算缓存（此时可视行即全量数据）。
      */
     const virtualX_colMergeRange = computed(() => {
         if (!virtualX_on.value) return null;
         if (virtual_on.value) {
-            return buildColMergeRange(virtual_dataSourcePart.value, 0);
+            return buildColMergeRange(virtual_dataSourcePart.value, virtualScroll.value.startIndex);
         }
         return virtualX_colMergeRangeFull.value;
     });
@@ -584,7 +594,13 @@ export function useVirtualScroll(
 
         if (!virtual_on.value) {
             // github #34 init
-            Object.assign(virtualScroll.value, { startIndex: 0, endIndex: 0, offsetTop: 0 });
+            Object.assign(virtualScroll.value, {
+                startIndex: 0,
+                endIndex: 0,
+                offsetTop: 0,
+                viewportStartIndex: 0,
+                viewportEndIndex: 0,
+            });
             return;
         }
 
@@ -628,10 +644,21 @@ export function useVirtualScroll(
             startIndex = Math.floor(sTop / rowHeight);
             endIndex = startIndex + pageSize;
             if (startIndex === oldStartIndex && endIndex === oldEndIndex) {
+                // Not change: still update viewportStartIndex/viewportEndIndex for above/below-viewport tracking
+                if (virtualScroll.value.viewportStartIndex !== startIndex) {
+                    virtualScroll.value.viewportStartIndex = startIndex;
+                }
+                if (virtualScroll.value.viewportEndIndex !== endIndex) {
+                    virtualScroll.value.viewportEndIndex = endIndex;
+                }
                 // Not change: not update
                 return;
             }
         }
+
+        // Save viewportStartIndex/viewportEndIndex before rowspan/stripe correction
+        const viewportStartIndex = startIndex;
+        const viewportEndIndex = endIndex;
 
         if (maxRowSpan.size) {
             // fix startIndex：查找是否有合并行跨越当前startIndex
@@ -701,12 +728,12 @@ export function useVirtualScroll(
          */
         if (!optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // scroll up
-            Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop });
+            Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop, viewportStartIndex, viewportEndIndex });
         } else {
             // vue2 scroll down optimize
-            virtualScroll.value.endIndex = endIndex;
+            Object.assign(virtualScroll.value, { endIndex, viewportStartIndex, viewportEndIndex });
             vue2ScrollYTimeout = window.setTimeout(() => {
-                Object.assign(virtualScroll.value, { startIndex, offsetTop });
+                Object.assign(virtualScroll.value, { startIndex, offsetTop, viewportStartIndex, viewportEndIndex });
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }

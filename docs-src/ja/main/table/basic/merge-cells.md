@@ -52,15 +52,20 @@ function mergeCells({ row, col }: { row: any, col: StkTableColumn<any> }) {
     rowspan: { continent: 12, country: 6, }
 }
 ```
-::: tip パフォーマンス
+::: tip mergeCellsパフォーマンス
 仮想リストモードでは、すべてのマージセル（mergeCells関数）が走査されるため、パフォーマンスにある程度の影響を与える可能性があります。
-:::
-::: warning 注意
-rowspanが非常に大きい場合（例如：1000行）、マージセルはそれでもカバーするすべての行をレンダリングしますTherefore, rowspan is not recommended to be very large. 
 :::
 
 #### 不規則マージ
 <demo vue="basic/merge-cells/MergeCellsRowVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/Special.vue"></demo>
+
+#### 超長 rowspan
+`rowspan` が非常に大きい場合（例：1000〜2000行）、仮想リストはマージセルがカバーするすべての行をレンダリングするため、パフォーマンスが低下する可能性があります。以下の例はこの極端なシナリオを示しています。
+<demo vue="basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/HugeRowspan.vue"></demo>
+
+::: tip パフォーマンス最適化
+rowspan や colspan が非常に大きい場合は、**通常のセル** + **border の非表示** という方法でセルマージの効果を**シミュレート**することを検討できます。
+:::
 
 ## 行・列マージ <Badge type="tip" text="^1.1.0" />
 行マージ（`rowspan`）と列マージ（`colspan`）は同時に使用でき、`virtual` と `virtual-x` の仮想スクロールにも対応しています。
