@@ -173,69 +173,97 @@
                             ></td>
                         </template>
                     </tr>
-                    <tr v-for="(row, rowIndex) in virtual_dataSourcePart" ref="trRef" :key="rowKeyGen(row)" v-bind="getTRProps(row, rowIndex)">
-                        <td v-if="row && row.__EXP_R__" :colspan="expandRowColspan">
-                            <div class="table-cell-wrapper" tabindex="-1">
-                                <slot name="expand" :row="row.__EXP_R__" :col="row.__EXP_C__">
-                                    {{ (row.__EXP_R__ && row.__EXP_C__ && row.__EXP_R__[row.__EXP_C__.dataIndex]) || '' }}
-                                </slot>
-                            </div>
-                        </td>
-                        <template v-else>
-                            <td v-if="virtualX_on" class="vt-x-left"></td>
-                            <template
-                                v-for="(col, _colIdx) in getBodyColumns(row, rowIndex)"
-                                :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : col.__VT_PH__ ? `ph-${_colIdx}` : colKeyGen(col)"
-                            >
-                                <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
-                                <td v-else-if="col.__VT_PH__" class="vt-above-viewport-ph" :colspan="col.__VT_PH__"></td>
-                                <td
-                                    v-else-if="!shouldHideCell(row, col)"
-                                    v-bind="getTDProps(row, col, rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
+                    <!-- tbody 渲染列表（异构）：
+                         - row: 数据行（视口行 + 视口上方保留的锚点行/孤立空行）
+                         - above-ph: 视口上方连续空行（无 td）合并的占位段
+                         - below-ph: 视口下方行（rowspan 修正产生的 viewportEndIndex ~ endIndex 区域）合并的占位 tr
+                         占位 tr 以 height: calc(var(--row-height) * 行数) 保持总高度，大 rowspan 场景显著减少 DOM 节点数 -->
+                    <template v-for="item in bodyRenderItems">
+                        <tr v-if="item.type === 'row'" ref="trRef" :key="item.key" v-bind="getTRProps(item.row, item.rowIndex)">
+                            <td v-if="item.row && item.row.__EXP_R__" :colspan="expandRowColspan">
+                                <div class="table-cell-wrapper" tabindex="-1">
+                                    <slot name="expand" :row="item.row.__EXP_R__" :col="item.row.__EXP_C__">
+                                        {{ (item.row.__EXP_R__ && item.row.__EXP_C__ && item.row.__EXP_R__[item.row.__EXP_C__.dataIndex]) || '' }}
+                                    </slot>
+                                </div>
+                            </td>
+                            <template v-else>
+                                <td v-if="virtualX_on" class="vt-x-left"></td>
+                                <template
+                                    v-for="(col, _colIdx) in getBodyColumns(item.row, item.rowIndex)"
+                                    :key="col.__VT_C_SP__ ? `spacer-${_colIdx}` : col.__VT_PH__ ? `ph-${_colIdx}` : colKeyGen(col)"
                                 >
-                                    <component
-                                        :is="col.customCell"
-                                        v-if="col.customCell"
-                                        class="table-cell-wrapper"
-                                        tabindex="-1"
-                                        :col="col"
-                                        :row="row"
-                                        :rowIndex="getAbsoluteRowIndex(rowIndex)"
-                                        :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
-                                        :cellValue="row && row[col.dataIndex]"
-                                        :expanded="row && row.__EXP__"
-                                        :tree-expanded="row && row.__T_EXP__"
+                                    <td v-if="col.__VT_C_SP__" class="vt-x-spacer" :colspan="col.__VT_C_SP__"></td>
+                                    <td v-else-if="col.__VT_PH__" class="vt-above-viewport-ph" :colspan="col.__VT_PH__"></td>
+                                    <td
+                                        v-else-if="!shouldHideCell(item.row, col)"
+                                        v-bind="getTDProps(item.row, col, item.rowIndex, (col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0)"
                                     >
-                                        <template #stkFoldIcon>
-                                            <TriangleIcon @click="triangleClick($event, row, col)"></TriangleIcon>
-                                        </template>
-                                        <template #stkDragIcon>
-                                            <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                        </template>
-                                    </component>
-                                    <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        {{ (row && row[col.dataIndex]) != null ? row && row[col.dataIndex] : getEmptyCellText(col, row) }}
-                                    </div>
-                                    <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
-                                        {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(rowIndex) + 1 }}
-                                    </div>
-                                    <TreeNodeCell
-                                        v-else-if="col.type === 'tree-node'"
-                                        class="table-cell-wrapper"
-                                        tabindex="-1"
-                                        :col="col"
-                                        :row="row"
-                                    ></TreeNodeCell>
-                                    <div v-else class="table-cell-wrapper" tabindex="-1" :title="row[col.dataIndex] || ''">
-                                        <DragHandle v-if="col.type === 'dragRow'" @dragstart="onTrDragStart($event, getAbsoluteRowIndex(rowIndex))" />
-                                        <TriangleIcon v-else-if="col.type === 'expand'" />
-                                        <span v-if="row[col.dataIndex] != null">{{ row[col.dataIndex] }}</span>
-                                    </div>
-                                </td>
+                                        <component
+                                            :is="col.customCell"
+                                            v-if="col.customCell"
+                                            class="table-cell-wrapper"
+                                            tabindex="-1"
+                                            :col="col"
+                                            :row="item.row"
+                                            :rowIndex="getAbsoluteRowIndex(item.rowIndex)"
+                                            :colIndex="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
+                                            :cellValue="item.row && item.row[col.dataIndex]"
+                                            :expanded="item.row && item.row.__EXP__"
+                                            :tree-expanded="item.row && item.row.__T_EXP__"
+                                        >
+                                            <template #stkFoldIcon>
+                                                <TriangleIcon @click="triangleClick($event, item.row, col)"></TriangleIcon>
+                                            </template>
+                                            <template #stkDragIcon>
+                                                <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))" />
+                                            </template>
+                                        </component>
+                                        <div v-else-if="!col.type" class="table-cell-wrapper" tabindex="-1" :title="item.row[col.dataIndex] || ''">
+                                            {{
+                                                (item.row && item.row[col.dataIndex]) != null
+                                                    ? item.row && item.row[col.dataIndex]
+                                                    : getEmptyCellText(col, item.row)
+                                            }}
+                                        </div>
+                                        <div v-else-if="col.type === 'seq'" class="table-cell-wrapper" tabindex="-1">
+                                            {{ (props.seqConfig.startIndex || 0) + getAbsoluteRowIndex(item.rowIndex) + 1 }}
+                                        </div>
+                                        <TreeNodeCell
+                                            v-else-if="col.type === 'tree-node'"
+                                            class="table-cell-wrapper"
+                                            tabindex="-1"
+                                            :col="col"
+                                            :row="item.row"
+                                        ></TreeNodeCell>
+                                        <div v-else class="table-cell-wrapper" tabindex="-1" :title="item.row[col.dataIndex] || ''">
+                                            <DragHandle
+                                                v-if="col.type === 'dragRow'"
+                                                @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))"
+                                            />
+                                            <TriangleIcon v-else-if="col.type === 'expand'" />
+                                            <span v-if="item.row[col.dataIndex] != null">{{ item.row[col.dataIndex] }}</span>
+                                        </div>
+                                    </td>
+                                </template>
+                                <td v-if="virtualX_on" class="vt-x-right"></td>
                             </template>
-                            <td v-if="virtualX_on" class="vt-x-right"></td>
-                        </template>
-                    </tr>
+                        </tr>
+                        <tr
+                            v-else-if="item.type === 'above-ph'"
+                            :key="item.key"
+                            class="vt-above-viewport-ph-row"
+                            :data-above-count="item.count"
+                            :style="`height: calc(var(--row-height) * ${item.count})`"
+                        ></tr>
+                        <tr
+                            v-else
+                            :key="item.key"
+                            class="vt-below-viewport-ph"
+                            :data-below-count="item.count"
+                            :style="`height: calc(var(--row-height) * ${item.count})`"
+                        ></tr>
+                    </template>
                     <template v-if="!isExperimentalScrollY">
                         <tr v-if="virtual_on && !isSRBRActive" :style="offsetBottomStyle"></tr>
                         <tr v-if="SRBRBottomHeight" :style="SRBRBottomStyle"></tr>
@@ -915,6 +943,43 @@ const [scrollbar, showScrollbar, onVerticalScrollbarMouseDown, onHorizontalScrol
     isExperimentalScrollY,
 );
 
+/**
+ * 是否允许把虚拟窗口内的连续空行合并为占位 tr。
+ * autoRowHeight 时容器不定义 --row-height 且行高不均匀，不能合并。
+ */
+const canMergeEmptyRows = computed(() => virtual_on.value && !props.autoRowHeight);
+
+/** 视口上方行数（rowspan/stripe 修正区域）。不允许合并时为 0（上方行走常规行渲染） */
+const aboveViewportRowCount = computed(() => {
+    if (!canMergeEmptyRows.value) return 0;
+    const part = virtual_dataSourcePart.value;
+    const { startIndex, viewportStartIndex } = virtualScroll.value;
+    return Math.min(part.length, Math.max(0, viewportStartIndex - startIndex));
+});
+
+/**
+ * 视口下方可合并的占位行数。
+ * rowspan 修正会使 endIndex 超出 viewportEndIndex，二者之间的行无可见内容
+ * （跨视口的合并单元格由视口内锚点覆盖），此前逐行渲染为空 tr。
+ * 这里将其合并为一个 tr，用 `height: calc(var(--row-height) * N)` 保持总高度，
+ * 大 rowspan 场景下可显著减少 DOM 节点数。
+ * 行高不均匀时（autoRowHeight / 该区域存在展开行）不能按统一行高合并，返回 0。
+ */
+const belowViewportRowCount = computed(() => {
+    if (!canMergeEmptyRows.value) return 0;
+    const part = virtual_dataSourcePart.value;
+    const { startIndex, viewportEndIndex } = virtualScroll.value;
+    // 视口行数（含 rowspan/stripe 修正的越界部分），钳制到实际数据长度
+    const viewportCount = Math.min(part.length, Math.max(0, viewportEndIndex - startIndex + 1));
+    const count = part.length - viewportCount;
+    if (count <= 0) return 0;
+    // 展开行有独立行高（--row-height 被行内覆写），不能参与统一行高合并
+    for (let i = viewportCount; i < part.length; i++) {
+        if (part[i]?.__EXP_R__) return 0;
+    }
+    return count;
+});
+
 const [
     hiddenCellMap,
     mergeCellsWrapper,
@@ -923,6 +988,7 @@ const [
     activeMergedCells,
     updateActiveMergedCells,
     aboveViewportColumnMap,
+    aboveEmptyBlocks,
 ] = useMergeCells(
     rowActiveProp,
     tableHeaderLast,
@@ -933,6 +999,8 @@ const [
     virtualX_columnPart,
     dataSourceCopy,
     mergeCellsCache,
+    canMergeEmptyRows,
+    belowViewportRowCount,
 );
 
 const getFixedColPosition = useGetFixedColPosition(tableHeadersForCalc, colKeyGen);
@@ -1021,6 +1089,66 @@ const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceC
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
 const offsetBottomStyle = computed(() => `height:${virtual_offsetBottom.value}px`);
 const SRBRBottomStyle = computed(() => `height:${SRBRBottomHeight.value}px`);
+
+/** tbody 渲染项：数据行 | 视口上方合并占位段 | 视口下方合并占位段 */
+type BodyRenderItem =
+    | { type: 'row'; row: DT; rowIndex: number; key: UniqKey }
+    | { type: 'above-ph'; count: number; key: string }
+    | { type: 'below-ph'; count: number; key: string };
+
+/**
+ * 视口上方区域（startIndex..viewportStartIndex-1）的有序渲染段。
+ * 含 must-render 单元格（rowspan 跨入视口）的锚点行保留独立 tr；
+ * 连续「无 td」的空行（aboveEmptyBlocks，>= 2 行）合并为单个占位段，
+ * 以 height: calc(var(--row-height) * N) 保持总高度。
+ *
+ * 注意：占位段在 DOM 中只算 1 行，跨越它的 rowspan 属性已在
+ * mergeCellsWrapper 中按合并行数修正，保证单元格不会多跨行。
+ * 不允许合并时返回空数组。
+ */
+const aboveRenderParts = computed<BodyRenderItem[]>(() => {
+    const aboveCount = aboveViewportRowCount.value;
+    if (aboveCount <= 0) return [];
+    const part = virtual_dataSourcePart.value;
+    const blocks = aboveEmptyBlocks.value;
+    const { startIndex } = virtualScroll.value;
+
+    const items: BodyRenderItem[] = [];
+    let i = 0;
+    let blockIdx = 0;
+    while (i < aboveCount) {
+        const block = blocks[blockIdx];
+        if (block && block.start === startIndex + i) {
+            items.push({ type: 'above-ph', count: block.count, key: `vt-above-ph-${i}` });
+            i += block.count;
+            blockIdx++;
+        } else {
+            const row = part[i];
+            items.push({ type: 'row', row, rowIndex: i, key: rowKeyGen(row) });
+            i++;
+        }
+    }
+    return items;
+});
+
+/**
+ * tbody 渲染列表（异构）：视口上方段 + 视口行 + 视口下方占位段。
+ * 不允许合并时退化为全量数据行列表。
+ */
+const bodyRenderItems = computed<BodyRenderItem[]>(() => {
+    const part = virtual_dataSourcePart.value;
+    const items = aboveRenderParts.value.slice();
+    const rowEnd = part.length - belowViewportRowCount.value;
+    for (let i = aboveViewportRowCount.value; i < rowEnd; i++) {
+        const row = part[i];
+        items.push({ type: 'row', row, rowIndex: i, key: rowKeyGen(row) });
+    }
+    const belowCount = belowViewportRowCount.value;
+    if (belowCount > 0) {
+        items.push({ type: 'below-ph', count: belowCount, key: 'vt-below-ph' });
+    }
+    return items;
+});
 
 watch(
     () => props.columns,
@@ -1251,7 +1379,10 @@ function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColum
 /**
  * Get the column list for a body row.
  * - Above-viewport rows: returns a modified list with placeholder entries (__VT_PH__) to reduce DOM nodes.
- * - Below-viewport rows: returns [] (tr already has height via CSS, no td needed).
+ *   Rows without any must-render cell return [] and consecutive such rows are merged into a single
+ *   placeholder tr (see aboveRenderParts).
+ * - Below-viewport rows: normally merged into a single placeholder tr (see belowViewportRowCount);
+ *   when still rendered individually (fallback), returns [] (tr already has height via CSS, no td needed).
  */
 function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
     if (!row || !virtual_on.value) return virtualX_columnPart.value;

@@ -101,6 +101,10 @@ function buildGroundTruth(data, mergeDataIndexes) {
  * - 被覆盖的行不能渲染该列单元格
  * - 锚点行：合并区域与视口有交集时必须渲染，且 rowspan 属性正确
  * - 普通单元格：仅视口内（含缓冲行）渲染
+ *
+ * rowspan 属性校验：合并占位 tr 代表 N 行但 DOM 中只算 1 行，
+ * 跨越占位段的 rowspan 会按合并行数扣减（见组件 adjustRowspanForMergedRows），
+ * 这里依据 DOM 中的占位段信息推导期望值。
  */
 function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
     const rawStart = Math.floor(scrollTop / ROW_HEIGHT);
@@ -108,9 +112,22 @@ function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
     const { anchors, isCovered } = buildGroundTruth(data, mergeDataIndexes);
     const errors = [];
 
-    const trs = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key]');
-    for (const tr of trs) {
-        const i = Number(tr.attributes('data-row-i'));
+    const trs = wrapper.findAll('tbody.stk-tbody-main > tr');
+    // 收集占位段信息：上方合并段（DOM 位置 + 行数）、下方合并行数
+    const abovePhs = [];
+    let belowPhCount = 0;
+    trs.forEach((tr, domIndex) => {
+        const aboveCount = tr.attributes('data-above-count');
+        if (aboveCount !== void 0) abovePhs.push({ domIndex, count: Number(aboveCount) });
+        const belowCount = tr.attributes('data-below-count');
+        if (belowCount !== void 0) belowPhCount = Number(belowCount);
+    });
+
+    for (let domIndex = 0; domIndex < trs.length; domIndex++) {
+        const tr = trs[domIndex];
+        const rowIAttr = tr.attributes('data-row-i');
+        if (rowIAttr === void 0) continue; // padding / offsetBottom / 合并占位 tr
+        const i = Number(rowIAttr);
         for (const c of mergeDataIndexes) {
             const td = tr.find(`td[data-col-key="${c}"]`);
             const covered = isCovered(i, c);
@@ -128,10 +145,23 @@ function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
                     errors.push(`row#${i}(${data[i].id}) col=${c}: 锚点单元格缺失（rowspan=${anchorRs}）`);
                 } else if (!shouldRender && td.exists()) {
                     errors.push(`row#${i}(${data[i].id}) col=${c}: 锚点单元格不应渲染`);
-                } else if (td.exists() && td.attributes('rowspan') !== String(anchorRs)) {
-                    errors.push(
-                        `row#${i}(${data[i].id}) col=${c}: rowspan 应为 ${anchorRs}，实际 ${td.attributes('rowspan')}`,
-                    );
+                } else if (td.exists()) {
+                    // 期望 rowspan = 逻辑 rowspan - 锚点之后各上方合并段的 (count-1) - 下方合并扣减
+                    let expectedRs = anchorRs;
+                    for (const ph of abovePhs) {
+                        if (ph.domIndex > domIndex) expectedRs -= ph.count - 1;
+                    }
+                    if (belowPhCount > 0 && i + anchorRs - 1 > rawEnd) {
+                        // 下方合并时数据行只渲染到视口底，窗口末行索引 = rawEnd + 下方合并行数
+                        const endIndex = rawEnd + belowPhCount;
+                        expectedRs -= Math.min(i + anchorRs - 1, endIndex) - rawEnd - 1;
+                    }
+                    if (expectedRs < 1) expectedRs = 1;
+                    if (td.attributes('rowspan') !== String(expectedRs)) {
+                        errors.push(
+                            `row#${i}(${data[i].id}) col=${c}: rowspan 应为 ${expectedRs}（逻辑值 ${anchorRs}），实际 ${td.attributes('rowspan')}`,
+                        );
+                    }
                 }
             } else {
                 const shouldRender = i >= rawStart && i <= rawEnd;
@@ -186,7 +216,16 @@ describe('行合并虚拟列表-简单合并（文档 merge-cells.md 场景）',
             await scrollYTo(wrapper, top);
             const anchor = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="2-1-1"] > td[data-col-key="continent"]');
             expect(anchor.exists(), `scrollTop=${top} 时 Europe 锚点应渲染`).toBe(true);
-            expect(anchor.attributes('rowspan')).toBe('13');
+
+            // 渲染 rowspan 已按下方合并占位修正：锚点单元格按该 rowspan 跨到的最后一个 tr
+            // 应恰好是视口下方占位 tr（Europe span 越过视口底部、延伸进占位段）
+            const rs = Number(anchor.attributes('rowspan'));
+            expect(rs).toBeLessThan(13); // 逻辑 rowspan 13，合并后必然扣减
+            const allTrs = wrapper.findAll('tbody.stk-tbody-main > tr');
+            const anchorIdx = allTrs.findIndex(t => t.attributes('data-row-key') === '2-1-1');
+            const lastSpannedTr = allTrs[anchorIdx + rs - 1];
+            expect(lastSpannedTr.attributes('data-below-count'), `scrollTop=${top}`).not.toBeUndefined();
+
             const errors = checkMergeDom(wrapper, dataSource.value, ['continent', 'country'], top, PAGE_SIZE);
             expect(errors).toEqual([]);
         }
@@ -298,11 +337,22 @@ function checkAboveViewportPlaceholders(wrapper, scrollTop) {
 function checkColumnAlignment(wrapper, colKeyToIndex) {
     const colCount = colKeyToIndex.size;
     const errors = [];
-    const trs = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key]');
+    const trs = wrapper.findAll('tbody.stk-tbody-main > tr');
     /** 每列被上方 rowspan 占用的剩余行数 */
     const occupied = new Array(colCount).fill(0);
     for (const tr of trs) {
+        // 视口上方合并占位 tr：DOM 中只算 1 行，且 rowspan 属性已按合并行数修正，
+        // 因此与普通行一样只消耗 1 行占用
+        const aboveCount = tr.attributes('data-above-count');
+        if (aboveCount !== void 0) {
+            for (let col = 0; col < colCount; col++) {
+                if (occupied[col] > 0) occupied[col]--;
+            }
+            continue;
+        }
+        // 其他非数据行（padding-top / offsetBottom / 视口下方占位）：无单元格，跳过
         const rowKey = tr.attributes('data-row-key');
+        if (rowKey === void 0) continue;
         const cells = tr.findAll('td').map(td => ({
             key: td.attributes('data-col-key'),
             colspan: Number(td.attributes('colspan')) || 1,
@@ -500,6 +550,28 @@ describe('行合并虚拟列表-超长 rowspan（文档「超长 rowspan」场�
         },
         60_000,
     );
+
+    test('超长合并区域中间：视口上下方空行均合并为占位 tr，总行数收敛', async () => {
+        // Asia 组 rows 0..299（continent rowspan=300 @0，country rowspan=150 @0/150）。
+        // scrollTop=200*28 => 原始窗口 rows 200..210（pageSize=10），
+        // startIndex 修正为 0、endIndex 修正为 299（闭区间）。
+        mockContainerHeight(wrapper, 300);
+        await scrollYTo(wrapper, 200 * ROW_HEIGHT);
+
+        // 上方：锚点行 0（continent）、150（country）保留；
+        // 空行 1..149 合并为一段（149 行），151..199 合并为一段（49 行）
+        const abovePhs = wrapper.findAll('tbody.stk-tbody-main > tr[data-above-count]');
+        expect(abovePhs.map(tr => tr.attributes('data-above-count'))).toEqual(['149', '49']);
+
+        // 下方：rows 211..299 合并为单个占位 tr（89 行）
+        const belowPhs = wrapper.findAll('tbody.stk-tbody-main > tr[data-below-count]');
+        expect(belowPhs.map(tr => tr.attributes('data-below-count'))).toEqual(['89']);
+
+        // 总 tr 数 = padding-top(1) + 上方锚点(2) + 上方占位(2) + 视口行(11) + 下方占位(1) + offsetBottom(1)
+        // 优化前该位置约 303 个 tr（上方 200 + 下方 89 逐行渲染）
+        expect(wrapper.findAll('tbody.stk-tbody-main > tr').length).toBe(18);
+        expect(wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key]').length).toBe(13);
+    });
 });
 
 describe('行列合并 + virtual + virtual-x（文档「行列合并」场景）', () => {

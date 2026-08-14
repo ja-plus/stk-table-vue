@@ -674,7 +674,10 @@ export function useVirtualScroll(
                     correctedStartIndex = i;
                     if (spanEndIndex > endIndex) {
                         // 合并行跨越了整个可视区
-                        correctedEndIndex = spanEndIndex;
+                        // spanEndIndex 是开区间末端（最后一行+1），endIndex 需要的是闭区间最后一行，
+                        // 否则会把合并区域外的下一行也算进视口下方，导致下方占位 tr 多 1 行高，
+                        // 跨视口底部的 rowspan 单元格可视高度被撑大 1 行（滚动时居中文字抖动）。
+                        correctedEndIndex = spanEndIndex - 1;
                     }
                     break;
                 }
@@ -686,8 +689,9 @@ export function useVirtualScroll(
                 if (!row) continue;
                 const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
                 if (spanEndIndex > correctedEndIndex) {
-                    // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引
-                    correctedEndIndex = Math.max(spanEndIndex, correctedEndIndex);
+                    // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引（闭区间最后一行）。
+                    // spanEndIndex 为开区间末端，需 -1，避免把合并区域外的一行并入视口下方占位 tr。
+                    correctedEndIndex = Math.max(spanEndIndex - 1, correctedEndIndex);
                 }
             }
 

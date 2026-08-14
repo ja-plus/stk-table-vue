@@ -233,11 +233,15 @@ describe('virtual with mergeCells rowspan: above-viewport placeholder', () => {
             expect(Number(row0Tds[i].attributes('colspan')) || 1).toBe(1);
         }
 
-        // row1: 没有跨越视口的 must-render 单元格，渲染为空 <tr>（tr 已有 height 样式撑高）
+        // row1: 没有跨越视口的 must-render 单元格，渲染为空 <tr>（tr 已有 height 样式撑高）。
+        // 单个孤立空行不参与合并（仅连续 >=2 行合并），因此仍保留独立 tr
+        expect(wrapper.find('tbody.stk-tbody-main > tr[data-row-key="1"]').exists()).toBe(true);
         const row1Tds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="1"] > td');
         expect(row1Tds.length).toBe(0);
         // 不应渲染任何真实数据单元格
         expect(wrapper.find('tbody.stk-tbody-main > tr[data-row-key="1"] > td[data-col-key]').exists()).toBe(false);
+        // 此场景空行均为孤立单行，不应出现上方合并占位 tr
+        expect(wrapper.findAll('tbody.stk-tbody-main > tr[data-above-count]').length).toBe(0);
 
         // row2: c3 必须渲染（rowspan=2 跨入视口）；c1-c2 逐列单独占位（c0 被 row0 覆盖不占位），
         // c4-c7 逐列单独占位
@@ -259,7 +263,7 @@ describe('virtual with mergeCells rowspan: above-viewport placeholder', () => {
     });
 });
 
-describe('virtual with mergeCells rowspan: below-viewport empty tr', () => {
+describe('virtual with mergeCells rowspan: below-viewport merged tr', () => {
     const columns = new Array(8).fill(0).map((_, i) => ({ title: `Col ${i}`, dataIndex: `c${i}`, width: 100 }));
     // c0: row0 rowspan=4 (above-viewport); c5: row5 rowspan=4 (extends below viewport)
     columns[0].mergeCells = ({ row, rowIndex }) => (rowIndex === 0 && row.rowspan ? { rowspan: row.rowspan } : void 0);
@@ -283,22 +287,101 @@ describe('virtual with mergeCells rowspan: below-viewport empty tr', () => {
         },
     });
 
-    test('视口下方行不渲染任何 td', async () => {
+    test('视口下方行合并为单个占位 tr，不再逐行渲染', async () => {
         // rowHeight=28, height=100 => pageSize ~3。
         // scrollTop=84 => viewportStartIndex=3, viewportEndIndex=6。
-        // row5 的 rowspan=4 使 endIndex 修正到 9，rows 7-9 为 below-viewport 行。
+        // row0 的 rowspan=4 使 startIndex 修正到 0，row5 的 rowspan=4 使 endIndex 修正到 8（闭区间）。
+        // 上方 rows 1-2 为连续空行，下方 rows 7-8 为视口下方行。
         await scrollYTo(wrapper, 84);
 
-        // row5 在视口内，c5 的 rowspan=4 锚点必须渲染
+        // row5 在视口内，c5 的 rowspan=4 锚点必须渲染。
+        // 渲染 rowspan 已按下方合并占位修正：span 覆盖下方占位段中的 rows 7-8（2 行计 1 个 tr），
+        // 扣减 (2-1) 后为 3，保证浏览器不会让单元格多跨 tr
         const row5Tds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="5"] > td[data-col-key]');
         expect(row5Tds.some(td => td.attributes('data-col-key') === 'c5')).toBe(true);
         const c5Cell = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="5"] > td[data-col-key="c5"]');
-        expect(c5Cell.attributes('rowspan')).toBe('4');
+        expect(c5Cell.attributes('rowspan')).toBe('3');
 
-        // below-viewport rows: 7, 8, 9 — 不应有任何 td
+        // row0 的 c0 rowspan=4 同理按上方合并段（rows 1-2）修正为 3
+        const c0Cell = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="0"] > td[data-col-key="c0"]');
+        expect(c0Cell.attributes('rowspan')).toBe('3');
+
+        // below-viewport rows: 7, 8（及之后的 9）— 不再逐行渲染为独立 tr
         for (const rowKey of ['7', '8', '9']) {
-            const tds = wrapper.findAll(`tbody.stk-tbody-main > tr[data-row-key="${rowKey}"] > td`);
-            expect(tds.length).toBe(0);
+            expect(wrapper.find(`tbody.stk-tbody-main > tr[data-row-key="${rowKey}"]`).exists()).toBe(false);
         }
+
+        // 合并为单个占位 tr：height = calc(var(--row-height) * 2)，且不带数据行标记
+        // （happy-dom 会丢弃 calc(var()) 样式的解析结果，无法断言 style 字符串，改断言 data-below-count）
+        const phTrs = wrapper.findAll('tbody.stk-tbody-main > tr.vt-below-viewport-ph');
+        expect(phTrs.length).toBe(1);
+        expect(phTrs[0].attributes('data-below-count')).toBe('2');
+        expect(phTrs[0].attributes('data-row-key')).toBeUndefined();
+        // 占位 tr 内不应有数据单元格
+        expect(phTrs[0].findAll('td[data-col-key]').length).toBe(0);
+
+        // 上方 rows 1-2（连续空行，被 row0 的 rowspan 覆盖）合并为单个占位段
+        const abovePhTrs = wrapper.findAll('tbody.stk-tbody-main > tr[data-above-count]');
+        expect(abovePhTrs.length).toBe(1);
+        expect(abovePhTrs[0].attributes('data-above-count')).toBe('2');
+
+        // 带 data-row-key 的行：上方锚点 row0 + 视口 rows 3-6
+        const dataTrs = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key]');
+        expect(dataTrs.map(tr => tr.attributes('data-row-key'))).toEqual(['0', '3', '4', '5', '6']);
+    });
+
+    test('滚动到无跨视口下方合并的位置时，无下方占位 tr', async () => {
+        // scrollTop=0 => viewport 0..3，row0 的 rowspan=4 使 endIndex 修正到 3（闭区间），
+        // span 覆盖的行全部在数据窗口内，没有视口下方行，不渲染下方占位 tr。
+        // （height=100 时 offsetBottom 为 0：endIndex 即数据窗口末端，无补偿差）
+        await scrollYTo(wrapper, 0);
+
+        const phTrs = wrapper.findAll('tbody.stk-tbody-main > tr.vt-below-viewport-ph');
+        expect(phTrs.length).toBe(0);
+    });
+});
+
+describe('virtual with large rowspan: above/below-viewport tr count stays O(1)', () => {
+    // row0 的 c0 合并 120 行：视口位于合并区域中间时，
+    // startIndex 修正到 0、endIndex 修正到 119（闭区间），视口上方空行与下方行
+    // 曾逐行渲染 49 + 66 个空 tr，现在各合并为 1 个占位 tr
+    const columns = new Array(8).fill(0).map((_, i) => ({ title: `Col ${i}`, dataIndex: `c${i}`, width: 100 }));
+    columns[0].mergeCells = ({ row, rowIndex }) => (rowIndex === 0 && row.rowspan ? { rowspan: row.rowspan } : void 0);
+    const dataSource = new Array(200).fill(0).map((_, i) => ({
+        id: i,
+        rowspan: i === 0 ? 120 : void 0,
+        c0: i === 0 ? 'merged-c0' : void 0,
+    }));
+
+    const wrapper = mount(StkTable, {
+        props: {
+            rowKey: 'id',
+            virtual: true,
+            rowHeight: 28,
+            columns,
+            dataSource,
+        },
+    });
+
+    test('视口位于长合并区域中间时，上下方各仅 1 个占位 tr', async () => {
+        // scrollTop=1400 => 原始窗口 rows 50..53（pageSize=3）。
+        // row0 rowspan=120 => startIndex 修正为 0、endIndex 修正为 119（闭区间）。
+        // 上方：锚点 row0 + 空行 1..49（合并为 1 段）；视口行 50..53；
+        // 下方：rows 54..119（66 行）合并为 1 个占位 tr。
+        await scrollYTo(wrapper, 50 * 28);
+
+        const ph = wrapper.find('tbody.stk-tbody-main > tr.vt-below-viewport-ph');
+        expect(ph.exists()).toBe(true);
+        expect(ph.attributes('data-below-count')).toBe('66');
+
+        const abovePh = wrapper.find('tbody.stk-tbody-main > tr[data-above-count]');
+        expect(abovePh.exists()).toBe(true);
+        expect(abovePh.attributes('data-above-count')).toBe('49');
+
+        // 总 tr 数 = padding-top(1) + 上方锚点(1) + 上方占位(1) + 视口(4) + 下方占位(1) + offsetBottom(1)
+        const allTrs = wrapper.findAll('tbody.stk-tbody-main > tr');
+        expect(allTrs.length).toBe(9);
+        // data-row-key 行：锚点 row0 + 视口 rows 50-53（优化前该位置为 123 个 tr）
+        expect(wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key]').length).toBe(5);
     });
 });

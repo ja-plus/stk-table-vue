@@ -23,6 +23,10 @@ export function useMergeCells(
     dataSourceCopy: ShallowRef<any[]>,
     /** mergeCells 结果共享缓存（与 useVirtualScroll 共用，可跨滚动帧复用） */
     mergeCellsCache: MergeCellsCache,
+    /** 是否允许把连续空行合并为占位 tr（virtual && !autoRowHeight） */
+    canMergeEmptyRows: Ref<boolean>,
+    /** 视口下方合并为占位 tr 的行数（渲染 rowspan 属性修正用） */
+    belowViewportRowCount: Ref<number>,
 ) {
     /**
      * which cell need be hidden
@@ -212,7 +216,40 @@ export function useMergeCells(
             hideCells(rowKeyGen(targetRow), colKey, colspan, i === rowIndex, mergedCellKey);
         }
 
-        return { colspan, rowspan };
+        return { colspan, rowspan: adjustRowspanForMergedRows(absRowIndex, rowspan) };
+    }
+
+    /**
+     * 渲染用 rowspan 修正：合并占位 tr 代表 N 个逻辑行，但在 DOM 中只算 1 行，
+     * 跨越它们的 rowspan 必须相应减少计数，否则浏览器会让单元格多跨 tr，
+     * 挤入后续未合并的行（上方区域表现为视口内错位，下方区域表现为吞掉 offsetBottom 占位）。
+     *
+     * - 上方合并段：位于锚点行之后、视口顶部之前。must-render 的 rowspan 必然延伸到视口，
+     *   因此锚点之后的每个段都完整位于该 span 的行范围内，每段扣减 (count - 1)。
+     * - 下方合并 tr：span 越过 viewportEndIndex 时，按其实际覆盖的行数扣减 (coveredRows - 1)。
+     *
+     * hiddenCellMap 等逻辑仍使用未修正的逻辑 rowspan，仅渲染属性需要修正。
+     */
+    function adjustRowspanForMergedRows(absRowIndex: number, rowspan: number): number {
+        if (rowspan <= 1) return rowspan;
+        let adjusted = rowspan;
+        const spanEnd = absRowIndex + rowspan - 1;
+
+        const blocks = aboveEmptyBlocks.value;
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+            if (block.start > absRowIndex && block.start <= spanEnd) {
+                adjusted -= block.count - 1;
+            }
+        }
+
+        const belowCount = belowViewportRowCount.value;
+        if (belowCount > 0 && spanEnd > virtualScroll.value.viewportEndIndex) {
+            const coveredRows = Math.min(spanEnd, virtualScroll.value.endIndex) - virtualScroll.value.viewportEndIndex;
+            adjusted -= coveredRows - 1;
+        }
+
+        return adjusted > 0 ? adjusted : 1;
     }
 
     const emptySet = new Set<string>();
@@ -321,6 +358,49 @@ export function useMergeCells(
         return map;
     });
 
+    /** 空合并段列表（start 为绝对行索引）。禁止合并时返回共享空数组 */
+    const EMPTY_BLOCKS: { start: number; count: number }[] = [];
+
+    /**
+     * 视口上方连续「无 td」空行段（行数 >= 2 才成段；单行保留独立 tr）。
+     * 空行判定与渲染保持一致：aboveViewportColumnMap 中列结果为空且非展开行。
+     * 供模板合并渲染（StkTable aboveRenderParts）与 rowspan 属性修正共用。
+     */
+    const aboveEmptyBlocks = computed<{ start: number; count: number }[]>(() => {
+        if (!canMergeEmptyRows.value) return EMPTY_BLOCKS;
+        const data = virtual_dataSourcePart.value;
+        const { startIndex, viewportStartIndex } = virtualScroll.value;
+        const aboveCount = Math.min(data.length, Math.max(0, viewportStartIndex - startIndex));
+        if (aboveCount <= 0) return EMPTY_BLOCKS;
+        const colMap = aboveViewportColumnMap.value;
+
+        const isEmptyRow = (row: PrivateRowDT): boolean => {
+            // 展开行有独立行高且渲染内容，不能参与合并
+            if (!row || row.__EXP_R__) return false;
+            const cols = colMap.get(rowKeyGen(row));
+            // 仅当映射中明确为空列结果时才算空行；缺失（异常）时保留原渲染
+            return cols !== void 0 && cols.length === 0;
+        };
+
+        const blocks: { start: number; count: number }[] = [];
+        let runStart = -1;
+        const flushRun = (endExclusive: number) => {
+            if (endExclusive - runStart >= 2) {
+                blocks.push({ start: startIndex + runStart, count: endExclusive - runStart });
+            }
+            runStart = -1;
+        };
+        for (let i = 0; i < aboveCount; i++) {
+            if (isEmptyRow(data[i])) {
+                if (runStart < 0) runStart = i;
+                continue;
+            }
+            if (runStart >= 0) flushRun(i);
+        }
+        if (runStart >= 0) flushRun(aboveCount);
+        return blocks.length ? blocks : EMPTY_BLOCKS;
+    });
+
     function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
         if (!rowActiveProp.value.enabled) return;
         if (clear) {
@@ -338,5 +418,6 @@ export function useMergeCells(
         activeMergedCells,
         updateActiveMergedCells,
         aboveViewportColumnMap,
+        aboveEmptyBlocks,
     ] as const;
 }
