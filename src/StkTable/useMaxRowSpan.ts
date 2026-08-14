@@ -10,6 +10,9 @@ export function useMaxRowSpan(
     /** max rowspan of each row */
     const maxRowSpan = new Map<UniqKey, number>();
 
+    /** 全局最大 rowspan：用于限定滚动时跨界修正的扫描范围（O(maxSpan) 而非 O(startIndex)） */
+    let maxRowSpanValue = 0;
+
     /**
      * Use dataSourceCopy and tableHeaderLast to calculate maxRowSpan
      * @link {maxRowSpan}
@@ -17,9 +20,11 @@ export function useMaxRowSpan(
     function updateMaxRowSpan() {
         if (!props.virtual) {
             if (maxRowSpan.size) maxRowSpan.clear();
+            maxRowSpanValue = 0;
             return;
         }
         maxRowSpan.clear();
+        maxRowSpanValue = 0;
 
         const data = dataSourceCopy.value;
         const columns = tableHeaderLast.value;
@@ -46,9 +51,10 @@ export function useMaxRowSpan(
                 if (rowspan > 1 && rowspan > currentMax) {
                     currentMax = rowspan;
                     maxRowSpan.set(rowKey, currentMax);
+                    if (rowspan > maxRowSpanValue) maxRowSpanValue = rowspan;
                 }
             }
         }
     }
-    return [maxRowSpan, updateMaxRowSpan] as const;
+    return [maxRowSpan, updateMaxRowSpan, () => maxRowSpanValue] as const;
 }

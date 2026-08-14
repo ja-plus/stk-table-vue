@@ -226,7 +226,9 @@ export function useMergeCells(
      *
      * - 上方合并段：位于锚点行之后、视口顶部之前。must-render 的 rowspan 必然延伸到视口，
      *   因此锚点之后的每个段都完整位于该 span 的行范围内，每段扣减 (count - 1)。
-     * - 下方合并 tr：span 越过 viewportEndIndex 时，按其实际覆盖的行数扣减 (coveredRows - 1)。
+     * - 下方合并段：span 越过 viewportEndIndex 时，下方区域按跨界 rowspan 的结束行切分为
+     *   多个占位段（belowPhSegments），coveredRows 个逻辑行折叠为 segIdx 个占位 tr，
+     *   扣减 (coveredRows - segIdx)，使单元格恰好止于包含其逻辑结束行的段边界。
      *
      * hiddenCellMap 等逻辑仍使用未修正的逻辑 rowspan，仅渲染属性需要修正。
      */
@@ -244,12 +246,31 @@ export function useMergeCells(
         }
 
         const belowCount = belowViewportRowCount.value;
-        if (belowCount > 0 && spanEnd > virtualScroll.value.viewportEndIndex) {
-            const coveredRows = Math.min(spanEnd, virtualScroll.value.endIndex) - virtualScroll.value.viewportEndIndex;
-            adjusted -= coveredRows - 1;
+        const { viewportEndIndex } = virtualScroll.value;
+        if (belowCount > 0 && spanEnd > viewportEndIndex) {
+            // 下方区域末端与 belowPhSegments 保持一致（钳制到窗口最后一行）
+            const regionEnd = viewportEndIndex + belowCount;
+            const coveredRows = Math.min(spanEnd, regionEnd) - viewportEndIndex;
+            adjusted -= coveredRows - getBelowSegmentIndex(spanEnd);
         }
 
         return adjusted > 0 ? adjusted : 1;
+    }
+
+    /**
+     * spanEnd 落在下方区域第几个占位段（1 基）。
+     * 各段按跨界 rowspan 的去重结束行切分，单元格止于包含其逻辑结束行的段，
+     * 不同结束行的单元格因此止于不同的 tr，底边位置跨滚动帧保持稳定。
+     */
+    function getBelowSegmentIndex(spanEnd: number): number {
+        const { viewportEndIndex } = virtualScroll.value;
+        const segments = belowPhSegments.value;
+        let acc = viewportEndIndex;
+        for (let i = 0; i < segments.length; i++) {
+            acc += segments[i].count;
+            if (spanEnd <= acc) return i + 1;
+        }
+        return segments.length || 1;
     }
 
     const emptySet = new Set<string>();
@@ -361,6 +382,9 @@ export function useMergeCells(
     /** 空合并段列表（start 为绝对行索引）。禁止合并时返回共享空数组 */
     const EMPTY_BLOCKS: { start: number; count: number }[] = [];
 
+    /** 空下方占位段列表。无下方合并行时返回共享空数组 */
+    const EMPTY_SEGMENTS: { count: number }[] = [];
+
     /**
      * 视口上方连续「无 td」空行段（行数 >= 2 才成段；单行保留独立 tr）。
      * 空行判定与渲染保持一致：aboveViewportColumnMap 中列结果为空且非展开行。
@@ -401,6 +425,57 @@ export function useMergeCells(
         return blocks.length ? blocks : EMPTY_BLOCKS;
     });
 
+    /**
+     * 视口下方占位段：把 [viewportEndIndex+1, endIndex] 按跨界 rowspan 的
+     * 去重结束行切分为多段，每段渲染一个占位 tr。
+     *
+     * 单个占位 tr 无法表达多个 rowspan 的不同逻辑结束位置（不规律合并下
+     * 多个单元格会塌缩到同一 tr 底边，滚动时高度跳动）；按结束行切段后，
+     * 每个单元格的修正 rowspan 恰好止于包含其逻辑结束行的段。
+     * 超长 rowspan 场景只有一个结束行（= 区域末端），仍只产生 1 段，不增加 DOM。
+     */
+    const belowPhSegments = computed<{ count: number }[]>(() => {
+        const belowCount = belowViewportRowCount.value;
+        if (belowCount <= 0) return EMPTY_SEGMENTS;
+        const data = virtual_dataSourcePart.value;
+        const { startIndex, viewportEndIndex, endIndex } = virtualScroll.value;
+        // 下方区域末端钳制到窗口最后一行（endIndex 可能超出数据长度）
+        const regionEnd = Math.min(endIndex, startIndex + data.length - 1);
+        const columns = virtualX_columnPart.value;
+
+        // 跨界 rowspan 的锚点只可能在视口上方保留行与视口行内，收集其去重结束行
+        const endsSet = new Set<number>();
+        const anchorRowEnd = Math.min(data.length - 1, viewportEndIndex - startIndex);
+        for (let rowOffset = 0; rowOffset <= anchorRowEnd; rowOffset++) {
+            const row = data[rowOffset];
+            if (!row) continue;
+            const absRowIndex = startIndex + rowOffset;
+            for (let colIdx = 0; colIdx < columns.length; colIdx++) {
+                const col = columns[colIdx];
+                if (!col.mergeCells) continue;
+                const leafIndex = col.__LF_S__ ?? colIdx;
+                const { rowspan } = mergeCellsCache.getMergeCellsResult(row, col, absRowIndex, leafIndex);
+                if (rowspan <= 1) continue;
+                const spanEnd = absRowIndex + rowspan - 1;
+                if (spanEnd > viewportEndIndex) endsSet.add(Math.min(spanEnd, regionEnd));
+            }
+        }
+
+        // 兜底：未收集到跨界结束行时保持单段（与合并前行为一致）
+        if (!endsSet.size) return [{ count: belowCount }];
+
+        const ends = Array.from(endsSet).sort((a, b) => a - b);
+        const segments: { count: number }[] = [];
+        let prev = viewportEndIndex;
+        for (let i = 0; i < ends.length; i++) {
+            const count = ends[i] - prev;
+            if (count > 0) segments.push({ count });
+            prev = ends[i];
+        }
+        if (regionEnd > prev) segments.push({ count: regionEnd - prev });
+        return segments;
+    });
+
     function updateActiveMergedCells(clear?: boolean, rowKey?: UniqKey) {
         if (!rowActiveProp.value.enabled) return;
         if (clear) {
@@ -419,5 +494,6 @@ export function useMergeCells(
         updateActiveMergedCells,
         aboveViewportColumnMap,
         aboveEmptyBlocks,
+        belowPhSegments,
     ] as const;
 }

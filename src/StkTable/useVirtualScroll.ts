@@ -110,6 +110,8 @@ export function useVirtualScroll(
     tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>,
     rowKeyGen: RowKeyGen,
     maxRowSpan: Map<UniqKey, number>,
+    /** 全局最大 rowspan（限定跨界修正扫描范围用） */
+    getMaxRowSpanValue: () => number,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
     isExperimentalScrollY: Ref<boolean | undefined>,
     /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
@@ -665,7 +667,11 @@ export function useVirtualScroll(
             let correctedStartIndex = startIndex;
             let correctedEndIndex = endIndex;
 
-            for (let i = 0; i < startIndex; i++) {
+            // 跨越 startIndex 的锚点行必然位于 [startIndex - maxSpan + 1, startIndex - 1]，
+            // 在此范围内反向扫描即可（保留最早锚点语义：循环不提前 break，最终留下最小 i），
+            // 避免原实现从 0 起 O(startIndex) 全量扫描——大数据量滚动到深处时每帧开销巨大。
+            const scanFrom = Math.max(0, startIndex - getMaxRowSpanValue() + 1);
+            for (let i = startIndex - 1; i >= scanFrom; i--) {
                 const row = dataSourceCopyTemp[i];
                 if (!row) continue;
                 const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
@@ -679,7 +685,6 @@ export function useVirtualScroll(
                         // 跨视口底部的 rowspan 单元格可视高度被撑大 1 行（滚动时居中文字抖动）。
                         correctedEndIndex = spanEndIndex - 1;
                     }
-                    break;
                 }
             }
 

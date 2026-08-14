@@ -176,10 +176,13 @@
                     <!-- tbody 渲染列表（异构）：
                          - row: 数据行（视口行 + 视口上方保留的锚点行/孤立空行）
                          - above-ph: 视口上方连续空行（无 td）合并的占位段
-                         - below-ph: 视口下方行（rowspan 修正产生的 viewportEndIndex ~ endIndex 区域）合并的占位 tr
+                         - below-ph: 视口下方行（rowspan 修正产生的 viewportEndIndex ~ endIndex 区域）
+                           按跨界 rowspan 结束行切分的占位段
                          占位 tr 以 height: calc(var(--row-height) * 行数) 保持总高度，大 rowspan 场景显著减少 DOM 节点数 -->
-                    <template v-for="item in bodyRenderItems">
-                        <tr v-if="item.type === 'row'" ref="trRef" :key="item.key" v-bind="getTRProps(item.row, item.rowIndex)">
+                    <!-- key 必须在 template 上：v-for 模板含多个条件分支时子节点 key 不会提升到 Fragment，
+                         会导致 Fragment 无 key 走 unkeyed diff，滚动时整行重建 -->
+                    <template v-for="item in bodyRenderItems" :key="item.key">
+                        <tr v-if="item.type === 'row'" ref="trRef" v-bind="getTRProps(item.row, item.rowIndex)">
                             <td v-if="item.row && item.row.__EXP_R__" :colspan="expandRowColspan">
                                 <div class="table-cell-wrapper" tabindex="-1">
                                     <slot name="expand" :row="item.row.__EXP_R__" :col="item.row.__EXP_C__">
@@ -251,14 +254,12 @@
                         </tr>
                         <tr
                             v-else-if="item.type === 'above-ph'"
-                            :key="item.key"
                             class="vt-above-viewport-ph-row"
                             :data-above-count="item.count"
                             :style="`height: calc(var(--row-height) * ${item.count})`"
                         ></tr>
                         <tr
                             v-else
-                            :key="item.key"
                             class="vt-below-viewport-ph"
                             :data-below-count="item.count"
                             :style="`height: calc(var(--row-height) * ${item.count})`"
@@ -886,7 +887,7 @@ const [onThDragStart, onThDragOver, onThDrop, isHeaderDraggable] = useThDrag(pro
 
 const [onTrDragStart, onTrDragEnter, onTrDragOver, onTrDrop, onTrDragEnd] = useTrDrag(props, emits, dataSourceCopy);
 
-const [maxRowSpan, updateMaxRowSpan] = useMaxRowSpan(props, tableHeaderLast, rowKeyGen, dataSourceCopy);
+const [maxRowSpan, updateMaxRowSpan, getMaxRowSpanValue] = useMaxRowSpan(props, tableHeaderLast, rowKeyGen, dataSourceCopy);
 
 /**
  * mergeCells 结果共享缓存：useVirtualScroll（可视列范围修正）与 useMergeCells
@@ -925,6 +926,7 @@ const [
     tableHeaders,
     rowKeyGen,
     maxRowSpan,
+    getMaxRowSpanValue,
     scrollbarOptions,
     isExperimentalScrollY,
     mergeCellsCache,
@@ -961,7 +963,8 @@ const aboveViewportRowCount = computed(() => {
  * 视口下方可合并的占位行数。
  * rowspan 修正会使 endIndex 超出 viewportEndIndex，二者之间的行无可见内容
  * （跨视口的合并单元格由视口内锚点覆盖），此前逐行渲染为空 tr。
- * 这里将其合并为一个 tr，用 `height: calc(var(--row-height) * N)` 保持总高度，
+ * 这里将其合并为占位 tr（按跨界 rowspan 结束行切段，见 belowPhSegments），
+ * 用 `height: calc(var(--row-height) * N)` 保持总高度，
  * 大 rowspan 场景下可显著减少 DOM 节点数。
  * 行高不均匀时（autoRowHeight / 该区域存在展开行）不能按统一行高合并，返回 0。
  */
@@ -989,6 +992,7 @@ const [
     updateActiveMergedCells,
     aboveViewportColumnMap,
     aboveEmptyBlocks,
+    belowPhSegments,
 ] = useMergeCells(
     rowActiveProp,
     tableHeaderLast,
@@ -1143,9 +1147,10 @@ const bodyRenderItems = computed<BodyRenderItem[]>(() => {
         const row = part[i];
         items.push({ type: 'row', row, rowIndex: i, key: rowKeyGen(row) });
     }
-    const belowCount = belowViewportRowCount.value;
-    if (belowCount > 0) {
-        items.push({ type: 'below-ph', count: belowCount, key: 'vt-below-ph' });
+    // 下方占位按跨界 rowspan 结束行分段输出，保证不同结束行的单元格止于不同 tr
+    const belowSegs = belowPhSegments.value;
+    for (let i = 0; i < belowSegs.length; i++) {
+        items.push({ type: 'below-ph', count: belowSegs[i].count, key: `vt-below-ph-${i}` });
     }
     return items;
 });
@@ -1381,8 +1386,9 @@ function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColum
  * - Above-viewport rows: returns a modified list with placeholder entries (__VT_PH__) to reduce DOM nodes.
  *   Rows without any must-render cell return [] and consecutive such rows are merged into a single
  *   placeholder tr (see aboveRenderParts).
- * - Below-viewport rows: normally merged into a single placeholder tr (see belowViewportRowCount);
- *   when still rendered individually (fallback), returns [] (tr already has height via CSS, no td needed).
+ * - Below-viewport rows: normally merged into placeholder tr segments split at crossing rowspan
+ *   ends (see belowPhSegments); when still rendered individually (fallback), returns []
+ *   (tr already has height via CSS, no td needed).
  */
 function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
     if (!row || !virtual_on.value) return virtualX_columnPart.value;

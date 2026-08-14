@@ -104,6 +104,7 @@ function buildGroundTruth(data, mergeDataIndexes) {
  *
  * rowspan 属性校验：合并占位 tr 代表 N 行但 DOM 中只算 1 行，
  * 跨越占位段的 rowspan 会按合并行数扣减（见组件 adjustRowspanForMergedRows），
+ * 下方占位按跨界 rowspan 结束行切分为多段，单元格止于包含其结束行的段，
  * 这里依据 DOM 中的占位段信息推导期望值。
  */
 function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
@@ -113,14 +114,14 @@ function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
     const errors = [];
 
     const trs = wrapper.findAll('tbody.stk-tbody-main > tr');
-    // 收集占位段信息：上方合并段（DOM 位置 + 行数）、下方合并行数
+    // 收集占位段信息：上方合并段（DOM 位置 + 行数）、下方占位段（DOM 顺序的行数序列）
     const abovePhs = [];
-    let belowPhCount = 0;
+    const belowPhs = [];
     trs.forEach((tr, domIndex) => {
         const aboveCount = tr.attributes('data-above-count');
         if (aboveCount !== void 0) abovePhs.push({ domIndex, count: Number(aboveCount) });
         const belowCount = tr.attributes('data-below-count');
-        if (belowCount !== void 0) belowPhCount = Number(belowCount);
+        if (belowCount !== void 0) belowPhs.push(Number(belowCount));
     });
 
     for (let domIndex = 0; domIndex < trs.length; domIndex++) {
@@ -151,10 +152,21 @@ function checkMergeDom(wrapper, data, mergeDataIndexes, scrollTop, pageSize) {
                     for (const ph of abovePhs) {
                         if (ph.domIndex > domIndex) expectedRs -= ph.count - 1;
                     }
-                    if (belowPhCount > 0 && i + anchorRs - 1 > rawEnd) {
-                        // 下方合并时数据行只渲染到视口底，窗口末行索引 = rawEnd + 下方合并行数
-                        const endIndex = rawEnd + belowPhCount;
-                        expectedRs -= Math.min(i + anchorRs - 1, endIndex) - rawEnd - 1;
+                    if (belowPhs.length && i + anchorRs - 1 > rawEnd) {
+                        // 下方占位按跨界 rowspan 结束行切段：覆盖的逻辑行折叠为
+                        // 包含其结束行的第 segIdx 个占位 tr，扣减 (coveredRows - segIdx)
+                        const endIndex = rawEnd + belowPhs.reduce((a, b) => a + b, 0);
+                        const spanEnd = Math.min(i + anchorRs - 1, endIndex);
+                        let acc = rawEnd;
+                        let segIdx = belowPhs.length;
+                        for (let s = 0; s < belowPhs.length; s++) {
+                            acc += belowPhs[s];
+                            if (spanEnd <= acc) {
+                                segIdx = s + 1;
+                                break;
+                            }
+                        }
+                        expectedRs -= spanEnd - rawEnd - segIdx;
                     }
                     if (expectedRs < 1) expectedRs = 1;
                     if (td.attributes('rowspan') !== String(expectedRs)) {
@@ -449,6 +461,35 @@ describe('行合并虚拟列表-不规律合并（文档 merge-cells.md 场景�
         // 列对齐：'12' 的 c 单元格必须落在第 4 列；视口内各行单元格落在正确的列
         expect(checkColumnAlignment(wrapper, specialColKeyToIndex)).toEqual([]);
         const errors = checkMergeDom(wrapper, specialDataSource.value, ['a', 'b', 'c'], 13 * ROW_HEIGHT, pageSize);
+        expect(errors).toEqual([]);
+    });
+
+    test('滚动到第十七行：下方不同结束行的 rowspan 单元格各止于自己的占位段', async () => {
+        // 容器高度 140px => pageSize=4。scrollTop=476 => rawStart=17，视口 17..21。
+        // '14' a rowspan=10（止于 22）、'21' c rowspan=6（止于 25）、'20' b rowspan=9（止于 27）
+        // 三者同时越视口底且结束行各不相同。修复前三者复用同一个下方占位 tr，
+        // 底边塌缩到同一位置导致高度跳动；修复后下方区域 22..27 按结束行切为三段。
+        const pageSize = mockContainerHeight(wrapper, 140);
+        expect(pageSize).toBe(4);
+        await scrollYTo(wrapper, 17 * ROW_HEIGHT);
+
+        // 下方占位段：22（1 行）、23..25（3 行）、26..27（2 行）
+        const belowPhs = wrapper.findAll('tbody.stk-tbody-main > tr[data-below-count]');
+        expect(belowPhs.map(tr => tr.attributes('data-below-count'))).toEqual(['1', '3', '2']);
+
+        // 三个单元格修正 rowspan 互不相同，各止于包含其逻辑结束行的段边界：
+        // '14' a：行 13..21（扣除上方占位段后 8 个 tr）+ 第 1 段 = 9
+        // '20' b：行 19..21（3 个 tr）+ 3 段 = 6
+        // '21' c：行 20..21（2 个 tr）+ 前 2 段 = 4
+        const cellA = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="14"] > td[data-col-key="a"]');
+        const cellB = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="20"] > td[data-col-key="b"]');
+        const cellC = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="21"] > td[data-col-key="c"]');
+        expect(cellA.attributes('rowspan')).toBe('9');
+        expect(cellB.attributes('rowspan')).toBe('6');
+        expect(cellC.attributes('rowspan')).toBe('4');
+
+        expect(checkColumnAlignment(wrapper, specialColKeyToIndex)).toEqual([]);
+        const errors = checkMergeDom(wrapper, specialDataSource.value, ['a', 'b', 'c'], 17 * ROW_HEIGHT, pageSize);
         expect(errors).toEqual([]);
     });
 
