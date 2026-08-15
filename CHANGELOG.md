@@ -1,4 +1,14 @@
 
+## 1.2.0-beta.1
+* Feature
+  - feat: `mergeCells` now supports huge `rowspan` (e.g. thousands of rows) in `virtual` mode. Rows covered by a rowspan anchor above the viewport are compressed into placeholder cells/rows instead of being fully rendered, so the DOM node count stays proportional to the viewport size.
+  - feat: `mergeCells` now supports huge `colspan` (e.g. merging 150 columns) in `virtualX` mode. When the anchor column of a merged cell scrolls out of the viewport, the visible column range is expanded so the merged cell is fully rendered; in the expanded area, non-merged cells on the left are compressed into a single placeholder `td` with `colspan`, and the right part is not rendered at all (tbody only; thead keeps the full expanded range).
+* Optimize
+  - perf: shared cache for `mergeCells` user callbacks — hidden-cell map building, rendering, above-viewport placeholders and virtual-x range correction now reuse one cache across scroll frames; the user callback is only invoked for rows newly entering the viewport. In merged scenarios this yields a 5~13x speedup.
+  - perf: the `startIndex` correction for rowspan anchors crossing the viewport top is now a bounded scan of O(maxRowSpan) instead of O(startIndex), improving deep-scroll performance.
+  - perf: moved the row-level `:key` onto the `<template v-for>` so multi-branch rendering keeps a keyed Fragment diff, restoring row reuse during scroll instead of rebuilding all visible rows each frame.
+  - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
+
 ## 1.1.0
 * Feature
   - feat: `setTreeExpand` add `parents` option, pass a child node's rowKey to expand/collapse all its ancestors (the target node itself is also expanded when expanding if it has children), making the target row visible/hidden (e.g. locating a row).
