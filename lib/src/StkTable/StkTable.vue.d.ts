@@ -814,7 +814,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     }): any;
     expand?(_: {
         row: any;
-        col: StkTableColumn<any> | undefined;
+        col: any;
     }): any;
     empty?(_: {}): any;
     customBottom?(_: {}): any;

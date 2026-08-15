@@ -1,4 +1,5 @@
 import { Ref, ShallowRef } from 'vue';
+import { MergeCellsCache } from './mergeCellsCache';
 import { PrivateRowDT, PrivateStkTableColumn, RowKeyGen, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
 
@@ -23,6 +24,8 @@ export type VirtualScrollStore = {
     translateY: number;
     /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
     viewportStartIndex: number;
+    /** 视口实际结束行索引（rowspan 修正前的原始值，用于区分 below-viewport 行） */
+    viewportEndIndex: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -43,7 +46,11 @@ export type VirtualScrollXStore = {
  * virtual scroll
  * @returns
  */
-export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTMLElement | undefined>, trRef: Ref<HTMLTableRowElement[] | undefined>, dataSourceCopy: ShallowRef<PrivateRowDT[]>, tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>, tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>, rowKeyGen: RowKeyGen, maxRowSpan: Map<UniqKey, number>, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>): readonly [Ref<{
+export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTMLElement | undefined>, trRef: Ref<HTMLTableRowElement[] | undefined>, dataSourceCopy: ShallowRef<PrivateRowDT[]>, tableHeaderLast: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[]>, tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>, rowKeyGen: RowKeyGen, maxRowSpan: Map<UniqKey, number>, 
+/** 全局最大 rowspan（限定跨界修正扫描范围用） */
+getMaxRowSpanValue: () => number, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>, 
+/** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
+mergeCellsCache: MergeCellsCache): readonly [Ref<{
     containerHeight: number;
     pageSize: number;
     startIndex: number;
@@ -54,6 +61,7 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
     scrollHeight: number;
     translateY: number;
     viewportStartIndex: number;
+    viewportEndIndex: number;
 }, VirtualScrollStore | {
     containerHeight: number;
     pageSize: number;
@@ -65,6 +73,7 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
     scrollHeight: number;
     translateY: number;
     viewportStartIndex: number;
+    viewportEndIndex: number;
 }>, Ref<{
     containerWidth: number;
     scrollWidth: number;
@@ -83,4 +92,11 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
     startIndex: number;
     endIndex: number;
     offsetLeft: number;
-}>, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[]>];
+}>, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[]>, import('vue').ComputedRef<{
+    prefix: PrivateStkTableColumn<PrivateRowDT>[];
+    leftExpand: PrivateStkTableColumn<PrivateRowDT>[];
+    viewport: PrivateStkTableColumn<PrivateRowDT>[];
+    suffix: PrivateStkTableColumn<PrivateRowDT>[];
+    /** leftExpand 起始的绝对叶子列索引（mergeCells 缓存键用） */
+    leftExpandStart: number;
+} | null>];
