@@ -1,0 +1,162 @@
+{
+  "generatedAt": "2026-08-15T02:14:00.000Z",
+  "versions": ["0.8.14", "0.9.3", "0.10.0", "0.11.15", "1.0.2", "master", "optimize-cell-merge-render"],
+  "scenarios": {
+    "vertical_10k": {
+      "category": "vertical",
+      "label": "纵向 10K行",
+      "data": {
+        "0.8.14": { "mount": 14.06, "domNodes": 66, "renderedRows": 18, "scrollMid": 0.13 },
+        "0.9.3": { "mount": 12.34, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.18 },
+        "0.10.0": { "mount": 11.95, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.13 },
+        "0.11.15": { "mount": 14.70, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.14 },
+        "1.0.2": { "mount": 12.97, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.26 },
+        "master": { "mount": 12.47, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.13 },
+        "optimize-cell-merge-render": { "mount": 13.64, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "vertical_50k": {
+      "category": "vertical",
+      "label": "纵向 50K行",
+      "data": {
+        "0.8.14": { "mount": 42.23, "domNodes": 67, "renderedRows": 18 },
+        "0.9.3": { "mount": 44.85, "domNodes": 67, "renderedRows": 18 },
+        "0.10.0": { "mount": 41.48, "domNodes": 67, "renderedRows": 18 },
+        "0.11.15": { "mount": 46.15, "domNodes": 67, "renderedRows": 18 },
+        "1.0.2": { "mount": 45.24, "domNodes": 67, "renderedRows": 18 },
+        "master": { "mount": 40.27, "domNodes": 67, "renderedRows": 18 },
+        "optimize-cell-merge-render": { "mount": 47.03, "domNodes": 67, "renderedRows": 18 }
+      }
+    },
+    "non_virtual_500": {
+      "category": "vertical",
+      "label": "非虚拟 500行",
+      "data": {
+        "0.8.14": { "mount": 313.17, "domNodes": 5520, "renderedRows": 500 },
+        "0.9.3": { "mount": 284.68, "domNodes": 5521, "renderedRows": 500 },
+        "0.10.0": { "mount": 240.69, "domNodes": 5521, "renderedRows": 500 },
+        "0.11.15": { "mount": 268.67, "domNodes": 5521, "renderedRows": 500 },
+        "1.0.2": { "mount": 200.35, "domNodes": 5521, "renderedRows": 500 },
+        "master": { "mount": 196.15, "domNodes": 5521, "renderedRows": 500 },
+        "optimize-cell-merge-render": { "mount": 205.47, "domNodes": 5521, "renderedRows": 500 }
+      }
+    },
+    "virtualX_30cols": {
+      "category": "horizontal",
+      "label": "横向 30列",
+      "data": {
+        "0.8.14": { "mount": 29.36, "domNodes": 43, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.04 },
+        "0.9.3": { "mount": 28.92, "domNodes": 44, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.04 },
+        "0.10.0": { "mount": 27.26, "domNodes": 44, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.04 },
+        "0.11.15": { "mount": 33.83, "domNodes": 55, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.04 },
+        "1.0.2": { "mount": 28.70, "domNodes": 44, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.04 },
+        "master": { "mount": 28.45, "domNodes": 44, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.05 },
+        "optimize-cell-merge-render": { "mount": 31.72, "domNodes": 44, "renderedRows": 18, "scrollX": 0.02, "scrollXY": 0.02 }
+      }
+    },
+    "virtualX_50cols": {
+      "category": "horizontal",
+      "label": "横向 50列",
+      "data": {
+        "0.8.14": { "mount": 20.40, "domNodes": 43, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.04 },
+        "0.9.3": { "mount": 19.16, "domNodes": 44, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.04 },
+        "0.10.0": { "mount": 18.84, "domNodes": 44, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.04 },
+        "0.11.15": { "mount": 26.63, "domNodes": 55, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.04 },
+        "1.0.2": { "mount": 21.29, "domNodes": 44, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.04 },
+        "master": { "mount": 19.23, "domNodes": 44, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.05 },
+        "optimize-cell-merge-render": { "mount": 19.62, "domNodes": 44, "renderedRows": 18, "scrollX": 0.02, "scrollXY": 0.02 }
+      }
+    },
+    "mergeCells_rowspan": {
+      "category": "merge",
+      "label": "合并 rowspan",
+      "data": {
+        "0.8.14": { "mount": 13.34, "domNodes": 67, "renderedRows": 18, "scrollMid": 0.13 },
+        "0.9.3": { "mount": 12.94, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.18 },
+        "0.10.0": { "mount": 13.39, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.13 },
+        "0.11.15": { "mount": 13.85, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.14 },
+        "1.0.2": { "mount": 11.89, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.26 },
+        "master": { "mount": 12.73, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.13 },
+        "optimize-cell-merge-render": { "mount": 11.01, "domNodes": 59, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "mergeCells_colspan": {
+      "category": "merge",
+      "label": "合并 colspan",
+      "data": {
+        "0.8.14": { "mount": 15.24, "domNodes": 62, "renderedRows": 18, "scrollMid": 0.01 },
+        "0.9.3": { "mount": 9.39, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 },
+        "0.10.0": { "mount": 11.04, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 },
+        "0.11.15": { "mount": 12.85, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 },
+        "1.0.2": { "mount": 14.43, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 },
+        "master": { "mount": 13.57, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 },
+        "optimize-cell-merge-render": { "mount": 9.25, "domNodes": 63, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "mergeCells_mixed": {
+      "category": "merge",
+      "label": "合并 mixed",
+      "data": {
+        "0.8.14": { "mount": 11.80, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.10 },
+        "0.9.3": { "mount": 11.37, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.11 },
+        "0.10.0": { "mount": 11.35, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.18 },
+        "0.11.15": { "mount": 8.26, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.10 },
+        "1.0.2": { "mount": 9.29, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.09 },
+        "master": { "mount": 10.85, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.08 },
+        "optimize-cell-merge-render": { "mount": 7.16, "domNodes": 59, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "multi_header_3lvl": {
+      "category": "header",
+      "label": "3层表头",
+      "data": {
+        "0.8.14": { "mount": 11.08, "domNodes": 79, "renderedRows": 18, "scrollMid": 0.01 },
+        "0.9.3": { "mount": 8.32, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.02 },
+        "0.10.0": { "mount": 10.54, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.01 },
+        "0.11.15": { "mount": 7.49, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.01 },
+        "1.0.2": { "mount": 7.57, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.01 },
+        "master": { "mount": 6.65, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.01 },
+        "optimize-cell-merge-render": { "mount": 7.46, "domNodes": 80, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "merge_multiHeader": {
+      "category": "combined",
+      "label": "合并+多级表头",
+      "data": {
+        "0.8.14": { "mount": 8.96, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.09 },
+        "0.9.3": { "mount": 17.59, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.10 },
+        "0.10.0": { "mount": 10.26, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.09 },
+        "0.11.15": { "mount": 8.15, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.09 },
+        "1.0.2": { "mount": 7.52, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.08 },
+        "master": { "mount": 7.99, "domNodes": 68, "renderedRows": 18, "scrollMid": 0.10 },
+        "optimize-cell-merge-render": { "mount": 7.69, "domNodes": 59, "renderedRows": 18, "scrollMid": 0.01 }
+      }
+    },
+    "merge_virtualX": {
+      "category": "combined",
+      "label": "合并+virtualX",
+      "data": {
+        "0.8.14": { "mount": 20.29, "domNodes": 68, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.06 },
+        "0.9.3": { "mount": 18.86, "domNodes": 68, "renderedRows": 18, "scrollX": 0.06, "scrollXY": 0.06 },
+        "0.10.0": { "mount": 18.81, "domNodes": 68, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.10 },
+        "0.11.15": { "mount": 18.12, "domNodes": 68, "renderedRows": 18, "scrollX": 0.10, "scrollXY": 0.10 },
+        "1.0.2": { "mount": 20.99, "domNodes": 68, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.11 },
+        "master": { "mount": 17.92, "domNodes": 68, "renderedRows": 18, "scrollX": 0.11, "scrollXY": 0.11 },
+        "optimize-cell-merge-render": { "mount": 17.36, "domNodes": 59, "renderedRows": 18, "scrollX": 0.02, "scrollXY": 0.02 }
+      }
+    },
+    "all_features": {
+      "category": "combined",
+      "label": "全功能",
+      "data": {
+        "0.8.14": { "mount": 17.08, "domNodes": 68, "renderedRows": 18, "scrollX": 0.04, "scrollXY": 0.04 },
+        "0.9.3": { "mount": 17.30, "domNodes": 68, "renderedRows": 18, "scrollX": 0.04, "scrollXY": 0.04 },
+        "0.10.0": { "mount": 17.07, "domNodes": 68, "renderedRows": 18, "scrollX": 0.04, "scrollXY": 0.04 },
+        "0.11.15": { "mount": 17.31, "domNodes": 68, "renderedRows": 18, "scrollX": 0.04, "scrollXY": 0.04 },
+        "1.0.2": { "mount": 15.94, "domNodes": 68, "renderedRows": 18, "scrollX": 0.04, "scrollXY": 0.04 },
+        "master": { "mount": 16.09, "domNodes": 68, "renderedRows": 18, "scrollX": 0.05, "scrollXY": 0.05 },
+        "optimize-cell-merge-render": { "mount": 15.60, "domNodes": 59, "renderedRows": 18, "scrollX": 0.02, "scrollXY": 0.02 }
+      }
+    }
+  }
+}
