@@ -26,7 +26,8 @@ const VERSIONS = [
 ];
 
 const RESULTS_DIR = resolve(ROOT, 'test/perf/results');
-const TEST_FILE = resolve(ROOT, 'test/perf/scrollPerf.test.js');
+const SOURCE_FILE = resolve(__dirname, 'scrollPerf.test.js');
+const TEST_FILE = resolve(ROOT, 'test/scrollPerf.test.js');
 const TMP_TEST = resolve(__dirname, '.scrollPerf.test.js.bak');
 
 // Scenario metadata — labels used in charts
@@ -77,7 +78,7 @@ function parsePerfLine(line) {
 
 // ─── Main ───────────────────────────────────────────────────────────────────
 
-copyFileSync(TEST_FILE, TMP_TEST);
+copyFileSync(SOURCE_FILE, TMP_TEST);
 const originalBranch = exec('git branch --show-current') || 'perf-test';
 log(`Original branch: ${originalBranch}`);
 
@@ -116,7 +117,7 @@ for (const ver of VERSIONS) {
     copyFileSync(TMP_TEST, TEST_FILE);
 
     log('Running performance tests...');
-    const testOutput = exec('npx vitest run --reporter=verbose test/perf/scrollPerf.test.js 2>&1', { timeout: 300_000 });
+    const testOutput = exec('npx vitest run --reporter=verbose test/scrollPerf.test.js 2>&1', { timeout: 300_000 });
 
     if (testOutput === null) {
         log(`✗ Tests failed/timed out for ${ver.name}`);
