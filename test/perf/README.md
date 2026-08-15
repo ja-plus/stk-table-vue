@@ -6,13 +6,14 @@
 
 ```
 test/perf/
-── scrollPerf.test.js          # 性能测试用例（12 个场景）
+├── scrollPerf.test.js          # 性能测试用例（12 个场景）
 ├── run-perf-benchmark.mjs      # 跨版本自动化运行脚本
 ├── README.md                   # 本文件
 └── results/                    # 测试结果输出目录
     ├── REPORT.md               # Markdown 性能报告（含分析总结）
-    ├── benchmark.html          # ECharts 可视化页面（浏览器打开）
-    └── *.txt                   # 各版本原始测试数据
+    ├── benchmark.html          # ECharts 可视化页面（通过内置 http 服务打开）
+    ├── data.json               # 聚合数据（benchmark.html 动态加载）
+    └── {version}.json          # 各版本单版本结果（增量测试的判断依据）
 ```
 
 ## 测试场景
@@ -34,22 +35,34 @@ test/perf/
 
 ## 使用方式
 
-### 运行全量基准测试
-
 ```bash
 # 在项目根目录下执行
-node test/perf/run-perf-benchmark.mjs
+
+# 增量模式（默认）：仅测试缺少数据的版本，已有 results/{version}.json 的版本直接复用
+pnpm perf
+
+# 强制重测指定版本（可传多个，空格分隔），其余版本复用已有数据
+pnpm perf 1.1.0
+pnpm perf 1.0.4 optimize-cell-merge-render
+
+# 强制重测列表中的所有版本
+pnpm perf all
+
+# 结束后不启动本地服务
+pnpm perf --no-serve
 ```
 
 脚本会自动完成以下流程：
 
-1. 保存当前分支状态
-2. 依次 checkout 每个目标版本（tag 或 branch）
+1. 确定待测版本（已有合法结果文件的版本默认跳过）
+2. 依次 checkout 每个待测版本（tag 或 branch）
 3. 对每个版本执行 `pnpm install` 安装依赖
-4. 复制测试文件并运行 `vitest`
-5. 收集 `[PERF]` 输出，保存到 `results/` 目录
-6. 恢复原始分支和依赖
-7. 生成 `results/REPORT.md` 报告
+4. 复制测试文件并运行 `vitest`，收集 `[PERF]` 输出写入 `results/{version}.json`
+5. 恢复原始分支和依赖
+6. 聚合全量数据生成 `results/data.json` 与 `results/REPORT.md`
+7. 启动内置 http 服务（默认端口 4399，被占用时自动顺延），浏览器打开输出的 `benchmark.html` 地址即可查看图表
+
+> 提示：删除某个版本的 `results/{version}.json` 后重新运行，即可只补测该版本。
 
 ### 单独运行测试（当前版本）
 
@@ -60,7 +73,7 @@ npx vitest run test/perf/scrollPerf.test.js
 
 ### 查看可视化报告
 
-用浏览器直接打开 `results/benchmark.html`，包含 9 个 ECharts 图表：
+脚本结束后会自动启动 http 服务并输出地址（如 `http://localhost:4399/benchmark.html`）。也可手动在 `results/` 目录下启动任意静态服务器。页面包含：
 
 - 纵向/横向/合并/多级表头 mount 耗时柱状图
 - 合并单元格滚动性能对比（核心图表，opt-merge 绿色高亮）
