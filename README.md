@@ -112,11 +112,6 @@ const dataSource = [
 
 * [Highlight: setHighlightDimCell & setHighlightDimRow](https://ja-plus.github.io/stk-table-vue/main/api/expose.html#sethighlightdimcell)
 
-### Merge cells with virtual scroll
-- `rowspan` & `colspan` both work with `virtual` (vertical) and `virtual-x` (horizontal) virtual scrolling.
-- In `virtual-x` mode, when the anchor column of a merged cell scrolls out of the viewport, the visible column range is automatically expanded so the merged cell is fully rendered — even with a huge `colspan` (e.g. merging 150 columns).
-- [Merge cells docs](https://ja-plus.github.io/stk-table-vue/main/table/basic/merge-cells.html)
-
 
 ### Example
 ```vue
@@ -138,6 +133,7 @@ const dataSource = [
     virtual
     virtual-x
     no-data-full
+    col-resizable
     auto-resize
     fixed-col-shadow
     :col-min-width="10"
