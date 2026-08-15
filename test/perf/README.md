@@ -1,0 +1,127 @@
+# StkTable 滚动性能基准测试
+
+跨版本自动化性能测试框架，用于检测 StkTable 从 v0.8.x 到各版本的滚动性能趋势。
+
+## 目录结构
+
+```
+test/perf/
+├── scrollPerf.test.js          # 性能测试用例（12 个场景）
+├── run-perf-benchmark.mjs      # 跨版本自动化运行脚本
+├── README.md                   # 本文件
+└── results/                    # 测试结果输出目录
+    ├── REPORT.md               # Markdown 性能报告（含分析总结）
+    ├── benchmark.html          # ECharts 可视化页面（通过内置 http 服务打开）
+    ├── data.json               # 聚合数据（benchmark.html 动态加载）
+    └── {version}.json          # 各版本单版本结果（增量测试的判断依据）
+```
+
+## 测试场景
+
+| 分类 | 场景 | 说明 |
+|------|------|------|
+| 纵向滚动 | `vertical_10k` | 10,000 行 × 5 列，虚拟滚动 |
+| | `vertical_50k` | 50,000 行 × 5 列，虚拟滚动 |
+| | `non_virtual_500` | 500 行非虚拟基线对照 |
+| 横向滚动 | `virtualX_30cols` | 5,000 行 × 30 列，virtualX |
+| | `virtualX_50cols` | 2,000 行 × 50 列，virtualX |
+| 单元格合并 | `mergeCells_rowspan` | 5,000 行，rowspan 合并 |
+| | `mergeCells_colspan` | 5,000 行，colspan 合并 |
+| | `mergeCells_mixed` | 3,000 行，混合合并 |
+| 多级表头 | `multi_header_3lvl` | 5,000 行，3 层嵌套表头 |
+| 组合场景 | `merge+multiHeader` | 3,000 行，合并 + 多级表头 |
+| | `merge+virtualX` | 3,000 行 × 20 列，合并 + virtualX |
+| | `all_features` | 2,000 行 × 20 列，全功能叠加 |
+
+## 使用方式
+
+```bash
+# 在项目根目录下执行
+
+# 增量模式（默认）：仅测试缺少数据的版本，已有 results/{version}.json 的版本直接复用
+pnpm perf
+
+# 强制重测指定版本（可传多个，空格分隔），其余版本复用已有数据
+pnpm perf 1.1.0
+pnpm perf 1.0.4 optimize-cell-merge-render
+
+# 强制重测列表中的所有版本
+pnpm perf all
+
+# 结束后不启动本地服务
+pnpm perf --no-serve
+```
+
+脚本会自动完成以下流程：
+
+1. 确定待测版本（已有合法结果文件的版本默认跳过）
+2. 依次 checkout 每个待测版本（tag 或 branch）
+3. 对每个版本执行 `pnpm install` 安装依赖
+4. 复制测试文件并运行 `vitest`，收集 `[PERF]` 输出写入 `results/{version}.json`
+5. 恢复原始分支和依赖
+6. 聚合全量数据生成 `results/data.json` 与 `results/REPORT.md`
+7. 启动内置 http 服务（默认端口 4399，被占用时自动顺延），浏览器打开输出的 `benchmark.html` 地址即可查看图表
+
+> 提示：删除某个版本的 `results/{version}.json` 后重新运行，即可只补测该版本。
+
+### 单独运行测试（当前版本）
+
+```bash
+# 仅对当前代码运行性能测试
+npx vitest run test/perf/scrollPerf.test.js
+```
+
+### 查看可视化报告
+
+脚本结束后会自动启动 http 服务并输出地址（如 `http://localhost:4399/benchmark.html`）。也可手动在 `results/` 目录下启动任意静态服务器。页面包含：
+
+- 纵向/横向/合并/多级表头 mount 耗时柱状图
+- 合并单元格滚动性能对比（核心图表，opt-merge 绿色高亮）
+- DOM 节点数对比
+- 非虚拟基线面积图
+- 全场景 mount 耗时热力图
+
+## 测试版本
+
+在 `run-perf-benchmark.mjs` 的 `VERSIONS` 数组中配置：
+
+```js
+const VERSIONS = [
+    { name: '0.8.14', type: 'tag' },          // git tag
+    { name: '0.9.3', type: 'tag' },
+    { name: '0.10.0', type: 'tag' },
+    { name: '0.11.15', type: 'tag' },
+    { name: '1.0.4', type: 'tag' },
+    { name: '1.1.0', type: 'tag' },
+    { name: 'optimize-cell-merge-render', type: 'branch' },  // git branch
+];
+```
+
+- `type: 'tag'` — 通过 `git switch --detach <tag>` 检出
+- `type: 'branch'` — 通过 `git switch <branch>` 检出
+
+### 添加新版本
+
+1. 在 `VERSIONS` 数组中添加条目
+2. 重新运行脚本即可
+
+## 指标说明
+
+| 指标 | 含义 | 单位 |
+|------|------|------|
+| `mount` | 组件创建 + 初始渲染耗时 | ms |
+| `domNodes` | 渲染的 DOM 元素总数 | 个 |
+| `renderedRows` | tbody 中实际渲染的 `<tr>` 行数 | 个 |
+| `scrollMid` | 滚动到 ~5000 行后虚拟滚动重算耗时 | ms |
+| `scrollDeep` | 滚动到 90%+ 深度后重算耗时 | ms |
+| `scrollX` | 横向虚拟滚动重算耗时 | ms |
+| `scrollXY` | 横向 + 纵向同时滚动重算耗时 | ms |
+
+每个数值为 **5 次运行的中位数**（排除 1 次预热）。
+
+## 注意事项
+
+- 测试环境为 **happy-dom**（无真实浏览器布局），scroll 耗时绝对值偏小，但版本间**相对差异**有效
+- 每个版本需重新 `pnpm install`，全量测试约需 **5~10 分钟**
+- 如果某版本缺少某功能（如 `registerFeature` 在 0.11.0 之前不存在），对应测试会自动跳过
+- 运行过程中请勿手动切换分支

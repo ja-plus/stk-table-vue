@@ -1,0 +1,65 @@
+{
+  "version": "1.1.0",
+  "type": "tag",
+  "scenarios": {
+    "vertical_10k": {
+      "mount": 11.2,
+      "domNodes": 67,
+      "renderedRows": 4,
+      "scrollMid": 0.02,
+      "scrollDeep": 0.02
+    },
+    "vertical_50k": {
+      "mount": 38.16,
+      "domNodes": 67,
+      "scrollDeep": 0.02
+    },
+    "non_virtual_500": {
+      "mount": 182.46,
+      "domNodes": 5521,
+      "renderedRows": 500
+    },
+    "virtualX_30cols": {
+      "mount": 28.95,
+      "domNodes": 44,
+      "scrollX": 0.01,
+      "scrollXY": 0.02
+    },
+    "virtualX_50cols": {
+      "mount": 19.89,
+      "domNodes": 44,
+      "scrollX": 0.01
+    },
+    "mergeCells_rowspan": {
+      "mount": 13.55,
+      "domNodes": 68,
+      "scrollMid": 0.12
+    },
+    "mergeCells_colspan": {
+      "mount": 11.37,
+      "domNodes": 63,
+      "scrollMid": 0.01
+    },
+    "mergeCells_mixed": {
+      "mount": 7.27,
+      "scrollMid": 0.08
+    },
+    "multi_header_3lvl": {
+      "mount": 7.26,
+      "domNodes": 80,
+      "scrollMid": 0.01
+    },
+    "merge+multiHeader": {
+      "mount": 6.39,
+      "scrollMid": 0.08
+    },
+    "merge+virtualX": {
+      "mount": 14.95,
+      "scrollXY": 0.1
+    },
+    "all_features": {
+      "mount": 13.79,
+      "scrollXY": 0.04
+    }
+  }
+}
