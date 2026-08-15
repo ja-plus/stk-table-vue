@@ -21,11 +21,25 @@ function mergeCells(data: {
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ### 列合并虚拟列表 <Badge type="tip" text="^1.1.0" />
+#### 简单合并
 <demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+代码中，定义了 `mergeCells` 函数，将一行中的`colspan`字段作为合并数量。
+```ts
+mergeCells: ({ row }) => {
+    return row.colspan ? { colspan: row.colspan } : void 0;
+}
+```
 
 ::: tip
 横向虚拟列表模式下，合并单元格（colspan）的锚点列滚出可视区域时，会自动扩展可视列范围，保证合并单元格完整渲染。
 :::
+
+#### 不规律合并
+<demo vue="basic/merge-cells/MergeCellsColVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/Special.vue"></demo>
+
+#### 超长 colspan
+当 `colspan` 非常大（如合并 150 列）时，横向虚拟滚动依然可以正确工作：合并区域与可视区相交期间，可视列范围会扩展到整个合并区域，保证合并单元格完整渲染；滚出合并区域后恢复正常渲染。
+<demo vue="basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue"></demo>
 
 ## 行合并
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>

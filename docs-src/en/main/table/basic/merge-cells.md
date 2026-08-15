@@ -21,11 +21,25 @@ Return `{ colspan: number, rowspan: number }` to indicate the number of cells to
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ### Column Merging in Virtual List <Badge type="tip" text="^1.1.0" />
+#### Simple Merging
 <demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+In the code, the `mergeCells` function is defined to use the `colspan` field in a row as the merge count.
+```ts
+mergeCells: ({ row }) => {
+    return row.colspan ? { colspan: row.colspan } : void 0;
+}
+```
 
 ::: tip
 In horizontal virtual list mode, when the anchor column of a merged cell (colspan) scrolls out of the viewport, the visible column range is automatically expanded so that the merged cell is fully rendered.
 :::
+
+#### Irregular Merging
+<demo vue="basic/merge-cells/MergeCellsColVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/Special.vue"></demo>
+
+#### Huge colspan
+When `colspan` is very large (e.g. merging 150 columns), horizontal virtual scrolling still works correctly: while the merged range overlaps the viewport, the visible column range is expanded to the whole merged range so that the merged cell is fully rendered; scrolling outside the merged range restores normal rendering.
+<demo vue="basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue"></demo>
 
 ## Row Merging
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>

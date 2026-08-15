@@ -22,11 +22,25 @@ function mergeCells(data: {
 <demo vue="basic/merge-cells/MergeCellsCol.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsCol.vue"></demo>
 
 ### 列マージ仮想リスト <Badge type="tip" text="^1.1.0" />
+#### シンプルマージ
 <demo vue="basic/merge-cells/MergeCellsColVirtual/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/index.vue"></demo>
+コードでは、行の `colspan` フィールドをマージ数として使用するように `mergeCells` 関数が定義されています。
+```ts
+mergeCells: ({ row }) => {
+    return row.colspan ? { colspan: row.colspan } : void 0;
+}
+```
 
 ::: tip
 横方向仮想リストモードでは、マージセル（colspan）のアンカー列が可視エリア外にスクロールアウトした場合、可視列範囲を自動的に拡張し、マージセルの完全なレンダリングを保証します。
 :::
+
+#### 不規則マージ
+<demo vue="basic/merge-cells/MergeCellsColVirtual/Special.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/Special.vue"></demo>
+
+#### 非常に大きな colspan
+`colspan` が非常に大きい（例：150 列をマージ）場合でも、横方向仮想スクロールは正しく動作します：マージ範囲が可視エリアと交差している間、可視列範囲はマージ範囲全体まで拡張され、マージセルの完全なレンダリングを保証します；マージ範囲外へスクロールすると通常のレンダリングに戻ります。
+<demo vue="basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsColVirtual/HugeColspan.vue"></demo>
 
 ## 行マージ
 <demo vue="basic/merge-cells/MergeCellsRow.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/merge-cells/MergeCellsRow.vue"></demo>

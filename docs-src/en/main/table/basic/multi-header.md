@@ -25,7 +25,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo vue="basic/multi-header/MultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeader.vue"></demo>
 
-## Horizontal Virtual List(✨NEW)<Badge type="tip" text="^1.0.0" />
+## Horizontal Virtual List<Badge type="tip" text="^1.0.0" />
 With the help of AI, multi-level headers finally support horizontal virtual list!
 
 Configure `props.virtualX` to enable it.
