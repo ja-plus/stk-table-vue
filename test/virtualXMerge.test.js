@@ -113,6 +113,105 @@ describe('virtual + virtual-x with mergeCells colspan', () => {
     });
 });
 
+describe('virtual-x with huge colspan', () => {
+    const COL_COUNT = 160;
+    const HUGE_COLSPAN = 120;
+    const columns = new Array(COL_COUNT).fill(0).map((_, i) => ({ title: `Col ${i}`, dataIndex: `c${i}`, width: 100 }));
+    // c5 列合并 120 列（覆盖 c5..c124）
+    columns[5].mergeCells = ({ row }) => (row.colspan ? { colspan: row.colspan } : void 0);
+    const dataSource = new Array(6).fill(0).map((_, i) => ({ id: i, colspan: i < 4 ? HUGE_COLSPAN : void 0, c5: `merged-${i}` }));
+
+    const wrapper = mount(StkTable, {
+        props: {
+            rowKey: 'id',
+            virtualX: true,
+            columns,
+            dataSource,
+        },
+    });
+
+    test('视口位于超长合并区间中部时，左扩到锚点列并完整渲染合并单元格', async () => {
+        // 容器宽度 200(DEFAULT_TABLE_WIDTH)，列宽 100。scrollLeft=6000 时原始可视列 [60,62)，
+        // 全部被 c5(colspan=120) 覆盖，可视范围需左扩到锚点列 c5（范围变为 [5,62)）
+        await scrollXTo(wrapper, 6000);
+
+        const colKeys = getRowTdColKeys(wrapper, '0');
+        expect(colKeys).toEqual(['c5']);
+
+        const anchor = wrapper.find('tbody.stk-tbody-main > tr[data-row-key="0"] > td[data-col-key="c5"]');
+        expect(anchor.attributes('colspan')).toBe('120');
+
+        // 左侧占位宽度 = c5 之前所有列宽度和 = 5 * 100 = 500
+        expect(wrapper.find('thead th.vt-x-left').attributes('style')).toContain('width: 500px');
+    });
+
+    test('超长合并区域跨越视口右边界时，右扩到合并末端', async () => {
+        // scrollLeft=11800 时原始可视列 [118,120)，c5 合并区域覆盖到 c124，需右扩到 125
+        await scrollXTo(wrapper, 11800);
+
+        const colKeys = getRowTdColKeys(wrapper, '0');
+        expect(colKeys).toEqual(['c5']);
+
+        // 右侧占位宽度 = c125..c159 = 35 * 100 = 3500
+        expect(wrapper.find('thead th.vt-x-right').attributes('style')).toContain('width: 3500px');
+    });
+
+    test('滚出合并区域后可视范围恢复正常（不再持有全部合并列）', async () => {
+        // scrollLeft=14000 时可视列 [140,142)，位于合并区域 c5..c124 之外
+        await scrollXTo(wrapper, 14000);
+
+        expect(wrapper.find('tbody.stk-tbody-main td[data-col-key="c5"]').exists()).toBe(false);
+        // 该行 td 数回到正常可视列数（2 列），而不是 120+ 列
+        const tds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="0"] > td[data-col-key]');
+        expect(tds.length).toBe(2);
+    });
+
+    test('非合并行：左扩展区合并为单个占位 td，右扩展区不渲染', async () => {
+        // scrollLeft=11800：原始可视列 [118,120)，修正后 [5,125)。
+        // row5 无合并：左扩展区 c5..c117（113 列）合并为 1 个占位 td，
+        // 可视列 c118/c119 正常渲染，右扩展区 c120..c124 不渲染
+        await scrollXTo(wrapper, 11800);
+
+        expect(getRowTdColKeys(wrapper, '5')).toEqual(['c118', 'c119']);
+
+        const tds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="5"] > td');
+        // vt-x-left + 占位(colspan=113) + c118 + c119 + vt-x-right
+        expect(tds.length).toBe(5);
+        expect(tds[1].classes()).toContain('vt-above-viewport-ph');
+        expect(tds[1].attributes('colspan')).toBe('113');
+
+        // 右扩展区单元格不渲染
+        expect(wrapper.find('tbody.stk-tbody-main > tr[data-row-key="5"] > td[data-col-key="c120"]').exists()).toBe(false);
+
+        // 合并行不受影响：仍只有锚点 td（覆盖列照旧隐藏），不产生占位
+        const mergedTds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="0"] > td');
+        expect(mergedTds.length).toBe(3);
+        expect(mergedTds[1].attributes('data-col-key')).toBe('c5');
+        expect(mergedTds[1].attributes('colspan')).toBe('120');
+    });
+
+    test('非合并行：视口位于合并区中部时占位 colspan 随左扩展宽度变化', async () => {
+        // scrollLeft=6000：原始可视列 [60,62)，修正后 [5,125)，左扩展 55 列，右扩展 c62..c124
+        await scrollXTo(wrapper, 6000);
+
+        expect(getRowTdColKeys(wrapper, '5')).toEqual(['c60', 'c61']);
+
+        const tds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="5"] > td');
+        // vt-x-left + 占位(colspan=55) + c60 + c61 + vt-x-right
+        expect(tds.length).toBe(5);
+        expect(tds[1].attributes('colspan')).toBe('55');
+    });
+
+    test('无修正扩展时非合并行恢复正常逐列渲染', async () => {
+        // scrollLeft=0：可视列 [0,2)，与合并区域 c5..c124 无交集，无修正
+        await scrollXTo(wrapper, 0);
+
+        expect(getRowTdColKeys(wrapper, '5')).toEqual(['c0', 'c1']);
+        const phTds = wrapper.findAll('tbody.stk-tbody-main > tr[data-row-key="5"] > td.vt-above-viewport-ph');
+        expect(phTds.length).toBe(0);
+    });
+});
+
 describe('virtual-x multi-level header with mergeCells colspan', () => {
     const leafCols = new Array(12).fill(0).map((_, i) => ({ title: `Col ${i}`, dataIndex: `c${i}`, width: 100 }));
     leafCols[3].mergeCells = ({ row }) => (row.colspan ? { colspan: row.colspan } : void 0);

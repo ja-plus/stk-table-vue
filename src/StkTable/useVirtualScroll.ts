@@ -213,6 +213,7 @@ export function useVirtualScroll(
      * 收集行集合中的列合并（colspan）区间
      * @param rows 行数据
      * @param rowIndexBase mergeCells 入参 rowIndex 的起始值
+     * @return { leftReach, rightEnd }  合并区间
      */
     function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
         const mergeColsInfo = virtualX_mergeColsInfo.value;
@@ -420,6 +421,46 @@ export function useVirtualScroll(
             return leftCols.concat(mainColumns).concat(rightCols);
         }
         return tableHeaderLastValue;
+    });
+
+    /**
+     * tbody 行渲染的列分段（超长 colspan 优化）。
+     * 修正扩展出的区域都在原始可视视口之外，非锚点单元格无需真实渲染：
+     * - leftExpand（原始视口左侧扩展区）：由调用方逐行处理——锚点/被覆盖单元格保留原行为，
+     *   其余连续普通单元格合并为单个 colspan 占位 td（占位相同列槽位，保持对齐）；
+     * - 右侧扩展区：完全不渲染（不影响可视单元格对齐，区域在屏幕外）。
+     * thead 仍保持完整修正范围（锚点 colspan 需要真实列槽位），仅 tbody 收缩。
+     * 多级表头含 spacer/分组逻辑，暂不分段（返回 null 回退完整列列表）。
+     */
+    const virtualX_expandColSegments = computed(() => {
+        if (!virtualX_on.value || isMultiLevelHeader.value) return null;
+        const { startIndex: xStart, endIndex: xEnd } = virtualScrollX.value;
+        const { startIndex: cStart, endIndex: cEnd } = virtualX_colRange.value;
+        // 无修正扩展时无需分段
+        if (cStart >= xStart && cEnd <= xEnd) return null;
+
+        const headers = tableHeaderLast.value;
+        const maxIndex = headers.length;
+        const vs = Math.min(cStart, maxIndex);
+        const ve = Math.min(cEnd, maxIndex);
+
+        const prefix: PrivateStkTableColumn<PrivateRowDT>[] = [];
+        const suffix: PrivateStkTableColumn<PrivateRowDT>[] = [];
+        for (let i = 0; i < headers.length; i++) {
+            const col = headers[i];
+            if (i < vs && col.fixed === 'left') prefix.push(col);
+            else if (i >= ve && col.fixed === 'right') suffix.push(col);
+        }
+
+        return {
+            prefix,
+            leftExpand: headers.slice(vs, Math.min(xStart, ve)),
+            // 可视区取原始视口范围；[xEnd, cEnd) 为右扩展区，不进入 tbody 行列表
+            viewport: headers.slice(Math.min(xStart, ve), Math.min(xEnd, ve)),
+            suffix,
+            /** leftExpand 起始的绝对叶子列索引（mergeCells 缓存键用） */
+            leftExpandStart: vs,
+        };
     });
 
     /**
@@ -845,5 +886,6 @@ export function useVirtualScroll(
         expandRowColspan,
         theadVirtualX,
         virtualX_columnPart,
+        virtualX_expandColSegments,
     ] as const;
 }

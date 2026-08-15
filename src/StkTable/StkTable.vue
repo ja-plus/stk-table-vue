@@ -917,6 +917,7 @@ const [
     expandRowColspan,
     theadVirtualX,
     virtualX_columnPart,
+    virtualX_expandColSegments,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -1391,17 +1392,73 @@ function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColum
  *   (tr already has height via CSS, no td needed).
  */
 function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
-    if (!row || !virtual_on.value) return virtualX_columnPart.value;
-    const { startIndex, viewportStartIndex, viewportEndIndex } = virtualScroll.value;
-    const aboveCount = viewportStartIndex - startIndex;
-    if (aboveCount > 0 && rowIndex < aboveCount) {
-        return (aboveViewportColumnMap.value.get(rowKeyGen(row)) || virtualX_columnPart.value) as PrivateStkTableColumn<PrivateRowDT>[];
+    if (!row) return virtualX_columnPart.value;
+    if (virtual_on.value) {
+        const { startIndex, viewportStartIndex, viewportEndIndex } = virtualScroll.value;
+        const aboveCount = viewportStartIndex - startIndex;
+        if (aboveCount > 0 && rowIndex < aboveCount) {
+            return (aboveViewportColumnMap.value.get(rowKeyGen(row)) || virtualX_columnPart.value) as PrivateStkTableColumn<PrivateRowDT>[];
+        }
+        // Below-viewport rows: no td needed
+        if (startIndex + rowIndex > viewportEndIndex) {
+            return [];
+        }
     }
-    // Below-viewport rows: no td needed
-    if (startIndex + rowIndex > viewportEndIndex) {
-        return [];
+    const segments = virtualX_expandColSegments.value;
+    if (!segments) return virtualX_columnPart.value;
+    return buildExpandColumns(row, rowIndex, segments) as PrivateStkTableColumn<PrivateRowDT>[];
+}
+
+/**
+ * 超长 colspan 优化：收缩修正扩展区域（virtualX_expandColSegments）内的行渲染列列表。
+ * - 左扩展区：colspan/rowspan 锚点单元格保留真实渲染（否则行列占位断裂）；
+ *   被覆盖单元格照旧不渲染（槽位由跨越它的单元格占用）；其余连续普通单元格
+ *   合并为单个 colspan 占位 td（fixed 布局下恰好占用相同列槽位，保持对齐）；
+ * - 右扩展区：完全不渲染（均在可视视口外，不影响可视单元格对齐）。
+ */
+function buildExpandColumns(
+    row: PrivateRowDT,
+    rowIndex: number,
+    segments: {
+        prefix: PrivateStkTableColumn<PrivateRowDT>[];
+        leftExpand: PrivateStkTableColumn<PrivateRowDT>[];
+        viewport: PrivateStkTableColumn<PrivateRowDT>[];
+        suffix: PrivateStkTableColumn<PrivateRowDT>[];
+        leftExpandStart: number;
+    },
+) {
+    const { prefix, leftExpand, viewport, suffix, leftExpandStart } = segments;
+    const result: (PrivateStkTableColumn<PrivateRowDT> | { __VT_PH__: number })[] = prefix.slice();
+
+    if (leftExpand.length) {
+        const hiddenSet = hiddenCellMap.value ? hiddenCellMap.value[rowKeyGen(row)] : void 0;
+        const colKeyGenValue = colKeyGen.value;
+        const absRowIndex = (virtual_on.value ? virtualScroll.value.startIndex : 0) + rowIndex;
+        let run = 0;
+        for (let i = 0; i < leftExpand.length; i++) {
+            const col = leftExpand[i];
+            // 被覆盖单元格：不渲染 td（槽位由上方/左侧的跨越单元格占用）
+            if (hiddenSet && hiddenSet.has(colKeyGenValue(col))) continue;
+            // 锚点单元格（colspan/rowspan > 1）必须真实渲染，不能占位替代
+            if (col.mergeCells) {
+                const { colspan, rowspan } = mergeCellsCache.getMergeCellsResult(row, col, absRowIndex, col.__LF_S__ ?? leftExpandStart + i);
+                if (colspan > 1 || rowspan > 1) {
+                    if (run > 0) {
+                        result.push({ __VT_PH__: run } as PrivateStkTableColumn<PrivateRowDT>);
+                        run = 0;
+                    }
+                    result.push(col);
+                    continue;
+                }
+            }
+            run++;
+        }
+        if (run > 0) result.push({ __VT_PH__: run } as PrivateStkTableColumn<PrivateRowDT>);
     }
-    return virtualX_columnPart.value;
+
+    // 右扩展区不渲染，直接拼接可视区与右侧固定列
+    result.push(...viewport, ...suffix);
+    return result;
 }
 /** th title */
 function getHeaderTitle(col: StkTableColumn<DT>): string {
