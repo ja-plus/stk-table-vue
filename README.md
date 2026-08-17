@@ -182,7 +182,9 @@ const dataSource = [
 ```
 
 ## Compare
-Compare performance with other vue table [vue-table-compare](https://github.com/ja-plus/vue-table-compare)
+Compare performance with other vue table [vue-virtual-table-benchmark](https://github.com/ja-plus/vue-virtual-table-benchmark)
+
+[Benchmark Result Page](https://ja-plus.github.io/vue-virtual-table-benchmark/perf-report.html)
 
 
 ## License
