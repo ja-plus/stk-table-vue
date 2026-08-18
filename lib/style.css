@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v1.2.0-beta.1
+ * version: v1.2.0-beta.2
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -213,6 +213,7 @@
   --rs-bc:#2a7ee4;
   position:relative;
   overflow:auto;
+  will-change:scroll-position;
   display:flex;
   flex-direction:column;
   box-sizing:border-box;

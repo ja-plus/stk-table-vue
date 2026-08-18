@@ -243,6 +243,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      */
     initVirtualScrollY: (height?: number) => void;
     /**
+     * 清空 mergeCells 结果缓存并强制重算合并结果
+     *
+     * en: Clear mergeCells result cache and force recomputation
+     * @see {@link clearMergeCellsCache}
+     */
+    clearMergeCellsCache: () => void;
+    /**
      * 选中一行
      *
      * en：select a row
@@ -757,13 +764,13 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     maxWidth: string;
     sortConfig: SortConfig<any>;
     colKey: UniqKeyProp;
-    rowHeight: number;
     headless: boolean;
     autoRowHeight: boolean | AutoRowHeightConfig<any>;
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | string;
+    rowHeight: number;
     scrollbar: boolean | ScrollbarOptions;
     fixedMode: boolean;
     theme: "light" | "dark";

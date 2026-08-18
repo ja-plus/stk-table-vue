@@ -50,45 +50,7 @@ export declare function useVirtualScroll(props: any, tableContainerRef: Ref<HTML
 /** 全局最大 rowspan（限定跨界修正扫描范围用） */
 getMaxRowSpanValue: () => number, scrollbarOptions: Ref<Required<ScrollbarOptions>>, isExperimentalScrollY: Ref<boolean | undefined>, 
 /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
-mergeCellsCache: MergeCellsCache): readonly [Ref<{
-    containerHeight: number;
-    pageSize: number;
-    startIndex: number;
-    endIndex: number;
-    rowHeight: number;
-    offsetTop: number;
-    scrollTop: number;
-    scrollHeight: number;
-    translateY: number;
-    viewportStartIndex: number;
-    viewportEndIndex: number;
-}, VirtualScrollStore | {
-    containerHeight: number;
-    pageSize: number;
-    startIndex: number;
-    endIndex: number;
-    rowHeight: number;
-    offsetTop: number;
-    scrollTop: number;
-    scrollHeight: number;
-    translateY: number;
-    viewportStartIndex: number;
-    viewportEndIndex: number;
-}>, Ref<{
-    containerWidth: number;
-    scrollWidth: number;
-    startIndex: number;
-    endIndex: number;
-    offsetLeft: number;
-    scrollLeft: number;
-}, VirtualScrollXStore | {
-    containerWidth: number;
-    scrollWidth: number;
-    startIndex: number;
-    endIndex: number;
-    offsetLeft: number;
-    scrollLeft: number;
-}>, import('vue').ComputedRef<any>, import('vue').ComputedRef<PrivateRowDT[]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<any>, import('vue').ComputedRef<number>, import('vue').ComputedRef<number>, (height?: number) => void, (height?: number) => void, () => void, (sTop?: number) => void, (sLeft?: number) => void, (rowKey: UniqKey, height?: number | null) => void, () => void, () => void, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[][]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<{
+mergeCellsCache: MergeCellsCache): readonly [ShallowRef<VirtualScrollStore, VirtualScrollStore>, ShallowRef<VirtualScrollXStore, VirtualScrollXStore>, import('vue').ComputedRef<any>, import('vue').ComputedRef<PrivateRowDT[]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<any>, import('vue').ComputedRef<number>, import('vue').ComputedRef<number>, (height?: number) => void, (height?: number) => void, () => void, (sTop?: number) => void, (sLeft?: number) => void, (rowKey: UniqKey, height?: number | null) => void, () => void, () => void, import('vue').ComputedRef<PrivateStkTableColumn<PrivateRowDT>[][]>, import('vue').ComputedRef<number>, import('vue').ComputedRef<{
     startIndex: number;
     endIndex: number;
     offsetLeft: number;
