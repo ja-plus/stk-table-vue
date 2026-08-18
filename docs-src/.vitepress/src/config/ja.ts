@@ -63,7 +63,7 @@ export const jaConfig = defineConfig({
                                     { text: 'ヘッダーレス', link: '/table/basic/headless' },
                                     { text: '行展開', link: '/table/basic/expand-row' },
                                     { text: 'ツリー', link: '/table/basic/tree' },
-                                    { text: 'マルチレベルヘッダー(✨Update)', link: '/table/basic/multi-header' },
+                                    { text: 'マルチレベルヘッダー', link: '/table/basic/multi-header' },
                                     { text: 'シーケンス列', link: '/table/basic/seq' },
                                     { text: '空データ', link: '/table/basic/empty' },
                                     { text: '行・列の一意キー', link: '/table/basic/key' },
@@ -88,7 +88,7 @@ export const jaConfig = defineConfig({
                                     { text: 'カスタムソート', link: '/table/advanced/custom-sort' },
                                     { text: 'Vue 2スクロール最適化', link: '/table/advanced/vue2-scroll-optimize' },
                                     {
-                                        text: 'カスタムセル組み込み拡張(✨NEW)',
+                                        text: 'カスタムセル組み込み拡張',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
@@ -137,7 +137,7 @@ export const jaConfig = defineConfig({
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
                     { text: '遅延ロード', link: '/lazy-load' },
-                    { text: 'リアルタイムセル結合(✨NEW)', link: '/realtime-merge-cells' },
+                    { text: 'リアルタイムセル結合', link: '/realtime-merge-cells' },
                 ]
             }
         },

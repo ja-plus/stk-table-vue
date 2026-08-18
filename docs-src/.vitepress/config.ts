@@ -15,6 +15,9 @@ export default defineConfig({
     appearance: 'dark',
     vite: {
         plugins: [llmstxt()],
+        server: {
+            host: '0.0.0.0',
+        },
     },
     head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/stk-table-vue/assets/logo.svg' }]],
     themeConfig: {

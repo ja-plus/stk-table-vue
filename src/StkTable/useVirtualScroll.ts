@@ -1,5 +1,6 @@
-import { Ref, ShallowRef, computed, ref } from 'vue';
+import { Ref, ShallowRef, computed, ref, shallowRef, triggerRef } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
+import { MergeCellsCache } from './mergeCellsCache';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
@@ -24,6 +25,10 @@ export type VirtualScrollStore = {
     /** 总滚动高度 */
     scrollHeight: number;
     translateY: number;
+    /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
+    viewportStartIndex: number;
+    /** 视口实际结束行索引（rowspan 修正前的原始值，用于区分 below-viewport 行） */
+    viewportEndIndex: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -105,12 +110,16 @@ export function useVirtualScroll(
     tableHeaders: ShallowRef<PrivateStkTableColumn<PrivateRowDT>[][]>,
     rowKeyGen: RowKeyGen,
     maxRowSpan: Map<UniqKey, number>,
+    /** 全局最大 rowspan（限定跨界修正扫描范围用） */
+    getMaxRowSpanValue: () => number,
     scrollbarOptions: Ref<Required<ScrollbarOptions>>,
     isExperimentalScrollY: Ref<boolean | undefined>,
+    /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
+    mergeCellsCache: MergeCellsCache,
 ) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
-    const virtualScroll = ref<VirtualScrollStore>({
+    const virtualScroll = shallowRef<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
         pageSize: 0,
@@ -120,11 +129,13 @@ export function useVirtualScroll(
         scrollTop: 0,
         scrollHeight: 0,
         translateY: 0,
+        viewportStartIndex: 0,
+        viewportEndIndex: 0,
     });
 
     // TODO: init pageSize
 
-    const virtualScrollX = ref<VirtualScrollXStore>({
+    const virtualScrollX = shallowRef<VirtualScrollXStore>({
         containerWidth: 0,
         scrollWidth: 0,
         startIndex: 0,
@@ -202,6 +213,7 @@ export function useVirtualScroll(
      * 收集行集合中的列合并（colspan）区间
      * @param rows 行数据
      * @param rowIndexBase mergeCells 入参 rowIndex 的起始值
+     * @return { leftReach, rightEnd }  合并区间
      */
     function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
         const mergeColsInfo = virtualX_mergeColsInfo.value;
@@ -215,7 +227,8 @@ export function useVirtualScroll(
             for (let m = 0; m < mergeCols.length; m++) {
                 const { col, index } = mergeCols[m];
                 if (index >= maxColIndex) break;
-                const { colspan = 1 } = col.mergeCells!({ row, col, rowIndex: rowIndexBase + r, colIndex: index }) || {};
+                // 走共享缓存：与 buildHiddenCellMap / 渲染期的 mergeCells 调用复用同一份结果
+                const { colspan } = mergeCellsCache.getMergeCellsResult(row, col, rowIndexBase + r, index);
                 if (colspan > 1) {
                     const end = Math.min(index + colspan, maxColIndex);
                     for (let c = index; c < end; c++) {
@@ -242,13 +255,13 @@ export function useVirtualScroll(
 
     /**
      * virtual-x 列合并覆盖信息。
-     * Y 虚拟滚动开启时仅计算可视行（rowIndex 与渲染时 mergeCells 入参保持一致）；
+     * Y 虚拟滚动开启时仅计算可视行（rowIndex 传入绝对行索引，与渲染时 mergeCells 入参保持一致）；
      * 否则使用全量数据懒计算缓存（此时可视行即全量数据）。
      */
     const virtualX_colMergeRange = computed(() => {
         if (!virtualX_on.value) return null;
         if (virtual_on.value) {
-            return buildColMergeRange(virtual_dataSourcePart.value, 0);
+            return buildColMergeRange(virtual_dataSourcePart.value, virtualScroll.value.startIndex);
         }
         return virtualX_colMergeRangeFull.value;
     });
@@ -411,6 +424,46 @@ export function useVirtualScroll(
     });
 
     /**
+     * tbody 行渲染的列分段（超长 colspan 优化）。
+     * 修正扩展出的区域都在原始可视视口之外，非锚点单元格无需真实渲染：
+     * - leftExpand（原始视口左侧扩展区）：由调用方逐行处理——锚点/被覆盖单元格保留原行为，
+     *   其余连续普通单元格合并为单个 colspan 占位 td（占位相同列槽位，保持对齐）；
+     * - 右侧扩展区：完全不渲染（不影响可视单元格对齐，区域在屏幕外）。
+     * thead 仍保持完整修正范围（锚点 colspan 需要真实列槽位），仅 tbody 收缩。
+     * 多级表头含 spacer/分组逻辑，暂不分段（返回 null 回退完整列列表）。
+     */
+    const virtualX_expandColSegments = computed(() => {
+        if (!virtualX_on.value || isMultiLevelHeader.value) return null;
+        const { startIndex: xStart, endIndex: xEnd } = virtualScrollX.value;
+        const { startIndex: cStart, endIndex: cEnd } = virtualX_colRange.value;
+        // 无修正扩展时无需分段
+        if (cStart >= xStart && cEnd <= xEnd) return null;
+
+        const headers = tableHeaderLast.value;
+        const maxIndex = headers.length;
+        const vs = Math.min(cStart, maxIndex);
+        const ve = Math.min(cEnd, maxIndex);
+
+        const prefix: PrivateStkTableColumn<PrivateRowDT>[] = [];
+        const suffix: PrivateStkTableColumn<PrivateRowDT>[] = [];
+        for (let i = 0; i < headers.length; i++) {
+            const col = headers[i];
+            if (i < vs && col.fixed === 'left') prefix.push(col);
+            else if (i >= ve && col.fixed === 'right') suffix.push(col);
+        }
+
+        return {
+            prefix,
+            leftExpand: headers.slice(vs, Math.min(xStart, ve)),
+            // 可视区取原始视口范围；[xEnd, cEnd) 为右扩展区，不进入 tbody 行列表
+            viewport: headers.slice(Math.min(xStart, ve), Math.min(xEnd, ve)),
+            suffix,
+            /** leftExpand 起始的绝对叶子列索引（mergeCells 缓存键用） */
+            leftExpandStart: vs,
+        };
+    });
+
+    /**
      * 表头横向虚拟滚动：
      * - 单级表头：最后一行使用 virtualX_columnPart，其他行原样返回。
      * - 多级表头：按顶层组粒度过滤（整个组滚出才移除），保持 colSpan 稳定。
@@ -510,6 +563,7 @@ export function useVirtualScroll(
             scrollTop = maxScrollTop;
         }
         Object.assign(virtualScroll.value, { containerHeight, pageSize, scrollHeight });
+        triggerRef(virtualScroll);
         updateVirtualScrollY(scrollTop);
     }
 
@@ -517,6 +571,7 @@ export function useVirtualScroll(
         const { clientWidth, scrollLeft, scrollWidth } = tableContainerRef.value || {};
         virtualScrollX.value.containerWidth = clientWidth || DEFAULT_TABLE_WIDTH;
         virtualScrollX.value.scrollWidth = scrollWidth || DEFAULT_TABLE_WIDTH;
+        triggerRef(virtualScrollX);
         updateVirtualScrollX(scrollLeft);
     }
 
@@ -581,10 +636,18 @@ export function useVirtualScroll(
         vsValue.scrollTop = sTop;
 
         Object.assign(virtualScroll.value, vsValue);
+        triggerRef(virtualScroll);
 
         if (!virtual_on.value) {
             // github #34 init
-            Object.assign(virtualScroll.value, { startIndex: 0, endIndex: 0, offsetTop: 0 });
+            Object.assign(virtualScroll.value, {
+                startIndex: 0,
+                endIndex: 0,
+                offsetTop: 0,
+                viewportStartIndex: 0,
+                viewportEndIndex: 0,
+            });
+            triggerRef(virtualScroll);
             return;
         }
 
@@ -628,17 +691,32 @@ export function useVirtualScroll(
             startIndex = Math.floor(sTop / rowHeight);
             endIndex = startIndex + pageSize;
             if (startIndex === oldStartIndex && endIndex === oldEndIndex) {
+                // Not change: still update viewportStartIndex/viewportEndIndex for above/below-viewport tracking
+                const vs = virtualScroll.value;
+                if (vs.viewportStartIndex !== startIndex || vs.viewportEndIndex !== endIndex) {
+                    vs.viewportStartIndex = startIndex;
+                    vs.viewportEndIndex = endIndex;
+                    triggerRef(virtualScroll);
+                }
                 // Not change: not update
                 return;
             }
         }
+
+        // Save viewportStartIndex/viewportEndIndex before rowspan/stripe correction
+        const viewportStartIndex = startIndex;
+        const viewportEndIndex = endIndex;
 
         if (maxRowSpan.size) {
             // fix startIndex：查找是否有合并行跨越当前startIndex
             let correctedStartIndex = startIndex;
             let correctedEndIndex = endIndex;
 
-            for (let i = 0; i < startIndex; i++) {
+            // 跨越 startIndex 的锚点行必然位于 [startIndex - maxSpan + 1, startIndex - 1]，
+            // 在此范围内反向扫描即可（保留最早锚点语义：循环不提前 break，最终留下最小 i），
+            // 避免原实现从 0 起 O(startIndex) 全量扫描——大数据量滚动到深处时每帧开销巨大。
+            const scanFrom = Math.max(0, startIndex - getMaxRowSpanValue() + 1);
+            for (let i = startIndex - 1; i >= scanFrom; i--) {
                 const row = dataSourceCopyTemp[i];
                 if (!row) continue;
                 const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
@@ -647,9 +725,11 @@ export function useVirtualScroll(
                     correctedStartIndex = i;
                     if (spanEndIndex > endIndex) {
                         // 合并行跨越了整个可视区
-                        correctedEndIndex = spanEndIndex;
+                        // spanEndIndex 是开区间末端（最后一行+1），endIndex 需要的是闭区间最后一行，
+                        // 否则会把合并区域外的下一行也算进视口下方，导致下方占位 tr 多 1 行高，
+                        // 跨视口底部的 rowspan 单元格可视高度被撑大 1 行（滚动时居中文字抖动）。
+                        correctedEndIndex = spanEndIndex - 1;
                     }
-                    break;
                 }
             }
 
@@ -659,8 +739,9 @@ export function useVirtualScroll(
                 if (!row) continue;
                 const spanEndIndex = i + (maxRowSpan.get(rowKeyGen(row)) || 1);
                 if (spanEndIndex > correctedEndIndex) {
-                    // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引
-                    correctedEndIndex = Math.max(spanEndIndex, correctedEndIndex);
+                    // 找到跨越endIndex的合并行，将endIndex修正为合并行的结束索引（闭区间最后一行）。
+                    // spanEndIndex 为开区间末端，需 -1，避免把合并区域外的一行并入视口下方占位 tr。
+                    correctedEndIndex = Math.max(spanEndIndex - 1, correctedEndIndex);
                 }
             }
 
@@ -701,12 +782,15 @@ export function useVirtualScroll(
          */
         if (!optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // scroll up
-            Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop });
+            Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop, viewportStartIndex, viewportEndIndex });
+            triggerRef(virtualScroll);
         } else {
             // vue2 scroll down optimize
-            virtualScroll.value.endIndex = endIndex;
+            Object.assign(virtualScroll.value, { endIndex, viewportStartIndex, viewportEndIndex });
+            triggerRef(virtualScroll);
             vue2ScrollYTimeout = window.setTimeout(() => {
-                Object.assign(virtualScroll.value, { startIndex, offsetTop });
+                Object.assign(virtualScroll.value, { startIndex, offsetTop, viewportStartIndex, viewportEndIndex });
+                triggerRef(virtualScroll);
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }
@@ -779,11 +863,14 @@ export function useVirtualScroll(
         if (!props.optimizeVue2Scroll || sLeft <= scrollLeft) {
             // 向左滚动
             Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
+            triggerRef(virtualScrollX);
         } else {
             // vue2 向右滚动优化
             Object.assign(virtualScrollX.value, { endIndex, scrollLeft: sLeft });
+            triggerRef(virtualScrollX);
             vue2ScrollXTimeout = window.setTimeout(() => {
                 Object.assign(virtualScrollX.value, { startIndex, offsetLeft });
+                triggerRef(virtualScrollX);
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }
@@ -809,5 +896,6 @@ export function useVirtualScroll(
         expandRowColspan,
         theadVirtualX,
         virtualX_columnPart,
+        virtualX_expandColSegments,
     ] as const;
 }

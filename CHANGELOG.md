@@ -1,4 +1,15 @@
 
+## 1.2.0-beta.1
+* Feature
+  - feat: add instance method `clearMergeCellsCache` to clear the `mergeCells` result cache and force recalculation. The cache is only auto-cleared when `dataSource` / `columns` change; call this method after mutating row fields in place (row reference unchanged) that `mergeCells` depends on.
+  - feat: `mergeCells` now supports huge `rowspan` (e.g. thousands of rows) in `virtual` mode. Rows covered by a rowspan anchor above the viewport are compressed into placeholder cells/rows instead of being fully rendered, so the DOM node count stays proportional to the viewport size.
+  - feat: `mergeCells` now supports huge `colspan` (e.g. merging 150 columns) in `virtualX` mode. When the anchor column of a merged cell scrolls out of the viewport, the visible column range is expanded so the merged cell is fully rendered; in the expanded area, non-merged cells on the left are compressed into a single placeholder `td` with `colspan`, and the right part is not rendered at all (tbody only; thead keeps the full expanded range).
+* Optimize
+  - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
+  - perf: `virtualScroll` / `virtualScrollX` switched from `ref` to `shallowRef` with explicit `triggerRef` at each write boundary, so Vue is notified once per scroll frame instead of on every property assignment, eliminating deep Proxy overhead in the hot scroll path.
+* Bugfix:
+  - fix: remove `contain: paint` from tbody `tr` — it clipped cells to a zero-height row box in table layout, causing cells to disappear.
+
 ## 1.1.0
 * Feature
   - feat: `setTreeExpand` add `parents` option, pass a child node's rowKey to expand/collapse all its ancestors (the target node itself is also expanded when expanding if it has children), making the target row visible/hidden (e.g. locating a row).

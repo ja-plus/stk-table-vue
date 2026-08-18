@@ -25,7 +25,7 @@ Smooth performance with tens of thousands of rows. Designed for real-time data d
 - Cell highlighting with Animation API
 - Built-in custom cells: Filter, Editable, Checkbox, Number, Change
 - Column resize, header drag, row drag
-- Merge cells (virtual mode supported)
+- Merge cells (virtual mode, huge rowspan / colspan supported)
 - Custom scrollbar
 - Sortable & filterable
 - Theme support (dark / light)
@@ -185,6 +185,9 @@ const dataSource = [
 Compare performance with other vue table [vue-virtual-table-benchmark](https://github.com/ja-plus/vue-virtual-table-benchmark)
 
 [Benchmark Result Page](https://ja-plus.github.io/vue-virtual-table-benchmark/perf-report.html)
+
+## Changelog
+[CHANGELOG](CHANGELOG.md)
 
 
 ## License

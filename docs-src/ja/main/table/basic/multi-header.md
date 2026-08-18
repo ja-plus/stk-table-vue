@@ -25,7 +25,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo vue="basic/multi-header/MultiHeader.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/multi-header/MultiHeader.vue"></demo>
 
-## 横方向仮想リスト(✨NEW)<Badge type="tip" text="^1.0.0" />
+## 横方向仮想リスト<Badge type="tip" text="^1.0.0" />
 AIの支援により、マルチレベルヘッダーがついに横方向仮想リストをサポートしました！
 
 `props.virtualX` を設定するだけです。

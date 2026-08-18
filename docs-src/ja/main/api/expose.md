@@ -40,6 +40,30 @@ initVirtualScrollX()
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+`mergeCells` の結果キャッシュをクリアし、マージ結果の再計算を強制します。
+
+マージ結果のキャッシュは `dataSource` / `columns` が変更されたときのみ自動的にクリアされます。行フィールドを**その場で変更**した場合（行オブジェクトの参照が変わらない場合。例：リアクティブな行オブジェクトを直接変更）、かつ `mergeCells` の戻り値がこれらのフィールドに依存する場合、変更後にこのメソッドを呼び出す必要があります。呼び出さないと、rowspan/colspan は古いキャッシュ結果を使用し続けます。
+
+```ts
+/**
+ * mergeCells の結果キャッシュをクリアし、マージ結果の再計算を強制する
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// 行フィールドをその場で変更した後、マージキャッシュを手動で無効化する
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+`dataSource` を置き換える（新しい配列を渡す）方法でデータを更新する場合、キャッシュは自動的にクリアされるため、このメソッドを呼び出す必要はありません。
+:::
+
 ### setCurrentRow
 現在選択されている行を設定します。
 
