@@ -1,4 +1,4 @@
-import { Ref, ShallowRef, computed, ref } from 'vue';
+import { Ref, ShallowRef, computed, ref, shallowRef, triggerRef } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { MergeCellsCache } from './mergeCellsCache';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
@@ -119,7 +119,7 @@ export function useVirtualScroll(
 ) {
     const tableHeaderHeight = computed(() => props.headerRowHeight * tableHeaders.value.length);
 
-    const virtualScroll = ref<VirtualScrollStore>({
+    const virtualScroll = shallowRef<VirtualScrollStore>({
         containerHeight: 0,
         rowHeight: props.rowHeight,
         pageSize: 0,
@@ -135,7 +135,7 @@ export function useVirtualScroll(
 
     // TODO: init pageSize
 
-    const virtualScrollX = ref<VirtualScrollXStore>({
+    const virtualScrollX = shallowRef<VirtualScrollXStore>({
         containerWidth: 0,
         scrollWidth: 0,
         startIndex: 0,
@@ -563,6 +563,7 @@ export function useVirtualScroll(
             scrollTop = maxScrollTop;
         }
         Object.assign(virtualScroll.value, { containerHeight, pageSize, scrollHeight });
+        triggerRef(virtualScroll);
         updateVirtualScrollY(scrollTop);
     }
 
@@ -570,6 +571,7 @@ export function useVirtualScroll(
         const { clientWidth, scrollLeft, scrollWidth } = tableContainerRef.value || {};
         virtualScrollX.value.containerWidth = clientWidth || DEFAULT_TABLE_WIDTH;
         virtualScrollX.value.scrollWidth = scrollWidth || DEFAULT_TABLE_WIDTH;
+        triggerRef(virtualScrollX);
         updateVirtualScrollX(scrollLeft);
     }
 
@@ -634,6 +636,7 @@ export function useVirtualScroll(
         vsValue.scrollTop = sTop;
 
         Object.assign(virtualScroll.value, vsValue);
+        triggerRef(virtualScroll);
 
         if (!virtual_on.value) {
             // github #34 init
@@ -644,6 +647,7 @@ export function useVirtualScroll(
                 viewportStartIndex: 0,
                 viewportEndIndex: 0,
             });
+            triggerRef(virtualScroll);
             return;
         }
 
@@ -688,11 +692,11 @@ export function useVirtualScroll(
             endIndex = startIndex + pageSize;
             if (startIndex === oldStartIndex && endIndex === oldEndIndex) {
                 // Not change: still update viewportStartIndex/viewportEndIndex for above/below-viewport tracking
-                if (virtualScroll.value.viewportStartIndex !== startIndex) {
-                    virtualScroll.value.viewportStartIndex = startIndex;
-                }
-                if (virtualScroll.value.viewportEndIndex !== endIndex) {
-                    virtualScroll.value.viewportEndIndex = endIndex;
+                const vs = virtualScroll.value;
+                if (vs.viewportStartIndex !== startIndex || vs.viewportEndIndex !== endIndex) {
+                    vs.viewportStartIndex = startIndex;
+                    vs.viewportEndIndex = endIndex;
+                    triggerRef(virtualScroll);
                 }
                 // Not change: not update
                 return;
@@ -779,11 +783,14 @@ export function useVirtualScroll(
         if (!optimizeVue2Scroll || sTop <= scrollTop || Math.abs(oldStartIndex - startIndex) >= pageSize) {
             // scroll up
             Object.assign(virtualScroll.value, { startIndex, endIndex, offsetTop, viewportStartIndex, viewportEndIndex });
+            triggerRef(virtualScroll);
         } else {
             // vue2 scroll down optimize
             Object.assign(virtualScroll.value, { endIndex, viewportStartIndex, viewportEndIndex });
+            triggerRef(virtualScroll);
             vue2ScrollYTimeout = window.setTimeout(() => {
                 Object.assign(virtualScroll.value, { startIndex, offsetTop, viewportStartIndex, viewportEndIndex });
+                triggerRef(virtualScroll);
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }
@@ -856,11 +863,14 @@ export function useVirtualScroll(
         if (!props.optimizeVue2Scroll || sLeft <= scrollLeft) {
             // 向左滚动
             Object.assign(virtualScrollX.value, { startIndex, endIndex, offsetLeft, scrollLeft: sLeft });
+            triggerRef(virtualScrollX);
         } else {
             // vue2 向右滚动优化
             Object.assign(virtualScrollX.value, { endIndex, scrollLeft: sLeft });
+            triggerRef(virtualScrollX);
             vue2ScrollXTimeout = window.setTimeout(() => {
                 Object.assign(virtualScrollX.value, { startIndex, offsetLeft });
+                triggerRef(virtualScrollX);
             }, VUE2_SCROLL_TIMEOUT_MS);
         }
     }
