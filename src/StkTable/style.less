@@ -64,6 +64,7 @@
     // contain: layout paint size;
     position: relative;
     overflow: auto;
+    will-change: scroll-position;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -310,6 +311,10 @@
 
     /**虚拟滚动模式 */
     &.virtual {
+
+        .stk-tbody-main tr {
+            contain: paint;
+        }
 
         /* 为不影响布局，表头行高要定死*/
         .table-header-cell-wrapper {
