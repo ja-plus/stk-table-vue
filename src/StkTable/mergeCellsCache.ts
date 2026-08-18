@@ -24,6 +24,9 @@ const COL_INDEX_BASE = 0x10000;
  *   稳态滚动时仅新进入窗口的行会触发回调，只需在数据/列真正变化时 clear；
  * - 条目额外保存行引用并在命中时校验同一性：即使数据被重排/替换（如排序后同一批行对象
  *   顺序变化），也不会取到错行的旧结果，缓存清理时机不再影响正确性。
+ * - 注意：引用同一性校验无法感知行字段被原地修改（行引用不变）。
+ *   业务原地改行且 mergeCells 结果依赖该字段时，需调用 clear() 显式失效
+ *   （组件已暴露 clearMergeCellsCache 实例方法）。
  */
 export function createMergeCellsCache() {
     const cache = new Map<number, MergeCellsCacheEntry>();
@@ -55,7 +58,7 @@ export function createMergeCellsCache() {
         return entry;
     }
 
-    /** 清空缓存（数据/列变化时调用，释放旧数据集条目） */
+    /** 清空缓存（数据/列变化时自动调用；行字段被原地修改时需显式调用以强制重算） */
     function clear() {
         cache.clear();
     }

@@ -47,6 +47,8 @@ mergeCells: ({ row }) => {
 
 ::: tip
 テーブルデータが変更されると、`mergeCells` 関数が再度呼び出されて再計算されます。
+
+注意：行フィールドを**その場で変更**した場合（行オブジェクトの参照が変わらず、新しい `dataSource` を再渡していない場合）かつ `mergeCells` がこれらのフィールドに依存する場合、変更後にインスタンスメソッド [`clearMergeCellsCache`](/ja/main/api/expose.html#clearmergecellscache) を呼び出して、マージ結果のキャッシュを手動で無効化する必要があります。
 :::
 
 ### 仮想リストでの行マージ <Badge type="tip" text="^0.8.4" /> 

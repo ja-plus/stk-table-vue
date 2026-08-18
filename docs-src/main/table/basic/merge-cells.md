@@ -46,6 +46,8 @@ mergeCells: ({ row }) => {
 
 ::: tip
 如果表格数据有变化，则会重新调用 `mergeCells` 函数计算。
+
+注意：若是**原地修改**行字段（行对象引用不变，未重新传入 `dataSource`）且 `mergeCells` 依赖这些字段，修改后需调用实例方法 [`clearMergeCellsCache`](/main/api/expose.html#clearmergecellscache) 手动失效合并结果缓存。
 :::
 
 ### 行合并虚拟列表 <Badge type="tip" text="^0.8.4" /> 

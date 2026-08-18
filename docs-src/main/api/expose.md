@@ -39,6 +39,30 @@ initVirtualScrollX()
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+清空 `mergeCells` 结果缓存并强制重新计算合并结果。
+
+合并结果缓存仅在 `dataSource` / `columns` 变化时自动清空。如果您是**原地修改**行数据字段（行对象引用不变，如直接修改响应式行对象），且 `mergeCells` 的返回值依赖这些字段，修改后需调用此方法，否则 rowspan/colspan 仍会使用旧的缓存结果。
+
+```ts
+/**
+ * 清空 mergeCells 结果缓存并强制重算合并结果
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// 原地修改行字段后，手动失效合并缓存
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+如果通过替换 `dataSource`（传入新数组）的方式更新数据，则无需调用此方法，缓存会自动清空。
+:::
+
 ### setCurrentRow
 设置当前选中行。
 

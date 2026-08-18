@@ -53,6 +53,8 @@ export function useMergeCells(
      * 数据/列真正变化时才清空 mergeCells 结果缓存。
      * 缓存键为绝对索引且命中时校验行引用同一性，滚动换窗（virtual_dataSourcePart 变化）
      * 无需清缓存——相邻帧高度重叠，复用缓存可避免对同一单元格重复调用用户回调。
+     * 行字段被原地修改（引用不变）时不会触发本 watch，需由外部调用暴露的
+     * clearMergeCellsCache 实例方法显式失效缓存并重算。
      */
     watch([dataSourceCopy, tableHeaderLast], () => {
         mergeCellsCache.clear();
@@ -82,7 +84,7 @@ export function useMergeCells(
          * 仅在「有 → 无」切换时重置一次（清掉残留的隐藏/高亮状态），之后滚动帧直接返回。
          */
         if (!hasMergeColumn.value) {
-            if (!hiddenCellMap.value) {
+            if (hiddenCellMap.value) {
                 hiddenCellMap.value = null;
                 hoverRowMap.value = {};
             }

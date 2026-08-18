@@ -46,6 +46,8 @@ When `colspan` is very large (e.g. merging 150 columns), horizontal virtual scro
 
 ::: tip
 If the table data changes, the `mergeCells` function will be called again to recalculate.
+
+Note: If you **mutate** row fields in place (the row object reference stays the same, without passing a new `dataSource`) and `mergeCells` depends on these fields, call the instance method [`clearMergeCellsCache`](/en/main/api/expose.html#clearmergecellscache) after the mutation to manually invalidate the merge result cache.
 :::
 
 ### Row Merging in Virtual List <Badge type="tip" text="^0.8.4" /> 

@@ -40,6 +40,30 @@ Initializes the number of rows for vertical virtual scrolling.
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+Clears the cached `mergeCells` results and forces the merge results to be recalculated.
+
+The merge result cache is only cleared automatically when `dataSource` / `columns` change. If you **mutate** row fields in place (the row object reference stays the same, e.g. directly modifying a reactive row object) and the return value of `mergeCells` depends on these fields, you must call this method after the mutation; otherwise rowspan/colspan will still use the stale cached result.
+
+```ts
+/**
+ * Clear the mergeCells result cache and force recalculation of merge results
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// After mutating row fields in place, manually invalidate the merge cache
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+If you update data by replacing `dataSource` (passing a new array), you don't need to call this method, as the cache will be cleared automatically.
+:::
+
 ### setCurrentRow
 Sets the currently selected row.
 

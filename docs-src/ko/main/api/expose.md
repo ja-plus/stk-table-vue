@@ -39,6 +39,30 @@ initVirtualScrollX()
 initVirtualScrollY(height?: number)
 ```
 
+### clearMergeCellsCache
+`mergeCells` 결과 캐시를 비우고 병합 결과 재계산을 강제합니다.
+
+병합 결과 캐시는 `dataSource` / `columns`가 변경될 때만 자동으로 비워집니다. 행 필드를 **제자리에서 수정**한 경우(행 객체 참조가 변하지 않은 경우, 예: 반응형 행 객체를 직접 수정)이고 `mergeCells`의 반환값이 해당 필드에 의존한다면, 수정 후 이 메서드를 호출해야 합니다. 그렇지 않으면 rowspan/colspan은 여전히 오래된 캐시 결과를 사용합니다.
+
+```ts
+/**
+ * mergeCells 결과 캐시를 비우고 병합 결과 재계산을 강제합니다
+ */
+clearMergeCellsCache()
+```
+
+```ts
+// 행 필드를 제자리에서 수정한 후 병합 캐시를 수동으로 무효화
+row.rowspan = { continent: 3 };
+nextTick(() => {
+    tableRef.value.clearMergeCellsCache();
+});
+```
+
+::: tip
+`dataSource`를 교체하는 방식(새 배열 전달)으로 데이터를 갱신하는 경우 캐시가 자동으로 비워지므로 이 메서드를 호출할 필요가 없습니다.
+:::
+
 ### setCurrentRow
 현재 선택된 행을 설정합니다.
 

@@ -615,6 +615,55 @@ describe('行合并虚拟列表-超长 rowspan（文档「超长 rowspan」场�
     });
 });
 
+describe('mergeCells 结果缓存-原地修改行字段后显式失效（clearMergeCellsCache）', () => {
+    // 缓存命中校验只看行引用同一性：原地改行字段（引用不变）不会自动失效，
+    // 需调用暴露的 clearMergeCellsCache 强制重算
+    const data = [
+        { id: '1', continent: 'Asia', country: 'China', province: 'Beijing' },
+        { id: '2', continent: 'Asia', country: 'China', province: 'Shanghai' },
+        { id: '3', continent: 'Asia', country: 'China', province: 'Tianjin' },
+        { id: '4', continent: 'Europe', country: 'France', province: 'Paris' },
+    ];
+
+    const wrapper = mount(StkTable, {
+        props: { rowKey: 'id', columns: simpleColumns, dataSource: data },
+    });
+
+    test('原地修改 rowspan 字段后调用 clearMergeCellsCache，合并结果应重算', async () => {
+        // 初始无合并：每行都渲染 continent 单元格
+        expect(wrapper.find('tbody tr[data-row-key="1"] > td[data-col-key="continent"]').exists()).toBe(true);
+        expect(wrapper.find('tbody tr[data-row-key="2"] > td[data-col-key="continent"]').exists()).toBe(true);
+
+        // 原地修改行字段（dataSource 引用不变），缓存命中旧结果，合并不会自动生效
+        data[0].rowspan = { continent: 3 };
+        await wrapper.vm.$nextTick();
+        expect(
+            wrapper.find('tbody tr[data-row-key="1"] > td[data-col-key="continent"]').attributes('rowspan'),
+            '未调用 clearMergeCellsCache 前使用旧缓存结果',
+        ).toBeUndefined();
+
+        // 显式失效缓存：重算后锚点行 rowspan=3，被覆盖行不再渲染该列单元格
+        wrapper.vm.clearMergeCellsCache();
+        await wrapper.vm.$nextTick();
+        const anchor = wrapper.find('tbody tr[data-row-key="1"] > td[data-col-key="continent"]');
+        expect(anchor.exists()).toBe(true);
+        expect(anchor.attributes('rowspan')).toBe('3');
+        expect(wrapper.find('tbody tr[data-row-key="2"] > td[data-col-key="continent"]').exists()).toBe(false);
+        expect(wrapper.find('tbody tr[data-row-key="3"] > td[data-col-key="continent"]').exists()).toBe(false);
+        expect(wrapper.find('tbody tr[data-row-key="4"] > td[data-col-key="continent"]').exists()).toBe(true);
+
+        // 反向变更：取消合并后同样需要重算，被覆盖行恢复渲染
+        delete data[0].rowspan;
+        wrapper.vm.clearMergeCellsCache();
+        await wrapper.vm.$nextTick();
+        for (const key of ['1', '2', '3', '4']) {
+            const td = wrapper.find(`tbody tr[data-row-key="${key}"] > td[data-col-key="continent"]`);
+            expect(td.exists(), `row ${key} 的 continent 单元格应恢复渲染`).toBe(true);
+            expect(td.attributes('rowspan')).toBeUndefined();
+        }
+    });
+});
+
 describe('行列合并 + virtual + virtual-x（文档「行列合并」场景）', () => {
     const columns = [
         { title: 'id', dataIndex: 'id', width: 80 },

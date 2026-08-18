@@ -1945,6 +1945,22 @@ function getTableData() {
     return toRaw(dataSourceCopy.value);
 }
 
+/**
+ * 清空 mergeCells 结果缓存并强制重算合并结果。
+ *
+ * 缓存以「绝对行索引 + 叶子列索引」为键、行引用同一性校验命中，
+ * 仅在 dataSource/列配置变化时自动清空。业务代码原地修改行字段
+ * （行对象引用不变，常见于响应式行对象）且 mergeCells 结果依赖这些字段时，
+ * 缓存会命中旧结果，需调用本方法显式失效。
+ */
+function clearMergeCellsCache() {
+    mergeCellsCache.clear();
+    // 重建 dataSourceCopy（新数组引用）：触发缓存清空 watch 与渲染更新，
+    // 使 hiddenCellMap/hoverRowMap 及渲染出的 rowspan/colspan 全部重算
+    initDataSource();
+    updateMaxRowSpan();
+}
+
 defineExpose({
     /**
      * 重新计算虚拟列表宽高
@@ -1967,6 +1983,13 @@ defineExpose({
      * @see {@link initVirtualScrollY}
      */
     initVirtualScrollY,
+    /**
+     * 清空 mergeCells 结果缓存并强制重算合并结果
+     *
+     * en: Clear mergeCells result cache and force recomputation
+     * @see {@link clearMergeCellsCache}
+     */
+    clearMergeCellsCache,
     /**
      * 选中一行
      *

@@ -46,6 +46,8 @@ mergeCells: ({ row }) => {
 
 ::: tip
 테이블 데이터가 변경되면 `mergeCells` 함수를 다시 호출하여 계산합니다.
+
+주의: 행 필드를 **제자리에서 수정**한 경우(행 객체 참조가 변하지 않고 새 `dataSource`를 다시 전달하지 않은 경우)이고 `mergeCells`가 해당 필드에 의존한다면, 수정 후 인스턴스 메서드 [`clearMergeCellsCache`](/ko/main/api/expose.html#clearmergecellscache)를 호출하여 병합 결과 캐시를 수동으로 무효화해야 합니다.
 :::
 
 ### 행 병합 가상 리스트 <Badge type="tip" text="^0.8.4" /> 
