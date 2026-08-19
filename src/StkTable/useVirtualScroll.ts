@@ -897,5 +897,6 @@ export function useVirtualScroll(
         theadVirtualX,
         virtualX_columnPart,
         virtualX_expandColSegments,
+        getRowHeightFn,
     ] as const;
 }

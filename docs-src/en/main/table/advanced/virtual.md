@@ -64,6 +64,17 @@ initVirtualScroll(height?: number)
 <StkTable :autoResize="false"></StkTable>
 ```
 
+## Programmatic Scrolling
+
+The `scrollTo` instance method can locate coordinates, a row by its current display `index` / `rowKey`, or the table top or bottom, with optional smooth scrolling.
+
+```ts
+tableRef.value?.scrollTo({ index: 100 })
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth' })
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+See the [`scrollTo` instance method](/en/main/api/expose#scrollto) for the complete signatures, `debounce` behavior, and numeric-overload migration note.
+
 ## Single Column List
 Please refer to [Virtual Single List](/en/demos/virtual-list.html)
-

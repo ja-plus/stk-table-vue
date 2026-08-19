@@ -64,5 +64,17 @@ initVirtualScroll(height?: number)
 <StkTable :autoResize="false"></StkTable>
 ```
 
+## プログラムによるスクロール
+
+インスタンスメソッド `scrollTo` は、座標、現在の表示行の `index` / `rowKey`、またはテーブルの上端・下端へ移動でき、スムーズスクロールにも対応します。
+
+```ts
+tableRef.value?.scrollTo({ index: 100 })
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth' })
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+完全なシグネチャ、`debounce` の動作、数値オーバーロードの移行方法は [`scrollTo` インスタンスメソッド](/ja/main/api/expose#scrollto) を参照してください。
+
 ## 単位列リスト
 [仮想単位リスト](/ja/demos/virtual-list.html) を参照してください。

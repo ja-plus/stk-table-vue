@@ -171,16 +171,63 @@ function setSorter(
 重置排序状态
 
 ### scrollTo
-滚动到指定位置
+按坐标、行索引、行 key 或边界滚动表格。接口形式与原生 `Element.scrollTo` / Naive UI Virtual List 一致。
 
 ```ts
-/**
- * 设置滚动条位置
- * @param top 设置null则不改变位置
- * @param left 设置null则不改变位置
- */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+interface ScrollTo {
+    (x: number, y: number): void
+    (options: {
+        left?: number
+        top?: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        index: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        key: string | number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        position: 'top' | 'bottom'
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+}
 ```
+
+- `(x, y)` 中 `x` 表示横向 `left`，`y` 表示纵向 `top`。
+- `index` 是当前表格展示顺序中的零基行索引（包含排序、筛选或树形数据展开后的结果）。
+- `key` 使用 `props.rowKey` 定位当前可见数据中的行；未找到时不滚动。
+- `debounce` 仅用于 `index` / `key`，默认为 `true`：目标行已完全可见时不滚动，否则以最小距离使其可见；设为 `false` 时总是将目标行对齐到表体顶部。
+- `behavior` 与原生 `ScrollToOptions.behavior` 相同，可传入 `'auto'`、`'instant'` 或 `'smooth'`。
+- `position` 滚动到顶部或底部，并像 Naive UI 一样同时回到横向起点。
+
+```ts
+// 滚动到第 101 行；若已经可见则保持当前位置
+tableRef.value?.scrollTo({ index: 100 })
+
+// 通过 rowKey 定位，并平滑对齐到表体顶部
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth', debounce: false })
+
+// 只修改纵向坐标，不改变横向位置
+tableRef.value?.scrollTo({ top: 600 })
+
+// 滚动到表格底部
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+::: warning 兼容性变化
+数值重载已从旧版 `(top, left)` 调整为与原生 API 一致的 `(x, y)`（即 `(left, top)`）。旧代码 `scrollTo(top, left)` 应改为 `scrollTo(left, top)`，或使用无歧义的 `scrollTo({ top, left })`。
+:::
+
+::: tip
+在可变行高模式下，`index` / `key` 会使用已测量或通过 `setAutoHeight` 设置的行高；尚未测量的行使用 `autoRowHeight.expectedHeight`，再回退到 `rowHeight`。
+:::
 
 ### getTableData
 获取表格数据，返回当前表格的排序顺序的数组
@@ -298,4 +345,3 @@ function copySelectedArea(): string
  */
 function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
-

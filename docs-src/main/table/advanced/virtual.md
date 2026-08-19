@@ -64,6 +64,17 @@ initVirtualScroll(height?: number)
 <StkTable :autoResize="false"></StkTable>
 ```
 
+## 定位滚动
+
+实例方法 `scrollTo` 支持按坐标、当前展示行的 `index` / `rowKey`，以及表格顶部或底部定位，并可配置平滑滚动。
+
+```ts
+tableRef.value?.scrollTo({ index: 100 })
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth' })
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+完整签名、`debounce` 语义和数值重载迁移说明请参见 [`scrollTo` 实例方法](/main/api/expose#scrollto)。
+
 ## 单列表
 请移步至[虚拟单列表](/demos/virtual-list.html)
-

@@ -172,16 +172,63 @@ function setSorter(
 排序状態をリセット
 
 ### scrollTo
-指定位置までスクロール
+座標、行インデックス、行 key、または境界を指定してテーブルをスクロールします。API 形式はネイティブの `Element.scrollTo` および Naive UI Virtual List と同じです。
 
 ```ts
-/**
- * スクロールバー位置を設定
- * @param top nullに設定して位置を変更しない
- * @param left nullに設定して位置を変更しない
- */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+interface ScrollTo {
+    (x: number, y: number): void
+    (options: {
+        left?: number
+        top?: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        index: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        key: string | number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        position: 'top' | 'bottom'
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+}
 ```
+
+- `(x, y)` の `x` は横方向の `left`、`y` は縦方向の `top` です。
+- `index` は、ソート、フィルター、ツリー展開後の現在の表示順における 0 始まりの行インデックスです。
+- `key` は `props.rowKey` を使用して現在表示されているデータの行を検索します。見つからない場合はスクロールしません。
+- `debounce` は `index` / `key` にのみ適用され、既定値は `true` です。行が完全に表示されていれば何もせず、表示範囲外なら必要最小限だけスクロールします。`false` にすると常に行をテーブル本体の上端に揃えます。
+- `behavior` はネイティブの `ScrollToOptions.behavior` と同じで、`'auto'`、`'instant'`、`'smooth'` を指定できます。
+- `position` は上端または下端へ移動し、Naive UI と同様に横方向も先頭へ戻します。
+
+```ts
+// 101 行目へ移動（すでに表示されている場合は位置を維持）
+tableRef.value?.scrollTo({ index: 100 })
+
+// rowKey で検索し、行を本体上端へ滑らかに揃える
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth', debounce: false })
+
+// 横方向を変えずに縦座標だけ変更
+tableRef.value?.scrollTo({ top: 600 })
+
+// テーブルの下端へ移動
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+::: warning 互換性の変更
+数値オーバーロードは旧 `(top, left)` からネイティブと同じ `(x, y)`、つまり `(left, top)` に変更されました。既存の `scrollTo(top, left)` は `scrollTo(left, top)` に変更するか、曖昧さのない `scrollTo({ top, left })` を使用してください。
+:::
+
+::: tip
+可変行高モードでは、`index` / `key` は測定済みの行高と `setAutoHeight` で設定した値を使用します。未測定の行は `autoRowHeight.expectedHeight`、次に `rowHeight` を使用します。
+:::
 
 ### getTableData
 テーブルデータを取得、現在のテーブル排序順序の配列を返します
@@ -299,4 +346,3 @@ function copySelectedArea(): string
  */
 function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
-

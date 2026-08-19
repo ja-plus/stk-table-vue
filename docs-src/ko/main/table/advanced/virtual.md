@@ -64,5 +64,17 @@ initVirtualScroll(height?: number)
 <StkTable :autoResize="false"></StkTable>
 ```
 
+## 프로그래밍 방식 스크롤
+
+인스턴스 메서드 `scrollTo`는 좌표, 현재 표시 행의 `index` / `rowKey`, 테이블의 상단 또는 하단으로 이동할 수 있으며 부드러운 스크롤도 지원합니다.
+
+```ts
+tableRef.value?.scrollTo({ index: 100 })
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth' })
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+전체 시그니처, `debounce` 동작 및 숫자 오버로드 마이그레이션은 [`scrollTo` 인스턴스 메서드](/ko/main/api/expose#scrollto)를 참고하세요.
+
 ## 단일 열 리스트
 자세한 내용은 [가상 단일 열 리스트](/ko/demos/virtual-list.html)를 참고하세요.

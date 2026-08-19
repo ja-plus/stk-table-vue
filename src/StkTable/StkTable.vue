@@ -304,7 +304,7 @@ export default {
 /**
  * @author japlus
  */
-import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, shallowRef, toRaw, toRef, watch } from 'vue';
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
@@ -335,6 +335,8 @@ import {
     PrivateRowDT,
     PrivateStkTableColumn,
     RowActiveOption,
+    ScrollTo,
+    ScrollToOptions,
     SeqConfig,
     SortConfig,
     StkTableColumn,
@@ -918,6 +920,7 @@ const [
     theadVirtualX,
     virtualX_columnPart,
     virtualX_expandColSegments,
+    getRowHeightFn,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -1042,7 +1045,7 @@ const {
     tableHeaderLast,
     colKeyGen,
     cellKeyGen,
-    scrollTo,
+    setScrollPosition,
     virtualScroll,
     virtualScrollX,
     getRowIndex,
@@ -1050,7 +1053,7 @@ const {
 );
 
 /** 键盘箭头滚动 */
-useKeyboardArrowScroll(tableContainerRef, props, scrollTo, virtualScroll, virtualScrollX, tableHeaders, virtual_on, areaSelectionConfig);
+useKeyboardArrowScroll(tableContainerRef, props, setScrollPosition, virtualScroll, virtualScrollX, tableHeaders, virtual_on, areaSelectionConfig);
 
 /** 固定列处理 */
 const [fixedCols, fixedColClassMap, updateFixedShadow] = useFixedCol(
@@ -1922,23 +1925,145 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
     }
 }
 
-/**
- * set scroll bar position
- * @param top null to not change
- * @param left null to not change
- */
-function scrollTo(top: number | null = 0, left: number | null = 0) {
-    if (!tableContainerRef.value) return;
-    if (top !== null) {
-        if (isExperimentalScrollY.value) {
-            updateVirtualScrollY(top);
-            updateCustomScrollbar();
-        } else {
-            tableContainerRef.value.scrollTop = top;
-        }
-    }
-    if (left !== null) tableContainerRef.value.scrollLeft = left;
+let smoothScrollFrame: number | null = null;
+
+function cancelSmoothScroll() {
+    if (smoothScrollFrame === null) return;
+    cancelAnimationFrame(smoothScrollFrame);
+    smoothScrollFrame = null;
 }
+
+onBeforeUnmount(cancelSmoothScroll);
+
+function getRowsHeight(endIndex = dataSourceCopy.value.length) {
+    let height = 0;
+    const rows = dataSourceCopy.value;
+    const getRowHeight = getRowHeightFn.value;
+    for (let i = 0; i < endIndex; i++) {
+        height += getRowHeight(rows[i]);
+    }
+    return height;
+}
+
+function getBodyViewportHeight() {
+    const container = tableContainerRef.value;
+    if (!container) return 0;
+    const footer = container.querySelector<HTMLElement>('.stk-footer');
+    const footerHeight = footer?.offsetHeight || 0;
+    const containerHeight = virtualScroll.value.containerHeight || container.clientHeight;
+    const headerHeight = props.headless ? 0 : tableHeaderHeight.value;
+    return Math.max(0, containerHeight - headerHeight - footerHeight);
+}
+
+function getMaxScrollTop() {
+    const container = tableContainerRef.value;
+    if (!container) return 0;
+    const nativeMax = Math.max(0, container.scrollHeight - container.clientHeight);
+    const estimatedMax = Math.max(0, getRowsHeight() - getBodyViewportHeight());
+    return Math.max(nativeMax, estimatedMax);
+}
+
+function scrollExperimentalY(top: number, behavior?: ScrollBehavior) {
+    const targetTop = Math.min(Math.max(0, top), getMaxScrollTop());
+    cancelSmoothScroll();
+    if (behavior !== 'smooth') {
+        updateVirtualScrollY(targetTop);
+        updateCustomScrollbar();
+        return;
+    }
+
+    const startTop = virtualScroll.value.scrollTop;
+    const distance = targetTop - startTop;
+    if (!distance) return;
+    const duration = 300;
+    let startTime: number | null = null;
+    const step = (timestamp: number) => {
+        startTime ??= timestamp;
+        const progress = Math.min(1, (timestamp - startTime) / duration);
+        const easedProgress = 1 - (1 - progress) ** 3;
+        updateVirtualScrollY(startTop + distance * easedProgress);
+        updateCustomScrollbar();
+        if (progress < 1) {
+            smoothScrollFrame = requestAnimationFrame(step);
+        } else {
+            smoothScrollFrame = null;
+        }
+    };
+    smoothScrollFrame = requestAnimationFrame(step);
+}
+
+/** Internal helper. Arguments keep the historical top/left order for keyboard and area-selection features. */
+function setScrollPosition(top: number | null | undefined, left: number | null | undefined, behavior?: ScrollBehavior) {
+    const container = tableContainerRef.value;
+    if (!container) return;
+
+    if (top !== null && top !== undefined && isExperimentalScrollY.value) {
+        scrollExperimentalY(top, behavior);
+    } else {
+        cancelSmoothScroll();
+    }
+
+    const nativeOptions: { left?: number; top?: number; behavior?: ScrollBehavior } = {};
+    if (top !== null && top !== undefined && !isExperimentalScrollY.value) nativeOptions.top = top;
+    if (left !== null && left !== undefined) nativeOptions.left = left;
+    if (behavior !== undefined) nativeOptions.behavior = behavior;
+    if (nativeOptions.top === undefined && nativeOptions.left === undefined) return;
+
+    if (behavior === 'smooth' && typeof container.scrollTo === 'function') {
+        container.scrollTo(nativeOptions);
+    } else {
+        if (nativeOptions.top !== undefined) container.scrollTop = nativeOptions.top;
+        if (nativeOptions.left !== undefined) container.scrollLeft = nativeOptions.left;
+    }
+}
+
+function scrollToIndex(index: number, behavior?: ScrollBehavior, debounce = true) {
+    const rows = dataSourceCopy.value;
+    if (!Number.isInteger(index) || index < 0 || index >= rows.length) return;
+
+    const targetTop = getRowsHeight(index);
+    const targetBottom = targetTop + getRowHeightFn.value(rows[index]);
+    if (!debounce) {
+        setScrollPosition(targetTop, 0, behavior);
+        return;
+    }
+
+    const container = tableContainerRef.value;
+    if (!container) return;
+    const visibleTop = isExperimentalScrollY.value ? virtualScroll.value.scrollTop : container.scrollTop;
+    const bodyViewportHeight = getBodyViewportHeight();
+    const visibleBottom = visibleTop + bodyViewportHeight;
+    if (targetTop < visibleTop) {
+        setScrollPosition(targetTop, 0, behavior);
+    } else if (targetBottom > visibleBottom) {
+        setScrollPosition(targetBottom - bodyViewportHeight, 0, behavior);
+    }
+}
+
+/**
+ * Scroll the table to coordinates, a row, or a boundary.
+ * The numeric overload follows the native x/y (left/top) order.
+ */
+const scrollTo: ScrollTo = (options: ScrollToOptions | number, y?: number): void => {
+    if (typeof options === 'number') {
+        setScrollPosition(y ?? 0, options);
+        return;
+    }
+
+    const { left, top, index, key, position, behavior, debounce = true } = options;
+    if (left !== undefined || top !== undefined) {
+        setScrollPosition(top, left, behavior);
+    } else if (index !== undefined) {
+        scrollToIndex(index, behavior, debounce);
+    } else if (key !== undefined) {
+        const targetIndex = dataSourceCopy.value.findIndex(row => rowKeyGen(row) === key);
+        if (targetIndex !== -1) scrollToIndex(targetIndex, behavior, debounce);
+    } else if (position === 'bottom') {
+        setScrollPosition(getMaxScrollTop(), 0, behavior);
+    } else if (position === 'top') {
+        setScrollPosition(0, 0, behavior);
+    }
+};
 
 /** get current table data */
 function getTableData() {

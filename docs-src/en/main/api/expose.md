@@ -172,16 +172,63 @@ function setSorter(
 Reset sort state
 
 ### scrollTo
-Scroll to specified position
+Scroll the table by coordinates, row index, row key, or boundary. The API shape matches native `Element.scrollTo` and Naive UI Virtual List.
 
 ```ts
-/**
- * Set scrollbar position
- * @param top Set to null to not change position
- * @param left Set to null to not change position
- */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+interface ScrollTo {
+    (x: number, y: number): void
+    (options: {
+        left?: number
+        top?: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        index: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        key: string | number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        position: 'top' | 'bottom'
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+}
 ```
+
+- In `(x, y)`, `x` is the horizontal `left` coordinate and `y` is the vertical `top` coordinate.
+- `index` is a zero-based row index in the table's current display order, after sorting, filtering, or tree flattening.
+- `key` uses `props.rowKey` to locate a row in the currently visible data; a missing key is a no-op.
+- `debounce` applies to `index` / `key` and defaults to `true`: do nothing when the row is fully visible, otherwise scroll the minimum distance needed to reveal it. Set it to `false` to always align the row with the top of the table body.
+- `behavior` matches native `ScrollToOptions.behavior`: `'auto'`, `'instant'`, or `'smooth'`.
+- `position` scrolls to the top or bottom and, like Naive UI, also resets the horizontal position.
+
+```ts
+// Scroll to row 101, unless it is already visible
+tableRef.value?.scrollTo({ index: 100 })
+
+// Locate by rowKey and smoothly align the row with the body top
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth', debounce: false })
+
+// Change only the vertical coordinate
+tableRef.value?.scrollTo({ top: 600 })
+
+// Scroll to the table bottom
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+::: warning Compatibility change
+The numeric overload changed from `(top, left)` to the native `(x, y)` order, meaning `(left, top)`. Change old `scrollTo(top, left)` calls to `scrollTo(left, top)`, or use the unambiguous `scrollTo({ top, left })` form.
+:::
+
+::: tip
+In variable-row-height mode, `index` / `key` use measured heights and values supplied through `setAutoHeight`. Unmeasured rows use `autoRowHeight.expectedHeight`, then fall back to `rowHeight`.
+:::
 
 ### getTableData
 Get table data, returns array in current table sort order
@@ -299,4 +346,3 @@ Set filter status(Beta). Triggers the `filter-change` event after setting.
  */
 function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
-

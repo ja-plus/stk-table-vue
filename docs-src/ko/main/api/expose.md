@@ -171,16 +171,63 @@ function setSorter(
 정렬 상태 초기화
 
 ### scrollTo
-지정 위치로 스크롤
+좌표, 행 인덱스, 행 key 또는 경계를 기준으로 테이블을 스크롤합니다. API 형식은 네이티브 `Element.scrollTo` 및 Naive UI Virtual List와 같습니다.
 
 ```ts
-/**
- * 스크롤바 위치 설정
- * @param top null 설정 시 위치 변경 안함
- * @param left null 설정 시 위치 변경 안함
- */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+interface ScrollTo {
+    (x: number, y: number): void
+    (options: {
+        left?: number
+        top?: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        index: number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        key: string | number
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+    (options: {
+        position: 'top' | 'bottom'
+        behavior?: ScrollBehavior
+        debounce?: boolean
+    }): void
+}
 ```
+
+- `(x, y)`에서 `x`는 가로 `left`, `y`는 세로 `top` 좌표입니다.
+- `index`는 정렬, 필터링 또는 트리 펼침이 적용된 현재 표시 순서의 0부터 시작하는 행 인덱스입니다.
+- `key`는 `props.rowKey`를 사용하여 현재 표시 데이터의 행을 찾습니다. 찾지 못하면 스크롤하지 않습니다.
+- `debounce`는 `index` / `key`에만 적용되며 기본값은 `true`입니다. 행이 완전히 보이면 이동하지 않고, 보이지 않으면 필요한 최소 거리만 스크롤합니다. `false`이면 항상 행을 테이블 본문 상단에 맞춥니다.
+- `behavior`는 네이티브 `ScrollToOptions.behavior`와 동일하며 `'auto'`, `'instant'`, `'smooth'`를 사용할 수 있습니다.
+- `position`은 상단 또는 하단으로 이동하고 Naive UI와 동일하게 가로 위치도 시작점으로 되돌립니다.
+
+```ts
+// 101번째 행으로 이동하며, 이미 보이는 경우 현재 위치 유지
+tableRef.value?.scrollTo({ index: 100 })
+
+// rowKey로 찾고 행을 본문 상단에 부드럽게 맞춤
+tableRef.value?.scrollTo({ key: orderId, behavior: 'smooth', debounce: false })
+
+// 가로 위치는 유지하고 세로 좌표만 변경
+tableRef.value?.scrollTo({ top: 600 })
+
+// 테이블 하단으로 이동
+tableRef.value?.scrollTo({ position: 'bottom' })
+```
+
+::: warning 호환성 변경
+숫자 오버로드가 기존 `(top, left)`에서 네이티브와 같은 `(x, y)`, 즉 `(left, top)` 순서로 변경되었습니다. 기존 `scrollTo(top, left)` 호출은 `scrollTo(left, top)`으로 바꾸거나 모호하지 않은 `scrollTo({ top, left })` 형식을 사용하세요.
+:::
+
+::: tip
+가변 행 높이 모드에서 `index` / `key`는 측정된 높이와 `setAutoHeight`로 설정된 값을 사용합니다. 측정되지 않은 행은 `autoRowHeight.expectedHeight`, 그다음 `rowHeight`를 사용합니다.
+:::
 
 ### getTableData
 테이블 데이터 가져오기, 현재 테이블 정렬 순서의 배열 반환
@@ -298,4 +345,3 @@ function copySelectedArea(): string
  */
 function setFilter(status: Record<UniqKey, FilterStatus> | null, option?: { remote?: boolean; silent?: boolean })
 ```
-

@@ -45,3 +45,22 @@
 
 - **WHEN** 用户手动拖动改变表格宽高后，调用 `initVirtualScroll`
 - **THEN** 可视区按新的容器尺寸重新计算并正确渲染
+
+### Requirement: 提供与 Naive UI Virtual List 对齐的 scrollTo 实例方法
+
+组件 SHALL expose `scrollTo`，并支持 `(x, y)` 数值坐标、`{ left?, top? }` 坐标对象、`{ index }`、`{ key }` 与 `{ position: 'top' | 'bottom' }` 五种调用形式；对象形式 SHALL 支持原生 `ScrollBehavior`。`index` 与 `key` 形式的 `debounce` 默认为 `true`，目标行完全可见时 MUST 保持当前滚动位置，否则 MUST 以最小距离使目标行可见；`debounce: false` 时 MUST 将目标行对齐到表体顶部。索引与 key MUST 基于排序、筛选及树形展开后的当前展示数据。
+
+#### Scenario: 通过行 key 定位当前展示行
+
+- **WHEN** 调用 `scrollTo({ key, behavior: 'smooth' })` 且该 key 对应当前展示数据中的一行
+- **THEN** 表格以平滑滚动方式用最小距离使该行完全可见
+
+#### Scenario: 强制将指定索引行对齐到顶部
+
+- **WHEN** 调用 `scrollTo({ index: 100, debounce: false })`
+- **THEN** 当前展示顺序中的第 101 行与表体顶部对齐
+
+#### Scenario: key 或 index 无效
+
+- **WHEN** `key` 未匹配当前展示数据，或 `index` 越界
+- **THEN** 当前滚动位置保持不变且不抛出异常

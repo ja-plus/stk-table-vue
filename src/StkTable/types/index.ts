@@ -227,6 +227,34 @@ export type UniqKey = string | number;
 export type UniqKeyFun = (param: any) => UniqKey;
 export type UniqKeyProp = UniqKey | UniqKeyFun;
 
+export interface CommonScrollToOptions {
+    /** Native scroll behavior. */
+    behavior?: ScrollBehavior;
+    /**
+     * When scrolling by index or key, only scroll when the target row is outside the viewport.
+     * Set to false to always align the target row with the top of the table body.
+     * @default true
+     */
+    debounce?: boolean;
+}
+
+export interface ScrollToOptions extends CommonScrollToOptions {
+    left?: number;
+    top?: number;
+    index?: number;
+    key?: UniqKey;
+    position?: 'top' | 'bottom';
+}
+
+/** Scroll the table to coordinates, a row, or a boundary. */
+export interface ScrollTo {
+    (x: number, y: number): void;
+    (options: { left?: number; top?: number } & CommonScrollToOptions): void;
+    (options: { index: number } & CommonScrollToOptions): void;
+    (options: { key: UniqKey } & CommonScrollToOptions): void;
+    (options: { position: 'top' | 'bottom' } & CommonScrollToOptions): void;
+}
+
 /**
  * 默认排序配置
  */
