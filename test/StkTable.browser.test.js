@@ -135,9 +135,11 @@ describe('StkTable.vue area selection expose', () => {
 
         const emittedCountBefore = wrapper.emitted('area-selection-change')?.length || 0;
         vm.setAreaSelection({ begin: { row: 2, col: 1 } });
-        expect((wrapper.emitted('area-selection-change')?.length || 0) - emittedCountBefore).toBe(0);
+        // silent 默认 false，会触发 area-selection-change
+        expect((wrapper.emitted('area-selection-change')?.length || 0) - emittedCountBefore).toBe(1);
 
-        vm.setAreaSelection({ begin: { row: 2, col: 1 } }, { silent: false });
+        vm.setAreaSelection({ begin: { row: 3, col: 2 } }, { silent: true });
+        // silent: true 不触发事件
         expect((wrapper.emitted('area-selection-change')?.length || 0) - emittedCountBefore).toBe(1);
 
         wrapper.unmount();

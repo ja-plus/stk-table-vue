@@ -189,28 +189,33 @@ describe('1_vertical_scroll', () => {
         wrapper.unmount();
     });
 
-    test('10K_rows_non_virtual_baseline', async () => {
-        // Only render 500 rows in non-virtual mode to avoid happy-dom overload
-        const data = genData(500);
-        const cols = genColumns(5);
+    test(
+        '10K_rows_non_virtual_baseline',
+        async () => {
+            // Only render 500 rows in non-virtual mode to avoid happy-dom overload
+            const data = genData(500);
+            const cols = genColumns(5);
 
-        const mountTime = await measureAsync(async () => {
-            const w = mount(StkTable, {
+            const mountTime = await measureAsync(async () => {
+                const w = mount(StkTable, {
+                    props: { rowKey: 'id', columns: cols, dataSource: data, virtual: false, rowHeight: 28 },
+                });
+                return w;
+            });
+
+            const wrapper = mount(StkTable, {
                 props: { rowKey: 'id', columns: cols, dataSource: data, virtual: false, rowHeight: 28 },
             });
-            return w;
-        });
+            await nextTick();
+            const nodes = countNodes(wrapper);
+            const rows = wrapper.findAll('tbody > tr[data-row-key]').length;
 
-        const wrapper = mount(StkTable, {
-            props: { rowKey: 'id', columns: cols, dataSource: data, virtual: false, rowHeight: 28 },
-        });
-        await nextTick();
-        const nodes = countNodes(wrapper);
-        const rows = wrapper.findAll('tbody > tr[data-row-key]').length;
-
-        console.log(`[PERF] non_virtual_500 | mount=${fmt(mountTime)} | domNodes=${nodes} | renderedRows=${rows}`);
-        wrapper.unmount();
-    });
+            console.log(`[PERF] non_virtual_500 | mount=${fmt(mountTime)} | domNodes=${nodes} | renderedRows=${rows}`);
+            wrapper.unmount();
+        },
+        // Non-virtual rendering of 500 rows is slow in happy-dom, raise timeout to avoid flaky failure under load
+        30000,
+    );
 });
 
 // ─── 2. Horizontal Virtual Scroll (virtualX) ────────────────────────────────

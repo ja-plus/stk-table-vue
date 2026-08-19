@@ -25,7 +25,7 @@ function createWrapper(extraProps = {}) {
 describe('defaultSort 排序切换', () => {
     // ─── defaultSort: asc ───────────────────────────────────────────────
     describe('当 defaultSort.order 为 asc 时', () => {
-        it('首次点击应该切换到 null（取消排序）', async () => {
+        it('首次点击应该切换到 desc', async () => {
             const wrapper = createWrapper({
                 sortConfig: {
                     defaultSort: {
@@ -47,40 +47,16 @@ describe('defaultSort 排序切换', () => {
             const ageHeader = wrapper.findAll('th').find(th => th.text().includes('Age'));
             expect(ageHeader).toBeDefined();
 
-            // 点击表头：按照循环顺序 null → desc → asc → null，从 asc 点击后应该切换到 null
-            await ageHeader.trigger('click');
-
-            // 应该切换到 null（取消排序）
-            expect(wrapper.vm.sortStates).toHaveLength(0);
-        });
-
-        it('第二次点击应该切换到 desc', async () => {
-            const wrapper = createWrapper({
-                sortConfig: {
-                    defaultSort: {
-                        dataIndex: 'age',
-                        order: 'asc',
-                        sortType: 'number',
-                    },
-                },
-            });
-
-            await wrapper.vm.$nextTick();
-
-            // 第一次点击：asc → null
-            const ageHeader = wrapper.findAll('th').find(th => th.text().includes('Age'));
-            await ageHeader.trigger('click');
-            expect(wrapper.vm.sortStates).toHaveLength(0);
-
-            // 第二次点击：null → desc
+            // 点击默认排序列表头：在 desc ↔ asc 之间切换，不会循环到 null
             await ageHeader.trigger('click');
 
             // 应该切换到 desc
+            expect(wrapper.vm.sortStates).toHaveLength(1);
             expect(wrapper.vm.sortStates[0]?.dataIndex).toBe('age');
             expect(wrapper.vm.sortStates[0]?.order).toBe('desc');
         });
 
-        it('第三次点击应该切换到 asc', async () => {
+        it('第二次点击应该切换回 asc', async () => {
             const wrapper = createWrapper({
                 sortConfig: {
                     defaultSort: {
@@ -95,16 +71,15 @@ describe('defaultSort 排序切换', () => {
 
             const ageHeader = wrapper.findAll('th').find(th => th.text().includes('Age'));
 
-            // 第 1 次点击：asc → null
-            await ageHeader.trigger('click');
-            expect(wrapper.vm.sortStates).toHaveLength(0);
-
-            // 第 2 次点击：null → desc
+            // 第一次点击：asc → desc
             await ageHeader.trigger('click');
             expect(wrapper.vm.sortStates[0]?.order).toBe('desc');
 
-            // 第 3 次点击：desc → asc
+            // 第二次点击：desc → asc
             await ageHeader.trigger('click');
+
+            // 应该切换回 asc
+            expect(wrapper.vm.sortStates[0]?.dataIndex).toBe('age');
             expect(wrapper.vm.sortStates[0]?.order).toBe('asc');
         });
     });
@@ -137,7 +112,7 @@ describe('defaultSort 排序切换', () => {
             expect(wrapper.vm.sortStates[0]?.order).toBe('asc');
         });
 
-        it('完整循环：desc → asc → null → desc', async () => {
+        it('完整循环：desc → asc → desc（默认排序列不经过 null）', async () => {
             const wrapper = createWrapper({
                 sortConfig: {
                     defaultSort: {
@@ -159,19 +134,16 @@ describe('defaultSort 排序切换', () => {
             await ageHeader.trigger('click');
             expect(wrapper.vm.sortStates[0]?.order).toBe('asc');
 
-            // 第 2 次点击：asc → null
+            // 第 2 次点击：asc → desc（默认排序列不会切换到 null）
             await ageHeader.trigger('click');
-            expect(wrapper.vm.sortStates).toHaveLength(0);
-
-            // 第 3 次点击：null → desc
-            await ageHeader.trigger('click');
+            expect(wrapper.vm.sortStates).toHaveLength(1);
             expect(wrapper.vm.sortStates[0]?.order).toBe('desc');
         });
     });
 
     // ─── 非 defaultSort 列 ───────────────────────────────────────────────
     describe('非 defaultSort 配置的列', () => {
-        it('应该从 desc 开始正常循环（null → desc → asc → null）', async () => {
+        it('应该从 desc 开始正常循环（null → desc → asc），取消后回退默认排序', async () => {
             const wrapper = createWrapper({
                 sortConfig: {
                     defaultSort: {
@@ -195,19 +167,22 @@ describe('defaultSort 排序切换', () => {
             await nameHeader.trigger('click');
             expect(wrapper.vm.sortStates[0]?.order).toBe('asc');
 
-            // 第 3 次点击：asc → null
+            // 第 3 次点击：asc → null，取消后回退到 defaultSort 配置的排序
             await nameHeader.trigger('click');
-            expect(wrapper.vm.sortStates).toHaveLength(0);
+            expect(wrapper.vm.sortStates).toHaveLength(1);
+            expect(wrapper.vm.sortStates[0]?.dataIndex).toBe('age');
+            expect(wrapper.vm.sortStates[0]?.order).toBe('asc');
 
-            // 第 4 次点击：null → desc
+            // 第 4 次点击：重新对 name 列排序（null → desc）
             await nameHeader.trigger('click');
+            expect(wrapper.vm.sortStates[0]?.dataIndex).toBe('name');
             expect(wrapper.vm.sortStates[0]?.order).toBe('desc');
         });
     });
 
     // ─── sort-change 事件 ───────────────────────────────────────────────
     describe('sort-change 事件', () => {
-        it('defaultSort 为 asc 时，首次点击应该触发 sort-change 事件且 order 为 null', async () => {
+        it('defaultSort 为 asc 时，首次点击应该触发 sort-change 事件且 order 为 desc', async () => {
             const wrapper = createWrapper({
                 sortConfig: {
                     defaultSort: {
@@ -231,7 +206,7 @@ describe('defaultSort 排序切换', () => {
             const eventArgs = wrapper.emitted('sort-change')[0];
             const [col, order] = eventArgs;
             expect(col.dataIndex).toBe('age');
-            expect(order).toBe(null);
+            expect(order).toBe('desc');
         });
     });
 });
