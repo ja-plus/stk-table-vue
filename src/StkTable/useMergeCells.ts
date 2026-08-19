@@ -292,6 +292,8 @@ export function useMergeCells(
      */
     const aboveViewportColumnMap = computed(() => {
         const map = new Map<UniqKey, AboveViewportCell[]>();
+        // autoRowHeight 时不允许剔除 td（行高靠内容撑开，见 StkTable getBodyColumns），直接返回空表
+        if (!canMergeEmptyRows.value) return map;
         const data = virtual_dataSourcePart.value;
         const { startIndex, viewportStartIndex } = virtualScroll.value;
         const aboveCount = viewportStartIndex - startIndex;

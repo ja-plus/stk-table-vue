@@ -1,4 +1,8 @@
 
+## 1.2.0-beta.2
+* Bugfix:
+  - fix: `autoRowHeight` + `virtual` + `stripe` — rows kept above the viewport (added by the stripe even-index alignment, or by rowspan correction) had their `td` stripped by the above/below-viewport placeholder optimization, which assumes empty `tr` keeps its height via CSS `height: var(--row-height)`. In `autoRowHeight` mode row height is stretched by cell content, so those rows collapsed and the collapsed height was measured into the row-height cache. The td-stripping optimization now only applies to fixed row height (`virtual` without `autoRowHeight`).
+
 ## 1.2.0-beta.1
 * Feature
   - feat: add instance method `clearMergeCellsCache` to clear the `mergeCells` result cache and force recalculation. The cache is only auto-cleared when `dataSource` / `columns` change; call this method after mutating row fields in place (row reference unchanged) that `mergeCells` depends on.

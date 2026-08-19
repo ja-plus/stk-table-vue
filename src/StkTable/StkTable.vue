@@ -1390,10 +1390,15 @@ function shouldHideCell(row: PrivateRowDT | null | undefined, col: StkTableColum
  * - Below-viewport rows: normally merged into placeholder tr segments split at crossing rowspan
  *   ends (see belowPhSegments); when still rendered individually (fallback), returns []
  *   (tr already has height via CSS, no td needed).
+ *
+ * 仅在 canMergeEmptyRows（定高虚拟列表）时启用上述剔除：空 tr 依赖 CSS `height: var(--row-height)`
+ * 保持高度，autoRowHeight 模式行高靠 td 内容撑开（容器也不定义 --row-height），
+ * 剔除 td 会让视口上方行（stripe/rowspan 修正保留的行）塌陷为 0 高，且塌陷高度会被
+ * DOM 测量写入行高缓存，导致行高无法正常撑开。
  */
 function getBodyColumns(row: PrivateRowDT | null | undefined, rowIndex: number): PrivateStkTableColumn<PrivateRowDT>[] {
     if (!row) return virtualX_columnPart.value;
-    if (virtual_on.value) {
+    if (canMergeEmptyRows.value) {
         const { startIndex, viewportStartIndex, viewportEndIndex } = virtualScroll.value;
         const aboveCount = viewportStartIndex - startIndex;
         if (aboveCount > 0 && rowIndex < aboveCount) {
