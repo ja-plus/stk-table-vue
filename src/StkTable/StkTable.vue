@@ -768,6 +768,14 @@ const isFooterTop = computed(() => props.footerConfig?.position === 'top');
 /** 表格底部标签名：顶部吸附用 tbody，底部吸附用 tfoot */
 const footerTagName = computed(() => (isFooterTop.value ? 'tbody' : 'tfoot'));
 
+function getFooterHeight() {
+    if (!props.footerData.length) return 0;
+    const footer = tableContainerRef.value?.querySelector<HTMLElement>('.stk-footer');
+    if (footer?.offsetHeight) return footer.offsetHeight;
+    const fallbackRowHeight = Number.parseFloat(String(props.footerRowHeight)) || props.rowHeight || DEFAULT_ROW_HEIGHT;
+    return props.footerData.length * fallbackRowHeight;
+}
+
 /**
  * 当前选中的一行
  * - shallowRef： 使 currentRow.value === row 地址相同。防止rowKeyGen 的WeakMap key不一致。
@@ -920,7 +928,10 @@ const [
     theadVirtualX,
     virtualX_columnPart,
     virtualX_expandColSegments,
-    getRowHeightFn,
+    getRowsHeight,
+    getRowHeight,
+    getBodyViewportHeight,
+    getVerticalScrollMetrics,
 ] = useVirtualScroll(
     props,
     tableContainerRef,
@@ -931,8 +942,8 @@ const [
     rowKeyGen,
     maxRowSpan,
     getMaxRowSpanValue,
-    scrollbarOptions,
     isExperimentalScrollY,
+    getFooterHeight,
     mergeCellsCache,
 );
 
@@ -1757,9 +1768,9 @@ function onTableWheel(e: WheelEvent) {
     const { deltaY, deltaX, shiftKey } = e;
 
     if (virtual_on.value && deltaY && !shiftKey) {
-        const { containerHeight, scrollTop, scrollHeight } = virtualScroll.value;
+        const { scrollTop, maxScrollTop } = virtualScroll.value;
         // overflow: hidden mode: manually control scroll, preventDefault to block parent scroll
-        const canScrollDown = scrollTop < scrollHeight - containerHeight - 1;
+        const canScrollDown = scrollTop < maxScrollTop - 1;
         const canScrollUp = scrollTop > 1;
 
         if ((deltaY > 0 && canScrollDown) || (deltaY < 0 && canScrollUp)) {
@@ -1935,36 +1946,8 @@ function cancelSmoothScroll() {
 
 onBeforeUnmount(cancelSmoothScroll);
 
-function getRowsHeight(endIndex = dataSourceCopy.value.length) {
-    let height = 0;
-    const rows = dataSourceCopy.value;
-    const getRowHeight = getRowHeightFn.value;
-    for (let i = 0; i < endIndex; i++) {
-        height += getRowHeight(rows[i]);
-    }
-    return height;
-}
-
-function getBodyViewportHeight() {
-    const container = tableContainerRef.value;
-    if (!container) return 0;
-    const footer = container.querySelector<HTMLElement>('.stk-footer');
-    const footerHeight = footer?.offsetHeight || 0;
-    const containerHeight = virtualScroll.value.containerHeight || container.clientHeight;
-    const headerHeight = props.headless ? 0 : tableHeaderHeight.value;
-    return Math.max(0, containerHeight - headerHeight - footerHeight);
-}
-
-function getMaxScrollTop() {
-    const container = tableContainerRef.value;
-    if (!container) return 0;
-    const nativeMax = Math.max(0, container.scrollHeight - container.clientHeight);
-    const estimatedMax = Math.max(0, getRowsHeight() - getBodyViewportHeight());
-    return Math.max(nativeMax, estimatedMax);
-}
-
 function scrollExperimentalY(top: number, behavior?: ScrollBehavior) {
-    const targetTop = Math.min(Math.max(0, top), getMaxScrollTop());
+    const targetTop = Math.min(Math.max(0, top), getVerticalScrollMetrics().maxScrollTop);
     cancelSmoothScroll();
     if (behavior !== 'smooth') {
         updateVirtualScrollY(targetTop);
@@ -2022,7 +2005,7 @@ function scrollToIndex(index: number, behavior?: ScrollBehavior, debounce = true
     if (!Number.isInteger(index) || index < 0 || index >= rows.length) return;
 
     const targetTop = getRowsHeight(index);
-    const targetBottom = targetTop + getRowHeightFn.value(rows[index]);
+    const targetBottom = targetTop + getRowHeight(rows[index]);
     if (!debounce) {
         setScrollPosition(targetTop, 0, behavior);
         return;
@@ -2051,7 +2034,11 @@ const scrollTo: ScrollTo = (options: ScrollToOptions | number, y?: number): void
     }
 
     const { left, top, index, key, position, behavior, debounce = true } = options;
-    if (left !== undefined || top !== undefined) {
+    const hasCoordinates = left !== undefined || top !== undefined;
+    const targetCount = Number(hasCoordinates) + Number(index !== undefined) + Number(key !== undefined) + Number(position !== undefined);
+    if (targetCount !== 1) return;
+
+    if (hasCoordinates) {
         setScrollPosition(top, left, behavior);
     } else if (index !== undefined) {
         scrollToIndex(index, behavior, debounce);
@@ -2059,7 +2046,7 @@ const scrollTo: ScrollTo = (options: ScrollToOptions | number, y?: number): void
         const targetIndex = dataSourceCopy.value.findIndex(row => rowKeyGen(row) === key);
         if (targetIndex !== -1) scrollToIndex(targetIndex, behavior, debounce);
     } else if (position === 'bottom') {
-        setScrollPosition(getMaxScrollTop(), 0, behavior);
+        setScrollPosition(getVerticalScrollMetrics().maxScrollTop, 0, behavior);
     } else if (position === 'top') {
         setScrollPosition(0, 0, behavior);
     }

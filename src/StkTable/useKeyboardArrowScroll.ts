@@ -71,7 +71,7 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
-        const { scrollTop, rowHeight, containerHeight, scrollHeight } = virtualScroll.value;
+        const { scrollTop, rowHeight, containerHeight, maxScrollTop } = virtualScroll.value;
         const { scrollLeft } = virtualScrollX.value;
         const { headless, headerRowHeight } = props;
 
@@ -94,7 +94,7 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         } else if (keyCode === ScrollCodes.Home) {
             scrollTo(0, null);
         } else if (keyCode === ScrollCodes.End) {
-            scrollTo(scrollHeight, null);
+            scrollTo(maxScrollTop, null);
         }
     }
 

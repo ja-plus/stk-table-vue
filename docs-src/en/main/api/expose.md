@@ -175,30 +175,65 @@ Reset sort state
 Scroll the table by coordinates, row index, row key, or boundary. The API shape matches native `Element.scrollTo` and Naive UI Virtual List.
 
 ```ts
+interface CommonScrollToOptions {
+    behavior?: ScrollBehavior
+    debounce?: boolean
+}
+
+type ScrollToOptions = CommonScrollToOptions & (
+    | {
+          left: number
+          top?: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: number
+          top: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index: number
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key: string | number
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key?: never
+          position: 'top' | 'bottom'
+      }
+)
+
 interface ScrollTo {
     (x: number, y: number): void
-    (options: {
-        left?: number
-        top?: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        index: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        key: string | number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        position: 'top' | 'bottom'
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
+    (options: ScrollToOptions): void
 }
+```
+
+`ScrollTo`, `ScrollToOptions`, and `CommonScrollToOptions` are public types exported from the package root. `ScrollToOptions` is a mutually exclusive union: coordinate targets require at least `left` or `top`, while other targets allow exactly one of `index`, `key`, or `position`. Empty objects and mixed targets fail TypeScript compilation.
+
+```ts
+import type { CommonScrollToOptions, ScrollTo, ScrollToOptions } from 'stk-table-vue'
+
+const common: CommonScrollToOptions = { behavior: 'smooth', debounce: false }
+const target: ScrollToOptions = { key: orderId, ...common }
+const scroll: ScrollTo = tableRef.value!.scrollTo
+
+scroll(target)
 ```
 
 - In `(x, y)`, `x` is the horizontal `left` coordinate and `y` is the vertical `top` coordinate.

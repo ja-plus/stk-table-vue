@@ -238,21 +238,54 @@ export interface CommonScrollToOptions {
     debounce?: boolean;
 }
 
-export interface ScrollToOptions extends CommonScrollToOptions {
-    left?: number;
-    top?: number;
-    index?: number;
-    key?: UniqKey;
-    position?: 'top' | 'bottom';
-}
+type ScrollToCoordinateOptions =
+    | {
+          left: number;
+          top?: number;
+          index?: never;
+          key?: never;
+          position?: never;
+      }
+    | {
+          left?: number;
+          top: number;
+          index?: never;
+          key?: never;
+          position?: never;
+      };
+
+type ScrollToIndexOptions = {
+    left?: never;
+    top?: never;
+    index: number;
+    key?: never;
+    position?: never;
+};
+
+type ScrollToKeyOptions = {
+    left?: never;
+    top?: never;
+    index?: never;
+    key: UniqKey;
+    position?: never;
+};
+
+type ScrollToPositionOptions = {
+    left?: never;
+    top?: never;
+    index?: never;
+    key?: never;
+    position: 'top' | 'bottom';
+};
+
+/** Mutually exclusive target options accepted by {@link ScrollTo}. */
+export type ScrollToOptions = CommonScrollToOptions &
+    (ScrollToCoordinateOptions | ScrollToIndexOptions | ScrollToKeyOptions | ScrollToPositionOptions);
 
 /** Scroll the table to coordinates, a row, or a boundary. */
 export interface ScrollTo {
     (x: number, y: number): void;
-    (options: { left?: number; top?: number } & CommonScrollToOptions): void;
-    (options: { index: number } & CommonScrollToOptions): void;
-    (options: { key: UniqKey } & CommonScrollToOptions): void;
-    (options: { position: 'top' | 'bottom' } & CommonScrollToOptions): void;
+    (options: ScrollToOptions): void;
 }
 
 /**

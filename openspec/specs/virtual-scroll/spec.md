@@ -48,7 +48,7 @@
 
 ### Requirement: 提供与 Naive UI Virtual List 对齐的 scrollTo 实例方法
 
-组件 SHALL expose `scrollTo`，并支持 `(x, y)` 数值坐标、`{ left?, top? }` 坐标对象、`{ index }`、`{ key }` 与 `{ position: 'top' | 'bottom' }` 五种调用形式；对象形式 SHALL 支持原生 `ScrollBehavior`。`index` 与 `key` 形式的 `debounce` 默认为 `true`，目标行完全可见时 MUST 保持当前滚动位置，否则 MUST 以最小距离使目标行可见；`debounce: false` 时 MUST 将目标行对齐到表体顶部。索引与 key MUST 基于排序、筛选及树形展开后的当前展示数据。
+组件 SHALL expose `scrollTo`，并支持 `(x, y)` 数值坐标、`{ left?, top? }` 坐标对象、`{ index }`、`{ key }` 与 `{ position: 'top' | 'bottom' }` 五种调用形式；对象形式 SHALL 支持原生 `ScrollBehavior`。包根入口 SHALL 导出 `ScrollTo`、`ScrollToOptions` 与 `CommonScrollToOptions` 公共类型，其中 `ScrollToOptions` MUST 以互斥 union 拒绝空目标和混合目标。`index` 与 `key` 形式的 `debounce` 默认为 `true`，目标行完全可见时 MUST 保持当前滚动位置，否则 MUST 以最小距离使目标行可见；`debounce: false` 时 MUST 将目标行对齐到表体顶部。索引与 key MUST 基于排序、筛选及树形展开后的当前展示数据。
 
 #### Scenario: 通过行 key 定位当前展示行
 
@@ -64,3 +64,8 @@
 
 - **WHEN** `key` 未匹配当前展示数据，或 `index` 越界
 - **THEN** 当前滚动位置保持不变且不抛出异常
+
+#### Scenario: 实验滚动使用统一的纵向几何模型
+
+- **WHEN** 实验性纵向滚动启用，且存在已测量的可变行高或粘性 footer
+- **THEN** `scrollTo` 目标计算、纵向位置截断与自定义滚动条 MUST 使用同一份总行高、footer 高度和最大滚动位置，顶部/底部及索引目标均可到达

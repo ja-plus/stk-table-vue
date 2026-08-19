@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "allowJs": false,
+        "noEmit": true
+    },
+    "include": ["./src/vite-env.d.ts", "./type-tests/scrollTo.ts"],
+    "exclude": ["node_modules"]
+}

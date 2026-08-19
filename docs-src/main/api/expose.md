@@ -174,30 +174,65 @@ function setSorter(
 按坐标、行索引、行 key 或边界滚动表格。接口形式与原生 `Element.scrollTo` / Naive UI Virtual List 一致。
 
 ```ts
+interface CommonScrollToOptions {
+    behavior?: ScrollBehavior
+    debounce?: boolean
+}
+
+type ScrollToOptions = CommonScrollToOptions & (
+    | {
+          left: number
+          top?: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: number
+          top: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index: number
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key: string | number
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key?: never
+          position: 'top' | 'bottom'
+      }
+)
+
 interface ScrollTo {
     (x: number, y: number): void
-    (options: {
-        left?: number
-        top?: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        index: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        key: string | number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        position: 'top' | 'bottom'
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
+    (options: ScrollToOptions): void
 }
+```
+
+`ScrollTo`、`ScrollToOptions` 和 `CommonScrollToOptions` 都是从包根入口导出的公共类型。`ScrollToOptions` 是互斥 union：坐标形式至少需要 `left` 或 `top`，其他形式只能包含 `index`、`key`、`position` 中的一个；空对象或混合目标会在 TypeScript 编译期报错。
+
+```ts
+import type { CommonScrollToOptions, ScrollTo, ScrollToOptions } from 'stk-table-vue'
+
+const common: CommonScrollToOptions = { behavior: 'smooth', debounce: false }
+const target: ScrollToOptions = { key: orderId, ...common }
+const scroll: ScrollTo = tableRef.value!.scrollTo
+
+scroll(target)
 ```
 
 - `(x, y)` 中 `x` 表示横向 `left`，`y` 表示纵向 `top`。

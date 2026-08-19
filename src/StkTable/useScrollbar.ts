@@ -71,17 +71,18 @@ export function useScrollbar(
 
     function updateCustomScrollbar() {
         if (!scrollbarOptions.value.enabled || isMobileDevice) return;
-        const { scrollHeight, scrollTop, containerHeight } = virtualScroll.value;
+        const { scrollHeight, scrollTop, maxScrollTop, containerHeight } = virtualScroll.value;
         const { scrollWidth, scrollLeft, containerWidth } = virtualScrollX.value;
 
-        const needVertical = scrollHeight > containerHeight;
+        const needVertical = maxScrollTop > 0;
         const needHorizontal = scrollWidth > containerWidth;
         showScrollbar.value = { x: needHorizontal, y: needVertical };
 
         if (needVertical) {
             const ratio = containerHeight / scrollHeight;
             scrollbar.value.h = Math.max(scrollbarOptions.value.minHeight, ratio * containerHeight);
-            scrollbar.value.t = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
+            const scrollRatio = Math.min(Math.max(0, scrollTop), maxScrollTop) / maxScrollTop;
+            scrollbar.value.t = Math.round(scrollRatio * (containerHeight - scrollbar.value.h));
         }
 
         if (needHorizontal) {
@@ -123,17 +124,15 @@ export function useScrollbar(
         e.preventDefault();
         const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
         const deltaY = clientY - dragStartY;
-        const { scrollHeight, containerHeight } = virtualScroll.value;
-        const scrollRange = scrollHeight - containerHeight;
+        const { maxScrollTop: scrollRange, containerHeight } = virtualScroll.value;
         const trackRange = containerHeight - scrollbar.value.h;
+        if (scrollRange <= 0 || trackRange <= 0) return;
         const scrollDelta = (deltaY / trackRange) * scrollRange;
 
         if (isExperimentalScrollY.value) {
-            const ratio = containerHeight / scrollHeight;
-            const top = Math.round((dragStartTop + scrollDelta) * ratio);
-            const maxTop = containerHeight - scrollbar.value.h;
-            scrollbar.value.t = top < 0 ? 0 : top > maxTop ? maxTop : top;
-            rafUpdateVirtualScrollY(dragStartTop + scrollDelta);
+            const targetTop = Math.min(Math.max(0, dragStartTop + scrollDelta), scrollRange);
+            scrollbar.value.t = Math.round((targetTop / scrollRange) * trackRange);
+            rafUpdateVirtualScrollY(targetTop);
         } else {
             containerRef.value!.scrollTop = dragStartTop + scrollDelta;
         }

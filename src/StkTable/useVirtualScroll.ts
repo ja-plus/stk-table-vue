@@ -1,8 +1,7 @@
-import { Ref, ShallowRef, computed, ref, shallowRef, triggerRef } from 'vue';
+import { Ref, ShallowRef, computed, shallowRef, triggerRef } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { MergeCellsCache } from './mergeCellsCache';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
-import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
 import { getCalculatedColWidth } from './utils/constRefUtils';
 
@@ -24,11 +23,23 @@ export type VirtualScrollStore = {
     scrollTop: number;
     /** 总滚动高度 */
     scrollHeight: number;
+    /** 纵向最大滚动位置 */
+    maxScrollTop: number;
     translateY: number;
     /** 视口实际起始行索引（rowspan 修正前的原始值，用于区分 above-viewport 行） */
     viewportStartIndex: number;
     /** 视口实际结束行索引（rowspan 修正前的原始值，用于区分 below-viewport 行） */
     viewportEndIndex: number;
+};
+
+export type VerticalScrollMetrics = {
+    rowsHeight: number;
+    headerHeight: number;
+    footerHeight: number;
+    containerHeight: number;
+    bodyViewportHeight: number;
+    scrollHeight: number;
+    maxScrollTop: number;
 };
 /** 暂存横向虚拟滚动的数据 */
 export type VirtualScrollXStore = {
@@ -112,8 +123,8 @@ export function useVirtualScroll(
     maxRowSpan: Map<UniqKey, number>,
     /** 全局最大 rowspan（限定跨界修正扫描范围用） */
     getMaxRowSpanValue: () => number,
-    scrollbarOptions: Ref<Required<ScrollbarOptions>>,
     isExperimentalScrollY: Ref<boolean | undefined>,
+    getFooterHeight: () => number,
     /** mergeCells 结果共享缓存（与 useMergeCells 共用，避免重复调用用户回调） */
     mergeCellsCache: MergeCellsCache,
 ) {
@@ -128,6 +139,7 @@ export function useVirtualScroll(
         offsetTop: 0,
         scrollTop: 0,
         scrollHeight: 0,
+        maxScrollTop: 0,
         translateY: 0,
         viewportStartIndex: 0,
         viewportEndIndex: 0,
@@ -525,6 +537,50 @@ export function useVirtualScroll(
         return rowHeightFn;
     });
 
+    function getRowHeight(row?: PrivateRowDT) {
+        return getRowHeightFn.value(row);
+    }
+
+    function getRowsHeight(endIndex = dataSourceCopy.value.length) {
+        const rows = dataSourceCopy.value;
+        const rowCount = Math.min(endIndex, rows.length);
+        if (!props.autoRowHeight && !hasExpandCol.value) {
+            return rowCount * getRowHeightFn.value();
+        }
+
+        let height = 0;
+        const getRowHeight = getRowHeightFn.value;
+        for (let i = 0; i < rowCount; i++) {
+            height += getRowHeight(rows[i]);
+        }
+        return height;
+    }
+
+    function getBodyViewportHeight() {
+        const containerHeight = virtualScroll.value.containerHeight || tableContainerRef.value?.clientHeight || DEFAULT_TABLE_HEIGHT;
+        const headerHeight = props.headless ? 0 : tableHeaderHeight.value;
+        return Math.max(0, containerHeight - headerHeight - getFooterHeight());
+    }
+
+    function getVerticalScrollMetrics(): VerticalScrollMetrics {
+        const containerHeight = virtualScroll.value.containerHeight || tableContainerRef.value?.clientHeight || DEFAULT_TABLE_HEIGHT;
+        const headerHeight = props.headless ? 0 : tableHeaderHeight.value;
+        const footerHeight = getFooterHeight();
+        const rowsHeight = getRowsHeight();
+        const modeledScrollHeight = rowsHeight + headerHeight + footerHeight;
+        const nativeScrollHeight = tableContainerRef.value?.scrollHeight || 0;
+        const scrollHeight = Math.max(modeledScrollHeight, nativeScrollHeight);
+        return {
+            rowsHeight,
+            headerHeight,
+            footerHeight,
+            containerHeight,
+            bodyViewportHeight: Math.max(0, containerHeight - headerHeight - footerHeight),
+            scrollHeight,
+            maxScrollTop: Math.max(0, scrollHeight - containerHeight),
+        };
+    }
+
     /**
      * 初始化虚拟滚动参数
      * @param {number} [height] 虚拟滚动的高度
@@ -543,7 +599,7 @@ export function useVirtualScroll(
             console.warn('initVirtualScrollY: height must be a number');
             height = 0;
         }
-        const { clientHeight, scrollHeight } = tableContainerRef.value || {};
+        const { clientHeight } = tableContainerRef.value || {};
         // 当 isExperimentalScrollY 为 true 时，DOM 的 scrollTop 始终为 0（纵向滚动通过 transform 模拟）
         // 此时应该使用 virtualScroll 中保存的 scrollTop 值
         let scrollTop = isExperimentalScrollY.value ? virtualScroll.value.scrollTop : tableContainerRef.value?.scrollTop || 0;
@@ -557,12 +613,13 @@ export function useVirtualScroll(
             const headerToBodyRowHeightCount = Math.floor(tableHeaderHeight.value / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
-        const maxScrollTop = Math.max(0, dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight);
+        Object.assign(virtualScroll.value, { containerHeight, pageSize });
+        const { scrollHeight, maxScrollTop } = getVerticalScrollMetrics();
         if (scrollTop > maxScrollTop) {
             /** fix： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
             scrollTop = maxScrollTop;
         }
-        Object.assign(virtualScroll.value, { containerHeight, pageSize, scrollHeight });
+        Object.assign(virtualScroll.value, { scrollHeight, maxScrollTop });
         triggerRef(virtualScroll);
         updateVirtualScrollY(scrollTop);
     }
@@ -622,16 +679,24 @@ export function useVirtualScroll(
         const dataLength = dataSourceCopyTemp.length;
         const rowHeight = getRowHeightFn.value();
 
-        const vsValue: any = {};
-        const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
-        const { enabled: scrollbarEnable } = scrollbarOptions.value;
-        if (scrollbarEnable) {
-            vsValue.scrollHeight = scrollHeight;
-            if (isExperimentalScrollY.value) {
-                let maxTop: number;
-                sTop = sTop < 0 ? 0 : sTop < (maxTop = scrollHeight - containerHeight) ? sTop : maxTop;
-                vsValue.translateY = props.scrollRowByRow ? 0 : -(sTop % rowHeight);
+        if (props.autoRowHeight && trRef.value) {
+            // Measure before deriving total height so clamping and scrollbar metrics use the latest known heights.
+            const trElements = trRef.value;
+            for (let i = 0, len = trElements.length; i < len; i++) {
+                const tr = trElements[i];
+                const rowKey = tr.dataset.rowKey;
+                if (!rowKey || autoRowHeightMap.has(rowKey)) continue;
+                autoRowHeightMap.set(rowKey, tr.offsetHeight);
             }
+        }
+
+        const vsValue: any = {};
+        const { scrollHeight, maxScrollTop } = getVerticalScrollMetrics();
+        vsValue.scrollHeight = scrollHeight;
+        vsValue.maxScrollTop = maxScrollTop;
+        if (isExperimentalScrollY.value) {
+            sTop = Math.min(Math.max(0, sTop), maxScrollTop);
+            vsValue.translateY = props.scrollRowByRow ? 0 : -(sTop % rowHeight);
         }
         vsValue.scrollTop = sTop;
 
@@ -658,16 +723,6 @@ export function useVirtualScroll(
         let endIndex = dataLength;
         let autoRowHeightTop = 0;
         if (autoRowHeight || hasExpandCol.value) {
-            if (autoRowHeight && trRef.value) {
-                // Batch DOM measurements for better performance
-                const trElements = trRef.value;
-                for (let i = 0, len = trElements.length; i < len; i++) {
-                    const tr = trElements[i];
-                    const rowKey = tr.dataset.rowKey;
-                    if (!rowKey || autoRowHeightMap.has(rowKey)) continue;
-                    autoRowHeightMap.set(rowKey, tr.offsetHeight);
-                }
-            }
             // calculate startIndex
             for (let i = 0; i < dataLength; i++) {
                 const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
@@ -897,6 +952,9 @@ export function useVirtualScroll(
         theadVirtualX,
         virtualX_columnPart,
         virtualX_expandColSegments,
-        getRowHeightFn,
+        getRowsHeight,
+        getRowHeight,
+        getBodyViewportHeight,
+        getVerticalScrollMetrics,
     ] as const;
 }

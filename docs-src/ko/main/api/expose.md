@@ -174,30 +174,65 @@ function setSorter(
 좌표, 행 인덱스, 행 key 또는 경계를 기준으로 테이블을 스크롤합니다. API 형식은 네이티브 `Element.scrollTo` 및 Naive UI Virtual List와 같습니다.
 
 ```ts
+interface CommonScrollToOptions {
+    behavior?: ScrollBehavior
+    debounce?: boolean
+}
+
+type ScrollToOptions = CommonScrollToOptions & (
+    | {
+          left: number
+          top?: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: number
+          top: number
+          index?: never
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index: number
+          key?: never
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key: string | number
+          position?: never
+      }
+    | {
+          left?: never
+          top?: never
+          index?: never
+          key?: never
+          position: 'top' | 'bottom'
+      }
+)
+
 interface ScrollTo {
     (x: number, y: number): void
-    (options: {
-        left?: number
-        top?: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        index: number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        key: string | number
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
-    (options: {
-        position: 'top' | 'bottom'
-        behavior?: ScrollBehavior
-        debounce?: boolean
-    }): void
+    (options: ScrollToOptions): void
 }
+```
+
+`ScrollTo`, `ScrollToOptions`, `CommonScrollToOptions`는 모두 패키지 루트에서 내보내는 공개 타입입니다. `ScrollToOptions`는 상호 배타적인 union입니다. 좌표 형식에는 `left` 또는 `top` 중 하나 이상이 필요하고, 다른 형식에는 `index`, `key`, `position` 중 정확히 하나만 사용할 수 있습니다. 빈 객체나 여러 대상을 섞은 값은 TypeScript 컴파일 오류가 됩니다.
+
+```ts
+import type { CommonScrollToOptions, ScrollTo, ScrollToOptions } from 'stk-table-vue'
+
+const common: CommonScrollToOptions = { behavior: 'smooth', debounce: false }
+const target: ScrollToOptions = { key: orderId, ...common }
+const scroll: ScrollTo = tableRef.value!.scrollTo
+
+scroll(target)
 ```
 
 - `(x, y)`에서 `x`는 가로 `left`, `y`는 세로 `top` 좌표입니다.
