@@ -1,0 +1,38 @@
+schema: spec-driven
+
+# Project context
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+context: |
+  stk-table-vue 是高性能虚拟滚动表格组件库（Sticky Table），基于 Vue 3 与 Vue 2.7，基于原生 table 元素，零第三方运行时依赖，支持数万行数据流畅展示。
+  技术栈：Vue 3 / Vue 2.7、Vite 7、TypeScript 5、Less + PostCSS、pnpm 包管理、Vitest 测试、VitePress 文档站（docs-src/，含 en/ja/ko 多语言镜像）。
+  核心能力：虚拟滚动（纵向/横向）、CSS sticky 固定列、多级表头、排序/筛选、树形表格与行展开、单元格合并、高亮动画、区域选取、列宽调整/列拖动、行拖动、内置自定义单元格工厂（Filter/Editable/Checkbox/Number/Change）。
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+rules:
+  proposal:
+    - 工件使用中文书写
+    - 涉及公共 API（defineExpose 方法 / props / events / slots）或行为变更时，必须在 What Changes 中登记文档同步范围（docs-src/main/ 中文主文档、en/ja/ko 镜像、CHANGELOG.md）
+  specs:
+    - 工件使用中文书写
+    - 公共 API 登记页为 docs-src/main/api/expose.md（实例方法）、table-props.md（props）、emits.md（events）、slots.md（slots），规格描述的行为必须与文档及实际实现一致
+  design:
+    - 工件使用中文书写
+    - 代码改动与 docs-src 文档视为同一个改动，设计文档须注明受影响的文档页面
+  tasks:
+    - 工件使用中文书写
+    - 代码改动必须同步更新 docs-src 文档（含 en/ja/ko 多语言镜像与 CHANGELOG.md），并把文档同步拆为独立任务项
+    - 提交信息（commit message）使用英文
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
