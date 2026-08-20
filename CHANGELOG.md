@@ -2,6 +2,8 @@
 ## Unreleased
 * Feature
   - feat: `scrollTo` instance method gains an options overload `scrollTo({ top, left, behavior })` in addition to the legacy numeric form `scrollTo(top, left)` (unchanged). Each axis accepts a pixel number or a `{ index, key, px }` target — the `top` axis targets a row (display-order index or rowKey) and the `left` axis targets a leaf column (index or dataIndex); `px` adds an extra offset on top of the resolved base. Unresolvable targets (index out of range / key not found) silently skip that axis, omitted axes keep their position, and `behavior: 'smooth'` animates to the target (cancelled by a new `scrollTo` call or wheel/touch interaction). New exported types: `ScrollToOptions`, `ScrollAxisTarget`, `ScrollToFn`.
+* Optimize
+  - perf: `useAreaSelection` is now tree-shakable — bundlers (Vite/Rollup, webpack) drop the whole area-selection feature (~6KB gzipped) when it is not imported. The feature-name tag previously attached by a top-level property assignment (an unshakeable side effect) is now applied through a `/* @__PURE__ */` initializer, and `package.json` declares `"sideEffects": false`.
 
 ## 1.2.0-beta.2
 * Bugfix:

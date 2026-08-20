@@ -1934,9 +1934,10 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
 /** smooth 滚动动画时长（ms） */
 const SMOOTH_SCROLL_DURATION = 300;
 let smoothScrollRafId = 0;
-let smoothScrollCleanup: (() => void) | null = null;
 /** 动画代际序号，取消后旧动画的 rAF 回调不再生效 */
 let smoothScrollSeq = 0;
+/** 当前动画的手势监听清理函数（监听直接挂 cancelSmoothScroll，无额外包装） */
+let removeGestureListeners: (() => void) | null = null;
 
 /** 取消进行中的平滑滚动动画 */
 function cancelSmoothScroll() {
@@ -1945,9 +1946,9 @@ function cancelSmoothScroll() {
         cancelAnimationFrame(smoothScrollRafId);
         smoothScrollRafId = 0;
     }
-    if (smoothScrollCleanup) {
-        smoothScrollCleanup();
-        smoothScrollCleanup = null;
+    if (removeGestureListeners) {
+        removeGestureListeners();
+        removeGestureListeners = null;
     }
 }
 
@@ -1985,11 +1986,8 @@ function resolveTopByIndex(index: number): number | null {
     return getRowsHeight(index);
 }
 function resolveTopByKey(key: string | number): number | null {
-    const data = dataSourceCopy.value;
-    for (let i = 0; i < data.length; i++) {
-        if (rowKeyGen(data[i]) === key) return getRowsHeight(i);
-    }
-    return null;
+    const index = dataSourceCopy.value.findIndex(row => rowKeyGen(row) === key);
+    return index === -1 ? null : getRowsHeight(index);
 }
 
 /** left 轴基准偏移：目标列之前所有列的宽度之和（与区域选择内部 getColPosition 同算法） */
@@ -2007,15 +2005,6 @@ function getMaxScrollTop(): number {
     return Math.max(0, getRowsHeight(dataSourceCopy.value.length) - virtualScroll.value.containerHeight);
 }
 
-/** left 轴最大可滚动距离：基于理论内容宽度（所有列宽之和），不依赖 DOM 测量 */
-function getMaxScrollLeft(): number {
-    const cols = tableHeaderLast.value;
-    let totalWidth = 0;
-    for (let i = 0; i < cols.length; i++) {
-        totalWidth += getCalculatedColWidth(cols[i]);
-    }
-    return Math.max(0, totalWidth - virtualScrollX.value.containerWidth);
-}
 function resolveLeftByIndex(index: number): number | null {
     if (index < 0 || index >= tableHeaderLast.value.length) return null;
     return getColLeft(index);
@@ -2051,14 +2040,12 @@ function smoothScrollTo(top: number | null, left: number | null) {
     const startTime = Date.now();
     const ease = (t: number) => 1 - Math.pow(1 - t, 3);
     // 用户手势介入时取消动画
-    const cancelOnUserGesture = () => cancelSmoothScroll();
-    container.addEventListener('wheel', cancelOnUserGesture, { passive: true });
-    container.addEventListener('touchstart', cancelOnUserGesture, { passive: true });
-    const removeGestureListeners = () => {
-        container.removeEventListener('wheel', cancelOnUserGesture);
-        container.removeEventListener('touchstart', cancelOnUserGesture);
+    container.addEventListener('wheel', cancelSmoothScroll, { passive: true });
+    container.addEventListener('touchstart', cancelSmoothScroll, { passive: true });
+    removeGestureListeners = () => {
+        container.removeEventListener('wheel', cancelSmoothScroll);
+        container.removeEventListener('touchstart', cancelSmoothScroll);
     };
-    smoothScrollCleanup = removeGestureListeners;
 
     const seq = smoothScrollSeq;
     const step = () => {
@@ -2071,8 +2058,8 @@ function smoothScrollTo(top: number | null, left: number | null) {
             smoothScrollRafId = requestAnimationFrame(step);
         } else {
             smoothScrollRafId = 0;
-            removeGestureListeners();
-            smoothScrollCleanup = null;
+            removeGestureListeners!();
+            removeGestureListeners = null;
         }
     };
     smoothScrollRafId = requestAnimationFrame(step);
@@ -2101,7 +2088,7 @@ function scrollTo(options?: ScrollToOptions | number | null, leftArg?: number | 
     if (top === null && left === null) return;
     // 钳制到合法滚动范围（基于理论内容尺寸，与滚动条语义一致）
     if (top !== null) top = Math.min(Math.max(top, 0), getMaxScrollTop());
-    if (left !== null) left = Math.min(Math.max(left, 0), getMaxScrollLeft());
+    if (left !== null) left = Math.min(Math.max(left, 0), Math.max(0, getColLeft(tableHeaderLast.value.length) - virtualScrollX.value.containerWidth));
     if (options.behavior === 'smooth') {
         smoothScrollTo(top, left);
     } else {

@@ -19,7 +19,7 @@ import { MY_FN_NAME } from './const';
  * 支持鼠标拖拽选择、键盘导航、复制粘贴等功能
  * en: Cell area selection feature with mouse drag, keyboard navigation, copy-paste, etc.
  */
-export function useAreaSelection<DT extends Record<string, any>>(
+function useAreaSelectionImpl<DT extends Record<string, any>>(
     props: any,
     emits: any,
     tableContainerRef: Ref<HTMLDivElement | undefined>,
@@ -1221,4 +1221,9 @@ export function useAreaSelection<DT extends Record<string, any>>(
 }
 export const useAreaSelectionName = 'useAreaSelection';
 
-(useAreaSelection as any)[MY_FN_NAME] = useAreaSelectionName;
+// 挂载特性名供 registerFeature 识别。
+// 顶层属性赋值会阻止消费方 tree-shaking，改用 @__PURE__ 包装并绑定到导出：
+// 本库构建时导出存活故保留；消费方未使用该导出时可整体摇掉。
+export const useAreaSelection: typeof useAreaSelectionImpl = /* @__PURE__ */ Object.assign(useAreaSelectionImpl, {
+    [MY_FN_NAME]: useAreaSelectionName,
+});
