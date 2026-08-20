@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>scrollbar mousedown probe</title></head>
+<body>
+<div id="box" style="width:300px;height:200px;overflow:auto;border:2px solid red;">
+  <div style="height:2000px;width:50px;">content</div>
+</div>
+<pre id="log"></pre>
+<script>
+const box = document.getElementById('box');
+const log = document.getElementById('log');
+['mousedown','mouseup','mousemove','scroll'].forEach(t => {
+  box.addEventListener(t, e => {
+    log.textContent += t + ' target=' + (e.target.id || e.target.tagName) + ' isBox=' + (e.target === box) + '\n';
+  }, true);
+});
+</script>
+</body>
+</html>
