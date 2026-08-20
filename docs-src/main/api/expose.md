@@ -171,15 +171,65 @@ function setSorter(
 重置排序状态
 
 ### scrollTo
-滚动到指定位置
+滚动到指定位置。支持两种调用形式：数字重载（向后兼容）与 options 重载（可按行/列定位）。
 
 ```ts
 /**
  * 设置滚动条位置
- * @param top 设置null则不改变位置
- * @param left 设置null则不改变位置
+ * - 数字重载：top/left 为像素坐标，null 表示不改变对应轴，省略默认 0
+ * - options 重载：每轴可传像素数字或 { index, key, px } 定位目标，省略的轴不改变位置
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** 纵向目标：像素坐标或行定位目标 */
+    top?: number | ScrollAxisTarget;
+    /** 横向目标：像素坐标或列定位目标 */
+    left?: number | ScrollAxisTarget;
+    /** 滚动行为，同原生 ScrollToOptions.behavior，默认 'auto'（立即跳转） */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** 目标索引（0 起始），与 key 同时给出时 index 优先 */
+    index?: number;
+    /** 目标键值：top 轴为 rowKey 对应的行键值；left 轴为列的 dataIndex */
+    key?: string | number;
+    /** 在基准偏移之上叠加的像素偏移，可为负值。仅传 px 时基准为 0 */
+    px?: number;
+}
+```
+
+* 索引空间：`top` 轴的 `index` 是当前展示顺序（排序/筛选/树展开后）的行索引；`left` 轴的 `index` 是叶子列（最深层表头列）索引。
+* 目标无法解析（index 越界 / key 不存在）时，该轴静默跳过，不改变位置。
+* `behavior: 'smooth'` 时以动画滚动到目标位置；动画进行中发起新的 `scrollTo` 调用会取消旧动画，滚轮/触摸操作也会取消动画。
+
+::: tip
+options 重载与数字重载对「省略」的语义不同：
+* options 重载：省略的轴**不改变**当前位置，`scrollTo({})` 不产生任何滚动；
+* 数字重载：省略的参数默认为 **0**，`scrollTo()` 会滚动到左上角。
+:::
+
+```js
+// 数字重载（向后兼容）
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // 仅改变横向
+
+// options 重载：像素坐标
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// 滚动到第 5 行（0 起始）
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// 滚动到 rowKey 为 'row-42' 的行
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// 滚动到第 5 行再往下偏移 10px
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// 同时定位行列，平滑滚动（列按 dataIndex 定位）
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData

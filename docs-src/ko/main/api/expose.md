@@ -171,15 +171,65 @@ function setSorter(
 정렬 상태 초기화
 
 ### scrollTo
-지정 위치로 스크롤
+지정 위치로 스크롤. 숫자 오버로드(하위 호환)와 options 오버로드(행/열 지정 지원) 두 가지 호출 형태를 지원.
 
 ```ts
 /**
  * 스크롤바 위치 설정
- * @param top null 설정 시 위치 변경 안함
- * @param left null 설정 시 위치 변경 안함
+ * - 숫자 오버로드: top/left는 픽셀 좌표, null은 해당 축 변경 안 함, 생략 시 기본값 0
+ * - options 오버로드: 각 축에 픽셀 숫자 또는 { index, key, px } 타겟 지정 가능, 생략한 축은 위치 변경 안 함
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** 세로 방향 타겟: 픽셀 좌표 또는 행 타겟 */
+    top?: number | ScrollAxisTarget;
+    /** 가로 방향 타겟: 픽셀 좌표 또는 열 타겟 */
+    left?: number | ScrollAxisTarget;
+    /** 스크롤 동작, 네이티브 ScrollToOptions.behavior와 동일, 기본값 'auto'(즉시 이동) */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** 타겟 인덱스(0부터 시작), key와 함께 지정 시 index 우선 */
+    index?: number;
+    /** 타겟 키: top 축은 rowKey에 해당하는 행 키, left 축은 열의 dataIndex */
+    key?: string | number;
+    /** 기준 오프셋에 추가하는 픽셀 오프셋, 음수 가능. px만 전달 시 기준은 0 */
+    px?: number;
+}
+```
+
+* 인덱스 공간: `top` 축의 `index`는 현재 표시 순서(정렬/필터/트리 확장 후)의 행 인덱스, `left` 축의 `index`는 리프 열(최심층 헤더) 인덱스.
+* 타겟을 해석할 수 없는 경우(index 범위 초과 / key 없음) 해당 축은 조용히 건너뛰며 위치가 변경되지 않음.
+* `behavior: 'smooth'` 지정 시 애니메이션으로 스크롤. 애니메이션 중 새로운 `scrollTo` 호출은 이전 애니메이션을 취소하며, 휠/터치 조작으로도 취소됨.
+
+::: tip
+두 오버로드의 「생략」 의미가 다름:
+* options 오버로드: 생략한 축은 현재 위치 **유지**, `scrollTo({})`는 아무 스크롤도 하지 않음;
+* 숫자 오버로드: 생략한 인수는 기본값 **0**, `scrollTo()`는 왼쪽 위 모서리로 스크롤.
+:::
+
+```js
+// 숫자 오버로드(하위 호환)
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // 가로 방향만 변경
+
+// options 오버로드: 픽셀 좌표
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// 5번째 행으로 스크롤(0부터 시작)
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// rowKey가 'row-42'인 행으로 스크롤
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// 5번째 행 + 10px 오프셋으로 스크롤
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// 행열 동시 지정, 부드럽게 스크롤(열은 dataIndex으로 지정)
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData

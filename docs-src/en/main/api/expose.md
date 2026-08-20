@@ -172,15 +172,65 @@ function setSorter(
 Reset sort state
 
 ### scrollTo
-Scroll to specified position
+Scroll to specified position. Two call forms are supported: the numeric overload (backward compatible) and the options overload (with row/column targeting).
 
 ```ts
 /**
  * Set scrollbar position
- * @param top Set to null to not change position
- * @param left Set to null to not change position
+ * - Numeric overload: top/left are pixel coordinates, null keeps the axis unchanged, omitted defaults to 0
+ * - Options overload: each axis accepts a pixel number or an { index, key, px } target, omitted axes keep their position
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** Vertical target: pixel coordinate or row target */
+    top?: number | ScrollAxisTarget;
+    /** Horizontal target: pixel coordinate or column target */
+    left?: number | ScrollAxisTarget;
+    /** Scroll behavior, same as native ScrollToOptions.behavior, default 'auto' (jump immediately) */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** Target index (0-based). Takes precedence over key when both are given */
+    index?: number;
+    /** Target key: row key (rowKey) for the top axis; column dataIndex for the left axis */
+    key?: string | number;
+    /** Extra pixel offset added to the base offset, may be negative. Base is 0 when only px is given */
+    px?: number;
+}
+```
+
+* Index space: the `top` axis `index` is the row index in the current display order (after sorting/filtering/tree expansion); the `left` axis `index` is the leaf column (deepest header level) index.
+* When a target cannot be resolved (index out of range / key not found), that axis is silently skipped and its position is unchanged.
+* With `behavior: 'smooth'` the table animates to the target position; a new `scrollTo` call cancels an in-progress animation, as does wheel/touch interaction.
+
+::: tip
+The two overloads treat "omitted" differently:
+* Options overload: an omitted axis **keeps** its current position, `scrollTo({})` performs no scrolling;
+* Numeric overload: an omitted parameter defaults to **0**, so `scrollTo()` scrolls to the top-left corner.
+:::
+
+```js
+// Numeric overload (backward compatible)
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // change horizontal only
+
+// Options overload: pixel coordinates
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// Scroll to row 5 (0-based)
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// Scroll to the row whose rowKey is 'row-42'
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// Scroll to row 5 plus a 10px offset
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// Target both axes with smooth scrolling (column targeted by dataIndex)
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData

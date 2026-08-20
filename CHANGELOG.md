@@ -1,4 +1,8 @@
 
+## Unreleased
+* Feature
+  - feat: `scrollTo` instance method gains an options overload `scrollTo({ top, left, behavior })` in addition to the legacy numeric form `scrollTo(top, left)` (unchanged). Each axis accepts a pixel number or a `{ index, key, px }` target — the `top` axis targets a row (display-order index or rowKey) and the `left` axis targets a leaf column (index or dataIndex); `px` adds an extra offset on top of the resolved base. Unresolvable targets (index out of range / key not found) silently skip that axis, omitted axes keep their position, and `behavior: 'smooth'` animates to the target (cancelled by a new `scrollTo` call or wheel/touch interaction). New exported types: `ScrollToOptions`, `ScrollAxisTarget`, `ScrollToFn`.
+
 ## 1.2.0-beta.2
 * Bugfix:
   - fix: `autoRowHeight` + `virtual` + `stripe` — rows kept above the viewport (added by the stripe even-index alignment, or by rowspan correction) had their `td` stripped by the above/below-viewport placeholder optimization, which assumes empty `tr` keeps its height via CSS `height: var(--row-height)`. In `autoRowHeight` mode row height is stretched by cell content, so those rows collapsed and the collapsed height was measured into the row-height cache. The td-stripping optimization now only applies to fixed row height (`virtual` without `autoRowHeight`).

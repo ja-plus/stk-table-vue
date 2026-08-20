@@ -456,3 +456,45 @@ export type FooterConfig = {
      */
     position?: 'bottom' | 'top';
 };
+
+/**
+ * scrollTo options 重载中单个滚动轴的定位目标。
+ * 最终坐标 = `index` 或 `key` 解析出的基准偏移 + `px` 附加偏移。
+ */
+export interface ScrollAxisTarget {
+    /**
+     * 目标索引（0 起始）
+     * - `top` 轴：当前展示顺序（排序/筛选/树展开后）的行索引
+     * - `left` 轴：叶子列（最深层表头列）索引
+     * 与 `key` 同时给出时 `index` 优先
+     */
+    index?: number;
+    /**
+     * 目标键值
+     * - `top` 轴：`props.rowKey` 对应的行键值
+     * - `left` 轴：列的 `dataIndex`
+     */
+    key?: string | number;
+    /** 在基准偏移之上叠加的像素偏移，可为负值。仅传 `px` 时基准为 0 */
+    px?: number;
+}
+
+/** scrollTo 实例方法 options 重载的参数 */
+export interface ScrollToOptions {
+    /** 纵向目标：像素坐标或行定位目标。省略表示不改变纵向位置 */
+    top?: number | ScrollAxisTarget;
+    /** 横向目标：像素坐标或列定位目标。省略表示不改变横向位置 */
+    left?: number | ScrollAxisTarget;
+    /** 滚动行为，同原生 ScrollToOptions.behavior，默认 'auto'（立即跳转） */
+    behavior?: ScrollBehavior;
+}
+
+/**
+ * scrollTo 实例方法的函数签名（数字重载 + options 重载）。
+ * - 数字重载中 `null` 表示不改变对应轴，省略默认 0
+ * - options 重载中省略的轴表示不改变位置
+ */
+export interface ScrollToFn {
+    (top?: number | null, left?: number | null): void;
+    (options: ScrollToOptions): void;
+}

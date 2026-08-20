@@ -172,15 +172,65 @@ function setSorter(
 排序状態をリセット
 
 ### scrollTo
-指定位置までスクロール
+指定位置までスクロール。数値オーバーロード（後方互換）と options オーバーロード（行/列の指定に対応）の 2 種類の呼び出し形式をサポート。
 
 ```ts
 /**
  * スクロールバー位置を設定
- * @param top nullに設定して位置を変更しない
- * @param left nullに設定して位置を変更しない
+ * - 数値オーバーロード：top/left はピクセル座標、null は該当軸を変更しない、省略時は 0
+ * - options オーバーロード：各軸にピクセル数値または { index, key, px } ターゲットを指定可能、省略した軸は位置を変更しない
  */
-function scrollTo(top: number | null = 0, left: number | null = 0)
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+
+interface ScrollToOptions {
+    /** 縦方向ターゲット：ピクセル座標または行ターゲット */
+    top?: number | ScrollAxisTarget;
+    /** 横方向ターゲット：ピクセル座標または列ターゲット */
+    left?: number | ScrollAxisTarget;
+    /** スクロール挙動、ネイティブの ScrollToOptions.behavior と同じ、デフォルト 'auto'（即時ジャンプ） */
+    behavior?: ScrollBehavior;
+}
+
+interface ScrollAxisTarget {
+    /** ターゲットインデックス（0 始まり）、key と同時指定時は index を優先 */
+    index?: number;
+    /** ターゲットキー：top 軸は rowKey に対応する行キー、left 軸は列の dataIndex */
+    key?: string | number;
+    /** 基準オフセットに加算するピクセルオフセット、負値可。px のみの場合の基準は 0 */
+    px?: number;
+}
+```
+
+* インデックス空間：`top` 軸の `index` は現在の表示順序（ソート/フィルター/ツリー展開後）の行インデックス、`left` 軸の `index` はリーフ列（最深ヘッダー階層）のインデックス。
+* ターゲットを解決できない場合（index が範囲外 / key が存在しない）、該当軸は黙ってスキップされ位置は変わらない。
+* `behavior: 'smooth'` 指定時はアニメーションでスクロール。アニメーション中の新しい `scrollTo` 呼び出しは古いアニメーションをキャンセルする。ホイール/タッチ操作でもキャンセルされる。
+
+::: tip
+2 つのオーバーロードで「省略」の意味が異なる：
+* options オーバーロード：省略した軸は現在位置を**維持**、`scrollTo({})` は何もスクロールしない；
+* 数値オーバーロード：省略した引数は **0** がデフォルト、`scrollTo()` は左上隅へスクロールする。
+:::
+
+```js
+// 数値オーバーロード（後方互換）
+stkTableRef.value.scrollTo(100, 200);
+stkTableRef.value.scrollTo(null, 200); // 横方向のみ変更
+
+// options オーバーロード：ピクセル座標
+stkTableRef.value.scrollTo({ top: 100, left: 200 });
+
+// 5 行目へスクロール（0 始まり）
+stkTableRef.value.scrollTo({ top: { index: 5 } });
+
+// rowKey が 'row-42' の行へスクロール
+stkTableRef.value.scrollTo({ top: { key: 'row-42' } });
+
+// 5 行目 + 10px オフセットへスクロール
+stkTableRef.value.scrollTo({ top: { index: 5, px: 10 } });
+
+// 行列を同時に指定しスムーズスクロール（列は dataIndex で指定）
+stkTableRef.value.scrollTo({ top: { index: 5 }, left: { key: 'name' }, behavior: 'smooth' });
 ```
 
 ### getTableData

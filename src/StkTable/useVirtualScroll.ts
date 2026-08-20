@@ -596,6 +596,23 @@ export function useVirtualScroll(
         autoRowHeightMap.clear();
     }
 
+    /**
+     * 前 count 行的累计高度（即第 count 行（0 起始）顶部的偏移量）。
+     * 固定行高直接相乘；变高/展开行逐行累加（实测/setAutoHeight 值 → expectedHeight → rowHeight）。
+     */
+    function getRowsHeight(count: number) {
+        const data = dataSourceCopy.value;
+        const end = Math.min(count, data.length);
+        if (end <= 0) return 0;
+        const heightFn = getRowHeightFn.value;
+        if (!props.autoRowHeight && !hasExpandCol.value) return end * heightFn();
+        let sum = 0;
+        for (let i = 0; i < end; i++) {
+            sum += heightFn(data[i]);
+        }
+        return sum;
+    }
+
     function getAutoRowHeight(row?: PrivateRowDT) {
         if (!row) return;
         const rowKey = rowKeyGen(row);
@@ -891,6 +908,7 @@ export function useVirtualScroll(
         updateVirtualScrollX,
         setAutoHeight,
         clearAllAutoHeight,
+        getRowsHeight,
         clearColWidthCache,
         virtualX_tableHeaders,
         expandRowColspan,

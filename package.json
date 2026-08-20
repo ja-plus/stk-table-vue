@@ -23,6 +23,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "vitest",
+    "test:types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p type-tests",
     "docs:dev": "vitepress dev docs-src",
     "docs:build": "vitepress build docs-src",
     "docs:preview": "vitepress preview docs-src",

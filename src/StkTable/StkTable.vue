@@ -335,6 +335,9 @@ import {
     PrivateRowDT,
     PrivateStkTableColumn,
     RowActiveOption,
+    ScrollAxisTarget,
+    ScrollToFn,
+    ScrollToOptions,
     SeqConfig,
     SortConfig,
     StkTableColumn,
@@ -912,6 +915,7 @@ const [
     updateVirtualScrollX,
     setAutoHeight,
     clearAllAutoHeight,
+    getRowsHeight,
     clearColWidthCache,
     virtualX_tableHeaders,
     expandRowColspan,
@@ -1927,23 +1931,185 @@ function setSelectedCell(row?: DT, col?: StkTableColumn<DT>, option = { silent: 
     }
 }
 
+/** smooth 滚动动画时长（ms） */
+const SMOOTH_SCROLL_DURATION = 300;
+let smoothScrollRafId = 0;
+let smoothScrollCleanup: (() => void) | null = null;
+/** 动画代际序号，取消后旧动画的 rAF 回调不再生效 */
+let smoothScrollSeq = 0;
+
+/** 取消进行中的平滑滚动动画 */
+function cancelSmoothScroll() {
+    smoothScrollSeq++;
+    if (smoothScrollRafId) {
+        cancelAnimationFrame(smoothScrollRafId);
+        smoothScrollRafId = 0;
+    }
+    if (smoothScrollCleanup) {
+        smoothScrollCleanup();
+        smoothScrollCleanup = null;
+    }
+}
+
 /**
- * set scroll bar position
- * @param top null to not change
- * @param left null to not change
+ * 解析滚动轴目标为绝对像素坐标
+ * @param target 数字坐标或 { index, key, px } 目标，undefined 表示不改变该轴
+ * @param resolveByIndex 按 index 解析基准偏移，失败返回 null
+ * @param resolveByKey 按 key 解析基准偏移，失败返回 null
+ * @returns null 表示该轴不滚动
  */
-function scrollTo(top: number | null = 0, left: number | null = 0) {
-    if (!tableContainerRef.value) return;
+function resolveScrollAxis(
+    target: number | ScrollAxisTarget | undefined,
+    resolveByIndex: (index: number) => number | null,
+    resolveByKey: (key: string | number) => number | null,
+): number | null {
+    if (target === undefined) return null;
+    if (typeof target === 'number') return target;
+    let base: number | null;
+    if (target.index !== undefined) {
+        // index 优先于 key
+        base = resolveByIndex(target.index);
+    } else if (target.key !== undefined) {
+        base = resolveByKey(target.key);
+    } else {
+        // 仅传 px：基准为 0
+        base = 0;
+    }
+    if (base === null) return null;
+    return base + (target.px ?? 0);
+}
+
+/** top 轴基准偏移：目标行之前所有行的累计高度 */
+function resolveTopByIndex(index: number): number | null {
+    if (index < 0 || index >= dataSourceCopy.value.length) return null;
+    return getRowsHeight(index);
+}
+function resolveTopByKey(key: string | number): number | null {
+    const data = dataSourceCopy.value;
+    for (let i = 0; i < data.length; i++) {
+        if (rowKeyGen(data[i]) === key) return getRowsHeight(i);
+    }
+    return null;
+}
+
+/** left 轴基准偏移：目标列之前所有列的宽度之和（与区域选择内部 getColPosition 同算法） */
+function getColLeft(colIndex: number): number {
+    const cols = tableHeaderLast.value;
+    let left = 0;
+    for (let i = 0; i < colIndex; i++) {
+        left += getCalculatedColWidth(cols[i]);
+    }
+    return left;
+}
+
+/** top 轴最大可滚动距离：基于理论内容高度（所有行高之和），不依赖 DOM 测量 */
+function getMaxScrollTop(): number {
+    return Math.max(0, getRowsHeight(dataSourceCopy.value.length) - virtualScroll.value.containerHeight);
+}
+
+/** left 轴最大可滚动距离：基于理论内容宽度（所有列宽之和），不依赖 DOM 测量 */
+function getMaxScrollLeft(): number {
+    const cols = tableHeaderLast.value;
+    let totalWidth = 0;
+    for (let i = 0; i < cols.length; i++) {
+        totalWidth += getCalculatedColWidth(cols[i]);
+    }
+    return Math.max(0, totalWidth - virtualScrollX.value.containerWidth);
+}
+function resolveLeftByIndex(index: number): number | null {
+    if (index < 0 || index >= tableHeaderLast.value.length) return null;
+    return getColLeft(index);
+}
+function resolveLeftByKey(key: string | number): number | null {
+    const index = tableHeaderLast.value.findIndex(col => col.dataIndex === key);
+    return index === -1 ? null : getColLeft(index);
+}
+
+/** 执行滚动（数字重载与 options 重载共用） */
+function applyScrollPosition(top: number | null, left: number | null) {
     if (top !== null) {
         if (isExperimentalScrollY.value) {
             updateVirtualScrollY(top);
             updateCustomScrollbar();
         } else {
-            tableContainerRef.value.scrollTop = top;
+            tableContainerRef.value!.scrollTop = top;
         }
     }
-    if (left !== null) tableContainerRef.value.scrollLeft = left;
+    if (left !== null) tableContainerRef.value!.scrollLeft = left;
 }
+
+/** 平滑滚动到目标位置（rAF 动画，ease-out）；每帧走与用户滚动相同的路径 */
+function smoothScrollTo(top: number | null, left: number | null) {
+    const container = tableContainerRef.value;
+    if (!container || (top === null && left === null)) return;
+    const startTop = isExperimentalScrollY.value ? virtualScroll.value.scrollTop : container.scrollTop;
+    const startLeft = container.scrollLeft;
+    const deltaTop = top === null ? 0 : top - startTop;
+    const deltaLeft = left === null ? 0 : left - startLeft;
+    if (!deltaTop && !deltaLeft) return;
+
+    const startTime = Date.now();
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    // 用户手势介入时取消动画
+    const cancelOnUserGesture = () => cancelSmoothScroll();
+    container.addEventListener('wheel', cancelOnUserGesture, { passive: true });
+    container.addEventListener('touchstart', cancelOnUserGesture, { passive: true });
+    const removeGestureListeners = () => {
+        container.removeEventListener('wheel', cancelOnUserGesture);
+        container.removeEventListener('touchstart', cancelOnUserGesture);
+    };
+    smoothScrollCleanup = removeGestureListeners;
+
+    const seq = smoothScrollSeq;
+    const step = () => {
+        // 动画已被取消（新调用或用户手势），旧回调直接退出
+        if (seq !== smoothScrollSeq) return;
+        const t = Math.min(1, (Date.now() - startTime) / SMOOTH_SCROLL_DURATION);
+        const eased = ease(t);
+        applyScrollPosition(top === null ? null : startTop + deltaTop * eased, left === null ? null : startLeft + deltaLeft * eased);
+        if (t < 1) {
+            smoothScrollRafId = requestAnimationFrame(step);
+        } else {
+            smoothScrollRafId = 0;
+            removeGestureListeners();
+            smoothScrollCleanup = null;
+        }
+    };
+    smoothScrollRafId = requestAnimationFrame(step);
+}
+
+/**
+ * set scroll bar position
+ * - 数字重载（向后兼容）：`scrollTo(top, left)`，null 表示不改变该轴，省略默认 0
+ * - options 重载：`scrollTo({ top, left, behavior })`，每轴可传像素数字或 `{ index, key, px }` 目标，
+ *   省略的轴不改变位置；目标无法解析（index 越界 / key 不存在）时该轴静默跳过
+ * @param options null to not change
+ * @param leftArg null to not change
+ */
+function scrollTo(top?: number | null, left?: number | null): void;
+function scrollTo(options: ScrollToOptions): void;
+function scrollTo(options?: ScrollToOptions | number | null, leftArg?: number | null): void {
+    if (!tableContainerRef.value) return;
+    cancelSmoothScroll();
+    if (options === undefined || options === null || typeof options === 'number') {
+        // 数字重载：保持既有行为
+        applyScrollPosition(options === undefined ? 0 : options, leftArg === undefined ? 0 : leftArg);
+        return;
+    }
+    let top: number | null = resolveScrollAxis(options.top, resolveTopByIndex, resolveTopByKey);
+    let left: number | null = resolveScrollAxis(options.left, resolveLeftByIndex, resolveLeftByKey);
+    if (top === null && left === null) return;
+    // 钳制到合法滚动范围（基于理论内容尺寸，与滚动条语义一致）
+    if (top !== null) top = Math.min(Math.max(top, 0), getMaxScrollTop());
+    if (left !== null) left = Math.min(Math.max(left, 0), getMaxScrollLeft());
+    if (options.behavior === 'smooth') {
+        smoothScrollTo(top, left);
+    } else {
+        applyScrollPosition(top, left);
+    }
+}
+// 编译期断言：实现签名与公共类型 ScrollToFn 保持一致（type-tests 依赖此类型）
+void (scrollTo satisfies ScrollToFn);
 
 /** get current table data */
 function getTableData() {
@@ -2058,8 +2224,10 @@ defineExpose({
     resetSorter,
     /**
      * 滚动至
+     * - 数字参数：scrollTo(top, left)，null 表示不改变该轴
+     * - 对象参数：scrollTo({ top, left, behavior })，top/left 可传像素数字或 { index, key, px } 目标
      *
-     * en: Scroll to
+     * en: Scroll to position or target row/column
      * @see {@link scrollTo}
      */
     scrollTo,
