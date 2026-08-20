@@ -1,25 +1,18 @@
 
-## Unreleased
+## 1.2.0
 * Feature
-  - feat: `scrollTo` instance method gains an options overload `scrollTo({ top, left, behavior })` in addition to the legacy numeric form `scrollTo(top, left)` (unchanged). Each axis accepts a pixel number or a `{ index, key, px }` target — the `top` axis targets a row (display-order index or rowKey) and the `left` axis targets a leaf column (index or dataIndex); `px` adds an extra offset on top of the resolved base. Unresolvable targets (index out of range / key not found) silently skip that axis, omitted axes keep their position, and `behavior: 'smooth'` animates to the target (cancelled by a new `scrollTo` call or wheel/touch interaction). New exported types: `ScrollToOptions`, `ScrollAxisTarget`, `ScrollToFn`.
+  - feat: `scrollTo` gains an options overload `scrollTo({ top, left, behavior })` — each axis accepts a pixel number or a `{ index, key, px }` target (row by index/rowKey, column by index/dataIndex), supports `behavior: 'smooth'`; the legacy `scrollTo(top, left)` form is unchanged.
+  - feat: add instance method `clearMergeCellsCache` to clear the `mergeCells` result cache and force recalculation.
+  - feat: `mergeCells` supports huge `rowspan` in `virtual` mode — rows covered by an off-viewport rowspan anchor are compressed into placeholder rows to keep DOM size proportional to the viewport.
+  - feat: `mergeCells` supports huge `colspan` in `virtualX` mode — the visible column range is expanded so merged cells anchored off-viewport stay fully rendered.
 * Optimize
-  - perf: `autoRowHeight` virtual scrolling — row location on scroll is now O(log n) via a Fenwick tree (binary indexed tree) over row heights, replacing the O(n) per-scroll linear accumulation; the bottom placeholder (`virtual_offsetBottom`) is derived from prefix sums instead of a tail summation. Heights set via `setAutoHeight` take effect immediately for both positioning and content height, and stale measured heights are pruned when `dataSource` is replaced. Behavior correction: in `autoRowHeight` mode the content height (`scrollHeight`) is now the precise sum of per-row real/estimated heights instead of `rows × rowHeight` estimation.
-  - perf: `useAreaSelection` is now tree-shakable — bundlers (Vite/Rollup, webpack) drop the whole area-selection feature (~6KB gzipped) when it is not imported. The feature-name tag previously attached by a top-level property assignment (an unshakeable side effect) is now applied through a `/* @__PURE__ */` initializer, and `package.json` declares `"sideEffects": false`.
-
-## 1.2.0-beta.2
-* Bugfix:
-  - fix: `autoRowHeight` + `virtual` + `stripe` — rows kept above the viewport (added by the stripe even-index alignment, or by rowspan correction) had their `td` stripped by the above/below-viewport placeholder optimization, which assumes empty `tr` keeps its height via CSS `height: var(--row-height)`. In `autoRowHeight` mode row height is stretched by cell content, so those rows collapsed and the collapsed height was measured into the row-height cache. The td-stripping optimization now only applies to fixed row height (`virtual` without `autoRowHeight`).
-
-## 1.2.0-beta.1
-* Feature
-  - feat: add instance method `clearMergeCellsCache` to clear the `mergeCells` result cache and force recalculation. The cache is only auto-cleared when `dataSource` / `columns` change; call this method after mutating row fields in place (row reference unchanged) that `mergeCells` depends on.
-  - feat: `mergeCells` now supports huge `rowspan` (e.g. thousands of rows) in `virtual` mode. Rows covered by a rowspan anchor above the viewport are compressed into placeholder cells/rows instead of being fully rendered, so the DOM node count stays proportional to the viewport size.
-  - feat: `mergeCells` now supports huge `colspan` (e.g. merging 150 columns) in `virtualX` mode. When the anchor column of a merged cell scrolls out of the viewport, the visible column range is expanded so the merged cell is fully rendered; in the expanded area, non-merged cells on the left are compressed into a single placeholder `td` with `colspan`, and the right part is not rendered at all (tbody only; thead keeps the full expanded range).
-* Optimize
+  - perf: `autoRowHeight` virtual scrolling row location is now O(log n) via a Fenwick tree; `scrollHeight` is the precise sum of per-row heights instead of an estimation.
+  - perf: `useAreaSelection` is tree-shakable (~6KB gzipped dropped when unused); `package.json` declares `"sideEffects": false`.
   - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
-  - perf: `virtualScroll` / `virtualScrollX` switched from `ref` to `shallowRef` with explicit `triggerRef` at each write boundary, so Vue is notified once per scroll frame instead of on every property assignment, eliminating deep Proxy overhead in the hot scroll path.
+  - perf: `virtualScroll` / `virtualScrollX` switched to `shallowRef` with explicit `triggerRef`, reducing deep Proxy overhead in the scroll hot path.
 * Bugfix:
-  - fix: remove `contain: paint` from tbody `tr` — it clipped cells to a zero-height row box in table layout, causing cells to disappear.
+  - fix: `autoRowHeight` + `virtual` + `stripe` — rows outside the viewport had their `td` stripped and collapsed; the td-stripping optimization now only applies to fixed row height.
+  - fix: remove `contain: paint` from tbody `tr` — it clipped cells to a zero-height row box, causing cells to disappear.
 
 ## 1.1.0
 * Feature
