@@ -60,10 +60,11 @@ pnpm perf --no-serve
 1. 确定待测版本（已有合法结果文件的版本默认跳过）
 2. 依次 checkout 每个待测版本（tag 或 branch）
 3. 对每个版本执行 `pnpm install` 安装依赖
-4. 复制测试文件并运行 `vitest`，收集 `[PERF]` 输出写入 `results/{version}.json`
-5. 恢复原始分支和依赖
-6. 聚合全量数据生成 `results/data.json` 与 `results/REPORT.md`
-7. 启动内置 http 服务（默认端口 4399，被占用时自动顺延），浏览器打开输出的 `benchmark.html` 地址即可查看图表
+4. 执行 `pnpm build` 并统计 `lib/` 产物体积（原始 + gzip），写入结果的 `bundleSize` 字段
+5. 复制测试文件并运行 `vitest`，收集 `[PERF]` 输出写入 `results/{version}.json`
+6. 恢复原始分支和依赖
+7. 聚合全量数据生成 `results/data.json` 与 `results/REPORT.md`
+8. 启动内置 http 服务（默认端口 4399，被占用时自动顺延），浏览器打开输出的 `benchmark.html` 地址即可查看图表
 
 > 提示：删除某个版本的 `results/{version}.json` 后重新运行，即可只补测该版本。
 
@@ -81,6 +82,7 @@ npx vitest run test/perf/scrollPerf.test.js
 - 纵向/横向/合并/多级表头 mount 耗时柱状图
 - 合并单元格滚动性能对比（核心图表，opt-merge 绿色高亮）
 - DOM 节点数对比
+- 构建产物体积对比（JS 原始/gzip、CSS）
 - 非虚拟基线面积图
 - 全场景 mount 耗时热力图
 
@@ -121,6 +123,21 @@ const VERSIONS = [
 | `scrollXY` | 横向 + 纵向同时滚动重算耗时 | ms |
 
 每个数值为 **5 次运行的中位数**（排除 1 次预热）。
+
+## 构建产物体积
+
+每个待测版本会额外执行 `pnpm build`，统计 `lib/` 根级产物文件（忽略 `src/`、`test/` 子目录）：
+
+| 字段 | 含义 | 单位 |
+|------|------|------|
+| `jsRaw` / `jsGzip` | JS 产物原始 / gzip 体积 | bytes |
+| `cssRaw` / `cssGzip` | CSS 产物原始 / gzip 体积 | bytes |
+| `totalRaw` | 全部产物文件原始体积合计 | bytes |
+| `files` | 各产物文件的明细列表 | - |
+
+体积数据保存在 `results/{version}.json` 的 `bundleSize` 字段，并聚合到 `data.json`；`REPORT.md` 与 `benchmark.html` 均有对应表格/图表。构建失败的版本无体积数据，重测时若构建再次失败则保留旧值。
+
+> 注：本项目构建配置为未压缩 ES 产物（`minify: false`，vue 为 external），gzip 值更接近实际分发体积。
 
 ## 注意事项
 

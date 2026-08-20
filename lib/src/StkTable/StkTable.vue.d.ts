@@ -1,5 +1,5 @@
 import { FilterStatus } from './custom-cells/FilterCell/types';
-import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
+import { AreaSelectionConfig, AreaSelectionRange, AutoRowHeightConfig, ColResizableConfig, DragRowConfig, ExpandConfig, ExperimentalConfig, FooterConfig, HeaderDragConfig, HighlightConfig, Order, PrivateRowDT, PrivateStkTableColumn, RowActiveOption, ScrollToOptions, SeqConfig, SortConfig, StkTableColumn, TreeConfig, UniqKey, UniqKeyProp } from './types/index';
 import { ScrollbarOptions } from './useScrollbar';
 
 declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<import('vue').ExtractPropTypes<__VLS_WithDefaults<__VLS_TypePropsToRuntimeProps<{
@@ -338,11 +338,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     resetSorter: () => void;
     /**
      * 滚动至
+     * - 数字参数：scrollTo(top, left)，null 表示不改变该轴
+     * - 对象参数：scrollTo({ top, left, behavior })，top/left 可传像素数字或 { index, key, px } 目标
      *
-     * en: Scroll to
+     * en: Scroll to position or target row/column
      * @see {@link scrollTo}
      */
-    scrollTo: (top?: number | null, left?: number | null) => void;
+    scrollTo: {
+        (top?: number | null, left?: number | null): void;
+        (options: ScrollToOptions): void;
+    };
     /**
      * 获取表格数据
      *

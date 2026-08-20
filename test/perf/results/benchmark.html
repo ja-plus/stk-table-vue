@@ -96,7 +96,7 @@ function fmt(v, decimals = 2) {
     return;
   }
 
-  const { versions, scenarios, generatedAt } = data;
+  const { versions, scenarios, bundleSize = {}, generatedAt } = data;
   document.getElementById('subtitle').textContent =
     `${versions.join(' → ')}  |  单位: ms (中位数)  |  生成: ${new Date(generatedAt).toLocaleString('zh-CN')}`;
 
@@ -291,6 +291,33 @@ function fmt(v, decimals = 2) {
       xAxis: { type: 'category', data: [...versions], axisLabel: { color: '#8b8fa3', rotate: 20 } },
       yAxis: { type: 'value', name: 'nodes', splitLine: { lineStyle: { color: '#2a2e3a' } } },
       series: domSeries
+    });
+  }
+
+  // ── Bundle size chart ──
+  const sizeVersions = versions.filter(v => bundleSize[v]);
+  if (sizeVersions.length) {
+    const sectionTitle = document.createElement('h2');
+    sectionTitle.className = 'section-title';
+    sectionTitle.textContent = '📦 构建产物体积对比';
+    app.appendChild(sectionTitle);
+
+    const card = document.createElement('div');
+    card.className = 'card full';
+    card.innerHTML = `<h2>lib/ 产物体积 <span class="tag">KB — 未压缩 ES 构建，越小越好</span></h2><div id="sizeChart" class="chart"></div>`;
+    app.appendChild(card);
+
+    const kb = bytes => bytes != null ? +(bytes / 1024).toFixed(2) : null;
+    const sizeChart = echarts.init(document.getElementById('sizeChart'));
+    sizeChart.setOption({
+      ...baseOpt(),
+      xAxis: { type: 'category', data: [...sizeVersions], axisLabel: { color: '#8b8fa3', rotate: 20 } },
+      yAxis: { type: 'value', name: 'KB', splitLine: { lineStyle: { color: '#2a2e3a' } } },
+      series: [
+        mkBar('JS 原始', sizeVersions.map(v => kb(bundleSize[v].jsRaw)), PALETTE[0]),
+        mkBar('JS gzip', sizeVersions.map(v => kb(bundleSize[v].jsGzip)), PALETTE[7]),
+        mkBar('CSS 原始', sizeVersions.map(v => kb(bundleSize[v].cssRaw)), PALETTE[4]),
+      ]
     });
   }
 

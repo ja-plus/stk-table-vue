@@ -1,7 +1,7 @@
 export { useAreaSelection } from './features/index';
 export { registerFeature } from './registerFeature';
 export { default as StkTable } from './StkTable.vue';
-export type { AreaSelectionRange, Order, SortConfig, SortOption, SortState, StkTableColumn } from './types/index';
+export type { AreaSelectionRange, Order, ScrollAxisTarget, ScrollToFn, ScrollToOptions, SortConfig, SortOption, SortState, StkTableColumn } from './types/index';
 export { binarySearch, insertToOrderedArray, strCompare, tableSort } from './utils';
 export { createFilterCell } from './custom-cells/FilterCell/index';
 export type { CreateFilterCellOption, FilterStatus } from './custom-cells/FilterCell/index';

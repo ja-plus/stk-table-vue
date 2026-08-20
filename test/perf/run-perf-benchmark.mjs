@@ -15,7 +15,8 @@
  */
 import { execSync } from 'node:child_process';
 import { createServer } from 'node:http';
-import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync, unlinkSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync, unlinkSync, readdirSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { resolve, dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -31,6 +32,7 @@ const VERSIONS = [
     { name: '1.0.4', type: 'tag' },
     { name: '1.1.0', type: 'tag' },
     { name: 'optimize-cell-merge-render', type: 'branch' },
+    { name: 'master', type: 'branch' },
 ];
 
 const RESULTS_DIR = resolve(ROOT, 'test/perf/results');
@@ -53,6 +55,9 @@ const SCENARIO_META = {
     'merge+multiHeader':{ category: 'combined',   label: '合并+多级表头' },
     'merge+virtualX':   { category: 'combined',   label: '合并+virtualX' },
     all_features:       { category: 'combined',   label: '全功能' },
+    autoRowHeight_10k:       { category: 'autoHeight', label: '变高 10K行' },
+    autoRowHeight_50k:       { category: 'autoHeight', label: '变高 50K行' },
+    autoRowHeight_setHeight: { category: 'autoHeight', label: '变高 setAutoHeight' },
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -103,6 +108,26 @@ function parsePerfLine(line) {
         }
     }
     return { testName, metrics };
+}
+
+/** 构建当前检出版本并统计 lib/ 产物体积（原始 + gzip），失败返回 null */
+function measureBundleSize() {
+    const buildOutput = exec('pnpm build 2>&1 | tail -5');
+    if (buildOutput === null) return null;
+    const libDir = resolve(ROOT, 'lib');
+    if (!existsSync(libDir)) return null;
+    const size = { jsRaw: 0, jsGzip: 0, cssRaw: 0, cssGzip: 0, totalRaw: 0, files: [] };
+    for (const f of readdirSync(libDir)) {
+        const fp = join(libDir, f);
+        if (!statSync(fp).isFile()) continue; // 只统计根级产物文件，忽略 src/ test/ 目录
+        const buf = readFileSync(fp);
+        const gz = gzipSync(buf).length;
+        size.totalRaw += buf.length;
+        if (f.endsWith('.js')) { size.jsRaw += buf.length; size.jsGzip += gz; }
+        if (f.endsWith('.css')) { size.cssRaw += buf.length; size.cssGzip += gz; }
+        size.files.push({ name: f, raw: buf.length, gzip: gz });
+    }
+    return size.files.length ? size : null;
 }
 
 function parseCliArgs(argv) {
@@ -184,6 +209,14 @@ if (toTest.size) {
                 continue;
             }
 
+            log('Building & measuring bundle size...');
+            const bundleSize = measureBundleSize();
+            if (bundleSize) {
+                log(`✓ bundle size: js ${(bundleSize.jsRaw / 1024).toFixed(1)} KB (gzip ${(bundleSize.jsGzip / 1024).toFixed(1)} KB), css ${(bundleSize.cssRaw / 1024).toFixed(1)} KB`);
+            } else {
+                log('✗ build failed, bundle size skipped');
+            }
+
             copyFileSync(TMP_TEST, TEST_FILE);
 
             log('Running performance tests...');
@@ -210,10 +243,10 @@ if (toTest.size) {
 
             if (validCount === 0) {
                 log(`✗ No perf data for ${ver.name}`);
-                allResults[ver.name] = { status: 'no_data' };
+                allResults[ver.name] = { status: 'no_data', bundleSize };
             } else {
                 log(`✓ ${validCount} benchmarks collected${hasFailure ? ' (with some failures)' : ''}`);
-                allResults[ver.name] = { status: 'ok', scenarios };
+                allResults[ver.name] = { status: 'ok', scenarios, bundleSize };
                 perfLines.forEach(l => log(`  ${l.replace(/.*\[PERF\] /, '')}`));
             }
         }
@@ -237,18 +270,24 @@ log('\nGenerating JSON data...');
 for (const ver of VERSIONS) {
     const r = allResults[ver.name];
     if (r?.status !== 'ok' || r.reused) continue;
-    const verData = { version: ver.name, type: ver.type, scenarios: r.scenarios };
+    // 构建失败时保留该版本已有的体积数据
+    const bundleSize = r.bundleSize ?? readBundleSize(ver.name);
+    const verData = { version: ver.name, type: ver.type, scenarios: r.scenarios, bundleSize };
     writeFileSync(resultFile(ver.name), JSON.stringify(verData, null, 2), 'utf-8');
 }
 
-// Build structured data: { versions, scenarios: { [name]: { category, label, data: { [ver]: metrics } } } }
+// Build structured data: { versions, scenarios: { [name]: { category, label, data: { [ver]: metrics } } }, bundleSize }
 const scenarios = {};
+const bundleSize = {};
 const testedVersions = [];
 
 for (const ver of VERSIONS) {
     const r = allResults[ver.name];
     if (r?.status !== 'ok') continue;
     testedVersions.push(ver.name);
+
+    const bs = r.bundleSize ?? readBundleSize(ver.name);
+    if (bs) bundleSize[ver.name] = bs;
 
     for (const [testName, metrics] of Object.entries(r.scenarios)) {
         if (!metrics) continue; // SKIPPED
@@ -264,6 +303,7 @@ const dataJson = {
     generatedAt: new Date().toISOString(),
     versions: testedVersions,
     scenarios,
+    bundleSize,
 };
 
 const dataPath = resolve(RESULTS_DIR, 'data.json');
@@ -276,6 +316,22 @@ log('Generating markdown report...');
 
 function fmtMetrics(m) {
     return Object.entries(m).map(([k, v]) => `${k}=${typeof v === 'number' ? +v.toFixed(2) : v}`).join(' | ');
+}
+
+function fmtKB(bytes) {
+    return bytes != null ? `${(bytes / 1024).toFixed(2)} KB` : '-';
+}
+
+/** 读取单版本结果文件中已有的 bundleSize 数据 */
+function readBundleSize(name) {
+    const file = resultFile(name);
+    if (!existsSync(file)) return null;
+    try {
+        const d = JSON.parse(readFileSync(file, 'utf-8'));
+        return d?.bundleSize ?? null;
+    } catch {
+        return null;
+    }
 }
 
 const report = [];
@@ -359,6 +415,31 @@ for (const s of Object.values(scenarios)) {
         else row += '| - ';
     }
     if (hasNodes) { row += '|'; report.push(row); }
+}
+report.push('');
+
+// Bundle size table
+report.push('## 总览 — 构建产物体积');
+report.push('');
+report.push('> 统计 `pnpm build` 输出的 `lib/` 根级产物文件（未压缩 ES 构建，vue 为 external）');
+report.push('');
+report.push('| 指标 | ' + testedVersions.join(' | ') + ' |');
+report.push('|' + '-'.repeat(14) + '|' + testedVersions.map(() => '-'.repeat(14)).join('|') + '|');
+const bsRows = [
+    ['JS 原始体积', bs => fmtKB(bs.jsRaw)],
+    ['JS gzip', bs => fmtKB(bs.jsGzip)],
+    ['CSS 原始体积', bs => fmtKB(bs.cssRaw)],
+    ['CSS gzip', bs => fmtKB(bs.cssGzip)],
+    ['产物总计 (原始)', bs => fmtKB(bs.totalRaw)],
+];
+for (const [label, getter] of bsRows) {
+    let row = `| ${label} `;
+    for (const v of testedVersions) {
+        const bs = allResults[v]?.bundleSize ?? readBundleSize(v);
+        row += `| ${bs ? getter(bs) : '-'} `;
+    }
+    row += '|';
+    report.push(row);
 }
 report.push('');
 
