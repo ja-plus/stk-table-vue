@@ -280,8 +280,12 @@ In variable row height virtual list, sets the height saved by auto-row-height fo
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip Timing semantics
+Takes effect immediately: the height immediately participates in scroll positioning and content height (scrollHeight) calculation, without waiting for the next render measurement. If the rowKey does not exist in the current data, the height is only stored and does not affect current positioning or total height.
+:::
+
 ### clearAllAutoHeight
-Clear all heights saved by auto-row-height
+Clear all heights saved by auto-row-height. After clearing, row heights fall back to estimated values (`expectedHeight` / `rowHeight`), and the content height is recalculated accordingly.
 
 ### setTreeExpand
 Set tree structure expanded row

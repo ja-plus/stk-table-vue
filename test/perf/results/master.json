@@ -1,0 +1,80 @@
+{
+  "version": "master",
+  "type": "branch",
+  "scenarios": {
+    "vertical_10k": {
+      "mount": 20.73,
+      "domNodes": 67,
+      "renderedRows": 4,
+      "scrollMid": 1.76,
+      "scrollDeep": 1.3
+    },
+    "vertical_50k": {
+      "mount": 86.95,
+      "domNodes": 67,
+      "scrollDeep": 1.54
+    },
+    "non_virtual_500": {
+      "mount": 526.57,
+      "domNodes": 5521,
+      "renderedRows": 500
+    },
+    "virtualX_30cols": {
+      "mount": 48.37,
+      "domNodes": 44,
+      "scrollX": 0.78,
+      "scrollXY": 1.33
+    },
+    "virtualX_50cols": {
+      "mount": 29.83,
+      "domNodes": 44,
+      "scrollX": 1.33
+    },
+    "mergeCells_rowspan": {
+      "mount": 17.52,
+      "domNodes": 59,
+      "scrollMid": 2.33
+    },
+    "mergeCells_colspan": {
+      "mount": 15.64,
+      "domNodes": 63,
+      "scrollMid": 1.91
+    },
+    "mergeCells_mixed": {
+      "mount": 13.31,
+      "scrollMid": 1.68
+    },
+    "multi_header_3lvl": {
+      "mount": 13.37,
+      "domNodes": 80,
+      "scrollMid": 1.25
+    },
+    "merge+multiHeader": {
+      "mount": 11.07,
+      "scrollMid": 0.94
+    },
+    "merge+virtualX": {
+      "mount": 22.76,
+      "scrollXY": 0.86
+    },
+    "all_features": {
+      "mount": 25.26,
+      "scrollXY": 0.86
+    },
+    "autoRowHeight_10k": {
+      "mount": 52.6,
+      "domNodes": 67,
+      "renderedRows": 4,
+      "scrollMid": 1.08,
+      "scrollDeep": 1.17
+    },
+    "autoRowHeight_50k": {
+      "mount": 317.35,
+      "domNodes": 67,
+      "scrollDeep": 1.49
+    },
+    "autoRowHeight_setHeight": {
+      "set100": 1.15
+    }
+  }
+}

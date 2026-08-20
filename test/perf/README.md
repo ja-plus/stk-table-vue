@@ -6,7 +6,7 @@
 
 ```
 test/perf/
-├── scrollPerf.test.js          # 性能测试用例（12 个场景）
+├── scrollPerf.test.js          # 性能测试用例（15 个场景）
 ├── run-perf-benchmark.mjs      # 跨版本自动化运行脚本
 ├── README.md                   # 本文件
 └── results/                    # 测试结果输出目录
@@ -32,6 +32,9 @@ test/perf/
 | 组合场景 | `merge+multiHeader` | 3,000 行，合并 + 多级表头 |
 | | `merge+virtualX` | 3,000 行 × 20 列，合并 + virtualX |
 | | `all_features` | 2,000 行 × 20 列，全功能叠加 |
+| 变高滚动 | `autoRowHeight_10k` | 10,000 行变高（expectedHeight），虚拟滚动 |
+| | `autoRowHeight_50k` | 50,000 行变高，深滚 90% |
+| | `autoRowHeight_setHeight` | 10,000 行变高，批量 setAutoHeight 生效耗时 |
 
 ## 使用方式
 

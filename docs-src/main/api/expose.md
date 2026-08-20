@@ -279,8 +279,12 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip 时机语义
+设置后立即生效：该行高会立即参与滚动定位与内容总高度（scrollHeight）计算，无需等待下一次渲染测量。若行键不在当前数据中，仅暂存高度，不影响当前定位与总高。
+:::
+
 ### clearAllAutoHeight
-清除所有 auto-row-height 保存的高度
+清除所有 auto-row-height 保存的高度，清除后行高回退为估算值（`expectedHeight` / `rowHeight`），内容总高度随之重新计算。
 
 ### setTreeExpand
 设置树状结构展开行

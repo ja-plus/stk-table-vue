@@ -627,3 +627,122 @@ describe('5_combined', () => {
         wrapper.unmount();
     });
 });
+
+// ─── 6. Auto Row Height (variable height virtual scroll) ──────────────────
+
+describe('6_auto_row_height', () => {
+    /** 变高行数据：每行期望高度不等（模拟 expectedHeight 场景） */
+    function genAutoHeightData(count) {
+        const data = [];
+        for (let i = 0; i < count; i++) {
+            const row = { id: i, h: 28 + (i % 5) * 7 };
+            for (let j = 0; j < 5; j++) row[`col${j}`] = `r${i}c${j}`;
+            data.push(row);
+        }
+        return data;
+    }
+
+    function mountAutoHeightTable(data) {
+        return mount(StkTable, {
+            props: {
+                rowKey: 'id',
+                columns: genColumns(5),
+                dataSource: data,
+                virtual: true,
+                rowHeight: 28,
+                autoRowHeight: { expectedHeight: row => row.h },
+            },
+        });
+    }
+
+    test('autoRowHeight_10K_rows', async () => {
+        const data = genAutoHeightData(10000);
+
+        const mountTime = await measureAsync(async () => {
+            const w = mountAutoHeightTable(data);
+            return w;
+        });
+
+        const wrapper = mountAutoHeightTable(data);
+        await nextTick();
+
+        const nodes = countNodes(wrapper);
+        const rows = wrapper.findAll('tbody > tr[data-row-key]').length;
+
+        const el = wrapper.find('.stk-table').element;
+
+        // 浅滚到中间（平均行高 ~42px）
+        el.scrollTop = 5000 * 42;
+        const scrollMid = await measureAsync(async () => {
+            if (typeof wrapper.vm.initVirtualScrollY === 'function') {
+                wrapper.vm.initVirtualScrollY();
+                await nextTick();
+            }
+        });
+
+        // 深滚到 90%（不同 scrollTop 强制重算）
+        el.scrollTop = 9000 * 42;
+        const scrollDeep = await measureAsync(async () => {
+            if (typeof wrapper.vm.initVirtualScrollY === 'function') {
+                wrapper.vm.initVirtualScrollY();
+                await nextTick();
+            }
+        });
+
+        console.log(
+            `[PERF] autoRowHeight_10k | mount=${fmt(mountTime)} | domNodes=${nodes} | renderedRows=${rows} | scrollMid=${fmt(scrollMid)} | scrollDeep=${fmt(scrollDeep)}`,
+        );
+        wrapper.unmount();
+    });
+
+    test('autoRowHeight_50K_rows', async () => {
+        const data = genAutoHeightData(50000);
+
+        const mountTime = await measureAsync(async () => {
+            const w = mountAutoHeightTable(data);
+            return w;
+        });
+
+        const wrapper = mountAutoHeightTable(data);
+        await nextTick();
+
+        const nodes = countNodes(wrapper);
+        const el = wrapper.find('.stk-table').element;
+
+        // 深滚到 90%
+        el.scrollTop = 45000 * 42;
+        const scrollDeep = await measureAsync(async () => {
+            if (typeof wrapper.vm.initVirtualScrollY === 'function') {
+                wrapper.vm.initVirtualScrollY();
+                await nextTick();
+            }
+        });
+
+        console.log(`[PERF] autoRowHeight_50k | mount=${fmt(mountTime)} | domNodes=${nodes} | scrollDeep=${fmt(scrollDeep)}`);
+        wrapper.unmount();
+    });
+
+    test('autoRowHeight_setHeight_10K_rows', async () => {
+        const data = genAutoHeightData(10000);
+        const wrapper = mountAutoHeightTable(data);
+        await nextTick();
+
+        // 先建好行高树（触发一次重算）
+        const el = wrapper.find('.stk-table').element;
+        el.scrollTop = 1000;
+        wrapper.vm.initVirtualScrollY();
+        await nextTick();
+
+        // 批量 setAutoHeight（100 次单点更新）+ 重算生效耗时
+        const set100 = await measureAsync(async () => {
+            for (let i = 0; i < 100; i++) {
+                wrapper.vm.setAutoHeight(String(i), 60 + (i % 3) * 10);
+            }
+            el.scrollTop = 1100;
+            wrapper.vm.initVirtualScrollY();
+        });
+
+        console.log(`[PERF] autoRowHeight_setHeight | set100=${fmt(set100)}`);
+        wrapper.unmount();
+    });
+});

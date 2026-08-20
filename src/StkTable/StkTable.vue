@@ -922,6 +922,8 @@ const [
     theadVirtualX,
     virtualX_columnPart,
     virtualX_expandColSegments,
+    // 内部诊断用（测试通过 setupState 访问），不加入 defineExpose
+    getRowHeightCacheInfo,
 ] = useVirtualScroll(
     props,
     tableContainerRef,

@@ -279,8 +279,12 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip 타이밍 의미
+즉시 반영됩니다: 설정한 행 높이는 즉시 스크롤 위치 판정과 콘텐츠 전체 높이(scrollHeight) 계산에 참여하며, 다음 렌더링 실측을 기다릴 필요가 없습니다. 행 키가 현재 데이터에 없으면 높이만 저장되며, 현재 위치 판정과 전체 높이에는 영향을 주지 않습니다.
+:::
+
 ### clearAllAutoHeight
-모든 auto-row-height 저장 높이 지우기
+모든 auto-row-height 저장 높이 지우기. 지운 후 행 높이는 추정값(`expectedHeight` / `rowHeight`)으로 돌아가며, 콘텐츠 전체 높이도 그에 따라 재계산됩니다.
 
 ### setTreeExpand
 트리 구조 확장 행 설정

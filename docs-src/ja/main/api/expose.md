@@ -280,8 +280,12 @@ function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean, da
 function setAutoHeight(rowKey: UniqKey, height?: number | null)
 ```
 
+::: tip タイミング意味
+即時に反映されます：設定した行高はただちにスクロール位置の特定とコンテンツ全体の高さ（scrollHeight）の計算に参加し、次のレンダリングでの実測を待つ必要はありません。行キーが現在のデータに存在しない場合、高さのみ保存され、現在の位置特定と全体の高さには影響しません。
+:::
+
 ### clearAllAutoHeight
-auto-row-heightに保存されたすべての高さをクリア
+auto-row-heightに保存されたすべての高さをクリア。クリア後、行高は推定値（`expectedHeight` / `rowHeight`）に戻り、コンテンツ全体の高さもそれに応じて再計算されます。
 
 ### setTreeExpand
 ツリー構造展開行を設定

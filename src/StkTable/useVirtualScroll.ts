@@ -1,10 +1,11 @@
-import { Ref, ShallowRef, computed, ref, shallowRef, triggerRef } from 'vue';
+import { Ref, ShallowRef, computed, shallowRef, triggerRef } from 'vue';
 import { DEFAULT_ROW_HEIGHT, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_WIDTH } from './const';
 import { MergeCellsCache } from './mergeCellsCache';
 import { AutoRowHeightConfig, PrivateRowDT, PrivateStkTableColumn, RowKeyGen, StkTableColumn, UniqKey } from './types';
 import { ScrollbarOptions } from './useScrollbar';
 import { binarySearch } from './utils';
 import { getCalculatedColWidth } from './utils/constRefUtils';
+import { RowHeightFenwickTree } from './utils/rowHeightFenwickTree';
 
 /** 暂存纵向虚拟滚动的数据 */
 export type VirtualScrollStore = {
@@ -167,12 +168,10 @@ export function useVirtualScroll(
         const dataSourceCopyValue = dataSourceCopy.value;
         const rowHeight = getRowHeightFn.value();
         if (props.autoRowHeight) {
-            let offsetBottom = 0;
-            for (let i = endIndex + 1; i < dataSourceCopyValue.length; i++) {
-                const rowHeight = getRowHeightFn.value(dataSourceCopyValue[i]);
-                offsetBottom += rowHeight;
-            }
-            return offsetBottom;
+            // 由行高 Fenwick 树 O(log n) 推导：总高 − 含 endIndex 的累计高，避免尾部逐行累加
+            const { tree } = getRowHeightTreeCache(dataSourceCopyValue);
+            const offsetBottom = tree.total - tree.query(endIndex + 1);
+            return offsetBottom > 0 ? offsetBottom : 0;
         }
 
         return (dataSourceCopyValue.length - startIndex - virtual_dataSourcePart.value.length) * rowHeight;
@@ -557,7 +556,12 @@ export function useVirtualScroll(
             const headerToBodyRowHeightCount = Math.floor(tableHeaderHeight.value / rowHeight);
             pageSize -= headerToBodyRowHeightCount; //减去表头行数
         }
-        const maxScrollTop = Math.max(0, dataSourceCopy.value.length * rowHeight + tableHeaderHeight.value - containerHeight);
+        // 变高模式下用行高 Fenwick 树的真实总高钳制（与 updateVirtualScrollY 的 scrollHeight 语义一致）
+        const totalRowsHeight =
+            props.autoRowHeight || hasExpandCol.value
+                ? getRowHeightTreeCache(dataSourceCopy.value).tree.total
+                : dataSourceCopy.value.length * rowHeight;
+        const maxScrollTop = Math.max(0, totalRowsHeight + tableHeaderHeight.value - containerHeight);
         if (scrollTop > maxScrollTop) {
             /** fix： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
             scrollTop = maxScrollTop;
@@ -579,21 +583,79 @@ export function useVirtualScroll(
 
     /**
      * every row actual height.
-     * FIXME: use a weak map instead of a plain map
+     * 不在当前数据中的行键条目会在行高 Fenwick 树缓存重建时被修剪（见 getRowHeightTreeCache），不会无限残留。
      */
     const autoRowHeightMap = new Map<string, number>();
+
+    /** 行高 Fenwick 树缓存：以 dataSourceCopy 数组引用与行高函数为缓存键，任一变化时懒重建（仿 useColWidthCache 模式） */
+    let rowHeightTreeCache: {
+        data: PrivateRowDT[] | null;
+        tree: RowHeightFenwickTree;
+        keyIndex: Map<string, number>;
+        heightFn: ((row?: PrivateRowDT) => number) | null;
+    } = {
+        data: null,
+        tree: new RowHeightFenwickTree(0),
+        keyIndex: new Map(),
+        heightFn: null,
+    };
+
+    /**
+     * 获取行高 Fenwick 树缓存。dataSourceCopy 引用或行高函数变化（如 rowHeight / expectedHeight prop 变更）时 O(n) 重建：
+     * 各行高度取 getRowHeightFn(row) 当前值（实测/setAutoHeight 值 → expectedHeight → 默认行高），
+     * 并顺带修剪 autoRowHeightMap（删除不在新数据中的行键，防止内存无限残留）。
+     */
+    function getRowHeightTreeCache(data: PrivateRowDT[]) {
+        const heightFn = getRowHeightFn.value;
+        if (rowHeightTreeCache.data === data && rowHeightTreeCache.heightFn === heightFn) return rowHeightTreeCache;
+        const len = data.length;
+        const heights = new Float64Array(len);
+        const keyIndex = new Map<string, number>();
+        for (let i = 0; i < len; i++) {
+            const row = data[i];
+            keyIndex.set(String(rowKeyGen(row)), i);
+            heights[i] = heightFn(row);
+        }
+        const tree = new RowHeightFenwickTree(len);
+        tree.build(heights);
+        // 修剪：不在新数据中的行键的行高（仅发生在数据变化的低频时刻）
+        for (const key of autoRowHeightMap.keys()) {
+            if (!keyIndex.has(key)) autoRowHeightMap.delete(key);
+        }
+        rowHeightTreeCache = { data, tree, keyIndex, heightFn };
+        return rowHeightTreeCache;
+    }
+
+    /** 内部诊断：行高缓存状态（不暴露为组件实例方法，测试用） */
+    function getRowHeightCacheInfo() {
+        return {
+            mapSize: autoRowHeightMap.size,
+            mapKeys: [...autoRowHeightMap.keys()],
+            cacheSize: rowHeightTreeCache.keyIndex.size,
+            total: rowHeightTreeCache.tree.total,
+        };
+    }
+
     /** 如果行高度有变化，则要调用此方法清除保存的行高 */
     function setAutoHeight(rowKey: UniqKey, height?: number | null) {
         const key = String(rowKey);
+        // 行在当前数据中则对树做单点更新，使定位/总高立即生效；行键不在当前数据中时仅更新 Map
+        const cache = rowHeightTreeCache;
+        const idx = cache.data === dataSourceCopy.value ? cache.keyIndex.get(key) : void 0;
+        const row = idx === void 0 || !cache.data ? void 0 : cache.data[idx];
+        const oldHeight = row ? getRowHeightFn.value(row) : 0;
         if (!height) {
             autoRowHeightMap.delete(key);
         } else {
             autoRowHeightMap.set(key, height);
         }
+        if (row) cache.tree.add(idx as number, getRowHeightFn.value(row) - oldHeight);
     }
 
     function clearAllAutoHeight() {
         autoRowHeightMap.clear();
+        // 失效树缓存：下次访问时按估算高度重建
+        rowHeightTreeCache.data = null;
     }
 
     /**
@@ -640,7 +702,10 @@ export function useVirtualScroll(
         const rowHeight = getRowHeightFn.value();
 
         const vsValue: any = {};
-        const scrollHeight = dataLength * rowHeight + tableHeaderHeight.value;
+        // 变高模式取行高 Fenwick 树的真实累计高度（实测优先，未测量行按估算高度），替代「行数 × 默认行高」的粗略估算
+        const totalRowsHeight =
+            props.autoRowHeight || hasExpandCol.value ? getRowHeightTreeCache(dataSourceCopyTemp).tree.total : dataLength * rowHeight;
+        const scrollHeight = totalRowsHeight + tableHeaderHeight.value;
         const { enabled: scrollbarEnable } = scrollbarOptions.value;
         if (scrollbarEnable) {
             vsValue.scrollHeight = scrollHeight;
@@ -675,35 +740,38 @@ export function useVirtualScroll(
         let endIndex = dataLength;
         let autoRowHeightTop = 0;
         if (autoRowHeight || hasExpandCol.value) {
+            const treeCache = getRowHeightTreeCache(dataSourceCopyTemp);
             if (autoRowHeight && trRef.value) {
                 // Batch DOM measurements for better performance
                 const trElements = trRef.value;
+                const { tree, keyIndex } = treeCache;
+                const heightFn = getRowHeightFn.value;
                 for (let i = 0, len = trElements.length; i < len; i++) {
                     const tr = trElements[i];
                     const rowKey = tr.dataset.rowKey;
                     if (!rowKey || autoRowHeightMap.has(rowKey)) continue;
+                    const idx = keyIndex.get(rowKey);
+                    const row = idx === void 0 ? void 0 : dataSourceCopyTemp[idx];
+                    // 本次测量前树中记录的高度（实测/setAutoHeight 值或估算值）
+                    const oldHeight = row ? heightFn(row) : 0;
                     autoRowHeightMap.set(rowKey, tr.offsetHeight);
+                    // 实测高度为 0 时有效高度不变（getAutoRowHeight 忽略 0 值），跳过树更新
+                    if (idx !== void 0 && tr.offsetHeight) tree.add(idx, tr.offsetHeight - oldHeight);
                 }
             }
-            // calculate startIndex
-            for (let i = 0; i < dataLength; i++) {
-                const height = getRowHeightFn.value(dataSourceCopyTemp[i]);
-                autoRowHeightTop += height;
-                if (autoRowHeightTop >= sTop) {
-                    startIndex = i;
-                    autoRowHeightTop -= height;
-                    break;
-                }
+            // calculate startIndex：树上二分，累计高度（含本行）首次 >= sTop 的行，O(log n)
+            const tree = treeCache.tree;
+            startIndex = tree.findFirstPrefixGE(sTop);
+            if (startIndex >= dataLength) {
+                // sTop 超过总高：与旧逐行累加语义保持一致（startIndex 停留 0，offsetTop 为总高）
+                startIndex = 0;
+                autoRowHeightTop = tree.total;
+            } else {
+                autoRowHeightTop = tree.query(startIndex);
             }
-            // calculate endIndex
-            let containerHeightSum = 0;
-            for (let i = startIndex + 1; i < dataLength; i++) {
-                containerHeightSum += getRowHeightFn.value(dataSourceCopyTemp[i]);
-                if (containerHeightSum >= containerHeight) {
-                    endIndex = i;
-                    break;
-                }
-            }
+            // calculate endIndex：树上二分，自 startIndex 之后累计高度首次 >= containerHeight 的行，O(log n)
+            const found = tree.findFirstPrefixGE(tree.query(startIndex + 1) + containerHeight);
+            endIndex = Math.max(found, Math.min(startIndex + 1, dataLength));
         } else {
             startIndex = Math.floor(sTop / rowHeight);
             endIndex = startIndex + pageSize;
@@ -915,5 +983,6 @@ export function useVirtualScroll(
         theadVirtualX,
         virtualX_columnPart,
         virtualX_expandColSegments,
+        getRowHeightCacheInfo,
     ] as const;
 }

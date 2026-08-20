@@ -63,6 +63,11 @@ Manually set the row height for a specific row.
 
 ::: tip Tips
 - Must be called after data is loaded
+- Takes effect immediately, participating in scroll positioning and content height (scrollHeight) calculation right away
 - If row height changes, call this method again to update
 - Pass `null` or `undefined` to clear the set row height and restore auto measurement
+:::
+
+::: tip Performance
+Row location in variable-height mode has been optimized to O(log n) (Fenwick tree index), and the content height is the precise sum of each row's real/estimated height (instead of row count × default row height estimation), so deep scrolling with large data sets stays smooth. When the data source is replaced entirely, measured heights of stale row keys are reclaimed automatically.
 :::

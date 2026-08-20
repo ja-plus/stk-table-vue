@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15T04:38:32.523Z",
+  "generatedAt": "2026-08-20T09:35:54.230Z",
   "versions": [
     "0.8.14",
     "0.9.3",
@@ -7,7 +7,8 @@
     "0.11.15",
     "1.0.4",
     "1.1.0",
-    "optimize-cell-merge-render"
+    "optimize-cell-merge-render",
+    "master"
   ],
   "scenarios": {
     "vertical_10k": {
@@ -62,6 +63,13 @@
           "renderedRows": 4,
           "scrollMid": 0.05,
           "scrollDeep": 0.02
+        },
+        "master": {
+          "mount": 20.73,
+          "domNodes": 67,
+          "renderedRows": 4,
+          "scrollMid": 1.76,
+          "scrollDeep": 1.3
         }
       }
     },
@@ -103,6 +111,11 @@
           "mount": 44.1,
           "domNodes": 67,
           "scrollDeep": 0.01
+        },
+        "master": {
+          "mount": 86.95,
+          "domNodes": 67,
+          "scrollDeep": 1.54
         }
       }
     },
@@ -142,6 +155,11 @@
         },
         "optimize-cell-merge-render": {
           "mount": 183.82,
+          "domNodes": 5521,
+          "renderedRows": 500
+        },
+        "master": {
+          "mount": 526.57,
           "domNodes": 5521,
           "renderedRows": 500
         }
@@ -192,6 +210,12 @@
           "domNodes": 44,
           "scrollX": 0.01,
           "scrollXY": 0.02
+        },
+        "master": {
+          "mount": 48.37,
+          "domNodes": 44,
+          "scrollX": 0.78,
+          "scrollXY": 1.33
         }
       }
     },
@@ -233,6 +257,11 @@
           "mount": 18.72,
           "domNodes": 44,
           "scrollX": 0.01
+        },
+        "master": {
+          "mount": 29.83,
+          "domNodes": 44,
+          "scrollX": 1.33
         }
       }
     },
@@ -274,6 +303,11 @@
           "mount": 9.02,
           "domNodes": 59,
           "scrollMid": 0.01
+        },
+        "master": {
+          "mount": 17.52,
+          "domNodes": 59,
+          "scrollMid": 2.33
         }
       }
     },
@@ -315,6 +349,11 @@
           "mount": 11.72,
           "domNodes": 63,
           "scrollMid": 0.01
+        },
+        "master": {
+          "mount": 15.64,
+          "domNodes": 63,
+          "scrollMid": 1.91
         }
       }
     },
@@ -349,6 +388,10 @@
         "optimize-cell-merge-render": {
           "mount": 6.6,
           "scrollMid": 0.01
+        },
+        "master": {
+          "mount": 13.31,
+          "scrollMid": 1.68
         }
       }
     },
@@ -390,6 +433,11 @@
           "mount": 6.34,
           "domNodes": 80,
           "scrollMid": 0.01
+        },
+        "master": {
+          "mount": 13.37,
+          "domNodes": 80,
+          "scrollMid": 1.25
         }
       }
     },
@@ -424,6 +472,10 @@
         "optimize-cell-merge-render": {
           "mount": 6.05,
           "scrollMid": 0.01
+        },
+        "master": {
+          "mount": 11.07,
+          "scrollMid": 0.94
         }
       }
     },
@@ -458,6 +510,10 @@
         "optimize-cell-merge-render": {
           "mount": 14.07,
           "scrollXY": 0.01
+        },
+        "master": {
+          "mount": 22.76,
+          "scrollXY": 0.86
         }
       }
     },
@@ -492,6 +548,43 @@
         "optimize-cell-merge-render": {
           "mount": 13.2,
           "scrollXY": 0.02
+        },
+        "master": {
+          "mount": 25.26,
+          "scrollXY": 0.86
+        }
+      }
+    },
+    "autoRowHeight_10k": {
+      "category": "autoHeight",
+      "label": "变高 10K行",
+      "data": {
+        "master": {
+          "mount": 52.6,
+          "domNodes": 67,
+          "renderedRows": 4,
+          "scrollMid": 1.08,
+          "scrollDeep": 1.17
+        }
+      }
+    },
+    "autoRowHeight_50k": {
+      "category": "autoHeight",
+      "label": "变高 50K行",
+      "data": {
+        "master": {
+          "mount": 317.35,
+          "domNodes": 67,
+          "scrollDeep": 1.49
+        }
+      }
+    },
+    "autoRowHeight_setHeight": {
+      "category": "autoHeight",
+      "label": "变高 setAutoHeight",
+      "data": {
+        "master": {
+          "set100": 1.15
         }
       }
     }
