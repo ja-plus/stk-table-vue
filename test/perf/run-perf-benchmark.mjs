@@ -12,6 +12,9 @@
  *
  * 已有数据（results/{version}.json 合法且非空）的版本默认不重复测试，
  * 聚合数据 data.json 与 REPORT.md 每次都会基于全量结果重新生成。
+ *
+ * 分支恢复：build/install 会改动被 git 跟踪的 lib/ 构建产物与 pnpm-lock.yaml，
+ * 导致切换回原分支失败；脚本结束后会自动清理这些改动并强制切回，无需手动处理。
  */
 import { execSync } from 'node:child_process';
 import { createServer } from 'node:http';
@@ -71,6 +74,23 @@ function exec(cmd, opts = {}) {
 
 function log(msg) {
     console.log(`[Runner] ${msg}`);
+}
+
+/**
+ * 恢复指定分支。build/install 会改动被跟踪的 lib/ 产物与 pnpm-lock.yaml，
+ * 直接 git switch 会因「本地改动/未跟踪文件将被覆盖」而失败，
+ * 此时先丢弃这些改动、删除构建产物，再重试切换。
+ */
+function restoreBranch(name) {
+    if (exec(`git switch ${name}`) !== null) return true;
+    log(`✗ git switch ${name} 失败，清理 build/install 产生的文件改动后重试...`);
+    // 丢弃 build/install 对跟踪文件（lib 构建产物、lockfile）的改动
+    exec('git checkout -- lib pnpm-lock.yaml');
+    // 删除构建产生的新产物与脚本临时文件（lib 为可重建产物，results/ 下的数据文件不受影响）
+    exec('git clean -fd -- lib test/scrollPerf.test.js test/perf/.scrollPerf.test.js.bak');
+    if (exec(`git switch ${name}`) !== null) return true;
+    log(`✗ 清理后仍无法切回 ${name}，请执行 git status 检查工作区并手动恢复`);
+    return false;
 }
 
 function resultFile(name) {
@@ -252,18 +272,27 @@ if (toTest.size) {
     } finally {
         // ─── Restore ────────────────────────────────────────────────────────
         log(`\nRestoring branch to ${originalBranch}...`);
-        exec(`git switch ${originalBranch}`);
+        const restored = restoreBranch(originalBranch);
         if (existsSync(TEST_FILE)) unlinkSync(TEST_FILE);
         if (existsSync(TMP_TEST)) unlinkSync(TMP_TEST);
 
+        if (!restored) {
+            log('✗ 未能恢复原分支，已终止后续流程（结果文件未写入）');
+            process.exit(1);
+        }
+
         log('Restoring dependencies...');
-        exec('pnpm install --no-frozen-lockfile 2>&1 | tail -3');
+        const restoreInstall = exec('pnpm install --no-frozen-lockfile 2>&1 | tail -3');
+        if (restoreInstall === null) log('✗ WARNING: 依赖恢复失败，请手动运行 pnpm install');
     }
 }
 
 // ─── Generate JSON Data ─────────────────────────────────────────────────────
 
 log('\nGenerating JSON data...');
+
+// 确保结果目录存在（旧版本 tag 可能没有 test/perf 目录，切换恢复后需重建）
+mkdirSync(RESULTS_DIR, { recursive: true });
 
 // 写入新测版本的单版本 JSON（复用版本的文件保持原样）
 for (const ver of VERSIONS) {
