@@ -9,7 +9,7 @@ test/perf/
 ├── scrollPerf.test.js          # 性能测试用例（15 个场景）
 ├── run-perf-benchmark.mjs      # 跨版本自动化运行脚本
 ├── README.md                   # 本文件
-└── results/                    # 测试结果输出目录
+└── results/                    # 测试结果输出目录（生成产物，已 gitignore，不入库）
     ├── REPORT.md               # Markdown 性能报告（含分析总结）
     ├── benchmark.html          # ECharts 可视化页面（通过内置 http 服务打开）
     ├── data.json               # 聚合数据（benchmark.html 动态加载）
@@ -146,4 +146,6 @@ const VERSIONS = [
 - 如果某版本缺少某功能（如 `registerFeature` 在 0.11.0 之前不存在），对应测试会自动跳过
 - 运行过程中请勿手动切换分支
 - `lib/` 构建产物与 `pnpm-lock.yaml` 被 git 跟踪：build/install 会改动它们，导致切回原分支时 git 报错。脚本结束后会自动清理这些改动并强制切回原分支；若仍恢复失败，脚本会终止并提示，此时请手动执行 `git status` 查看冲突文件
+- 脚本运行前会自动丢弃 `lib/` 的未提交改动（产物可随时通过 `pnpm build` 重建）；除此之外工作区若有未提交改动（如源码、`pnpm-lock.yaml`），脚本会拒绝运行，请先提交或 stash
+- `results/` 目录为脚本生成产物，已加入 `.gitignore`，不会污染 git 工作区
 - 旧版本 tag（如 0.8.14）没有 `test/perf` 目录，脚本会在写结果前自动重建，无需手动创建

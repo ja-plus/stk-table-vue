@@ -1,5 +1,7 @@
 .vscode
 node_modules
+# 性能基准测试生成产物（脚本每次运行都会重新生成，不入库）
+test/perf/results/
 docs/.vitepress/cache
 docs-src/.vitepress/dist
 docs-src/.vitepress/cache
