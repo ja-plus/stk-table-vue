@@ -31,7 +31,6 @@ const VERSIONS = [
     { name: '0.11.15', type: 'tag' },
     { name: '1.0.4', type: 'tag' },
     { name: '1.1.0', type: 'tag' },
-    { name: 'optimize-cell-merge-render', type: 'branch' },
     { name: 'master', type: 'branch' },
 ];
 
