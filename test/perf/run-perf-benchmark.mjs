@@ -228,7 +228,7 @@ if (toTest.size) {
             // 重测前先删除旧结果，避免失败时残留过期数据
             if (existsSync(resultFile(ver.name))) unlinkSync(resultFile(ver.name));
 
-            const checkoutCmd = ver.type === 'tag' ? `git switch --detach ${ver.name}` : `git switch ${ver.name}`;
+            const checkoutCmd = ver.type === 'tag' ? `git checkout ${ver.name}` : `git switch ${ver.name}`;
             const checkoutResult = exec(checkoutCmd);
             if (checkoutResult === null) {
                 log(`✗ Failed to checkout ${ver.name}, skipping`);
