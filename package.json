@@ -1,6 +1,6 @@
 {
   "name": "stk-table-vue",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "High performance realtime virtual table for vue3 and vue2.7",
   "main": "./lib/stk-table-vue.js",
   "types": "./lib/src/StkTable/index.d.ts",
@@ -19,7 +19,7 @@
     "test": "test"
   },
   "type": "module",
-  "sideEffects": ["./src/**"],
+  "sideEffects": ["./src/**", "./lib/**/*.css"],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
