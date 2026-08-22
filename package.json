@@ -19,7 +19,7 @@
     "test": "test"
   },
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": ["./src/**"],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
