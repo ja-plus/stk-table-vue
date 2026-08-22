@@ -770,12 +770,12 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     sortConfig: SortConfig<any>;
     colKey: UniqKeyProp;
     headless: boolean;
+    rowHeight: number;
     autoRowHeight: boolean | AutoRowHeightConfig<any>;
     stripe: boolean;
     optimizeVue2Scroll: boolean;
     rowKey: UniqKeyProp;
     headerRowHeight: number | string;
-    rowHeight: number;
     scrollbar: boolean | ScrollbarOptions;
     fixedMode: boolean;
     theme: "light" | "dark";
