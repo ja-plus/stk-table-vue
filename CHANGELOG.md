@@ -10,6 +10,7 @@
   - perf: `useAreaSelection` is tree-shakable (~6KB gzipped dropped when unused); `package.json` declares `"sideEffects": false`.
   - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
   - perf: `virtualScroll` / `virtualScrollX` switched to `shallowRef` with explicit `triggerRef`, reducing deep Proxy overhead in the scroll hot path.
+  - perf: fixed a regression from the `shallowRef` switch — `triggerRef` now fires only when a store value actually changed (instead of unconditionally), so a scroll that leaves the viewport unchanged no longer forces a full re-render; scroll recalculation is back to 0.02ms level (scrollX 1.7→0.01ms, setAutoHeight 2.6→0.3ms).
 * Bugfix:
   - fix: `autoRowHeight` + `virtual` + `stripe` — rows outside the viewport had their `td` stripped and collapsed; the td-stripping optimization now only applies to fixed row height.
   - fix: remove `contain: paint` from tbody `tr` — it clipped cells to a zero-height row box, causing cells to disappear.
