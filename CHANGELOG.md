@@ -1,4 +1,8 @@
 
+## 1.2.1
+* Bugfix:
+  - fix: `sideEffects` now includes `"./lib/**/*.css"`, preventing webpack from tree-shaking CSS imports in production builds.
+
 ## 1.2.0
 * Feature
   - feat: `scrollTo` gains an options overload `scrollTo({ top, left, behavior })` — each axis accepts a pixel number or a `{ index, key, px }` target (row by index/rowKey, column by index/dataIndex), supports `behavior: 'smooth'`; the legacy `scrollTo(top, left)` form is unchanged.
@@ -7,7 +11,7 @@
   - feat: `mergeCells` supports huge `colspan` in `virtualX` mode — the visible column range is expanded so merged cells anchored off-viewport stay fully rendered.
 * Optimize
   - perf: `autoRowHeight` virtual scrolling row location is now O(log n) via a Fenwick tree; `scrollHeight` is the precise sum of per-row heights instead of an estimation.
-  - perf: `useAreaSelection` is tree-shakable (~6KB gzipped dropped when unused); `package.json` declares `"sideEffects": false`.
+  - perf: `useAreaSelection` is tree-shakable (~6KB gzipped dropped when unused); `package.json` declares `"sideEffects"` for proper tree-shaking.
   - perf: reduced DOM node count in merged scenarios and eliminated the double rendering of merged rows.
   - perf: `virtualScroll` / `virtualScrollX` switched to `shallowRef` with explicit `triggerRef`, reducing deep Proxy overhead in the scroll hot path.
   - perf: fixed a regression from the `shallowRef` switch — `triggerRef` now fires only when a store value actually changed (instead of unconditionally), so a scroll that leaves the viewport unchanged no longer forces a full re-render; scroll recalculation is back to 0.02ms level (scrollX 1.7→0.01ms, setAutoHeight 2.6→0.3ms).
