@@ -7,3 +7,5 @@
         </svg>
     </span>
 </template>
+
+<script setup lang="ts" vapor></script>

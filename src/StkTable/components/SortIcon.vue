@@ -4,3 +4,5 @@
         <polygon class="arrow-down" transform="translate(8, 12) rotate(-180) translate(-8, -12) " points="8 10 4.8 14 11.2 14"></polygon>
     </svg>
 </template>
+
+<script setup lang="ts" vapor></script>
