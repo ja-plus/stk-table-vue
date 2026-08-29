@@ -15,6 +15,22 @@
     "url": "https://github.com/ja-plus/stk-table-vue/issues"
   },
   "packageManager": "pnpm@10.7.0",
+  "pnpm": {
+    "overrides": {
+      "vue": "3.6.0-rc.6",
+      "@vitejs/plugin-vue": "6.0.5",
+      "@vue/runtime-core": "3.6.0-rc.6",
+      "@vue/runtime-dom": "3.6.0-rc.6",
+      "@vue/runtime-vapor": "3.6.0-rc.6",
+      "@vue/reactivity": "3.6.0-rc.6",
+      "@vue/shared": "3.6.0-rc.6",
+      "@vue/compiler-core": "3.6.0-rc.6",
+      "@vue/compiler-dom": "3.6.0-rc.6",
+      "@vue/compiler-sfc": "3.6.0-rc.6",
+      "@vue/compiler-vapor": "3.6.0-rc.6",
+      "@vue/server-renderer": "3.6.0-rc.6"
+    }
+  },
   "directories": {
     "test": "test"
   },
@@ -87,7 +103,7 @@
     "vitepress-demo-plugin": "^1.5.1",
     "vitepress-plugin-llms": "^1.13.2",
     "vitest": "^4.1.9",
-    "vue": "^3.5.39",
+    "vue": "3.6.0-rc.6",
     "vue-eslint-parser": "^9.4.2"
   }
 }

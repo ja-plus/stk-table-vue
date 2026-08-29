@@ -300,7 +300,7 @@ export default {
 };
 </script>
 
-<script setup lang="ts">
+<script setup lang="ts" vapor>
 /**
  * @author japlus
  */

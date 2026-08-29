@@ -1,6 +1,6 @@
-import { createApp } from 'vue';
+import { createApp, vaporInteropPlugin } from 'vue';
 import App from './App.vue';
 
 const app = createApp(App);
-app.config.performance = true;
+app.use(vaporInteropPlugin);
 app.mount('#app');

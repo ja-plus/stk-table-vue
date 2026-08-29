@@ -19,6 +19,17 @@ export default defineConfig({
             host: '0.0.0.0',
         },
     },
+    // VitePress 通过顶层 `vue` 字段（userConfig.vue）创建其内部的 @vitejs/plugin-vue。
+    // 默认情况下 compilerOptions.isCustomElement 为 undefined，会遮蔽编译器默认函数，
+    // 导致 Vapor 模式下 compiler-vapor 报 "isCustomElement is not a function"。
+    // 显式提供一个函数以修复。
+    vue: {
+        template: {
+            compilerOptions: {
+                isCustomElement: () => false,
+            },
+        },
+    },
     head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/stk-table-vue/assets/logo.svg' }]],
     themeConfig: {
         logo: '/assets/logo.svg',

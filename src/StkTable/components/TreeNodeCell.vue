@@ -7,7 +7,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" vapor>
 import { PrivateStkTableColumn } from '../types';
 import TriangleIcon from './TriangleIcon.vue';
 

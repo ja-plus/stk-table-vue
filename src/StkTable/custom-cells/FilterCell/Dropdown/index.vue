@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" vapor>
 import { StkTableColumn } from '@/StkTable/types';
 import { h, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" vapor>
 import { CustomHeaderCellProps } from '../../types';
 import { computed } from 'vue';
 import { getDropdownIns } from './Dropdown/index';

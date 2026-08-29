@@ -5,7 +5,7 @@
     </div>
 </template>
 
-<script lang="ts" setup generic="T extends Record<string, any>">
+<script lang="ts" setup vapor generic="T extends Record<string, any>">
 import type { CustomCellProps } from '../../types';
 import { computed, nextTick, ref, watch } from 'vue';
 
