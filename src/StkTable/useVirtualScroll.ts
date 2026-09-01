@@ -192,8 +192,7 @@ export function useVirtualScroll(
 
     const virtualX_on = computed(() => {
         return (
-            props.virtualX &&
-            tableHeaderLast.value.reduce((sum, col) => (sum += getCalculatedColWidth(col)), 0) > virtualScrollX.value.containerWidth + 100
+            props.virtualX && tableHeaderLast.value.reduce((sum, col) => (sum += getCalculatedColWidth(col)), 0) > virtualScrollX.value.containerWidth
         );
     });
 
