@@ -49,3 +49,9 @@ const customVars = ref({
     --highlight-color: #ff5722;
 }
 ```
+
+::: warning
+`--row-height` 只决定视觉行高。虚拟列表等场景下，滚动几何（可视行数、总高、占位高度）由 `row-height` prop 计算，只改 CSS 变量而不改 `row-height` 会使二者不一致，出现空白带或行错位。
+
+变高模式（`auto-row-height`）下组件不输出 `--row-height`，行高由单元格内容撑开。
+:::

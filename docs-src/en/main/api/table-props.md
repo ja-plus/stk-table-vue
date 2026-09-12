@@ -66,6 +66,7 @@ theme?: 'light' | 'dark';
 
 Row height
 - When `props.autoRowHeight` is `true`, this represents the expected row height for calculation. It no longer affects the actual row height.
+- Can be changed dynamically: the visible row count and scroll height are recalculated automatically (row height is driven by `--row-height`, which stays in sync).
 
 ```ts
 rowHeight?: number;
@@ -109,6 +110,7 @@ rowActive?: boolean | {
 ### headerRowHeight
 
 Header row height. default = rowHeight
+- Can be changed dynamically: the number of body rows occupied by the header (`pageSize`) is recalculated accordingly.
 
 ```ts
 headerRowHeight?: number | null;
@@ -117,6 +119,7 @@ headerRowHeight?: number | null;
 ### footerRowHeight
 
 Footer row height. default = rowHeight
+- Can be changed dynamically. Footer rows stick to the bottom of the scroll area and are not counted in the virtual scroll total height.
 
 ```ts
 footerRowHeight?: number | string | null;

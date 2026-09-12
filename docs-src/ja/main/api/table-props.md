@@ -66,6 +66,7 @@ theme?: 'light' | 'dark';
 
 行の高さ
 - `props.autoRowHeight` が `true` の場合、期待値として計算に使用されます。実際の行の高さには影響しません。
+- 動的に変更できます。変更後、表示行数とスクロール高さが自動で再計算されます（行の高さは `--row-height` で制御され、同期して更新されます）。
 
 ```ts
 rowHeight?: number;
@@ -109,6 +110,7 @@ rowActive?: boolean | {
 ### headerRowHeight
 
 ヘッダー行の高さ。default = rowHeight
+- 動的に変更できます。ヘッダーが占有するボディ行数（`pageSize`）が再計算されます。
 
 ```ts
 headerRowHeight?: number | null;
@@ -117,6 +119,7 @@ headerRowHeight?: number | null;
 ### footerRowHeight
 
 フッター行の高さ。default = rowHeight
+- 動的に変更できます。フッター行はスクロール領域の下部に固定表示され、仮想スクロールの総高さには含まれません。
 
 ```ts
 footerRowHeight?: number | string | null;

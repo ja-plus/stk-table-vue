@@ -49,3 +49,9 @@ const customVars = ref({
     --highlight-color: #ff5722;
 }
 ```
+
+::: warning
+`--row-height`는 보이는 행 높이만 결정합니다. 가상 리스트 모드에서는 스크롤 기하(표시 행 수, 총 높이, 자리표시자 높이)가 `row-height` prop 으로 계산되므로, CSS 변수만 바꾸고 `row-height`를 함께 바꾸지 않으면 둘이 어긋나 빈 영역이나 행 정렬 어긋남이 발생합니다.
+
+가변 행 높이 모드(`auto-row-height`)에서는 컴포넌트가 `--row-height`를 출력하지 않으며, 행 높이는 셀 내용에 의해 결정됩니다.
+:::

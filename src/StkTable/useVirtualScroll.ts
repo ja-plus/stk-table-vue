@@ -17,7 +17,12 @@ export type VirtualScrollStore = {
     startIndex: number;
     /** 数组结束位置 */
     endIndex: number;
-    /** 行高 */
+    /**
+     * 基准行高（px）。
+     * 由 initVirtualScrollY 随 props.rowHeight 同步（模板中的 --row-height 亦取此值，二者同源），
+     * 因此行高配置动态变化后此处不会是旧快照。
+     * 仅记录统一基准行高：变高模式（autoRowHeight）与展开行的行级高度不写入此字段。
+     */
     rowHeight: number;
     /** 表格定位上边距 */
     offsetTop: number;
@@ -602,7 +607,9 @@ export function useVirtualScroll(
             /** fix： 滚动条不在顶部时，表格数据变少，导致滚动条位置有误 */
             scrollTop = maxScrollTop;
         }
-        assignVs(virtualScroll, { containerHeight, pageSize, scrollHeight });
+        // rowHeight 必须随 props.rowHeight 变化同步：模板的 --row-height 与 SRBR/区域选取均读此字段，
+        // 若只在 shallowRef 初始化时求值一次，改行高后会出现「计算已用新行高、渲染仍是旧行高」的不一致。
+        assignVs(virtualScroll, { rowHeight, containerHeight, pageSize, scrollHeight });
         updateVirtualScrollY(scrollTop);
     }
 

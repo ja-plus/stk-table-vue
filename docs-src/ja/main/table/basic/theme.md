@@ -48,3 +48,9 @@ const customVars = ref({
     --highlight-color: #ff5722;
 }
 ```
+
+::: warning
+`--row-height` は見た目の行の高さのみを決めます。仮想リストモードではスクロールの幾何計算（表示行数・総高さ・スペーサの高さ）が `row-height` prop に基づいて行われるため、CSS 変数だけを変更して `row-height` を変えないと両者が一致せず、空白帯や行のずれが発生します。
+
+可変行高モード（`auto-row-height`）ではコンポーネントは `--row-height` を出力せず、行の高さはセルの内容で決まります。
+:::

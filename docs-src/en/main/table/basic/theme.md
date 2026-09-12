@@ -48,3 +48,9 @@ Or override via CSS:
     --highlight-color: #ff5722;
 }
 ```
+
+::: warning
+`--row-height` only controls the visual row height. In virtual list mode the scroll geometry (visible row count, total height, spacer heights) is calculated from the `row-height` prop, so changing only the CSS variable without `row-height` makes the two inconsistent and produces blank bands or misaligned rows.
+
+In auto row height mode (`auto-row-height`) the component does not emit `--row-height`; rows are sized by their cell content.
+:::

@@ -48,6 +48,10 @@ const columns = [
 | ---- | ---- | ---- | ---- |
 | height | number | Table row height | Height of the expanded row |
 
+::: tip
+`height` can be changed dynamically: after the change, the expanded row height and the virtual scroll height accumulation are recalculated together. This value only pins the expanded row height in virtual list mode.
+:::
+
 ### expose
 You can call the example method to expand or collapse a row.
 ```ts

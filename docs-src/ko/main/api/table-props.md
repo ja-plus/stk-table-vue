@@ -66,6 +66,7 @@ theme?: 'light' | 'dark';
 
 행 높이
 - `props.autoRowHeight` 가 `true` 일 때, 기대 행 높이로 사용됩니다. 실제 행 높이에는 영향을 주지 않습니다.
+- 동적으로 변경할 수 있습니다. 변경 후 표시 행 수와 스크롤 높이가 자동으로 재계산됩니다 (행 높이는 `--row-height` 로 제어되며 함께 갱신됩니다).
 
 ```ts
 rowHeight?: number;
@@ -109,6 +110,7 @@ rowActive?: boolean | {
 ### headerRowHeight
 
 헤더 행 높이. 기본값 = rowHeight
+- 동적으로 변경할 수 있습니다. 헤더가 차지하는 본문 행 수(`pageSize`)가 함께 재계산됩니다.
 
 ```ts
 headerRowHeight?: number | null;
@@ -117,6 +119,7 @@ headerRowHeight?: number | null;
 ### footerRowHeight
 
 푸터 행 높이. 기본값 = rowHeight
+- 동적으로 변경할 수 있습니다. 푸터 행은 스크롤 영역 하단에 고정(sticky) 되므로 가상 스크롤 총 높이에 포함되지 않습니다.
 
 ```ts
 footerRowHeight?: number | string | null;

@@ -4,6 +4,12 @@
 * `props.headerRowHeight` 设置表头行高，默认为 `28px`。
 * `props.footerRowHeight` 设置表尾行高，默认为 `28px`。
 
+::: tip
+上述行高配置以及 `props.expandConfig.height` 都支持动态修改，修改后组件会自动重算可视区行数与滚动高度，无需手动调用 `initVirtualScroll`。
+
+表尾行悬浮于滚动区底部（sticky），不计入虚拟滚动的总高度。
+:::
+
 ## 示例
 如下设置了表头行高为 `50px`，表体行高为 `40px`。
 ```vue

@@ -1027,6 +1027,7 @@ function useAreaSelectionImpl<DT extends Record<string, any>>(
         const isScrollRowByRow = props.scrollRowByRow;
 
         // 计算目标行的位置（基于虚拟滚动数据）
+        // vs.rowHeight 由 initVirtualScrollY 随 props.rowHeight 同步，动态改行高后此处即新值
         const rowHeight = vs.rowHeight;
         const targetRowTop = rowIndex * rowHeight;
         const targetRowBottom = targetRowTop + rowHeight;

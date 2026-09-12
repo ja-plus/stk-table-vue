@@ -4,6 +4,12 @@
 * `props.headerRowHeight` sets the header row height, default is `28px`.
 * `props.footerRowHeight` sets the footer row height, default is `28px`.
 
+::: tip
+These row-height options and `props.expandConfig.height` can be changed dynamically. After the change the component recalculates the visible row count and the scroll height automatically, no need to call `initVirtualScroll` manually.
+
+Footer rows stick to the bottom of the scroll area (sticky) and are not counted in the virtual scroll total height.
+:::
+
 ## Example
 The following sets the header row height to `50px` and the body row height to `40px`.
 ```vue

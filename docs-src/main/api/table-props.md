@@ -66,6 +66,7 @@ theme?: 'light' | 'dark';
 
 行高
 - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+- 支持动态修改，修改后自动重算可视区行数与滚动高度（行高由 `--row-height` 控制，会同步更新）。
 
 ```ts
 rowHeight?: number;
@@ -109,6 +110,7 @@ rowActive?: boolean | {
 ### headerRowHeight
 
 表头行高。default = rowHeight
+- 支持动态修改，表头占用的表体行数（`pageSize`）随之重算。
 
 ```ts
 headerRowHeight?: number | null;
@@ -117,6 +119,7 @@ headerRowHeight?: number | null;
 ### footerRowHeight
 
 表尾行高。default = rowHeight
+- 支持动态修改。表尾行悬浮于滚动区底部，不计入虚拟滚动的总高度。
 
 ```ts
 footerRowHeight?: number | string | null;

@@ -4,6 +4,12 @@
 * `props.headerRowHeight` 테이블 헤더 행 높이 설정, 기본값 `28px`.
 * `props.footerRowHeight` 테이블 푸터 행 높이 설정, 기본값 `28px`.
 
+::: tip
+위의 행 높이 설정과 `props.expandConfig.height`는 모두 동적으로 변경할 수 있습니다. 변경 후 컴포넌트는 표시 행 수와 스크롤 높이를 자동으로 재계산하므로 `initVirtualScroll`을 수동으로 호출할 필요가 없습니다.
+
+푸터 행은 스크롤 영역 하단에 고정(sticky) 되므로 가상 스크롤 총 높이에 포함되지 않습니다.
+:::
+
 ## 예시
 다음과 같이 테이블 헤더 행 높이를 `50px`로, 테이블 본문 행 높이를 `40px`로 설정했습니다.
 ```vue

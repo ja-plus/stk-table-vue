@@ -37,9 +37,9 @@ const dataSource = [{ id: 1, name: 'John', age: 32 }]
 | --- | --- | --- |
 | `width` | `string` | 表格宽度 |
 | `height` | `string` | 表格高度 |
-| `rowHeight` | `number` | 行高（`autoRowHeight` 时表示期望高） |
-| `headerRowHeight` | `number\|null` | 表头行高，默认=rowHeight |
-| `footerRowHeight` | `number\|string\|null` | 表尾行高，默认=rowHeight |
+| `rowHeight` | `number` | 行高（`autoRowHeight` 时表示期望高）；可动态修改，自动重算可视区 |
+| `headerRowHeight` | `number\|null` | 表头行高，默认=rowHeight；可动态修改，`pageSize` 随之重算 |
+| `footerRowHeight` | `number\|string\|null` | 表尾行高，默认=rowHeight；可动态修改（表尾 sticky，不计入总高） |
 | `fixedMode` | `boolean` | 使用 `table-layout:fixed` |
 | `headless` | `boolean` | 隐藏表头 |
 | `theme` | `'light'\|'dark'` | 主题 |
