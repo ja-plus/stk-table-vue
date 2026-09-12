@@ -13,7 +13,12 @@ export type VirtualScrollStore = {
     startIndex: number;
     /** 数组结束位置 */
     endIndex: number;
-    /** 行高 */
+    /**
+     * 基准行高（px）。
+     * 由 initVirtualScrollY 随 props.rowHeight 同步（模板中的 --row-height 亦取此值，二者同源），
+     * 因此行高配置动态变化后此处不会是旧快照。
+     * 仅记录统一基准行高：变高模式（autoRowHeight）与展开行的行级高度不写入此字段。
+     */
     rowHeight: number;
     /** 表格定位上边距 */
     offsetTop: number;

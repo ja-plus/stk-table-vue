@@ -20,6 +20,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     /**
      * 行高
      * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+     * - 支持动态修改，修改后自动重算可视区行数与滚动高度，并与 `--row-height` 保持同步。
      */
     rowHeight?: number;
     /**
@@ -35,9 +36,15 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * @deprecated
      */
     rowCurrentRevokable?: boolean;
-    /** 表头行高。default = rowHeight */
+    /**
+     * 表头行高。default = rowHeight
+     * - 支持动态修改，表头占用的表体行数（pageSize）随之重算。
+     */
     headerRowHeight?: number | string;
-    /** 表尾行高。default = rowHeight */
+    /**
+     * 表尾行高。default = rowHeight
+     * - 支持动态修改。表尾行悬浮于滚动区底部，不计入虚拟滚动的总高度。
+     */
     footerRowHeight?: number | string;
     /** 虚拟滚动 */
     virtual?: boolean;
@@ -510,6 +517,7 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
     /**
      * 行高
      * - `props.autoRowHeight` 为 `true` 时，将表示为期望行高，用于计算。不再影响实际行高。
+     * - 支持动态修改，修改后自动重算可视区行数与滚动高度，并与 `--row-height` 保持同步。
      */
     rowHeight?: number;
     /**
@@ -525,9 +533,15 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
      * @deprecated
      */
     rowCurrentRevokable?: boolean;
-    /** 表头行高。default = rowHeight */
+    /**
+     * 表头行高。default = rowHeight
+     * - 支持动态修改，表头占用的表体行数（pageSize）随之重算。
+     */
     headerRowHeight?: number | string;
-    /** 表尾行高。default = rowHeight */
+    /**
+     * 表尾行高。default = rowHeight
+     * - 支持动态修改。表尾行悬浮于滚动区底部，不计入虚拟滚动的总高度。
+     */
     footerRowHeight?: number | string;
     /** 虚拟滚动 */
     virtual?: boolean;

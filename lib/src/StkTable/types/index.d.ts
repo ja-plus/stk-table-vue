@@ -297,7 +297,10 @@ export type SeqConfig = {
 };
 /** Configuration options for the expand column  */
 export type ExpandConfig = {
-    /** worked in virtual mode */
+    /**
+     * worked in virtual mode
+     * 展开行的行高，支持动态修改（修改后行高累计与虚拟滚动会一同重算）
+     */
     height?: number;
 };
 /** drag row config */
