@@ -1,4 +1,8 @@
 
+## 1.2.6
+* Bugfix
+  - fix: the custom horizontal scrollbar thumb length did not update after an auto-resize. The resize handler refreshed `containerWidth` in the store but never re-ran `updateCustomScrollbar`; it is now called after `initVirtualScroll`.
+
 ## 1.2.5
 * Bugfix
   - fix: `--row-height` kept its mount-time value after `row-height` changed, so rows rendered with the old height while virtual-scroll math used the new one (blank bands / misaligned rows). The store now re-syncs the base row height, which also fixes `scroll-row-by-row` total height and area-selection keyboard scrolling.

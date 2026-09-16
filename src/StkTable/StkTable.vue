@@ -1114,6 +1114,9 @@ if (props.autoResize) {
             initVirtualScroll();
             // 容器宽度变化后，需重新计算固定列状态
             updateFixedShadow();
+            // initVirtualScroll 只是把新的 containerWidth/Height 写回 store，
+            // 自定义滚动条 thumb 长度依赖 store 值，须在其后重算，否则 resize 后横向滚动条长度不更新
+            updateCustomScrollbar();
         },
         props,
         200,
