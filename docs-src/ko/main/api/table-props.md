@@ -520,6 +520,8 @@ treeConfig?: {
   hasChildField?: string;
   /** loadMethod가 reject될 때의 콜백 <Badge type="tip" text="^1.2.7" /> */
   onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
+  /** 트리 열 들여쓰기 영역에 단계별 세로 가이드 라인을 그리기, 기본 false <Badge type="tip" text="^1.2.7" /> */
+  showGuide?: boolean;
 };
 ```
 
@@ -530,6 +532,13 @@ treeConfig?: {
 - `lazy` 상태에서는 `defaultExpandAll` / `defaultExpandLevel`과 `setTreeExpand(..., { all: true } / { level })`가 미로딩 분기에서 펼침을 중지합니다(암시적 연쇄 요청 없음); `setTreeExpand(row, { parents: true })`는 미로딩 조상을 필요에 따라 연쇄 로딩합니다.
 
 자세한 내용은 [트리형 - 자식 노드 지연 로딩](/ko/main/table/basic/tree.html#자식-노드-지연-로딩)을 참고하세요.
+:::
+
+::: tip 들여쓰기 가이드 라인（`showGuide`）
+- 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그립니다. 기본 `false`, 비활성화 시 기존 들여쓰기만 유지됩니다.
+- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`). 다크 테마는 각각의 기본값을 합니다.
+
+자세한 내용은 [트리형 - 들여쓰기 가이드 라인](/ko/main/table/basic/tree.html#들여쓰기-가이드-라인)을 참고하세요.
 :::
 
 ### experimental

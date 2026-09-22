@@ -101,6 +101,24 @@ const treeConfig = {
 <demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
 
 
+## 层级引导线  <Badge type="tip" text="^1.2.7" />
+
+开启 `treeConfig.showGuide`（默认 `false`）后，`tree-node` 列会在每行的缩进区域按层级各绘制一根竖向引导线，帮助直观判断子行所属层级。关闭时保持既有纯缩进行为，不渲染任何引导线。
+
+```ts
+const treeConfig = {
+    // 按层级显示竖向引导线
+    showGuide: true,
+};
+```
+
+::: tip 说明
+- 引导线为“每层级一根贯穿竖线”风格，并**非**精确的 last-child 截断 / T 型树连接线。
+- 可通过 CSS 变量调整外观：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`），暗色主题有各自默认值。
+:::
+
+<demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
 ## 虚拟列表
 
 <demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>

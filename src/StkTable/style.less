@@ -48,6 +48,9 @@
     --fold-icon-hover-color: #8f90b5;
     /** 树形懒加载 loading 图标颜色 */
     --tree-loading-color: #757699;
+    /** 树形层级引导线颜色 / 线宽 */
+    --tree-guide-color: #d0d1e0;
+    --tree-guide-width: 1px;
     /** 列宽拖动指示器颜色 */
     --col-resize-indicator-color: #87879c;
 
@@ -113,6 +116,7 @@
         --fold-icon-color: #5d6064;
         --fold-icon-hover-color: #727782;
         --tree-loading-color: #5d6064;
+        --tree-guide-color: #3a3a48;
 
         --col-resize-indicator-color: #5d6064;
 
@@ -787,6 +791,32 @@
             border-radius: 50%;
             animation: stk-tree-loading-spin 0.8s linear infinite;
         }
+    }
+
+    /** 树形层级引导线：单元格作为定位上下文撑满整行高度（引导线需覆盖整行） */
+    .stk-tree-cell {
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    /** 每 16px 缩进列中心绘制一根竖向引导线（覆盖于缩进区，不响应交互） */
+    .stk-tree-guide {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(
+            to right,
+            transparent 0,
+            transparent 8px,
+            var(--tree-guide-color) 8px,
+            var(--tree-guide-color) calc(8px + var(--tree-guide-width)),
+            transparent calc(8px + var(--tree-guide-width)),
+            transparent 16px
+        );
     }
 
     td.cell-hover {

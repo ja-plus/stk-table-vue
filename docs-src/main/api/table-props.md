@@ -514,6 +514,8 @@ treeConfig?: {
   hasChildField?: string;
   /** 懒加载取数失败（Promise reject）时的回调 <Badge type="tip" text="^1.2.7" /> */
   onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
+  /** 是否在 tree-node 列缩进区域按层级绘制竖向引导线，默认 false <Badge type="tip" text="^1.2.7" /> */
+  showGuide?: boolean;
 };
 ```
 
@@ -524,6 +526,14 @@ treeConfig?: {
 - `lazy` 为真时，`defaultExpandAll` / `defaultExpandLevel` 与 `setTreeExpand(..., { all: true } / { level })` 遇到未加载分支即停止展开，不会隐式发起链式加载；`setTreeExpand(row, { parents: true })` 则会按需链式 `await loadMethod` 加载未加载的祖先。
 
 详见[树形 - 懒加载子节点](/main/table/basic/tree.html#懒加载子节点)。
+:::
+
+::: tip 层级引导线（`showGuide`）
+- 开启后，`tree-node` 列在每行缩进区域按层级各绘制一根竖向引导线，帮助识别子行所属层级；默认 `false`，关闭时保持既有纯缩进行为。
+- 引导线为“每层级一根贯穿竖线”风格，并非精确的 last-child 截断 / T 型树连接线。
+- 外观可用 CSS 变量覆盖：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`），暗色主题有各自默认值。
+
+详见[树形 - 层级引导线](/main/table/basic/tree.html#层级引导线)。
 :::
 
 ### experimental

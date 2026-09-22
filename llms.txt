@@ -113,7 +113,7 @@ const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
 | `sortConfig` | `SortConfig<T>` | `{emptyToBottom:false, stringLocaleCompare:false, sortChildren:false}` | `defaultSort`、`multiSort`、`multiSortLimit`(默认 3) |
 | `seqConfig` | `{startIndex}` | `{}` | 序号列起始值，分页用 |
 | `expandConfig` | `{height}` | `{}` | 展开行高（虚拟模式需要） |
-| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel, lazy, loadMethod, hasChildField, onLoadError}` | `{}` | 树形初始展开；`lazy`+`loadMethod` 开启子节点懒加载（`hasChildField` 默认 `'hasChildren'`） |
+| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel, lazy, loadMethod, hasChildField, onLoadError, showGuide}` | `{}` | 树形初始展开；`lazy`+`loadMethod` 开启子节点懒加载（`hasChildField` 默认 `'hasChildren'`）；`showGuide`（默认 `false`）在 tree-node 列按层级绘制竖向引导线（CSS 变量 `--tree-guide-color`/`--tree-guide-width`） |
 
 ### 2.6 已废弃（新代码不要写）
 

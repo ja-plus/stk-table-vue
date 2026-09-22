@@ -241,6 +241,7 @@
                                             :col="col"
                                             :row="item.row"
                                             :expandable="isTreeExpandable(item.row)"
+                                            :show-guide="props.treeConfig?.showGuide"
                                         ></TreeNodeCell>
                                         <div v-else class="table-cell-wrapper" tabindex="-1" :title="item.row[col.dataIndex] || ''">
                                             <DragHandle

@@ -2,6 +2,7 @@
 ## Unreleased
 * Feat (tree)
   - feat: tree children lazy load via `treeConfig.lazy` + `treeConfig.loadMethod(row, col)`; expanding a node marked with `hasChildren` loads and merges its children, with a built-in loading icon. Successful loads are cached; failures keep the row collapsed and fire `treeConfig.onLoadError`. New method `reloadTreeNode(rowKeyOrRow)` force-reloads a subtree. `lazy` defaults to `false` (backward compatible).
+  - feat: per-level vertical indent guide lines via `treeConfig.showGuide` (default `false`). When enabled, the `tree-node` column draws one vertical guide line per level in each row's indentation; disabled keeps the legacy padding-only behavior. Style via `--tree-guide-color` / `--tree-guide-width` CSS variables.
 * Feat (a11y)
   - feat: keyboard accessibility for virtual scroll and column sort. Keyboard scrolling shortcuts work by focusing the table (no prior mouse hover needed); the scroll container and sortable `<th>` auto-get `tabindex="0"`, **Enter**/**Space** triggers the sort cycle, with `:focus-visible` outlines.
 

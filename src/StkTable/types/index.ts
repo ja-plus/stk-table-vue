@@ -378,6 +378,18 @@ export type TreeConfig<T extends Record<string, any> = any> = {
      * @version 1.2.7
      */
     onLoadError?: (error: unknown, row: T, col: StkTableColumn<T>) => void;
+    /**
+     * 是否在 `tree-node` 列的缩进区域按层级绘制竖向引导线，帮助识别行所属层级。
+     * 默认 `false`；关闭时 tree-node 单元格保持既有纯缩进（padding-left）行为，不渲染任何引导线。
+     * 引导线为“每层级一根贯穿竖线”风格（非精确的 last-child 截断/T 型连接线），
+     * 颜色/线宽可通过 CSS 变量 `--tree-guide-color` / `--tree-guide-width` 覆盖。
+     *
+     * en: Draw vertical indent guide lines per level in the `tree-node` column. Default `false`; when disabled the
+     * cell keeps its legacy padding-only indentation with no guide lines. Style via `--tree-guide-color` /
+     * `--tree-guide-width` CSS variables.
+     * @version 1.2.7
+     */
+    showGuide?: boolean;
 };
 
 /** header drag config */

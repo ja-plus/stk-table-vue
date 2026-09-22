@@ -520,6 +520,8 @@ treeConfig?: {
   hasChildField?: string;
   /** Callback when loadMethod rejects <Badge type="tip" text="^1.2.7" /> */
   onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
+  /** Draw per-level vertical guide lines in the tree-node column, default false <Badge type="tip" text="^1.2.7" /> */
+  showGuide?: boolean;
 };
 ```
 
@@ -530,6 +532,13 @@ treeConfig?: {
 - With `lazy`, `defaultExpandAll` / `defaultExpandLevel` and `setTreeExpand(..., { all: true } / { level })` stop at unloaded branches (no implicit chained loads); `setTreeExpand(row, { parents: true })` chain-loads unloaded ancestors on demand.
 
 See [Tree - Lazy Load Children](/en/main/table/basic/tree.html#lazy-load-children).
+:::
+
+::: tip Indent Guide Lines (`showGuide`)
+- When enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation. Default `false`; when disabled the existing padding-only indentation is kept.
+- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`); the dark theme has its own defaults.
+
+See [Tree - Indent Guide Lines](/en/main/table/basic/tree.html#indent-guide-lines).
 :::
 
 ### experimental

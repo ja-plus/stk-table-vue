@@ -99,6 +99,24 @@ const treeConfig = {
 <demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
 
 
+## インデントガイドライン  <Badge type="tip" text="^1.2.7" />
+
+`treeConfig.showGuide`（デフォルト `false`）を有効にすると、`tree-node` 列が行のインデント領域に階層ごとに縦のガイドラインを描画し、子行がどの階層に属するかを直感的に判別できます。無効時は従来のインデントのみでガイドラインは描画されません。
+
+```ts
+const treeConfig = {
+    // 階層ごとに縦のガイドラインを表示
+    showGuide: true,
+};
+```
+
+::: tip 説明
+- ガイドラインは「各階層 1 本の縦線」スタイルで、精密な last-child 切断 / T 字型のツリーコネクタでは**ありません**。
+- CSS 変数で見た目を変更可能：`--tree-guide-color`（色）、`--tree-guide-width`（線幅、デフォルト `1px`）。ダークテーマは個別のデフォルト値を持ちます。
+:::
+
+<demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
 ## 仮想リスト
 
 <demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>

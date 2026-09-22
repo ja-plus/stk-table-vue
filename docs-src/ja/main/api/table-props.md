@@ -520,6 +520,8 @@ treeConfig?: {
   hasChildField?: string;
   /** loadMethod が reject された時のコールバック <Badge type="tip" text="^1.2.7" /> */
   onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
+  /** ツリー列のインデント領域に階層ごとに縦のガイドラインを描画、デフォルト false <Badge type="tip" text="^1.2.7" /> */
+  showGuide?: boolean;
 };
 ```
 
@@ -530,6 +532,13 @@ treeConfig?: {
 - `lazy` 時、`defaultExpandAll` / `defaultExpandLevel` と `setTreeExpand(..., { all: true } / { level })` は未読み込み分岐で展開を停止します（暗黙的な連鎖読み込みなし）；`setTreeExpand(row, { parents: true })` は未読み込みの祖先をオンデマンドで連鎖読み込みします。
 
 詳しくは [ツリー - 子ノードの遅延読み込み](/ja/main/table/basic/tree.html#子ノードの遅延読み込み) を参照してください。
+:::
+
+::: tip インデントガイドライン（`showGuide`）
+- 有効化すると、`tree-node` 列が行のインデント領域に階層ごとに縦のガイドラインを描画します。デフォルト `false`、無効時は従来のインデントのみを維持します。
+- CSS 変数で見た目を変更可能：`--tree-guide-color`（色）、`--tree-guide-width`（線幅、デフォルト `1px`）。ダークテーマは個別のデフォルト値を持ちます。
+
+詳しくは [ツリー - インデントガイドライン](/ja/main/table/basic/tree.html#インデントガイドライン) を参照してください。
 :::
 
 ### experimental

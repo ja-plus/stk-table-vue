@@ -99,6 +99,24 @@ Rules:
 <demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
 
 
+## Indent Guide Lines  <Badge type="tip" text="^1.2.7" />
+
+When `treeConfig.showGuide` (default `false`) is enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation, making it easy to tell which level a child row belongs to. When disabled, the existing padding-only indentation is kept with no guide lines.
+
+```ts
+const treeConfig = {
+    // show vertical guide lines per level
+    showGuide: true,
+};
+```
+
+::: tip Notes
+- Guide lines use a "one continuous vertical line per level" style, **not** precise last-child truncation / T-shaped tree connectors.
+- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`); the dark theme has its own defaults.
+:::
+
+<demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
 ## Virtual List
 
 <demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>

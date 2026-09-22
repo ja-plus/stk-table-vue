@@ -100,6 +100,24 @@ const treeConfig = {
 <demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
 
 
+## 들여쓰기 가이드 라인  <Badge type="tip" text="^1.2.7" />
+
+`treeConfig.showGuide`(기본 `false`)를 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그려 자식 행이 어떤 단계에 속하는지 직관적으로 파악할 수 있습니다. 비활성화 시 기존 들여쓰기만 유지되며 가이드 라인은 그려지지 않습니다.
+
+```ts
+const treeConfig = {
+    // 단계별 세로 가이드 라인 표시
+    showGuide: true,
+};
+```
+
+::: tip 참고
+- 가이드 라인은 “단계당 하나의 세로 선” 스타일이며, 정밀한 last-child 차단 / T자형 트리 커넥터가 **아닙니다**.
+- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`). 다크 테마는 각각의 기본값을 합니다.
+:::
+
+<demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
 ## 가상 리스트
 
 <demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>
