@@ -38,6 +38,8 @@ defineExpose({
         baseStkTableRef.value?.scrollTo(...p),
     setTreeExpand: (...p: Parameters<BaseStkTableType['setTreeExpand']>) =>
         baseStkTableRef.value?.setTreeExpand(...p),
+    reloadTreeNode: (...p: Parameters<BaseStkTableType['reloadTreeNode']>) =>
+        baseStkTableRef.value?.reloadTreeNode(...p),
 });
 </script>
 <template>

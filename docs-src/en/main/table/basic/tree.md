@@ -71,6 +71,33 @@ The example below demonstrates different parameter usages:
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
+## Lazy Load Children  <Badge type="tip" text="^1.2.7" />
+
+When a node's children must be fetched on demand (org trees, directory trees, 10K+ nodes), enable `treeConfig.lazy`. Expanding a row that is "marked as having children but not yet loaded" calls `treeConfig.loadMethod(row, col)`. The component manages the whole loading state; you only provide the fetch function.
+
+```ts
+const treeConfig = {
+    lazy: true,
+    // returns a Promise resolving to an array of child rows
+    loadMethod: (row, col) => fetchChildren(row.id),
+    // optional: field marking "has children", default 'hasChildren'
+    hasChildField: 'hasChildren',
+    // optional: load failure callback
+    onLoadError: (error, row, col) => console.error(error),
+};
+```
+
+Rules:
+
+1. Root-level data is still provided by `props.dataSource`; child levels are loaded by `loadMethod` on drill-down.
+2. Expandable check: the arrow shows when `children` exists **or** `row.hasChildren` is truthy; neither means a leaf node.
+3. While loading, the arrow is replaced by a loading icon and the **whole row (`<tr>`)** gets the `is-tree-loading` class (overridable).
+4. Loaded nodes are cached; collapse + re-expand does not re-request. Call [reloadTreeNode()](/en/main/api/expose.html#reloadtreeenode) to force a refresh.
+5. On reject the row stays collapsed, is not marked loaded (retry on next expand), and `onLoadError` fires.
+6. With `lazy`, `defaultExpandAll` / `defaultExpandLevel` and `setTreeExpand(..., { all: true } / { level })` stop at unloaded branches (no implicit N chained requests); `setTreeExpand(row, { parents: true })` chain-loads unloaded ancestors on demand (this branch returns a Promise).
+
+<demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
+
 
 ## Virtual List
 

@@ -71,6 +71,33 @@ export const getDataSource = () => [
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
+## 子ノードの遅延読み込み  <Badge type="tip" text="^1.2.7" />
+
+ノードの子要素をオンデマンドで取得する必要がある場合（組織ツリー、ディレクトリツリー、数万ノード）は `treeConfig.lazy` を有効にします。「子ノードありマーク済み但未読み込み」の行を展開すると `treeConfig.loadMethod(row, col)` が呼ばれ、ローディング状態はすべてコンポーネントが管理します。利用者はデータ取得関数のみ提供すればよいです。
+
+```ts
+const treeConfig = {
+    lazy: true,
+    // 子行配列を resolve する Promise を返す
+    loadMethod: (row, col) => fetchChildren(row.id),
+    // 任意：「子ノードあり」を判定するフィールド名、既定は 'hasChildren'
+    hasChildField: 'hasChildren',
+    // 任意：読み込み失敗時のコールバック
+    onLoadError: (error, row, col) => console.error(error),
+};
+```
+
+ルール：
+
+1. ルート層のデータは引き続き `props.dataSource` が提供し、子層は `loadMethod` がドリルダウン時に読み込みます。
+2. 展開可能判定：行の `children` が存在する **または** `row.hasChildren` が真なら展開矢印を表示、どちらも無ければリーフノード。
+3. 読み込み中は矢印の位置にローディングアイコンが表示され、**行全体（`<tr>`）**に `is-tree-loading` クラスが付与されます（スタイル上書き可能）。
+4. 読み込み成功ノードはキャッシュされ、折りたたみ→再展開でも再リクエストしません。更新は [reloadTreeNode()](/ja/main/api/expose.html#reloadtreeenode) を呼んで強制再読み込みします。
+5. reject 時はその行は折りたたみのまま「読み込み済み」にされず（次回展開で再試行）、`onLoadError` が発火します。
+6. `lazy` 時、`defaultExpandAll` / `defaultExpandLevel` と `setTreeExpand(..., { all: true } / { level })` は未読み込み分岐で展開を停止します（暗黙的な連鎖リクエストなし）；`setTreeExpand(row, { parents: true })` は未読み込みの祖先をオンデマンドで連鎖読み込みします（この分岐は Promise を返す）。
+
+<demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
+
 
 ## 仮想リスト
 

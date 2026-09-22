@@ -304,9 +304,35 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 `option.parents` が `true` の場合、深い階層の子ノードの rowKey を渡すだけで、そのすべての親ノードが自動的に展開され、対象行が表示されます。対象行自身が子ノードを持つ場合は合わせて展開されます（行への位置移動など）。フィルタによってある親ノードが除外されている場合、展開はそこで中断されます。
 :::
 
+::: tip 遅延読み込み時（`treeConfig.lazy = true`）
+`option.parents` 分岐は非同期になります：パスが未読み込みの祖先を経由する場合、コンポーネントはルートから対象順に `await loadMethod` でこれらの祖先を連鎖読み込みしてから展開します；いずれかの祖先の読み込みが失敗するとそこで中断し `console.warn` を出します。この分岐ではメソッドは `Promise<void>` を返します（他の分岐は同期のまま）。完了タイミングが必要なら `await` してください。
+:::
+
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
 - `option.parents` <Badge type="tip" text="^1.1.0" />
+
+### reloadTreeNode <Badge type="tip" text="^1.2.7" />
+指定したツリーノードの子ノードを強制再読み込みします。遅延読み込み（`treeConfig.lazy`）時に読み込み済みノードをリフレッシュする用途。
+```ts
+/**
+ * @param rowKeyOrRow 対象ノードの rowKey または row
+ * @returns 再読み込み完了の Promise
+ */
+function reloadTreeNode(rowKeyOrRow: UniqKey | DT): Promise<void>
+```
+
+動作：
+- ノードの読み込みキャッシュをクリアし、`loadMethod` を再度呼び、新しい結果で既存のサブツリーを置き換えます（子孫の展平行も再計算）。
+- ノードが展開中の場合、読み込み後に展開区をその場でリフレッシュ；折り返中の場合はデータのみ更新し展開を強制しません。
+
+- 适用：遅延読み込み下でサブツリーのデータがサーバー側で変わりリフレッシュが必要な場合。
+- 非适用：非遅延読み込み（`lazy=false`）の通常ツリー（サブツリーは `dataSource` が提供するため、`dataSource` を更新してください）。
+
+```ts
+// rowKey 'dir-1' のノードのサブツリーを再読み込み
+await tableRef.value.reloadTreeNode('dir-1');
+```
 
 ### getSelectedArea
 選択されたセル情報を取得

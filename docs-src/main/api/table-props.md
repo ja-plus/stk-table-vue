@@ -506,8 +506,25 @@ treeConfig?: {
   defaultExpandKeys?: UniqKey[];
   /** 默认展开到第几层 */
   defaultExpandLevel?: number;
+  /** 是否开启子节点懒加载，默认 false <Badge type="tip" text="^1.2.7" /> */
+  lazy?: boolean;
+  /** 懒加载取数函数，返回 resolve 为子行数组的 Promise <Badge type="tip" text="^1.2.7" /> */
+  loadMethod?: (row: DT, col: StkTableColumn<DT>) => Promise<DT[]>;
+  /** 懒加载下判定“行是否有子节点”的字段名，默认 'hasChildren' <Badge type="tip" text="^1.2.7" /> */
+  hasChildField?: string;
+  /** 懒加载取数失败（Promise reject）时的回调 <Badge type="tip" text="^1.2.7" /> */
+  onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
 };
 ```
+
+::: tip 懒加载（`lazy`）
+- 开启后，展开一个“标记有子节点但尚未加载”的行时，组件调用 `loadMethod(row, col)` 拉取子节点，resolve 后自动并入展平数据；使用方只需提供取数函数。
+- 可展开判定：行 `children` 已存在 **或** `row[hasChildField]`（默认 `hasChildren`）为真时显示展开箭头，两者皆无视为叶子节点。
+- 加载期间行上会注入 `@private` 字段 `__T_LOADING__`，对应**整行（`<tr>`）**附 `is-tree-loading` 类名并在箭头位置显示内置 loading 图标；加载成功缓存（不重复请求），失败则保持折叠可重试并触发 `onLoadError`。
+- `lazy` 为真时，`defaultExpandAll` / `defaultExpandLevel` 与 `setTreeExpand(..., { all: true } / { level })` 遇到未加载分支即停止展开，不会隐式发起链式加载；`setTreeExpand(row, { parents: true })` 则会按需链式 `await loadMethod` 加载未加载的祖先。
+
+详见[树形 - 懒加载子节点](/main/table/basic/tree.html#懒加载子节点)。
+:::
 
 ### experimental
 

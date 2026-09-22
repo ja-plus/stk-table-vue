@@ -303,9 +303,35 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 `option.parents`가 `true`이면 깊은 자식 노드의 rowKey를 전달하는 것만으로 그 모든 부모 노드가 자동으로 확장되어 해당 행이 표시되며, 해당 행 자체가 자식 노드를 가지면 함께 확장됩니다(행 위치 지정 등). 필터에 의해 어떤 부모 노드가 제외된 경우, 확장은 거기서 중단됩니다.
 :::
 
+::: tip 지연 로딩 시（`treeConfig.lazy = true`）
+`option.parents` 분기는 비동기가 됩니다: 경로가 미로딩 조상을 거치면, 컴포넌트는 루트부터 대상 순서대로 `await loadMethod`로 이 조상들을 연쇄 로딩한 후 확장합니다; 어느 한 조상의 로딩이 실패하면 거기서 중단하고 `console.warn`를 냅니다. 이 분기에서는 메서드가 `Promise<void>`를 반환합니다(다른 분기는 동기 유지). 완료 시점이 필요하면 `await`하세요.
+:::
+
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
 - `option.parents` <Badge type="tip" text="^1.1.0" />
+
+### reloadTreeNode <Badge type="tip" text="^1.2.7" />
+지정 트리 노드의 자식 노드를 강제로 다시 로딩합니다. 지연 로딩(`treeConfig.lazy`) 상태에서 로딩된 노드를 갱신할 때 사용합니다.
+```ts
+/**
+ * @param rowKeyOrRow 대상 노드의 rowKey 또는 row
+ * @returns 재로딩 완료 Promise
+ */
+function reloadTreeNode(rowKeyOrRow: UniqKey | DT): Promise<void>
+```
+
+동작:
+- 노드의 로딩 캐시를 지우고 `loadMethod`를 다시 호출해 새 결과로 기존 서브트리를 교체합니다(자손 평탄화 행 재계산).
+- 노드가 확장 상태이면 로딩 후 확장 영역을 그 자리에서 갱신; 접힌 상태이면 강제 확장하지 않고 데이터만 갱신합니다.
+
+- 적용: 지연 로딩에서 서버측 서브트리 데이터가 변해 갱신이 필요한 경우.
+- 미적용: 비지연 로딩(`lazy=false`) 일반 트리(서브트리는 `dataSource`가 제공, `dataSource`를 직접 갱신하세요).
+
+```ts
+// rowKey 'dir-1' 노드의 서브트리 재로딩
+await tableRef.value.reloadTreeNode('dir-1');
+```
 
 ### getSelectedArea
 선택된 셀 정보 가져오기

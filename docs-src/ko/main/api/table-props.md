@@ -512,8 +512,25 @@ treeConfig?: {
   defaultExpandKeys?: UniqKey[];
   /** 기본값 확장할 레벨 */
   defaultExpandLevel?: number;
+  /** 자식 노드 지연 로딩 활성화, 기본값 false <Badge type="tip" text="^1.2.7" /> */
+  lazy?: boolean;
+  /** 자식 행 배열을 resolve하는 Promise를 반환하는 지연 로딩 함수 <Badge type="tip" text="^1.2.7" /> */
+  loadMethod?: (row: DT, col: StkTableColumn<DT>) => Promise<DT[]>;
+  /** 지연 로딩 시 “자식 있음” 판별 필드명, 기본값 'hasChildren' <Badge type="tip" text="^1.2.7" /> */
+  hasChildField?: string;
+  /** loadMethod가 reject될 때의 콜백 <Badge type="tip" text="^1.2.7" /> */
+  onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
 };
 ```
+
+::: tip 지연 로딩（`lazy`）
+- 활성화하면 “자식이 있다고 표시되었으나 아직 로딩되지 않은” 행을 펼칠 때 `loadMethod(row, col)`를 호출하고, resolve된 자식을 평탄화 데이터에 자동 병합합니다.
+- 펼침 가능 판정: 행의 `children`이 존재하거나 `row[hasChildField]`(기본 `hasChildren`)가 참이면 펼침 화살표 표시, 둘 다 없으면 리프 노드.
+- 로딩 중 행에 `@private` 필드 `__T_LOADING__`이 설정되고 **행 전체(`<tr>`)에** `is-tree-loading` 클래스가 붙으며 화살표 자리에 내장 로딩 아이콘이 표시됩니다. 성공은 캐시(재요청 없음)되고, 실패 시 접힌 상태로 남아 다음 펼침 시 재시도되며 `onLoadError`가 호출됩니다.
+- `lazy` 상태에서는 `defaultExpandAll` / `defaultExpandLevel`과 `setTreeExpand(..., { all: true } / { level })`가 미로딩 분기에서 펼침을 중지합니다(암시적 연쇄 요청 없음); `setTreeExpand(row, { parents: true })`는 미로딩 조상을 필요에 따라 연쇄 로딩합니다.
+
+자세한 내용은 [트리형 - 자식 노드 지연 로딩](/ko/main/table/basic/tree.html#자식-노드-지연-로딩)을 참고하세요.
+:::
 
 ### experimental
 

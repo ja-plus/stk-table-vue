@@ -240,6 +240,7 @@
                                             tabindex="-1"
                                             :col="col"
                                             :row="item.row"
+                                            :expandable="isTreeExpandable(item.row)"
                                         ></TreeNodeCell>
                                         <div v-else class="table-cell-wrapper" tabindex="-1" :title="item.row[col.dataIndex] || ''">
                                             <DragHandle
@@ -1138,7 +1139,7 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
 
 const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen, onDataSourceChange);
 
-const [toggleTreeNode, setTreeExpand, flatTreeData] = useTree(props, dataSourceCopy, rowKeyGen, emits, onDataSourceChange);
+const [toggleTreeNode, setTreeExpand, flatTreeData, isTreeExpandable, reloadTreeNode] = useTree(props, dataSourceCopy, rowKeyGen, emits, onDataSourceChange);
 
 /** style cache */
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);
@@ -1549,6 +1550,8 @@ function getTRProps(row: PrivateRowDT | null | undefined, index: number) {
     const rowKey = rowKeyGen(row);
 
     const classList = [props.rowClassName(row, rowIndex), row?.__EXP__ ? 'expanded' : '', row?.__EXP_R__ ? 'expanded-row' : ''];
+    // 懒加载：加载中整行追加 is-tree-loading 类名（样式可覆盖）
+    if (row?.__T_LOADING__) classList.push('is-tree-loading');
     // area selection row highlight
     // if (areaSelectionConfig.value.enabled) {
     //     classList.push(...getAreaSelectionRowClass(rowIndex));
@@ -1656,8 +1659,8 @@ function getTDProps(row: PrivateRowDT | null | undefined, col: StkTableColumn<Pr
         classList.push('seq-column');
     } else if (col.type === 'expand' && (row.__EXP__ ? colKeyGen.value(row.__EXP__) === colKey : false)) {
         classList.push('expanded');
-    } else if (row.__T_EXP__ && col.type === 'tree-node') {
-        classList.push('tree-expanded');
+    } else if (col.type === 'tree-node') {
+        if (row.__T_EXP__) classList.push('tree-expanded');
     } else if (col.type === 'dragRow') {
         classList.push('drag-row-cell');
     }
@@ -2337,6 +2340,13 @@ defineExpose({
      * @see {@link setTreeExpand}
      */
     setTreeExpand,
+    /**
+     * 重新加载树节点子节点（treeConfig.lazy 懒加载）
+     *
+     * en: Force reload children of a tree node (treeConfig.lazy)
+     * @see {@link reloadTreeNode}
+     */
+    reloadTreeNode,
     /**
      * 获取拖选选中的单元格信息
      *

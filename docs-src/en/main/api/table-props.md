@@ -512,8 +512,25 @@ treeConfig?: {
   defaultExpandKeys?: UniqKey[];
   /** Level to expand to by default */
   defaultExpandLevel?: number;
+  /** Enable lazy load of children, default false <Badge type="tip" text="^1.2.7" /> */
+  lazy?: boolean;
+  /** Lazy load function returning a Promise resolving to child rows <Badge type="tip" text="^1.2.7" /> */
+  loadMethod?: (row: DT, col: StkTableColumn<DT>) => Promise<DT[]>;
+  /** Field marking "has children" in lazy mode, default 'hasChildren' <Badge type="tip" text="^1.2.7" /> */
+  hasChildField?: string;
+  /** Callback when loadMethod rejects <Badge type="tip" text="^1.2.7" /> */
+  onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
 };
 ```
+
+::: tip Lazy load (`lazy`)
+- When enabled, expanding a row "marked as having children but not yet loaded" calls `loadMethod(row, col)`; resolved children are merged into the flattened data automatically.
+- Expandable check: the arrow shows when `children` exists **or** `row[hasChildField]` (default `hasChildren`) is truthy; neither means a leaf node.
+- While loading, a `@private` `__T_LOADING__` field is set on the row, the **whole row (`<tr>`)** gets an `is-tree-loading` class and a built-in loading icon appears at the arrow position. Successes are cached (no re-request); failures keep the row collapsed and retry on next expand, firing `onLoadError`.
+- With `lazy`, `defaultExpandAll` / `defaultExpandLevel` and `setTreeExpand(..., { all: true } / { level })` stop at unloaded branches (no implicit chained loads); `setTreeExpand(row, { parents: true })` chain-loads unloaded ancestors on demand.
+
+See [Tree - Lazy Load Children](/en/main/table/basic/tree.html#lazy-load-children).
+:::
 
 ### experimental
 

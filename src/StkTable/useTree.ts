@@ -3,6 +3,9 @@ import { PrivateRowDT, RowKeyGen, TreeConfig, UniqKey } from './types';
 
 type DT = PrivateRowDT & { children?: DT[] };
 
+/** 懒加载进行中的 Promise 缓存（以 WeakMap 按行对象维护，对外不可见） */
+const loadingPromiseMap = new WeakMap<DT, Promise<boolean>>();
+
 type SetTreeExpandOption = {
     /**
      * 是否展开
@@ -35,10 +38,104 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
     const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = props.treeConfig;
     /** It used to check if it is first load. To execute defaultExpandXXX */
     let isFirstLoad = true;
+
+    /** 懒加载开关：每次调用时读 props，避免非响应式变更失效 */
+    function isLazy(): boolean {
+        return Boolean((props.treeConfig || {}).lazy);
+    }
+
+    /**
+     * 行是否可展开（唯一口径）：children 已存在，或懒加载下数据标记有子节点（hasChildField，默认 hasChildren）
+     * en: Whether a row is expandable: children exist, or in lazy mode the data marks hasChildren
+     */
+    function isExpandable(row: DT): boolean {
+        if (row.children !== undefined) return true;
+        if (!isLazy()) return false;
+        const { hasChildField }: TreeConfig = props.treeConfig;
+        return Boolean((row as any)[hasChildField || 'hasChildren']);
+    }
+
+    /**
+     * 懒加载：确保行 children 已加载。
+     * 命中“未加载分支”时置 __T_LOADING__ → await loadMethod → 成功写 row.children、__T_LOADED__；
+     * 失败清 __T_LOADING__、不置 __T_LOADED__（可重试）、调用 onLoadError。
+     * @returns 本次调用结束时子节点是否可用（已加载或本次加载成功）
+     */
+    function ensureChildrenLoaded(row: DT, col: any): Promise<boolean> {
+        if (!row) return Promise.resolve(false);
+        // 竞态防护：加载中复用进行中的 Promise，不重复触发 loadMethod
+        const pending = loadingPromiseMap.get(row);
+        if (pending) return pending;
+        const needLoad = isLazy() && !row.children?.length && isExpandable(row) && !row.__T_LOADED__;
+        if (!needLoad) return Promise.resolve(true);
+        const { loadMethod, onLoadError }: TreeConfig = props.treeConfig;
+        if (!loadMethod) return Promise.resolve(false);
+        row.__T_LOADING__ = true;
+        const p = Promise.resolve()
+            .then(() => loadMethod(row, col))
+            .then(
+                (children) => {
+                    row.children = children || [];
+                    row.__T_LOADED__ = true;
+                    return true;
+                },
+                (error: unknown) => {
+                    // 失败：不置 __T_LOADED__，下次展开可重试
+                    onLoadError?.(error, row, col);
+                    return false;
+                }
+            )
+            .finally(() => {
+                row.__T_LOADING__ = false;
+                loadingPromiseMap.delete(row);
+            });
+        loadingPromiseMap.set(row, p);
+        return p;
+    }
+
+    /** 懒加载下同一行的展开意图串行队列，避免快速连点时异步展平与折叠互踩 */
+    const toggleQueueMap = new WeakMap<DT, Promise<void>>();
+
     /** click expended icon to toggle expand row */
-    function toggleTreeNode(row: DT, col: any) {
-        const expand = row ? !row.__T_EXP__ : false;
-        privateSetTreeExpand(row, { expand, col, isClick: true });
+    function toggleTreeNode(row: DT, col: any): Promise<void> {
+        if (!row) return Promise.resolve();
+        const wantExpand = !row.__T_EXP__;
+        if (!isLazy() || !wantExpand || isChildrenReady(row)) {
+            // 非懒加载/收起/子节点已就绪：保持既有同步行为（同步返回，不改变 lazy=false 行为）
+            privateSetTreeExpand(row, { expand: wantExpand, col, isClick: true });
+            return Promise.resolve();
+        }
+        // 懒加载展开未加载分支：同行意图排队串行执行，连点时最后一个意图生效；
+        // 加载中重复点击复用进行中的请求，不二次触发 loadMethod
+        const queue = (toggleQueueMap.get(row) || Promise.resolve()).then(() => runToggleIntent(row, col, wantExpand));
+        toggleQueueMap.set(
+            row,
+            queue.finally(() => {
+                toggleQueueMap.delete(row);
+            })
+        );
+        return queue;
+    }
+
+    /** 队列 worker：执行单次展开意图（必要时先加载，重复点击时跳过已生效的意图） */
+    async function runToggleIntent(row: DT, col: any, wantExpand: boolean) {
+        if (!wantExpand) {
+            // 收起意图：加载完成后行可能尚未展开（旧意图），仅在确实展开时才折叠
+            if (row.__T_EXP__) {
+                privateSetTreeExpand(row, { expand: false, col, isClick: true });
+            }
+            return;
+        }
+        if (row.__T_EXP__) return; // 更早的同向意图已展开，不重复执行
+        const loaded = await ensureChildrenLoaded(row, col);
+        if (loaded && !row.__T_EXP__) {
+            privateSetTreeExpand(row, { expand: true, col, isClick: true });
+        }
+    }
+
+    /** 懒加载下子节点是否已就绪（无需再发请求即可展平） */
+    function isChildrenReady(row: DT): boolean {
+        return !isLazy() || !isExpandable(row) || Boolean(row.children?.length) || Boolean(row.__T_LOADED__);
     }
 
     /**
@@ -108,8 +205,12 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
         onDataSourceChange();
     }
 
-    function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) {
+    function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption): void | Promise<void> {
         if (option?.parents) {
+            // 懒加载下原始 dataSource 的 children 可能未加载，findPath 无法定位，改走逐层链式加载分支
+            if (isLazy()) {
+                return setTreeExpandParentsLazy(row, option);
+            }
             const rowKeyOrRow = Array.isArray(row) ? row[0] : row;
             const rowKey = typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number' ? rowKeyOrRow : rowKeyGen(rowKeyOrRow);
             const path = findPath(props.dataSource || [], rowKey);
@@ -131,6 +232,71 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
             return;
         }
         privateSetTreeExpand(row, { ...option, isClick: false });
+    }
+
+    /**
+     * 懒加载下的 parents 模式：从根逐层 await ensureChildrenLoaded 补齐未加载祖先的 children 后定位下一层，
+     * 任一祖先加载失败则在该处中断并告警。已加载部分保持展开（尽力展开）。
+     * en: parents mode under lazy load: chain-load unloaded ancestors from root, abort and warn on failure.
+     */
+    async function setTreeExpandParentsLazy(row: (UniqKey | DT) | (UniqKey | DT)[], option: SetTreeExpandOption) {
+        const rowKeyOrRow = Array.isArray(row) ? row[0] : row;
+        const targetKey = typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number' ? rowKeyOrRow : rowKeyGen(rowKeyOrRow);
+        const expanded = option?.expand !== false;
+        // path[0] 为展平数据中的根行；其余为对应父行下已加载的直接子行
+        const path = await resolveLazyPath(targetKey);
+        if (!path) return;
+        if (expanded) {
+            // 从根到目标逐级展开（祖先在展平数据中，privateSetTreeExpand 可定位）
+            for (let i = 0; i < path.length - 1; i++) {
+                privateSetTreeExpand(path[i], { expand: true, isClick: false });
+            }
+            const target = path[path.length - 1];
+            // 展开时若目标行自身有未加载子节点先链式补齐；收起时仅处理父节点，目标行自身状态不变
+            if (await ensureChildrenLoaded(target, null)) {
+                privateSetTreeExpand(target, { expand: true, isClick: false });
+            }
+        } else {
+            // 收起逆序处理，避免先折叠根节点导致其余节点从可见数据中移除而查找失败
+            const keys = path.slice(0, -1).map(it => rowKeyGen(it)).reverse();
+            if (!keys.length) return;
+            privateSetTreeExpand(keys, { expand: false, isClick: false });
+        }
+    }
+
+    /**
+     * 懒加载下从根逐层定位目标行，返回根 → 目标路径；某层加载失败或未找到时返回 null 并告警
+     */
+    async function resolveLazyPath(targetKey: UniqKey): Promise<DT[] | null> {
+        const roots: DT[] = dataSourceCopy.value.filter(it => !it.__T_LV__);
+        const rootRow = roots.find(it => rowKeyGen(it) === targetKey);
+        if (rootRow) return [rootRow];
+        for (const root of roots) {
+            const path = await walkLazyPath(root, [root], targetKey);
+            if (path) return path;
+        }
+        console.warn('treeExpandRow failed.rowKey:', targetKey);
+        return null;
+    }
+
+    /**
+     * 在已加载/可加载的子树中逐层向下定位目标行，命中返回根 → 目标完整路径
+     */
+    async function walkLazyPath(parent: DT, path: DT[], targetKey: UniqKey): Promise<DT[] | null> {
+        if (!(await ensureChildrenLoaded(parent, null))) {
+            // 某祖先加载失败，在该处中断
+            console.warn('tree lazy load failed on ancestor.rowKey:', rowKeyGen(parent));
+            return null;
+        }
+        for (const child of parent.children || []) {
+            const childKey = rowKeyGen(child);
+            if (childKey === targetKey) return [...path, child];
+        }
+        for (const child of parent.children || []) {
+            const res = await walkLazyPath(child, [...path, child], targetKey);
+            if (res) return res;
+        }
+        return null;
     }
 
     /**
@@ -249,5 +415,45 @@ export function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen:
         return deleteCount;
     }
 
-    return [toggleTreeNode, setTreeExpand, flatTreeData] as const;
+    /**
+     * 懒加载：强制重新加载指定节点的子节点并替换其现有子树。
+     * 展开中则折叠旧子树后重新插入新结果；折叠中仅更新数据不强制展开。
+     * en: Force reload children of a node and replace its subtree.
+     */
+    async function reloadTreeNode(rowKeyOrRow: UniqKey | DT): Promise<void> {
+        if (!rowKeyOrRow) return;
+        const rowKey = typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number' ? rowKeyOrRow : rowKeyGen(rowKeyOrRow);
+        const row = dataSourceCopy.value.find(it => rowKeyGen(it) === rowKey);
+        if (!row) {
+            console.warn('reloadTreeNode failed.rowKey:', rowKey);
+            return;
+        }
+        // 清除缓存与加载态，使 ensureChildrenLoaded 必定重新请求
+        row.__T_LOADED__ = false;
+        row.__T_LOADING__ = false;
+        loadingPromiseMap.delete(row);
+        row.children = void 0;
+
+        const index = dataSourceCopy.value.indexOf(row);
+        const level = row.__T_LV__ || 0;
+        const wasExpanded = Boolean(row.__T_EXP__);
+        if (wasExpanded) {
+            // 先移除旧子树展平行，避免新数据重复插入
+            const tempData = dataSourceCopy.value.slice();
+            const deleteCount = foldNode(index, tempData, level);
+            tempData.splice(index + 1, deleteCount);
+            dataSourceCopy.value = tempData;
+            onDataSourceChange();
+        }
+        if (!(await ensureChildrenLoaded(row, null))) return;
+        if (wasExpanded) {
+            // 展开中：走既有展平链路把新子树插回
+            privateSetTreeExpand(row, { expand: true, isClick: false });
+        } else {
+            // 折叠中：仅重渲染更新子树数据，不强制展开
+            onDataSourceChange();
+        }
+    }
+
+    return [toggleTreeNode, setTreeExpand, flatTreeData, isExpandable, reloadTreeNode] as const;
 }

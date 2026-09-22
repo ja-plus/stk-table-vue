@@ -193,6 +193,10 @@
 (e: 'toggle-tree-expand', data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }): void;
 ```
 
+::: tip 懒加载下（`treeConfig.lazy = true`）
+展开未加载分支时，事件在 `loadMethod` 成功 resolve 并并入子节点后才触发；取数失败（reject）不会触发该事件。收起与已缓存节点的展开仍同步触发。
+:::
+
 ### area-selection-change
 
 单元格选区变更事件。

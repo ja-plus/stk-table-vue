@@ -303,9 +303,35 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 `option.parents` 为 `true` 时，传入深层子节点的 rowKey 即可自动展开其所有父节点使该行可见，若该行自身有子节点也会一并展开（如定位行场景）。若表格当前存在筛选将某个祖先过滤掉，则展开会在该处中断。
 :::
 
+::: tip 懒加载下（`treeConfig.lazy = true`）
+`option.parents` 分支会变为异步：若路径经过尚未加载的祖先，组件会按从根到目标顺序依次 `await loadMethod` 链式加载这些祖先后再展开；任一祖先加载失败则在该处中断并 `console.warn`。此时该方法返回一个 `Promise<void>`（其余分支仍为同步语义），如需等待完成时机请 `await`。
+:::
+
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
 - `option.parents` <Badge type="tip" text="^1.1.0" />
+
+### reloadTreeNode <Badge type="tip" text="^1.2.7" />
+强制重新加载指定树节点的子节点，用于懒加载（`treeConfig.lazy`）场景下刷新某个已加载节点。
+```ts
+/**
+ * @param rowKeyOrRow 目标节点的 rowKey 或 row
+ * @returns 重新加载完成的 Promise
+ */
+function reloadTreeNode(rowKeyOrRow: UniqKey | DT): Promise<void>
+```
+
+行为：
+- 清除该节点的加载缓存，重新调用 `loadMethod` 拉取子节点并用新结果替换现有子树（含后代展平行重算）。
+- 若节点处于展开状态，加载完成后原地刷新展开区；若处于折叠状态，仅更新数据不强制展开。
+
+- 适用：懒加载下某个目录/节点的子数据在服务端发生变化，需要刷新其子树。
+- 不适用：非懒加载（`lazy=false`）的普通树形（子树由 `dataSource` 直接提供，直接更新 `dataSource` 即可）。
+
+```ts
+// 重新加载 rowKey 为 'dir-1' 的节点子树
+await tableRef.value.reloadTreeNode('dir-1');
+```
 
 ### getSelectedArea
 获取选中的单元格信息

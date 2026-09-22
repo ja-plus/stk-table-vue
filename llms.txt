@@ -113,7 +113,7 @@ const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
 | `sortConfig` | `SortConfig<T>` | `{emptyToBottom:false, stringLocaleCompare:false, sortChildren:false}` | `defaultSort`、`multiSort`、`multiSortLimit`(默认 3) |
 | `seqConfig` | `{startIndex}` | `{}` | 序号列起始值，分页用 |
 | `expandConfig` | `{height}` | `{}` | 展开行高（虚拟模式需要） |
-| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel}` | `{}` | 树形初始展开 |
+| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel, lazy, loadMethod, hasChildField, onLoadError}` | `{}` | 树形初始展开；`lazy`+`loadMethod` 开启子节点懒加载（`hasChildField` 默认 `'hasChildren'`） |
 
 ### 2.6 已废弃（新代码不要写）
 
@@ -237,6 +237,9 @@ areaSelection: {
 - `setRowExpand(rowKey | row, expand?, { col?, silent? })`
 - `setAutoHeight(rowKey, height?)` / `clearAllAutoHeight()` — 可变行高下手动回报实测行高
 - `setTreeExpand(row | row[], { expand?, all?, level?, parents? })` — `parents: true` 会连带展开目标行的所有父级（定位某深层节点时用）
+- `reloadTreeNode(rowKey | row): Promise<void>` — 懒加载(`treeConfig.lazy`)下强制重拉并替换某节点的子树；展开中原地刷新，折叠中仅更新数据
+  - 懒加载约束：`lazy` 下 `all`/`level`/`defaultExpandAll` 遇未加载分支即停（不发隐式链式请求）；`parents: true` 会按需链式 `await loadMethod` 加载未加载祖先，此分支返回 `Promise<void>`（其余分支仍同步）
+  - 加载中行上注入 `@private` `__T_LOADING__`、整行(`<tr>`)附 `is-tree-loading` 类；加载成功记 `__T_LOADED__` 并缓存（收起再展开不重复请求），reject 保持折叠可重试
 
 ### 6.6 区域选取 / 筛选
 

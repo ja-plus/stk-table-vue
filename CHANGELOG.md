@@ -1,11 +1,9 @@
 
 ## Unreleased
+* Feat (tree)
+  - feat: tree children lazy load via `treeConfig.lazy` + `treeConfig.loadMethod(row, col)`; expanding a node marked with `hasChildren` loads and merges its children, with a built-in loading icon. Successful loads are cached; failures keep the row collapsed and fire `treeConfig.onLoadError`. New method `reloadTreeNode(rowKeyOrRow)` force-reloads a subtree. `lazy` defaults to `false` (backward compatible).
 * Feat (a11y)
-  - feat: keyboard accessibility for virtual scroll and column sort.
-    - Arrow-key / PageUp / PageDown / Home / End scrolling no longer requires the mouse to have hovered the table first. Focus inside the table (via Tab on the container or a sortable header) now activates the shortcut.
-    - The scroll container auto-gets `tabindex="0"` when `virtual` is enabled, so keyboard-only users can reach it.
-    - Sortable `<th>` cells get `tabindex="0"`; **Enter** and **Space** trigger the same asc → desc → default cycle as a header click.
-    - Added `:focus-visible` outlines for the container and sortable headers (keyboard focus only; mouse interactions unchanged).
+  - feat: keyboard accessibility for virtual scroll and column sort. Keyboard scrolling shortcuts work by focusing the table (no prior mouse hover needed); the scroll container and sortable `<th>` auto-get `tabindex="0"`, **Enter**/**Space** triggers the sort cycle, with `:focus-visible` outlines.
 
 ## 1.2.6
 * Bugfix

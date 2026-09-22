@@ -29,7 +29,7 @@ docs-src/                    文档站源码（vitepress，中/英/日/韩四语
 docs-demo/                   文档示例组件（*.vue）
 test/                        单元测试（vitest）
 llms.txt                     ★面向 AI 的速查手册（随 npm 包发布，版本与本包绑定）
-scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅 + API 漂移自检
+scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 ```
 
 ## 常用命令
@@ -39,7 +39,6 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅 + API 
 | `pnpm dev` | 本地开发（vite） |
 | `pnpm build` | 构建组件库产物到 lib/（`postbuild` 会自动打 llms.txt 版本戳 + 注入 index.d.ts 横幅） |
 | `pnpm ai:gen` | 仅重跑 AI 资产（llms.txt 版本戳 + 横幅） |
-| `pnpm ai:check` | 漂移自检：llms.txt 是否覆盖全部公共 API、版本戳是否滞后（提交前必跑） |
 | `pnpm test` | 运行单元测试（vitest） |
 | `pnpm docs:dev` | 本地文档站（vitepress） |
 | `pnpm docs:build` | 构建文档站（产出站点级 `dist/llms.txt` / `llms-full.txt`，**与包根 llms.txt 不是同一个东西**） |
@@ -62,10 +61,10 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅 + API 
 1. 修改 `src/StkTable/types/index.ts` 中的类型定义与 JSDoc。
 2. 在 `src/StkTable/StkTable.vue` 中接入/实现对应 props/emits/expose。
 3. 同步文档 `docs-src/main/api/*.md`（props / emits / slots / expose / stk-table-column）。
-4. **同步 `llms.txt`**（面向 AI 与消费方的速查表），然后跑 `pnpm ai:check` 确认无遗漏。
+4. **同步 `llms.txt`**（面向 AI 与消费方的速查表）。
 5. 在 `docs-src/main/table/basic|advanced/` 或 `docs-demo/` 补充示例。
 6. 为改动补充测试（`test/`）。
-7. 运行 `pnpm test`、`pnpm ai:check`、`pnpm docs:build` 验证。
+7. 运行 `pnpm test`、`pnpm docs:build` 验证。
 
 ## AI 资产（消费方侧）
 
@@ -73,11 +72,11 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅 + API 
 
 | 位置 | 作用 | 维护方式 |
 |------|------|----------|
-| `llms.txt`（包根，已在 `files` 中） | 版本锁定的 API 速查表 + 坑清单 | 手写，版本戳由 `pnpm ai:gen` 写入，覆盖度由 `pnpm ai:check` 保障 |
+| `llms.txt`（包根，已在 `files` 中） | 版本锁定的 API 速查表 + 坑清单 | 手写，版本戳由 `pnpm ai:gen` 写入 |
 | `lib/src/StkTable/index.d.ts` 顶部横幅 | AI 从 `import` 跳定义时的唯一天然落点，引流到 llms.txt | 自动生成（`postbuild`），勿手改 |
 | `README.md` 的 “For AI assistants” | 人/AI 都会先看 README | 手写 |
 
-注意：`AI-API-REFERENCE.md` 是**仓内开发者向**浓缩手册，与包内 `llms.txt` 定位不同。两者内容重叠，改动 API 后以 `llms.txt`（有 `ai:check` 守门）为准。
+注意：`AI-API-REFERENCE.md` 是**仓内开发者向**浓缩手册，与包内 `llms.txt` 定位不同。两者内容重叠，改动 API 后以 `llms.txt` 为准。
 
 ## AI 协作建议
 

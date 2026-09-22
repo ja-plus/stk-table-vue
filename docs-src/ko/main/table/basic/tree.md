@@ -72,6 +72,33 @@ export const getDataSource = () => [
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
+## 자식 노드 지연 로딩  <Badge type="tip" text="^1.2.7" />
+
+노드의 자식을 온디맨드로 가져와야 하는 경우(조직 트리, 디렉터리 트리, 수만 노드) `treeConfig.lazy`를 활성화하면, “자식이 있다고 표시되었으나 아직 로딩되지 않은” 행을 펼칠 때 `treeConfig.loadMethod(row, col)`를 호출합니다. 로딩 상태는 컴포넌트가 전면 관리하며, 사용자는 데이터 조회 함수만 제공하면 됩니다.
+
+```ts
+const treeConfig = {
+    lazy: true,
+    // 자식 행 배열을 resolve하는 Promise를 반환
+    loadMethod: (row, col) => fetchChildren(row.id),
+    // 선택: “자식 있음” 판별 필드명, 기본값 'hasChildren'
+    hasChildField: 'hasChildren',
+    // 선택: 로딩 실패 콜백
+    onLoadError: (error, row, col) => console.error(error),
+};
+```
+
+규칙:
+
+1. 최상위층 데이터는 계속 `props.dataSource`가 제공하며, 하위층은 `loadMethod`가 드릴다운 시 로딩합니다.
+2. 펼침 가능 판정: 행의 `children`이 존재하거나 `row.hasChildren`이 참이면 펼침 화살표 표시, 둘 다 없으면 리프 노드.
+3. 로딩 중에는 화살표 자리에 로딩 아이콘이 표시되고 **행 전체(`<tr>`)에** `is-tree-loading` 클래스가 붙습니다 (스타일 overriding 가능).
+4. 로딩 성공 노드는 캐시되어 접었다 다시 펼쳐도 재요청하지 않습니다. 갱신은 [reloadTreeNode()](/ko/main/api/expose.html#reloadtreeenode)를 호출하세요.
+5. reject 시 해당 행은 접힌 상태로 유지되고 “로딩 완료”로 표시되지 않아 다음 펼침 시 재시도되며, `onLoadError`가 호출됩니다.
+6. `lazy` 상태에서는 `defaultExpandAll` / `defaultExpandLevel`과 `setTreeExpand(..., { all: true } / { level })`가 미로딩 분기에서 펼침을 중지합니다 (암시적 연쇄 요청 없음); `setTreeExpand(row, { parents: true })`는 미로딩 조상을 필요에 따라 연쇄 로딩합니다 (이 분기는 Promise를 반환).
+
+<demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
+
 
 ## 가상 리스트
 

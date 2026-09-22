@@ -512,8 +512,25 @@ treeConfig?: {
   defaultExpandKeys?: UniqKey[];
   /** デフォルトで展開ずるレイヤー数 */
   defaultExpandLevel?: number;
+  /** 子ノードの遅延読み込みを有効化、デフォルト false <Badge type="tip" text="^1.2.7" /> */
+  lazy?: boolean;
+  /** 子行配列を resolve する Promise を返す遅延読み込み関数 <Badge type="tip" text="^1.2.7" /> */
+  loadMethod?: (row: DT, col: StkTableColumn<DT>) => Promise<DT[]>;
+  /** 遅延読み込み時に「子ノードあり」を判定するフィールド名、デフォルト 'hasChildren' <Badge type="tip" text="^1.2.7" /> */
+  hasChildField?: string;
+  /** loadMethod が reject された時のコールバック <Badge type="tip" text="^1.2.7" /> */
+  onLoadError?: (error: unknown, row: DT, col: StkTableColumn<DT>) => void;
 };
 ```
+
+::: tip 遅延読み込み（`lazy`）
+- 有効化すると、「子ノードありマーク済み但未読み込み」の行を展開時に `loadMethod(row, col)` を呼び、resolve された子ノードを自動で展平データに統合します。
+- 展開可能判定：行の `children` が存在するか `row[hasChildField]`（デフォルト `hasChildren`）が真なら展開矢印を表示、どちらも無ければリーフノード。
+- 読み込み中、行に `@private` フィールド `__T_LOADING__` を設定し、**行全体（`<tr>`）**に `is-tree-loading` クラスを付与し、矢印位置に組み込みローディングアイコンを表示します。成功はキャッシュ（再リクエストなし）され、失敗は折りたたみのまま次回展開で再試行され `onLoadError` を呼びます。
+- `lazy` 時、`defaultExpandAll` / `defaultExpandLevel` と `setTreeExpand(..., { all: true } / { level })` は未読み込み分岐で展開を停止します（暗黙的な連鎖読み込みなし）；`setTreeExpand(row, { parents: true })` は未読み込みの祖先をオンデマンドで連鎖読み込みします。
+
+詳しくは [ツリー - 子ノードの遅延読み込み](/ja/main/table/basic/tree.html#子ノードの遅延読み込み) を参照してください。
+:::
 
 ### experimental
 

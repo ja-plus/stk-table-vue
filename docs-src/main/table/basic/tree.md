@@ -73,6 +73,33 @@ export const getDataSource = () => [
 
 <demo vue="basic/tree/TreeSetExpand.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeSetExpand.vue"></demo>
 
+## 懒加载子节点  <Badge type="tip" text="^1.2.7" />
+
+当节点子级需要按需拉取（组织树、目录树、万级节点）时，开启 `treeConfig.lazy`，组件会在展开“标记有子节点但尚未加载”的行时调用 `treeConfig.loadMethod(row, col)` 拉取子节点，全程由组件管理加载态，使用方只提供取数函数。
+
+```ts
+const treeConfig = {
+    lazy: true,
+    // 返回 resolve 为子行数组的 Promise
+    loadMethod: (row, col) => fetchChildren(row.id),
+    // 可选：判定“有子节点”的字段名，默认 'hasChildren'
+    hasChildField: 'hasChildren',
+    // 可选：取数失败回调
+    onLoadError: (error, row, col) => console.error(error),
+};
+```
+
+规则：
+
+1. 根层数据仍由 `props.dataSource` 提供；子层由 `loadMethod` 下钻加载。
+2. 可展开判定：行 `children` 已存在 **或** `row.hasChildren` 为真时显示展开箭头，两者皆无视为叶子节点。
+3. 加载中展开箭头位置显示 loading 图标，**整行（`<tr>`）**附 `is-tree-loading` 类名（样式可覆盖）。
+4. 加载成功的节点会被缓存，收起再展开不会重复请求；需要刷新时调用 [reloadTreeNode()](/main/api/expose.html#reloadtreeenode) 强制重新加载。
+5. 加载失败（Promise reject）时该行保持折叠、不标记已加载，下次展开可重试，并触发 `onLoadError`。
+6. `lazy` 为真时，`defaultExpandAll` / `defaultExpandLevel` 与 `setTreeExpand(..., { all: true } / { level })` 遇到未加载分支即停止展开（不会一次展开全部时发起 N 个链式请求）；`setTreeExpand(row, { parents: true })` 则按需链式加载未加载的祖先（该分支返回 Promise）。
+
+<demo vue="basic/tree/TreeLazyLoad.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeLazyLoad.vue"></demo>
+
 
 ## 虚拟列表
 

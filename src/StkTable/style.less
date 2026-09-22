@@ -5,6 +5,13 @@
     }
 }
 
+/** 树形懒加载 loading 图标旋转 */
+@keyframes stk-tree-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .stk-table {
     --row-height: 28px;
     --header-row-height: var(--row-height);
@@ -39,6 +46,8 @@
 
     --fold-icon-color: #757699;
     --fold-icon-hover-color: #8f90b5;
+    /** 树形懒加载 loading 图标颜色 */
+    --tree-loading-color: #757699;
     /** 列宽拖动指示器颜色 */
     --col-resize-indicator-color: #87879c;
 
@@ -103,6 +112,7 @@
 
         --fold-icon-color: #5d6064;
         --fold-icon-hover-color: #727782;
+        --tree-loading-color: #5d6064;
 
         --col-resize-indicator-color: #5d6064;
 
@@ -753,6 +763,29 @@
 
         &:hover::before {
             border-left: 5px solid var(--fold-icon-hover-color);
+        }
+    }
+    
+    .stk-tree-loading-icon {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle;
+        transform: translateX(-4px);
+        transform-origin: center;
+
+        &::before {
+            content: '';
+            display: block;
+            margin: 0 2px;
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--tree-loading-color);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: stk-tree-loading-spin 0.8s linear infinite;
         }
     }
 

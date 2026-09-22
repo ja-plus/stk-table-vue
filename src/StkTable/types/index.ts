@@ -207,6 +207,18 @@ export type PrivateRowDT = {
      * @private
      */
     __T_LV__?: number;
+    /**
+     * 树形懒加载：该节点子节点是否正在加载中（由组件注入，对外不可见）
+     * en: tree lazy load: whether the children of this node are loading (injected by component, not for external use)
+     * @private
+     */
+    __T_LOADING__?: boolean;
+    /**
+     * 树形懒加载：该节点子节点是否已成功加载（由组件注入，对外不可见；置 true 后再次展开不重复请求）
+     * en: tree lazy load: whether the children have been loaded (injected by component; no re-request when true)
+     * @private
+     */
+    __T_LOADED__?: boolean;
     /** expanded row */
     __EXP_R__?: any;
     /** expanded col */
@@ -327,11 +339,45 @@ export type DragRowConfig = {
     // disabled?: (row: T, rowIndex: number) => boolean;
 };
 
-export type TreeConfig = {
+export type TreeConfig<T extends Record<string, any> = any> = {
     // childrenField?: string;
     defaultExpandAll?: boolean;
     defaultExpandKeys?: UniqKey[];
     defaultExpandLevel?: number;
+    /**
+     * 是否开启子节点懒加载。开启后展开“标记有子节点但尚未加载”的行时调用 `loadMethod` 拉取子节点。
+     * 默认 `false`，关闭时既有“数据自带完整 children”的树形行为保持不变。
+     * 注意：`lazy` 为真时 `defaultExpandAll` / `defaultExpandLevel` / `setTreeExpand(..., { all: true } / { level })`
+     * 遇到未加载分支即停止展开，不会隐式发起链式加载。
+     *
+     * en: Enable lazy load of tree children. When enabled, expanding a row which is marked has children but not yet
+     * loaded will call `loadMethod`. Default `false`; legacy full-children tree behavior is unchanged when disabled.
+     * @version 1.2.7
+     */
+    lazy?: boolean;
+    /**
+     * 懒加载取数函数，返回 resolve 为子行数组的 Promise。resolve 后组件将结果挂到该行 `children` 并并入展平数据。
+     * 仅在 `lazy` 为真时生效；失败（reject）则该行保持折叠且可重试。
+     *
+     * en: Lazy load function returning a Promise which resolves to child rows. Only works when `lazy` is true.
+     * @version 1.2.7
+     */
+    loadMethod?: (row: T, col: StkTableColumn<T>) => Promise<T[]>;
+    /**
+     * 懒加载模式下判定“行是否有子节点”的数据字段名，默认 `'hasChildren'`。
+     * 行 `children` 已存在或该字段为真时显示展开箭头，两者皆无视为叶子节点。
+     *
+     * en: Field name which marks a row has children in lazy mode. Default `'hasChildren'`.
+     * @version 1.2.7
+     */
+    hasChildField?: string;
+    /**
+     * 懒加载 `loadMethod` 失败（Promise reject）时的回调。组件会中止该次展开、清除加载态，该行下次展开可重试。
+     *
+     * en: Callback when `loadMethod` rejects. The expand is aborted and the row can be retried on next expand.
+     * @version 1.2.7
+     */
+    onLoadError?: (error: unknown, row: T, col: StkTableColumn<T>) => void;
 };
 
 /** header drag config */

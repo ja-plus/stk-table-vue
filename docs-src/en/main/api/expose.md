@@ -304,9 +304,35 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 When `option.parents` is `true`, passing the rowKey of a deep child node will automatically expand all its ancestors to make the row visible, and the row itself is also expanded if it has children (e.g. locating a row). If a filter currently excludes one of the ancestors, the expansion will stop there.
 :::
 
+::: tip Under lazy load (`treeConfig.lazy = true`)
+The `option.parents` branch becomes async: if the path passes through an unloaded ancestor, the component chain-loads these ancestors with `await loadMethod` from root to target before expanding; if any ancestor fails to load it stops there and `console.warn`s. In this branch the method returns a `Promise<void>` (other branches stay synchronous) — `await` it if you need the completion timing.
+:::
+
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
 - `option.parents` <Badge type="tip" text="^1.1.0" />
+
+### reloadTreeNode <Badge type="tip" text="^1.2.7" />
+Force reload the children of a tree node, for refreshing a loaded node under lazy load (`treeConfig.lazy`).
+```ts
+/**
+ * @param rowKeyOrRow target node rowKey or row
+ * @returns Promise resolved when reload finished
+ */
+function reloadTreeNode(rowKeyOrRow: UniqKey | DT): Promise<void>
+```
+
+Behavior:
+- Clears the node's load cache, calls `loadMethod` again and replaces its existing subtree with the new result (descendant flattened rows recalculated).
+- If the node is expanded, the expanded area refreshes in place after loading; if collapsed, only the data updates without forcing expansion.
+
+- Use when: a node's children changed on the server under lazy load and its subtree needs a refresh.
+- Not for: non-lazy (`lazy=false`) trees (subtree comes from `dataSource`; just update `dataSource`).
+
+```ts
+// reload the subtree of the node with rowKey 'dir-1'
+await tableRef.value.reloadTreeNode('dir-1');
+```
 
 ### getSelectedArea
 Get selected cells information
