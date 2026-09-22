@@ -3,3 +3,5 @@
 /dist/
 /config/
 /static/
+# AI 速查手册：纯文本表格排版，不由 prettier 管理
+/llms.txt

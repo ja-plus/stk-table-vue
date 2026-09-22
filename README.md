@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://ja-plus.github.io/stk-table-vue/">
-        <img src="./docs-src/public/assets/logo.svg" width="152">
+        <img src="https://raw.githubusercontent.com/ja-plus/stk-table-vue/master/docs-src/public/assets/logo.svg" width="152">
     </a>
     <h3 align='center'>Stk Table Vue</h3>
     <p align="center">
@@ -39,6 +39,21 @@ Smooth performance with tens of thousands of rows. Designed for real-time data d
 ### [Stk Table React Official](https://ja-plus.github.io/stk-table-react/)
 ### [Stk Table Svelte Official](https://ja-plus.github.io/stk-table-svelte/)
 ### [Stk Table Solid Official](https://ja-plus.github.io/stk-table-solid/)
+
+## 🤖 For AI assistants
+
+如果你是通过 AI 编码助手（Claude Code / Cursor / Copilot / Qoder 等）接入本库：
+
+1. **先读 [`llms.txt`](./llms.txt)**（已随 npm 包发布，位于 `node_modules/stk-table-vue/llms.txt`）—— props / 列配置 / emits / slots / 实例方法速查，外加「约束与坑」与自检清单，其版本号与本包严格一致。
+2. 不要靠阅读 `src/StkTable/StkTable.vue` 或 `lib/*.js` 反推 API。
+3. 需要更细的说明时，抓取[文档站](https://ja-plus.github.io/stk-table-vue/)对应**单页**的 `.md` 镜像（`llms.txt` 末尾有主题 → URL 索引）。请勿抓取 `llms-full.txt`（全站合并，约 590KB）。
+4. 类型权威定义：`lib/src/StkTable/types/index.d.ts`（含中文 JSDoc，hover 即可看到）。
+
+想让 AI 助手无需提醒就能用上这份速查表，在你项目的 `AGENTS.md`（或 `.cursor/rules/`、`.claude/skills/`）加一行指针即可：
+
+```markdown
+本项目使用 stk-table-vue。写表格代码前先读 node_modules/stk-table-vue/llms.txt，不要从源码反推 API。
+```
 
 
 ## Repo: 

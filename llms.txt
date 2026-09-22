@@ -1,0 +1,325 @@
+# stk-table-vue — AI 速查手册（llms.txt）
+
+<!-- 下行由 scripts/build-ai-assets.mjs 自动写入，请勿手改（手写必然过期） -->
+Version: 1.2.6
+Docs: https://ja-plus.github.io/stk-table-vue/ （中/英/日/韩；每页存在同名 .md，可直接 WebFetch，例：`/main/api/expose.md`）
+Repo: https://github.com/ja-plus/stk-table-vue
+本文件权威来源：`src/StkTable/types/index.ts`（类型）+ `src/StkTable/StkTable.vue`（props/emits/expose）。三者不一致时以源码为准，并请反馈。
+
+## 0. 读取指令（先读这 6 条，能省 80% 上下文）
+
+1. 学 API **只读本文件**。不要通过阅读 `src/StkTable/StkTable.vue`（约 2400 行）或 `lib/stk-table-vue.js` 反推用法。
+2. 需要本文件没覆盖的细节 → 按第 11 节的「主题 → 文档 URL」表去 fetch 单个 .md 页，**不要** fetch `llms-full.txt`（约 590KB，会挤爆上下文）。
+3. 本文件版本号与所装包版本严格一致。若项目版本不同，先确认 `package.json` 里的版本，再决定信任程度。
+4. 零运行时依赖，只需 `import { StkTable } from 'stk-table-vue'`；样式已在入口自动注入，**不要**再 `import 'stk-table-vue/lib/style.css'`。
+5. 泛型约定：`T` / `DT` 都代表数据行类型（`dataSource` 的元素）。
+6. 私有字段一律以 `__` 开头（`__R_K__`、`__EXP__`、`__T_LV__`、`__W__` 等），`@private`，业务代码禁止读写。
+7. 命名歧义：本文是**包内** llms.txt（版本与本包一致）。站点还有一个 `https://ja-plus.github.io/stk-table-vue/llms.txt`（文档站目录清单，**总是最新版**），两者不同，对照版本时别拿错。
+
+## 1. 30 秒上手
+
+```vue
+<script setup>
+import { StkTable } from 'stk-table-vue';
+import { ref } from 'vue';
+
+const tableRef = ref();
+const columns = [
+  { title: 'Name', dataIndex: 'name', width: 120, fixed: 'left' },
+  { title: 'Age', dataIndex: 'age', width: 80, sorter: true, sortType: 'number' },
+  { title: 'Addr', dataIndex: 'address' },
+];
+const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
+</script>
+
+<template>
+  <!-- virtual 需要配合高度；开 virtual-x 则每列必须有 width -->
+  <StkTable ref="tableRef" row-key="id" :columns="columns" :data-source="dataSource" height="400px" virtual :row-height="28" />
+</template>
+```
+
+`<table>` 原生实现，固定表头/固定列基于 CSS `sticky`。
+
+## 2. Props
+
+### 2.1 布局与外观
+
+| prop | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `width` | `string` | `''` | 表格宽度 |
+| `height` | `string` | — | 表格高度（虚拟滚动必需） |
+| `rowHeight` | `number` | `28` | 行高；`autoRowHeight` 时改为「期望行高」，不影响实际行高。可动态改，自动重算可视区 |
+| `headerRowHeight` | `number\|string` | `28` | 表头行高，可动态改，`pageSize` 随之重算 |
+| `footerRowHeight` | `number\|string` | `28` | 表尾行高；表尾 sticky 于滚动区底部，**不计入**虚拟总高 |
+| `theme` | `'light'\|'dark'` | `'light'` | 主题 |
+| `stripe` | `boolean` | `false` | 斑马纹 |
+| `bordered` | `boolean\|'h'\|'v'\|'body-v'\|'body-h'` | `true` | 分割线 |
+| `headless` | `boolean` | `false` | 隐藏表头 |
+| `fixedMode` | `boolean` | `false` | 使用 `table-layout: fixed` |
+| `cellFixedMode` | `'sticky'\|'relative'` | `'sticky'` | 固定头/列实现方式。**非响应式**；低版本浏览器强制 `relative` |
+| `showOverflow` / `showHeaderOverflow` | `boolean` | `false` | 表体 / 表头溢出省略号 |
+| `hideHeaderTitle` | `boolean\|string[]` | `false` | 隐藏表头 hover title |
+| `emptyCellText` | `string\|fn({row,col})` | `'--'` | 空单元格文案 |
+| `showNoData` / `noDataFull` | `boolean` | `true` / `false` | 空数据是否展示 / 是否撑满 |
+| `rowClassName` | `fn(row, i)` | `() => ''` | 行附加 class |
+| `showTrHoverClass` | `boolean` | `false` | 行 hover 附加 class |
+| `autoResize` | `boolean\|fn` | `true` | 自动重算虚拟滚动宽高。**非响应式**；传 fn 表示 resize 回调 |
+
+### 2.2 数据与键
+
+| prop | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `columns` | `StkTableColumn<T>[]` | `[]` | **浅监听**：仅引用变化触发 |
+| `dataSource` | `T[]` | `[]` | **浅监听**：仅引用变化触发 |
+| `rowKey` | `string\|number\|fn(row)` | `''` | 行唯一键；**值不能为 `undefined`** |
+| `colKey` | `string\|number\|fn(col)` | `dataIndex` | 列唯一键 |
+| `footerData` | `T[]` | `[]` | 表尾合计行 |
+| `footerConfig` | `{position:'bottom'\|'top'}` | `{position:'bottom'}` | 表尾吸附位置 |
+
+### 2.3 虚拟滚动
+
+| prop | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `virtual` | `boolean` | `false` | Y 轴虚拟滚动 |
+| `virtualX` | `boolean` | `false` | X 轴虚拟滚动，**每列必须设 `width`** |
+| `autoRowHeight` | `boolean\|{expectedHeight?: number\|fn(row)}` | `false` | 可变行高 |
+| `scrollRowByRow` | `boolean\|'scrollbar'` | `false` | 按整数行纵向滚动；`'scrollbar'` 仅拖滚动条时生效 |
+| `smoothScroll` | `boolean` | `chrome<85 ? true : false` | `false` 时用 `onwheel` 抢占滚动，防止滚太快白屏 |
+| `scrollbar` | `boolean\|{enabled?, width?, height?, minWidth?, minHeight?}` | `false` | 自定义滚动条（覆盖原生）。注意：此配置类型尚未从包入口导出，暂无法 `import type` |
+| `optimizeVue2Scroll` | `boolean` | `false` | Vue2.7 滚动优化 |
+| `experimental` | `{scrollY?: boolean}` | `{}` | `scrollY`：用 transform 模拟滚动（实验） |
+
+### 2.4 交互
+
+| prop | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `rowHover` | `boolean` | `true` | hover 行高亮 |
+| `rowActive` | `boolean\|{enabled,disabled(row),revokable}` | `{enabled:true,revokable:true}` | 行选中 |
+| `cellHover` / `cellActive` | `boolean` | `false` | 单元格 hover / 选中 |
+| `selectedCellRevokable` | `boolean` | `true` | 再次点击取消单元格选中 |
+| `areaSelection` | `boolean\|AreaSelectionConfig` | `false` | Excel 式区域选取，见 3.3 |
+| `headerDrag` | `boolean\|{mode:'insert'\|'swap'\|'none', disabled(col)}` | `false` | 表头拖拽换序 |
+| `dragRowConfig` | `{mode:'none'\|'insert'\|'swap'}` | `{}` | 行拖拽；结果用 `getTableData()` 取 |
+| `colResizable` | `boolean\|{disabled(col)}` | `false` | 列宽拖动，**需 `v-model:columns`**，见 11 节坑 #3 |
+| `colMinWidth` | `number` | `10` | 可拖至的最小列宽 |
+| `fixedColShadow` | `boolean` | `false` | 固定列阴影（默认关，省性能） |
+| `highlightConfig` | `{duration, fps}` | `{}` | 高亮动画默认参数 |
+
+### 2.5 排序与树
+
+| prop | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `sortRemote` | `boolean` | `false` | `true` = 服务端排序，本地不排 |
+| `sortConfig` | `SortConfig<T>` | `{emptyToBottom:false, stringLocaleCompare:false, sortChildren:false}` | `defaultSort`、`multiSort`、`multiSortLimit`(默认 3) |
+| `seqConfig` | `{startIndex}` | `{}` | 序号列起始值，分页用 |
+| `expandConfig` | `{height}` | `{}` | 展开行高（虚拟模式需要） |
+| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel}` | `{}` | 树形初始展开 |
+
+### 2.6 已废弃（新代码不要写）
+
+| prop | 状态 | 改用 |
+| --- | --- | --- |
+| `minWidth` / `maxWidth` | @deprecated | 用容器样式控制；列级宽度请用 `StkTableColumn.width` |
+| `rowCurrentRevokable` | @deprecated | 用 `rowActive: { revokable: boolean }` |
+
+## 3. 列配置 `StkTableColumn<T>`
+
+### 3.1 字段
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `dataIndex` | `keyof T & string` | **必填**，取值字段 |
+| `key` | `any` | 列唯一键，默认取 `dataIndex` |
+| `title` | `string` | 表头文字 |
+| `type` | `'seq'\|'expand'\|'dragRow'\|'tree-node'` | 特殊列；`tree-node` 列前置展开箭头 |
+| `width` / `minWidth` / `maxWidth` | `string\|number` | `width` 在 X 虚拟下必填；`min/maxWidth` 仅**非** X 虚拟时生效 |
+| `fixed` | `'left'\|'right'\|null` | 固定列 |
+| `align` / `headerAlign` | `'left'\|'center'\|'right'` | 对齐 |
+| `hidden` | `boolean` | 隐藏列 |
+| `className` / `headerClassName` | `string` | td / th class |
+| `sorter` | `boolean\|fn(data, {order, column}) => T[]` | 可排序 / 自定义比较 |
+| `sortField` / `sortType` | `keyof T` / `'number'\|'string'` | 排序字段与方式 |
+| `sortConfig` | `Omit<SortConfig,'defaultSort'>` | 单列排序规则 |
+| `children` | `StkTableColumn<T>[]` | 多级表头 |
+| `mergeCells` | `fn({row,col,rowIndex,colIndex}) => {rowspan?,colspan?}\|undefined` | 单元格合并，见坑 #7 |
+| `customCell` / `customHeaderCell` / `customFooterCell` | `Component\|string` | 自定义 td / th / tfoot 渲染 |
+
+### 3.2 customCell 的 props
+
+- `customCell`: `{ row, col, cellValue, rowIndex, colIndex, expanded?, treeExpanded? }`
+- `customHeaderCell`: `{ col, rowIndex, colIndex }`
+- `customFooterCell`: `{ row, col, cellValue, rowIndex, colIndex }`
+
+推荐函数式组件，避免 `defineComponent` 的 props 声明约束：
+
+```ts
+{ dataIndex: 'op', customCell: (props) => h('a', { onClick: () => edit(props.row) }, '编辑') }
+```
+
+### 3.3 areaSelection 配置
+
+```ts
+areaSelection: {
+  enabled: true,          // 默认 true
+  keyboard: true,         // 方向键/Tab 移动选区（开启后原键盘滚动失效），默认 false
+  ctrl: true, shift: true,// 多选 / 扩选，默认 true
+  highlight: { cell: true, row: false },
+  formatCellForClipboard: (row, col, rawValue) => string, // 用了 customCell 就必须配，否则复制的是原始值
+}
+```
+
+## 4. Emits
+
+| 事件 | 载荷 |
+| --- | --- |
+| `sort-change` | `(col \| null, order, data, sortConfig)` |
+| `row-click` / `row-dblclick` / `row-menu` | `(ev, row, { rowIndex })` |
+| `current-change` | `(ev \| null, row \| undefined, { select })` |
+| `cell-click` / `cell-mousedown` | `(ev, row, col, { rowIndex })` |
+| `cell-mouseenter` / `cell-mouseleave` / `cell-mouseover` | `(ev, row, col)` |
+| `cell-selected` | `(ev \| null, { select, row, col })` |
+| `header-cell-click` | `(ev, col)` |
+| `header-row-menu` | `(ev)` |
+| `scroll` | `(ev, { startIndex, endIndex })` |
+| `scroll-x` | `(ev)` |
+| `col-order-change` | `(dragStartKey, targetColKey)` |
+| `th-drag-start` / `th-drop` | `(key)` |
+| `row-order-change` | `(dragStartKey, targetRowKey)` |
+| `col-resize` | `(col)` |
+| `toggle-row-expand` / `toggle-tree-expand` | `(
+{ expanded, row, col })` |
+| `area-selection-change` | `(ranges: AreaSelectionRange[])` |
+| `filter-change` | `(status: Record<colKey, FilterStatus>)` |
+| `update:columns` | `(cols)`（列宽拖动 / 换序后回写） |
+
+## 5. Slots
+
+| slot | props | 用途 |
+| --- | --- | --- |
+| `tableHeader` | `{ col }` | 批量自定义表头（比逐列 `customHeaderCell` 省事） |
+| `expand` | `{ row, col }` | 展开行内容 |
+| `empty` | — | 空数据 |
+| `customBottom` | — | 表格下方区域（配合 IntersectionObserver 做无限加载） |
+
+## 6. Expose（`tableRef.value.xxx()`）
+
+### 6.1 虚拟滚动 / 缓存
+
+- `initVirtualScroll(height?)` / `initVirtualScrollY(height?)` / `initVirtualScrollX()` — 强制重算可视区。容器尺寸变化默认由 `autoResize` 自动处理，通常**不需要**手调
+- `clearMergeCellsCache()` — 清空合并结果缓存（见坑 #7）
+
+### 6.2 位置与数据
+
+- `scrollTo(top?, left?)` | `scrollTo({ top, left, behavior })`
+  - 数字重载：`null` 表示该轴不动，省略默认 0
+  - 对象重载：`top`/`left` 可为像素数，或 `{ index, key, px }` 目标（`index` 优先于 `key`；行 index 是**排序/筛选/树展开后**的展示序号；`left` 的 `key` 是列 `dataIndex`；`px` 为叠加偏移，可为负）
+  - 例：`scrollTo({ top: { key: 123 }, behavior: 'smooth' })`
+- `getTableData()` — 当前展示顺序的数据（`toRaw`）
+- `getRowIndex(row)` / `getColumnIndex(col)` — 索引查询
+
+### 6.3 选中与高亮
+
+- `setCurrentRow(rowKey | undefined, { silent?, deep? })` — 传 `undefined` 取消选中
+- `setSelectedCell(row?, col?, { silent? })`
+- `setHighlightDimCell(rowKey, colKey, opt)` / `setHighlightDimRow(rowKeys[], opt)`
+  - `opt = { method?: 'animation'(默认) | 'css', keyframe?, className?, duration?, fps?, ignoreInvisible? }`
+  - `animation` 走 Web Animations API，`keyframe` 同 MDN Keyframe Formats；`css` 才用 `className`
+
+### 6.4 排序
+
+- `sortCol` / `sortStates` — 当前排序状态
+- `getSortColumns()` → `{ key, order }[]`
+- `setSorter(colKey, order, { sortOption?, force?, silent?, sort?, append? })` → `T[]`（`order: 'asc'|'desc'|null`；`append` 用于多列排序追加）
+- `resetSorter()`
+
+### 6.5 展开与树
+
+- `setRowExpand(rowKey | row, expand?, { col?, silent? })`
+- `setAutoHeight(rowKey, height?)` / `clearAllAutoHeight()` — 可变行高下手动回报实测行高
+- `setTreeExpand(row | row[], { expand?, all?, level?, parents? })` — `parents: true` 会连带展开目标行的所有父级（定位某深层节点时用）
+
+### 6.6 区域选取 / 筛选
+
+- `getSelectedArea()` → `{ rows, cols, ranges }`
+- `setAreaSelection(ranges?, { silent?, scrollToView? })` → `AreaSelectionRange[]`；range 形如 `{ begin: { row, col? }, end?: { row, col? } }`，`row`/`col` 可传索引或对象（行对象 / 列配置）
+- `clearSelectedArea()` / `copySelectedArea()` → `string`（TSV 文本，仅最后一个 range）
+- `setFilter(status | null, { remote?, silent? })` — `status: Record<colKey, { value: any[], filter?: fn }>`（Beta）
+
+## 7. 顶层导出
+
+```ts
+// 组件与特性
+import { StkTable, useAreaSelection, registerFeature } from 'stk-table-vue';
+// 内置单元格工厂（均需再调用一次拿到组件）
+import { createFilterCell, createEditableCell, createCheckboxCell, createNumberCell, createChangeCell, formatNumber } from 'stk-table-vue';
+// 工具
+import { binarySearch, insertToOrderedArray, strCompare, tableSort } from 'stk-table-vue';
+// 类型
+import type { StkTableColumn, SortConfig, SortState, Order, ScrollToOptions, ScrollAxisTarget, ScrollToFn, AreaSelectionRange, FilterStatus, CreateFilterCellOption, CreateEditableCellOptions, FormatNumberOptions } from 'stk-table-vue';
+```
+
+单元格工厂用法：
+
+```ts
+const { EditableCell } = createEditableCell({ trigger: 'dblclick', onChange: (v, row, dataIndex) => { /* 落库 */ } });
+const { NumberCell } = createNumberCell({ decimals: 2, thousands: true, prefix: '¥' });
+const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true }); // 默认涨红跌绿（A股）
+const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({ field: '_isChecked', onChange, onSelectAll });
+const { FilterComponent } = createFilterCell({ remote: false, onChange }); // BETA，配合 setFilter / filter-change
+const columns = [
+  { dataIndex: 'price', align: 'right', customCell: NumberCell() },
+  { dataIndex: 'name', customHeaderCell: FilterComponent() },
+];
+```
+
+`formatNumber(value, options)` 选项：`decimals`、`thousands`(默认 true)、`prefix`、`suffix`、`showSign`、`percent`、`abbr: 'cn'|'en'`（`abbrDecimals` 默认 2）、`placeholder`(默认 `'--'`)。`percent` 与 `abbr` 互斥。
+
+## 8. 约束与坑（按 AI 出错频率排序）
+
+1. **开 `virtual-x` 必须给每一列 `width`**；实践约定 `min-width = max-width = width`，保证计算宽度稳定。
+2. **`columns` / `dataSource` 是浅监听**。`dataSource.push(...)` 不生效，必须整体换引用（`dataSource.value = [...]`）。
+3. **`colResizable` 需要 `v-model:columns`**，且每列都要有 `width`；此时 `minWidth/maxWidth` 被忽略，table 宽度变为 `fit-content`。
+4. **`rowKey` 对应的值不能为 `undefined`/重复**，否则行复用、选中、展开、高亮全部错乱。
+5. **`autoRowHeight` 下 `rowHeight` 只是期望值**，不参与实际行高渲染；行高变化后需 `setAutoHeight(rowKey, h)` 回报，否则滚动条与可视区计算漂移。
+6. **`autoResize` / `cellFixedMode` 非响应式**，挂载后改值无效。
+7. **合并单元格缓存以「绝对行索引 + 叶子列索引 + 行引用同一性」命中**。原地改行对象字段（引用不变）且 `mergeCells` 依赖该字段时，需调 `clearMergeCellsCache()`。`mergeCells` 只返回给**左上角**单元格，被覆盖的单元格返回 `undefined`。
+8. **固定列基于 sticky**：`fixed` 列请放在 `columns` 两端；`cellFixedMode: 'relative'` 下多级表头固定列慎用。
+9. **虚拟模式下滚动位置是像素级**，`scrollTo` 的 `top` 传行索引要用对象重载 `{ top: { index } }`，不要 `scrollTo(index * 28)`。
+10. **右键菜单事件返回的是原生 `MouseEvent`**，组件不内置菜单，需自行接菜单库。
+11. **`sortRemote: true` 时组件不排序**，只 emit `sort-change`，数据需外部排好再换引用传入。
+12. **Vue2.7 注意**：`<template v-for>` 的 `key` 位置与 Vue3 不同；部分写法需 `export default` 而非 `defineOptions`。
+13. **不要手动引样式**，入口已 `import './style.less'`。
+14. **不要用 `deep watch` 包 `dataSource` 来「修」第 2 条**——大数据量下开销极大，正确做法是换引用。
+
+## 9. 何时**不**该用本组件
+
+- 需要内置分页器 / 内置筛选面板 UI（本库只提供 `setFilter` 状态与 `createFilterCell` 头部单元格的组合）；
+- 需要单元格内复杂表单编辑（应自定义 `customCell` 或考虑重型表格库）；
+- 数据量 < 200 行且无实时刷新需求 —— 开关 `virtual` 反而增加复杂度。
+
+## 10. 自检清单（生成代码后逐条对照）
+
+- [ ] 开了 `virtual` → 传了 `height` 与 `rowHeight`？
+- [ ] 开了 `virtual-x` → 每列都有 `width`？
+- [ ] `row-key` 指向字段在每行都有值？
+- [ ] 数据更新处是否换引用？
+- [ ] 用了 `colResizable` → 是否 `v-model:columns`？
+- [ ] 用了 `customCell` + `areaSelection` → 是否配 `formatCellForClipboard`？
+- [ ] 调实例方法是否在 `ref` 挂载后（`nextTick`）？
+
+## 11. 主题 → 文档页（按需 fetch 单页 .md）
+
+以下路径已核实存在（前缀 `https://ja-plus.github.io/stk-table-vue`）。英文页把 `/main/` 换成 `/en/main/`（另有 `/ja/`、`/ko/`）。
+
+| 主题 | URL 路径 |
+| --- | --- |
+| 介绍 / 快速开始 / Vue2.7 用法 | `/main/start/introduce.md`、`/main/start/start.md`、`/main/start/vue2-usage.md` |
+| Props / Column / Emits / Slots / Expose | `/main/api/table-props.md`、`/main/api/stk-table-column.md`、`/main/api/emits.md`、`/main/api/slots.md`、`/main/api/expose.md` |
+| 基础用法（键、行高、对齐、边框、主题、空数据、表尾、序号列、斑马纹、溢出、固定模式） | `/main/table/basic/key.md`、`row-height.md`、`align.md`、`bordered.md`、`theme.md`、`empty.md`、`footer.md`、`seq.md`、`stripe.md`、`overflow.md`、`fixed-mode.md`、`size.md`、`headless.md`、`basic.md` |
+| 虚拟滚动 / 固定列 / 多级表头 / 合并单元格 / 树形 / 展开行 / 排序 / 勾选 | `/main/table/advanced/virtual.md`、`/main/table/basic/fixed.md`、`/main/table/basic/multi-header.md`、`/main/table/basic/merge-cells.md`、`/main/table/basic/tree.md`、`/main/table/basic/expand-row.md`、`/main/table/basic/sort.md`、`/main/table/basic/checkbox.md` |
+| 区域选取 / 高亮 / 列宽拖动 / 表头拖拽 / 行拖拽 / 自定义单元格 / 可变行高虚拟 | `/main/table/advanced/area-selection.md`、`highlight.md`、`column-resize.md`、`header-drag.md`、`row-drag.md`、`custom-cell.md`、`auto-height-virtual.md`、`custom-sort.md`（同目录） |
+| 内置单元格：筛选 / 编辑 / 多选 / 数字 / 涨跌 | `/main/table/advanced/custom-cells/filter-cell.md`、`editable-cell.md`、`checkbox-cell.md`、`number-cell.md`（同目录）；`/main/other/change.md` |
+| 横向滚动条 / 逐行滚动 / 性能优化 / 实验特性 / 右键菜单 / FAQ / Tips | `/main/table/basic/scrollbar.md`、`scroll-row-by-row.md`、`/main/other/optimize.md`、`experimental.md`、`contextmenu.md`、`qa.md`、`tips.md` |
+| Demo 页 | `/demos/virtual-list.md`、`huge-data.md`、`cell-edit.md`、`matrix.md`、`panel-tree.md`、`lazy-load.md`、`realtime-merge-cells.md` |
+
+> 表中标「同目录」的表示沿用上一行的目录前缀。路径 404 时不要猜，回到 `/main/start/start.md` 从导航找入口。
