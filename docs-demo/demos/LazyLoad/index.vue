@@ -25,14 +25,14 @@
 
 <script setup lang="ts">
 import type { StkTableColumn } from '@/StkTable/index';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef, triggerRef } from 'vue';
 import { debounce } from '../../../src/StkTable/utils/index';
 import StkTable from '../../StkTable.vue';
 
 const totalCount = 100_000;
 const pageSize = 100;
 
-const tableData = ref<Array<Record<string, any>>>([]);
+const tableData = shallowRef<Record<string, any>[]>([]);
 const loadedPages = ref<Set<number>>(new Set());
 
 function initPlaceholderData() {
