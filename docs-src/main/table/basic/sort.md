@@ -7,6 +7,10 @@
 点击表头即可触发排序。
 <demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
+::: tip 键盘可访问性
+开启排序的列，其表头自动 `tabindex="0"`。用 **Tab** 聚焦到表头，**Enter** 或 **Space** 可同点击一样循环切换 升→降→默认。
+:::
+
 ## 自定义排序
 列配置中`StkTableColumn['sorter']` 可以设置为一个函数。
 

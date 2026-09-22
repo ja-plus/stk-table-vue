@@ -6,6 +6,10 @@ Set `StkTableColumn['sorter']` to `true` in column configuration to enable sorti
 Click the table header to trigger sorting.
 <demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
+::: tip Keyboard Accessibility
+Sortable columns automatically get `tabindex="0"` on the header cell. Use **Tab** to focus a header, then **Enter** or **Space** to cycle asc → desc → default, exactly like clicking.
+:::
+
 ## Custom Sorting
 `StkTableColumn['sorter']` can be set to a function in column configuration.
 

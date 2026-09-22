@@ -29,7 +29,7 @@
             'is-area-selecting': isAreaSelecting,
             'exp-scroll-y': isExperimentalScrollY,
         }"
-        :tabindex="areaSelectionConfig.enabled ? 0 : void 0"
+        :tabindex="areaSelectionConfig.enabled || virtual_on ? 0 : void 0"
         :style="{
             '--row-height': props.autoRowHeight ? void 0 : virtualScroll.rowHeight + 'px',
             '--header-row-height': props.headerRowHeight + 'px',
@@ -82,6 +82,8 @@
                             :key="colKeyGen(col)"
                             v-bind="getTHProps(col)"
                             @click="e => onHeaderCellClick(e, col)"
+                            @keydown.enter.prevent="e => onHeaderCellKeydown(e, col)"
+                            @keydown.space.prevent="e => onHeaderCellKeydown(e, col)"
                             @dragstart="onThDragStart"
                             @drop="onThDrop"
                             @dragover="onThDragOver"
@@ -1586,6 +1588,8 @@ function getTHProps(col: PrivateStkTableColumn<DT>) {
         colspan: col.__C_SP__,
         style: cellStyleMap.value[TagType.TH].get(colKey),
         title: getHeaderTitle(col),
+        // 键盘可访问性：可排序列的表头可被 Tab 聚焦，Enter/Space 触发排序（与 .sortable class 同条件）
+        tabindex: col.sorter ? 0 : void 0,
         // class 用预拼接字符串（而非数组），降低每格 vnode diff 与 GC 开销
         class: [
             col.sorter ? 'sortable' : '',
@@ -1748,6 +1752,16 @@ function getCellEventData(e: MouseEvent) {
 function onHeaderCellClick(e: MouseEvent, col: StkTableColumn<DT>) {
     onColumnSort(col);
     emits('header-cell-click', e, col);
+}
+
+/**
+ * th 键盘触发排序（Enter / Space）。
+ * 与点击行为对齐但不发 header-cell-click 事件：该事件语义是鼠标点击，
+ * 混入键盘事件会改变已有监听方的接收类型契约。
+ */
+function onHeaderCellKeydown(e: KeyboardEvent, col: StkTableColumn<DT>) {
+    if (!col.sorter) return;
+    onColumnSort(col);
 }
 
 /**

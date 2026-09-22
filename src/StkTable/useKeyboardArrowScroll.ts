@@ -68,7 +68,9 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
         if (areaSelectionConfig.value.keyboard) return;
         const keyCode = e.code;
         if (!ScrollCodesValues.includes(keyCode as any)) return;
-        if (!isMouseOver) return; // 不悬浮还是要触发键盘事件的
+        // 键盘可访问性：鼠标悬浮 或 焦点位于容器内部 任一命中即响应。
+        // 旧实现仅判断 isMouseOver，纯键盘用户从未触发 mouseenter，方向键滚动永远失效。
+        if (!isTableEngaged()) return;
         e.preventDefault(); // 不触发键盘默认的箭头事件
 
         const { scrollTop, rowHeight, containerHeight, scrollHeight } = virtualScroll.value;
@@ -101,6 +103,20 @@ export function useKeyboardArrowScroll<DT extends Record<string, any>>(
     function handleMouseEnter() {
         isMouseOver = true;
     }
+
+    /**
+     * 键盘可访问性判定：焦点是否落在表格容器内部（含容器自身）。
+     * 通过 document.activeElement 即时读取，无需额外 focus 监听与状态维护，
+     * 也不会在容器外元素聚焦时误吞按键。
+     */
+    function isTableEngaged(): boolean {
+        if (isMouseOver) return true;
+        const el = targetElement.value;
+        if (!el) return false;
+        const active = document.activeElement;
+        return !!active && (active === el || el.contains(active));
+    }
+
     function handleMouseLeave() {
         isMouseOver = false;
     }

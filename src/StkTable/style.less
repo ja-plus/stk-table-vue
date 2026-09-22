@@ -70,6 +70,11 @@
     box-sizing: border-box;
     outline: none;
 
+    /* 键盘可访问性：容器可 Tab 聚焦（虚拟滚动/区域选取时），仅键盘焦点显示焦点环，不影响鼠标交互 */
+    &:focus-visible {
+        outline: 2px solid var(--td-active-color);
+    }
+
     &:hover .stk-sb-thumb {
         opacity: 0.7;
     }
@@ -409,6 +414,12 @@
 
         &.sortable {
             cursor: pointer;
+
+            /* 键盘可访问性：可排序表头可 Tab 聚焦，Enter/Space 触发排序 */
+            &:focus-visible {
+                outline: 2px solid var(--td-active-color);
+                outline-offset: -2px;
+            }
         }
 
         &:not(.sorter-desc):not(.sorter-asc):hover .table-header-sorter {

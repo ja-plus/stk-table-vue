@@ -1,4 +1,12 @@
 
+## Unreleased
+* Feat (a11y)
+  - feat: keyboard accessibility for virtual scroll and column sort.
+    - Arrow-key / PageUp / PageDown / Home / End scrolling no longer requires the mouse to have hovered the table first. Focus inside the table (via Tab on the container or a sortable header) now activates the shortcut.
+    - The scroll container auto-gets `tabindex="0"` when `virtual` is enabled, so keyboard-only users can reach it.
+    - Sortable `<th>` cells get `tabindex="0"`; **Enter** and **Space** trigger the same asc → desc → default cycle as a header click.
+    - Added `:focus-visible` outlines for the container and sortable headers (keyboard focus only; mouse interactions unchanged).
+
 ## 1.2.6
 * Bugfix
   - fix: the custom horizontal scrollbar thumb length did not update after an auto-resize. The resize handler refreshed `containerWidth` in the store but never re-ran `updateCustomScrollbar`; it is now called after `initVirtualScroll`.

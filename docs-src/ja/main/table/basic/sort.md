@@ -6,6 +6,10 @@
 テーブルヘッダーをクリックして排序をトリガーします。
 <demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
+::: tip キーボードアクセシビリティ
+ソート可能な列のヘッダーには自動的に `tabindex="0"` が付与されます。**Tab** でヘッダーにフォーカスし、**Enter** または **Space** で クリック時と同様に 昇順→降順→デフォルト を切り替えできます。
+:::
+
 ## カスタム排序
 列設定で `StkTableColumn['sorter']` を関数に設定できます。
 

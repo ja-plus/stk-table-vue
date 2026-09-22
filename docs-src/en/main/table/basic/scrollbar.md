@@ -82,6 +82,13 @@ You can customize the appearance of the scrollbar using CSS variables:
 
 ## Key Scroll
 
+> **Preconditions**: arrow keys are intercepted only when **virtual scroll is enabled** (non-virtual uses browser default scrolling). Additionally, one of the following must hold:
+>
+> 1. The mouse is hovering over the table; or
+> 2. **The table or one of its descendants has keyboard focus**: tab to focus the container (auto `tabindex="0"` when virtual is on), or focus a sortable header.
+>
+> Condition 2 lets keyboard-only users (who never touched the mouse) scroll with arrow keys.
+
 | Key | Description | Function |
 | --- | --- | --- |
 | `ArrowUp` | Up arrow key | Scroll up one row |

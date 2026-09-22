@@ -7,6 +7,10 @@
 테이블 헤더를 클릭하면 정렬이 트리거됩니다.
 <demo vue="basic/sort/Sort.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/sort/Sort.vue"></demo>
 
+::: tip 키보드 접근성
+정렬 가능한 열의 헤더에는 자동으로 `tabindex="0"` 이 부여됩니다. **Tab** 으로 헤더에 포커스한 후 **Enter** 또는 **Space** 로 클릭과 동일하게 오름차순 → 내림차순 → 기본 을 순환할 수 있습니다.
+:::
+
 ## 커스텀 정렬
 열 설정에서 `StkTableColumn['sorter']`를 함수로 설정할 수 있습니다.
 
