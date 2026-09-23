@@ -10,7 +10,10 @@ const props = defineProps<CustomCellProps<FileTreeNode>>();
 const { t } = useI18n();
 
 /** 与自绘图标变体同一套整格拖拽 */
-const { dropPos, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(() => props.row);
+const { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(
+    () => props.row,
+    () => Boolean(props.treeExpanded)
+);
 const isDragging = computed(() => draggingRow.value === props.row);
 </script>
 
@@ -23,7 +26,8 @@ const isDragging = computed(() => draggingRow.value === props.row);
         class="tag-tree-cell"
         :class="{
             'tag-tree-cell--dragging': isDragging,
-            'tag-tree-cell--into': dropPos === 'into',
+            'tag-tree-cell--subtree': inDropSubtree,
+            'tag-tree-cell--into': isDropTarget,
             'tag-tree-cell--before': dropPos === 'before',
             'tag-tree-cell--after': dropPos === 'after',
         }"
@@ -52,8 +56,11 @@ const isDragging = computed(() => draggingRow.value === props.row);
 .tag-tree-cell--dragging {
     opacity: 0.5;
 }
+.tag-tree-cell--subtree {
+    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.1));
+}
 .tag-tree-cell--into {
-    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.14));
+    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.22));
 }
 .tag-tree-cell--before {
     box-shadow: inset 0 2px 0 var(--vp-c-brand, #3b82f6);

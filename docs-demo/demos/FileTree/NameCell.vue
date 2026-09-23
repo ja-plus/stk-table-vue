@@ -14,7 +14,10 @@ const draft = ref('');
 const isEditing = computed(() => editing.value?.row === props.row);
 
 /** 整格拖拽热区 / 放置目标（不用内置 dragRow 把手列） */
-const { dropPos, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(() => props.row);
+const { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(
+    () => props.row,
+    () => Boolean(props.treeExpanded)
+);
 const isDragging = computed(() => draggingRow.value === props.row);
 
 /** 进入编辑：预填当前名称，聚焦后选中主文件名（不含扩展名），与 VSCode 一致 */
@@ -55,7 +58,8 @@ function cancel() {
         :class="{
             'file-tree__name--editing': isEditing,
             'file-tree__name--dragging': isDragging,
-            'file-tree__name--into': dropPos === 'into',
+            'file-tree__name--subtree': inDropSubtree,
+            'file-tree__name--into': isDropTarget,
             'file-tree__name--before': dropPos === 'before',
             'file-tree__name--after': dropPos === 'after',
         }"
@@ -123,9 +127,12 @@ function cancel() {
 .file-tree__name--dragging {
     opacity: 0.5;
 }
-/* 落点提示：文件夹行高亮整格，文件行画插入线 */
+/* 落点提示：悬浮到文件夹上时高亮它自身与所有后代行（自身再深一档），文件行画插入线 */
+.file-tree__name--subtree {
+    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.1));
+}
 .file-tree__name--into {
-    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.14));
+    background: var(--vp-c-brand-soft, rgba(59, 130, 246, 0.22));
 }
 .file-tree__name--before {
     box-shadow: inset 0 2px 0 var(--vp-c-brand, #3b82f6);

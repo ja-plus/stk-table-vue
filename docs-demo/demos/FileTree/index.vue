@@ -18,6 +18,7 @@ import {
     cut,
     isFolder,
     paste,
+    registerExpand,
     registerReveal,
     removeNode,
     startEdit,
@@ -104,6 +105,9 @@ registerReveal((expandRow: FileTreeNode, scrollToRow?: FileTreeNode) => {
         if (index >= 0) tableARef.value?.scrollTo({ top: { index } });
     });
 });
+
+/** 悬浮超过 1s 自动展开（拖动中）：同样同步两张表 */
+registerExpand((row: FileTreeNode, expand: boolean) => setExpand(row, expand, tableARef.value));
 
 // ============ 右键菜单（ja-contextmenu，参考 VSCode 资源管理器） ============
 const contextMenu = new ContextMenu({

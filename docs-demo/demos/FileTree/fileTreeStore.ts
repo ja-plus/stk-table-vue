@@ -22,6 +22,9 @@ export const clipboard = ref<{ mode: 'cut' | 'copy'; row: FileTreeNode } | null>
  */
 export const draggingRow = ref<FileTreeNode | null>(null);
 
+/** 拖拽悬浮的目标文件夹：悬浮期间高亮它自身与所有后代行，放下 / 离开后清除 */
+export const dropTargetFolder = ref<FileTreeNode | null>(null);
+
 /** 数据引用换新，触发 StkTable 的 dataSource watch 重新展平 */
 export function bump() {
     treeData.value = treeData.value.slice();
@@ -29,6 +32,17 @@ export function bump() {
 
 export function isFolder(row?: FileTreeNode | null): boolean {
     return Array.isArray(row?.children);
+}
+
+/** 按名称字符串排序（资源管理器默认排序）：位置只由排序决定，同文件夹内不支持手动调序 */
+function sortByName(list?: FileTreeNode[]) {
+    list?.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** 节点所在的容器：父级的 children，根层为 treeData.value */
+function containerOf(node: FileTreeNode): FileTreeNode[] {
+    const parent = findParent(node);
+    return parent ? parent.children! : treeData.value;
 }
 
 /** 找节点的父节点；位于根层时返回 null */
@@ -55,6 +69,22 @@ export function isDescendant(ancestor: FileTreeNode, node: FileTreeNode): boolea
         return false;
     };
     return walk(ancestor.children);
+}
+
+/**
+ * 落点是否合法：只能跨文件夹拖动。
+ * - 落到自己身上、或把文件夹落进自己的子孙：不合法；
+ * - into：目标文件夹不能是源行当前的父级（同文件夹内不调整顺序）；
+ * - before / after：目标行的父级不能是源行当前的父级。
+ */
+export function canDrop(source: FileTreeNode, target: FileTreeNode, position: 'into' | 'before' | 'after'): boolean {
+    if (source === target) return false;
+    if (isDescendant(source, target)) return false;
+    if (position === 'into') {
+        if (!isFolder(target)) return false;
+        return findParent(source) !== target;
+    }
+    return findParent(target) !== findParent(source);
 }
 
 /** 同名去重：base 已存在时依次追加序号 */
@@ -87,6 +117,17 @@ export function registerReveal(fn: (expandRow: FileTreeNode, scrollToRow?: FileT
     revealRow = fn;
 }
 
+/** index.vue 注册的展开 / 折叠回调（悬浮自动展开用） */
+let expandRowFn: ((row: FileTreeNode, expand: boolean) => void) | null = null;
+export function registerExpand(fn: (row: FileTreeNode, expand: boolean) => void) {
+    expandRowFn = fn;
+}
+
+/** 展开 / 折叠一行（单元格内触发，经 index.vue 转到表格实例） */
+export function expandRow(row: FileTreeNode, expand: boolean) {
+    expandRowFn?.(row, expand);
+}
+
 /** 进入行内编辑；isNew 为 true 时取消编辑会删除该行（新建未提交） */
 export function startEdit(row: FileTreeNode, isNew = false) {
     editing.value = { row, isNew };
@@ -98,7 +139,7 @@ export function startRename(row: FileTreeNode) {
 }
 
 /**
- * 新建文件 / 文件夹（参考 VSCode）：追加到目录末尾并返回新节点，
+ * 新建文件 / 文件夹（参考 VSCode）：插入后按名称排序，并返回新节点，
  * 由调用方展开目录、滚动可见并进入行内重命名。
  */
 export function createNode(parent: FileTreeNode, kind: 'file' | 'folder', defaultName: string): FileTreeNode | null {
@@ -108,13 +149,14 @@ export function createNode(parent: FileTreeNode, kind: 'file' | 'folder', defaul
     const node: FileTreeNode = { name: uniqueName(children, defaultName) };
     if (kind === 'folder') node.children = [];
     children.push(node);
+    sortByName(children);
     bump();
     // 目标目录可能是折叠的：展开并滚动到新行，保证输入框可见
     revealRow?.(parent, node);
     return node;
 }
 
-/** 提交行内编辑：空名视为取消；与同级同名则阻止提交（保持编辑态） */
+/** 提交行内编辑：空名视为取消；与同级同名则阻止提交（保持编辑态）；改名后按名称重排 */
 export function commitEdit(row: FileTreeNode, name: string) {
     const current = editing.value;
     if (!current || current.row !== row) return;
@@ -127,6 +169,7 @@ export function commitEdit(row: FileTreeNode, name: string) {
     if (siblings.some(it => it !== row && it.name === trimmed)) return;
     editing.value = null;
     row.name = trimmed;
+    sortByName(siblings);
     bump();
 }
 
@@ -155,19 +198,20 @@ export function copy(row: FileTreeNode) {
     clipboard.value = { mode: 'copy', row };
 }
 
-/** 粘贴到目标文件夹：剪切为移动，复制为深拷贝（名字加 copy） */
+/** 粘贴到目标文件夹：剪切为移动，复制为深拷贝（名字加 copy）；落盘后按名称重排 */
 export function paste(target: FileTreeNode) {
     const clip = clipboard.value;
     if (!clip || !isFolder(target)) return;
     const children = (target.children ||= []);
     if (clip.mode === 'cut') {
-        if (clip.row === target || isDescendant(clip.row, target)) return;
+        if (!canDrop(clip.row, target, 'into')) return;
         moveNode(clip.row, target, 'into');
         clipboard.value = null;
     } else {
         const node = cloneNode(clip.row);
         node.name = uniqueName(children, copyName(node.name));
         children.push(node);
+        sortByName(children);
         bump();
     }
     revealRow?.(target);
@@ -175,27 +219,27 @@ export function paste(target: FileTreeNode) {
 
 /**
  * 移动节点（拖动行 / 剪切粘贴共用）：
- * - into：移入目标文件夹末尾；
+ * - into：移入目标文件夹；
  * - before / after：插入到目标行之前 / 之后，与目标同级。
- * 阻止把文件夹移入自己的子孙。
+ * 只能跨文件夹移动（同文件夹内位置由排序决定），落盘后按名称重排。
  */
 export function moveNode(source: FileTreeNode, target: FileTreeNode, how: 'into' | 'before' | 'after') {
-    if (source === target) return;
-    if (isDescendant(source, target)) return;
+    if (!canDrop(source, target, how)) return;
     // 先从原位置取出，再按目标位置插入（取出的 index 在取出后计算，避免同表移动时下标偏移）
-    const fromParent = findParent(source);
-    const fromList = fromParent ? fromParent.children! : treeData.value;
+    const fromList = containerOf(source);
     const fromIndex = fromList.indexOf(source);
     if (fromIndex > -1) fromList.splice(fromIndex, 1);
     if (how === 'into') {
         (target.children ||= []).push(source);
     } else {
-        const toParent = findParent(target);
-        const toList = toParent ? toParent.children! : treeData.value;
+        const toList = containerOf(target);
         const index = toList.indexOf(target);
         const at = index < 0 ? toList.length : how === 'after' ? index + 1 : index;
         toList.splice(at, 0, source);
     }
+    // 位置只由排序决定：源与目标容器都重排
+    sortByName(fromList);
+    sortByName(containerOf(source));
     if (clipboard.value?.row === source) clipboard.value = null;
     bump();
 }
@@ -207,8 +251,8 @@ export function moveNode(source: FileTreeNode, target: FileTreeNode, how: 'into'
 export function dropOn(target: FileTreeNode, position: 'into' | 'before' | 'after') {
     const source = draggingRow.value;
     draggingRow.value = null;
-    if (!source || source === target) return;
-    if (position === 'into' && !isFolder(target)) return;
+    dropTargetFolder.value = null;
+    if (!source || !canDrop(source, target, position)) return;
     moveNode(source, target, position);
     if (position === 'into') revealRow?.(target);
 }

@@ -4,7 +4,17 @@ export type FileTreeNode = {
     children?: FileTreeNode[];
 };
 
+/**
+ * 初始数据即按名称字符串排序（localeCompare）——
+ * 资源管理器里位置只由排序决定，新建 / 改名 / 移动后都会重新排一次。
+ */
 export const fileTreeData: FileTreeNode[] = [
+    {
+        name: 'docs-demo',
+        children: [{ name: 'advanced' }, { name: 'basic' }],
+    },
+    { name: 'package.json' },
+    { name: 'README.md' },
     {
         name: 'src',
         children: [
@@ -15,18 +25,12 @@ export const fileTreeData: FileTreeNode[] = [
                         name: 'components',
                         children: [{ name: 'SortIcon.vue' }, { name: 'TreeFoldIcon.vue' }, { name: 'TreeIndent.vue' }],
                     },
-                    { name: 'StkTable.vue' },
                     { name: 'index.ts' },
+                    { name: 'StkTable.vue' },
                 ],
             },
-            { name: 'VirtualTree.vue' },
             { name: 'style.less' },
+            { name: 'VirtualTree.vue' },
         ],
     },
-    {
-        name: 'docs-demo',
-        children: [{ name: 'basic' }, { name: 'advanced' }],
-    },
-    { name: 'package.json' },
-    { name: 'README.md' },
 ];

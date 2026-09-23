@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
     bump,
     cancelEdit,
+    canDrop,
     clipboard,
     commitEdit,
     copy,
@@ -12,12 +13,15 @@ import {
     cut,
     draggingRow,
     dropOn,
+    dropTargetFolder,
     editing,
+    expandRow,
     findParent,
     isDescendant,
     isFolder,
     moveNode,
     paste,
+    registerExpand,
     registerReveal,
     removeNode,
     startEdit,
@@ -33,6 +37,7 @@ beforeEach(() => {
     editing.value = null;
     clipboard.value = null;
     draggingRow.value = null;
+    dropTargetFolder.value = null;
 });
 
 /** 按名称找节点（demo 数据内名称唯一） */
@@ -49,6 +54,11 @@ function byName(name: string): FileTreeNode {
     return found;
 }
 
+/** 根层名称顺序（初始数据即按名称字符串排序） */
+function rootNames(): string[] {
+    return treeData.value.map(it => it.name);
+}
+
 describe('fileTreeStore 查询', () => {
     test('isFolder / findParent / isDescendant', () => {
         expect(isFolder(byName('src'))).toBe(true);
@@ -58,23 +68,105 @@ describe('fileTreeStore 查询', () => {
         expect(isDescendant(byName('src'), byName('StkTable.vue'))).toBe(true);
         expect(isDescendant(byName('StkTable'), byName('src'))).toBe(false);
     });
+
+    test('初始数据按名称字符串排序', () => {
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'StkTable.vue']);
+    });
 });
 
-describe('fileTreeStore 新建', () => {
-    test('新建文件追加到目录末尾，名称同名去重', () => {
-        const parent = byName('StkTable');
-        const node = createNode(parent, 'file', 'index.ts');
-        expect(node).not.toBeNull();
-        expect(parent.children?.map(it => it.name)).toEqual(['components', 'StkTable.vue', 'index.ts', 'index.ts 1']);
+describe('fileTreeStore 排序', () => {
+    test('改名后按名称自动重排', () => {
+        const row = byName('components');
+        startRename(row);
+        commitEdit(row, 'zzz');
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['index.ts', 'StkTable.vue', 'zzz']);
     });
 
-    test('新建文件夹带 children 数组（否则表格不认为可展开）', () => {
+    test('新建后按名称插入到排序位', () => {
+        const parent = byName('StkTable');
+        const node = createNode(parent, 'file', 'aaa.ts')!;
+        expect(node.name).toBe('aaa.ts');
+        expect(parent.children?.map(it => it.name)).toEqual(['aaa.ts', 'components', 'index.ts', 'StkTable.vue']);
+    });
+
+    test('新建同名去重后同样参与排序', () => {
+        const parent = byName('StkTable');
+        createNode(parent, 'file', 'index.ts');
+        expect(parent.children?.map(it => it.name)).toEqual(['components', 'index.ts', 'index.ts 1', 'StkTable.vue']);
+    });
+
+    test('移动后源容器与目标容器都重排', () => {
+        moveNode(byName('README.md'), byName('docs-demo'), 'into');
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README.md']);
+    });
+
+    test('粘贴后目标容器重排', () => {
+        copy(byName('README.md'));
+        paste(byName('docs-demo'));
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README copy.md']);
+    });
+});
+
+describe('fileTreeStore 只能跨文件夹拖动', () => {
+    test('同文件夹内 before / after 不合法', () => {
+        // package.json 与 README.md 同在根层
+        expect(canDrop(byName('package.json'), byName('README.md'), 'before')).toBe(false);
+        expect(canDrop(byName('package.json'), byName('README.md'), 'after')).toBe(false);
+    });
+
+    test('移入自己当前的父级不合法', () => {
+        expect(canDrop(byName('StkTable.vue'), byName('StkTable'), 'into')).toBe(false);
+    });
+
+    test('跨文件夹 before / after / into 合法', () => {
+        expect(canDrop(byName('README.md'), byName('index.ts'), 'before')).toBe(true);
+        expect(canDrop(byName('README.md'), byName('index.ts'), 'after')).toBe(true);
+        expect(canDrop(byName('README.md'), byName('docs-demo'), 'into')).toBe(true);
+    });
+
+    test('落到自己身上、落进自己的子孙、into 非文件夹均不合法', () => {
+        expect(canDrop(byName('src'), byName('src'), 'into')).toBe(false);
+        expect(canDrop(byName('src'), byName('StkTable.vue'), 'after')).toBe(false);
+        expect(canDrop(byName('src'), byName('StkTable'), 'into')).toBe(false);
+        expect(canDrop(byName('README.md'), byName('package.json'), 'into')).toBe(false);
+    });
+
+    test('同文件夹内拖动不产生任何变化', () => {
+        draggingRow.value = byName('package.json');
+        dropOn(byName('README.md'), 'after');
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(draggingRow.value).toBeNull();
+        expect(dropTargetFolder.value).toBeNull();
+    });
+
+    test('跨文件夹拖动：插到目标行两侧 / 移入文件夹', () => {
+        draggingRow.value = byName('README.md');
+        dropOn(byName('index.ts'), 'before');
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'README.md', 'StkTable.vue']);
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+
+        draggingRow.value = byName('package.json');
+        dropOn(byName('docs-demo'), 'into');
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'package.json']);
+        expect(rootNames()).toEqual(['docs-demo', 'src']);
+    });
+
+    test('moveNode 对非法落点直接返回', () => {
+        moveNode(byName('package.json'), byName('README.md'), 'after');
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        moveNode(byName('src'), byName('StkTable'), 'into');
+        expect(findParent(byName('src'))).toBeNull();
+    });
+});
+
+describe('fileTreeStore 新建 / 重命名 / 删除', () => {
+    test('新建文件追加并去重，新建文件夹带 children', () => {
         const parent = byName('StkTable');
         const folder = createNode(parent, 'folder', '新建文件夹')!;
-        expect(folder.name).toBe('新建文件夹');
         expect(isFolder(folder)).toBe(true);
         expect(folder.children).toEqual([]);
-        // 再次新建同名会去重
         expect(createNode(parent, 'folder', '新建文件夹')!.name).toBe('新建文件夹 1');
     });
 
@@ -89,23 +181,19 @@ describe('fileTreeStore 新建', () => {
         const node = createNode(parent, 'file', '新建文件')!;
         expect(reveal).toHaveBeenCalledWith(parent, node);
     });
-});
 
-describe('fileTreeStore 行内重命名', () => {
-    test('提交后改名', () => {
+    test('提交后改名；空名视为取消', () => {
         const row = byName('README.md');
         startRename(row);
         expect(editing.value).toEqual({ row, isNew: false });
         commitEdit(row, ' README.vue ');
         expect(row.name).toBe('README.vue');
         expect(editing.value).toBeNull();
-    });
 
-    test('空名视为取消，保持原值', () => {
-        const row = byName('README.md');
-        startRename(row);
-        commitEdit(row, '   ');
-        expect(row.name).toBe('README.md');
+        const row2 = byName('package.json');
+        startRename(row2);
+        commitEdit(row2, '   ');
+        expect(row2.name).toBe('package.json');
         expect(editing.value).toBeNull();
     });
 
@@ -122,56 +210,22 @@ describe('fileTreeStore 行内重命名', () => {
         startRename(renamed);
         cancelEdit();
         expect(renamed.name).toBe('README.md');
-        expect(editing.value).toBeNull();
 
         const parent = byName('docs-demo');
         const node = createNode(parent, 'file', '新建文件')!;
         startEdit(node, true);
         cancelEdit();
-        expect(parent.children?.map(it => it.name)).toEqual(['basic', 'advanced']);
+        expect(parent.children?.map(it => it.name)).toEqual(['advanced', 'basic']);
     });
-});
 
-describe('fileTreeStore 删除', () => {
-    test('删除文件与文件夹（连带子树）', () => {
+    test('删除文件与文件夹（连带子树），并清空相关剪贴板', () => {
+        cut(byName('README.md'));
         removeNode(byName('SortIcon.vue'));
         expect(byName('components').children?.map(it => it.name)).toEqual(['TreeFoldIcon.vue', 'TreeIndent.vue']);
         removeNode(byName('docs-demo'));
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'package.json', 'README.md']);
-    });
-
-    test('删除剪切中的行会清空剪贴板', () => {
-        const row = byName('README.md');
-        cut(row);
-        removeNode(row);
+        expect(rootNames()).toEqual(['package.json', 'README.md', 'src']);
+        removeNode(byName('README.md'));
         expect(clipboard.value).toBeNull();
-    });
-});
-
-describe('fileTreeStore 移动', () => {
-    test('移入文件夹末尾', () => {
-        moveNode(byName('README.md'), byName('docs-demo'), 'into');
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['basic', 'advanced', 'README.md']);
-        expect(findParent(byName('README.md'))?.name).toBe('docs-demo');
-    });
-
-    test('插入到目标文件之前 / 之后（同级）', () => {
-        moveNode(byName('package.json'), byName('README.md'), 'before');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'package.json', 'README.md']);
-        moveNode(byName('package.json'), byName('README.md'), 'after');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'README.md', 'package.json']);
-    });
-
-    test('同表内向前移动时下标不偏移', () => {
-        moveNode(byName('README.md'), byName('package.json'), 'before');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'README.md', 'package.json']);
-    });
-
-    test('阻止把文件夹移入自己的子孙', () => {
-        moveNode(byName('src'), byName('StkTable.vue'), 'before');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'package.json', 'README.md']);
-        moveNode(byName('src'), byName('StkTable'), 'into');
-        expect(findParent(byName('src'))).toBeNull();
     });
 });
 
@@ -179,8 +233,9 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
     test('剪切后粘贴为移动，并清空剪贴板', () => {
         cut(byName('README.md'));
         paste(byName('docs-demo'));
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['basic', 'advanced', 'README.md']);
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README.md']);
         expect(clipboard.value).toBeNull();
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
     });
 
     test('复制后粘贴为深拷贝，名称加 copy，改副本不影响原件', () => {
@@ -188,14 +243,14 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
         paste(byName('docs-demo'));
         const pasted = byName('StkTable copy');
         expect(isFolder(pasted)).toBe(true);
-        expect(pasted.children?.map(it => it.name)).toEqual(['components', 'StkTable.vue', 'index.ts']);
+        expect(pasted.children?.map(it => it.name)).toEqual(['components', 'index.ts', 'StkTable.vue']);
         pasted.children![1].name = 'changed.vue';
         expect(byName('StkTable.vue').name).toBe('StkTable.vue');
-        // 剪贴板保留，可再次粘贴（名称去重）
+        // 剪贴板保留，可再次粘贴（名称去重 + 排序）
         paste(byName('docs-demo'));
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual([
-            'basic',
             'advanced',
+            'basic',
             'StkTable copy',
             'StkTable copy 1',
         ]);
@@ -204,56 +259,45 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
     test('同名文件复制粘贴时 copy 后缀加在扩展名之前', () => {
         copy(byName('README.md'));
         paste(byName('docs-demo'));
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['basic', 'advanced', 'README copy.md']);
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README copy.md']);
     });
 
-    test('阻止把文件夹粘进自己的子孙', () => {
+    test('阻止把文件夹粘进自己的子孙，剪贴板保留', () => {
         cut(byName('src'));
         paste(byName('StkTable'));
         expect(findParent(byName('src'))).toBeNull();
         expect(clipboard.value?.mode).toBe('cut');
     });
+
+    test('粘贴到文件行上无效', () => {
+        copy(byName('README.md'));
+        paste(byName('package.json'));
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+    });
 });
 
-describe('fileTreeStore 整格拖拽落点', () => {
-    test('落点为文件夹：移入其中、清空拖拽源并揭示', () => {
+describe('fileTreeStore 拖拽状态与展开回调', () => {
+    test('dropOn 落点为文件夹时触发揭示回调', () => {
         const reveal = vi.fn();
         registerReveal(reveal);
         draggingRow.value = byName('README.md');
         dropOn(byName('docs-demo'), 'into');
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['basic', 'advanced', 'README.md']);
-        expect(draggingRow.value).toBeNull();
         expect(reveal).toHaveBeenCalledWith(byName('docs-demo'));
     });
 
-    test('落点为文件：按 before / after 插入到目标两侧', () => {
-        draggingRow.value = byName('package.json');
-        dropOn(byName('README.md'), 'after');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'README.md', 'package.json']);
-        draggingRow.value = byName('package.json');
-        dropOn(byName('README.md'), 'before');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'package.json', 'README.md']);
-    });
-
-    test('阻止把文件夹拖到自己的子孙行上', () => {
-        draggingRow.value = byName('src');
-        dropOn(byName('StkTable.vue'), 'after');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'package.json', 'README.md']);
-        expect(draggingRow.value).toBeNull();
+    test('expandRow 经注册的回转展开 / 折叠', () => {
+        const expand = vi.fn();
+        registerExpand(expand);
+        expandRow(byName('StkTable'), true);
+        expect(expand).toHaveBeenCalledWith(byName('StkTable'), true);
     });
 
     test('没有拖拽源 / 落点是自己时不动', () => {
         dropOn(byName('docs-demo'), 'into');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'docs-demo', 'package.json', 'README.md']);
+        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
         draggingRow.value = byName('docs-demo');
         dropOn(byName('docs-demo'), 'into');
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['basic', 'advanced']);
-    });
-
-    test('落点为文件夹却传 before / after 时按同级插入处理', () => {
-        draggingRow.value = byName('package.json');
-        dropOn(byName('docs-demo'), 'before');
-        expect(treeData.value.map(it => it.name)).toEqual(['src', 'package.json', 'docs-demo', 'README.md']);
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic']);
     });
 });
 
@@ -262,6 +306,6 @@ describe('fileTreeStore bump', () => {
         const before = treeData.value;
         bump();
         expect(treeData.value).not.toBe(before);
-        expect(treeData.value.map(it => it.name)).toEqual(before.map(it => it.name));
+        expect(rootNames()).toEqual(before.map(it => it.name));
     });
 });
