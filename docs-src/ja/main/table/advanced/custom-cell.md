@@ -10,6 +10,10 @@
 * `customCell` のルート要素をインライン要素（inline、inline-block、inline-flexなど）に設定することに**注意してください**。このレイアウトは**仮想リスト**で行の高さを引き伸ばす可能性があります。
 :::
 
+::: tip ツリーノード列 / 展開列
+`tree-node` / `expand` 列にも `customCell` を指定できます。組み込みの「レベル別のインデント + ガイド線」と「矢印 / 遅延ローディング」は `stkTreeIndent`・`stkFoldIcon` スロットとして渡され、`CustomCellProps` には `level` / `expandable` / `treeLoading` も追加されています。完全な例は[ファイル管理ツリー](/ja/demos/file-tree)を参照してください。
+:::
+
 ### Vue SFC での使用
 Vue SFC コンポーネントの受け渡しをサポートしています。Vueコンポーネントのpropsは `CustomCellProps` 型で特に定義する必要があります。
 
@@ -139,6 +143,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** 現在のツリーノード行が展開されているかどうか */
     treeExpanded?: boolean;
+    /** ツリー内のレベル（根は 0）。`tree-node` 列のみ値が入ります */
+    level?: number;
+    /** 展開可能かどうか（children 済み、または遅延モードで子ノード付きマーク）。`tree-node` 列のみ */
+    expandable?: boolean;
+    /** 子ノードを遅延読み込み中か。`tree-node` 列のみ */
+    treeLoading?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

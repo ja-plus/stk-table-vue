@@ -216,9 +216,16 @@
                                             :cellValue="item.row && item.row[col.dataIndex]"
                                             :expanded="item.row && item.row.__EXP__"
                                             :tree-expanded="item.row && item.row.__T_EXP__"
+                                            :level="col.type === 'tree-node' ? (item.row.__T_LV__ || 0) : undefined"
+                                            :expandable="col.type === 'tree-node' ? isTreeExpandable(item.row) : undefined"
+                                            :tree-loading="col.type === 'tree-node' ? Boolean(item.row.__T_LOADING__) : undefined"
                                         >
                                             <template #stkFoldIcon>
-                                                <TriangleIcon @click="triangleClick($event, item.row, col)"></TriangleIcon>
+                                                <!-- 不绑 click：展开切换统一由表体委托处理，避免一次点击触发两次切换 -->
+                                                <TreeFoldIcon :row="item.row" :col="col" :expandable="isTreeExpandable(item.row)"></TreeFoldIcon>
+                                            </template>
+                                            <template #stkTreeIndent>
+                                                <TreeIndent :level="item.row.__T_LV__ || 0" :show-guide="props.treeConfig?.showGuide" />
                                             </template>
                                             <template #stkDragIcon>
                                                 <DragHandle @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))" />
@@ -248,7 +255,7 @@
                                                 v-if="col.type === 'dragRow'"
                                                 @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))"
                                             />
-                                            <TriangleIcon v-else-if="col.type === 'expand'" />
+                                            <TreeFoldIcon v-else-if="col.type === 'expand'" :row="item.row" :col="col" />
                                             <span v-if="item.row[col.dataIndex] != null">{{ item.row[col.dataIndex] }}</span>
                                         </div>
                                     </td>
@@ -342,7 +349,8 @@ import { computed, nextTick, onMounted, provide, ref, shallowRef, toRaw, toRef, 
 import DragHandle from './components/DragHandle.vue';
 import SortIcon from './components/SortIcon.vue';
 import TreeNodeCell from './components/TreeNodeCell.vue';
-import TriangleIcon from './components/TriangleIcon.vue';
+import TreeFoldIcon from './components/TreeFoldIcon.vue';
+import TreeIndent from './components/TreeIndent.vue';
 import {
     CELL_KEY_SEPARATE,
     DEFAULT_ROW_ACTIVE_CONFIG,
@@ -1725,8 +1733,8 @@ function onCellClick(e: MouseEvent) {
     const colKey = getClosestColKey(e.target as HTMLElement);
     const col = tableHeaderLast.value.find(item => colKeyGen.value(item) === colKey);
     if (!col) return;
-    // Delegated triangle/fold icon click
-    if ((e.target as HTMLElement)?.closest('.stk-fold-icon')) {
+    // 委托命中展开控件：`data-stk-fold` 为公开契约，`.stk-fold-icon` 是内置件类名（历史隐性用法，继续匹配但不承诺兼容）
+    if ((e.target as HTMLElement)?.closest('[data-stk-fold], .stk-fold-icon')) {
         triangleClick(e, row, col);
         return;
     }

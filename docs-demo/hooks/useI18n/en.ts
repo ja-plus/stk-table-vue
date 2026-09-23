@@ -225,4 +225,20 @@ export const en = {
     splitCells: 'Split Cells',
     realtimeMergeTip: 'Drag to select multiple cells, then right-click to merge/split cells',
     mergedRegions: 'Merged regions',
+fileTreeTip:
+        'Right-click a row to rename / cut / copy / delete, right-click a folder to create a file or folder. Drag anywhere on a row to move it, and click a folder row to expand / collapse it.',
+    fileTreeSelfDrawn: 'Self-drawn expand control (folder icons, data-stk-fold) with full file management interactions',
+    fileTreeSlotVariant:
+        'Built-in arrow kept, only the folder label customized (rendering variant — file management interactions live in the first table)',
+    fileName: 'Name',
+    fileTagDir: 'dir',
+    fileMenuNewFile: 'New File',
+    fileMenuNewFolder: 'New Folder',
+    fileMenuRename: 'Rename',
+    fileMenuCut: 'Cut',
+    fileMenuCopy: 'Copy',
+    fileMenuPaste: 'Paste',
+    fileMenuDelete: 'Delete',
+    fileNewFileDefault: 'New File',
+    fileNewFolderDefault: 'New Folder',
 };

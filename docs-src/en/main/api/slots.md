@@ -11,6 +11,24 @@
 If you want to customize cells, please use the `StkTableColumn['customCell']` property.
 :::
 
+## Slots on the customCell side <Badge type="tip" text="^1.2.7" />
+
+The table below lists slots of **your customCell component** (not top-level StkTable slots). They are passed only when a column declares `customCell`, handing the built-in decorations back to you:
+
+| slots | built-in content | describe |
+| ---- | ---- | ---- |
+| `stkFoldIcon` | expand control: arrow / lazy loading spinner / leaf placeholder cell | Rendering it gives you the built-in look and the expanded-state rotation for free; skipping it means you draw the control yourself and must mark it with `data-stk-fold` |
+| `stkTreeIndent` | per-level indent cell + level guide lines (`treeConfig.showGuide`) | For `tree-node` columns; with `showGuide` off only the indent remains |
+| `stkDragIcon` | row drag handle | For `type: 'dragRow'` columns |
+
+::: warning Placement contract
+When you consume these slots, the cell root element needs `height: 100%; display: flex; align-items: center;`: guide lines are drawn inside the indent cell and stretch over the full row height, so a root that is not a full-height flex row will cut them short.
+:::
+
+::: tip Example
+See [File Management Tree](/en/demos/file-tree).
+:::
+
 
 ## customBottom
 

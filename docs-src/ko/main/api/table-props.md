@@ -535,8 +535,9 @@ treeConfig?: {
 :::
 
 ::: tip 들여쓰기 가이드 라인（`showGuide`）
-- 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그립니다. 기본 `false`, 비활성화 시 기존 들여쓰기만 유지됩니다.
-- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`). 다크 테마는 각각의 기본값을 합니다.
+- 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그립니다. 조상 슬롯만 그리며, 행 자신의 컨트롤 칸에는 선을 긋지 않습니다. 기본 `false`, 비활성화 시 기존 들여쓰기만 유지됩니다.
+- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`), `--tree-guide-mask`(가림 마스크, 기본 `none`는 실선. 세로 repeating 그라디언트로 교차시켜 점선 예: `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`). 다크 테마는 각각의 기본값을 합니다.
+- 더 넓은 화살표/아이콘으로 바꾸면 `--tree-indent-width`(기본 `16px`)를 재정의해 들여쓰기 칸·컨트롤 자리·가이드선 간격이 함께 커지도록 하세요. `tree-node` 열에 `customCell`로 셀 전체를 직접 그리는 방법(폴더 열기/닫기 아이콘 예시 포함)은 [파일 관리 트리](/ko/demos/file-tree)을 참조하세요.
 
 자세한 내용은 [트리형 - 들여쓰기 가이드 라인](/ko/main/table/basic/tree.html#들여쓰기-가이드-라인)을 참고하세요.
 :::

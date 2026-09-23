@@ -103,7 +103,7 @@ const treeConfig = {
 
 ## 层级引导线  <Badge type="tip" text="^1.2.7" />
 
-开启 `treeConfig.showGuide`（默认 `false`）后，`tree-node` 列会在每行的缩进区域按层级各绘制一根竖向引导线，帮助直观判断子行所属层级。关闭时保持既有纯缩进行为，不渲染任何引导线。
+开启 `treeConfig.showGuide`（默认 `false`）后，`tree-node` 列会在每行的缩进区域按层级各绘制一根竖向引导线，帮助直观判断子行所属层级。引导线只覆盖祖先各格（第 0 层到第 level-1 层），行自身的控件格不画线。关闭时保持既有纯缩进行为，不渲染任何引导线。
 
 ```ts
 const treeConfig = {
@@ -114,10 +114,17 @@ const treeConfig = {
 
 ::: tip 说明
 - 引导线为“每层级一根贯穿竖线”风格，并**非**精确的 last-child 截断 / T 型树连接线。
-- 可通过 CSS 变量调整外观：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`），暗色主题有各自默认值。
+- 可通过 CSS 变量调整外观：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`）、`--tree-guide-mask`（虚线遮罩，默认 `none` 即实线，设为纵向 repeating 渐变取交集画虚线，如 `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`），暗色主题有各自默认值。
+- 换更宽的箭头/图标时覆盖 `--tree-indent-width`（默认 `16px`），缩进格、控件占位格与引导线步长会一起缩放。`tree-node` 列配 `customCell` 整格自绘（含文件夹开合图标示例）见[文件管理树](/demos/file-tree)。
 :::
 
 <demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
+### 用 customCell 自定义树节点（替换展开图标）  <Badge type="tip" text="^1.2.7" />
+
+`tree-node` 列同样可以配 `customCell`：整格由你渲染，内置的「按层级缩进 + 引导线」与「箭头 / 懒加载 loading」分别经 `stkTreeIndent`、`stkFoldIcon` 两个插槽透传回来（注意它们是**你的单元格组件**的插槽，不是 StkTable 顶层插槽），由你决定渲染与否、摆在何处。
+
+可运行示例（自绘文件夹开 / 合图标、以及保留内置箭头只改标签两种）与摆放契约、代码骨架见 [文件管理树](/demos/file-tree)。
 
 ## 虚拟列表
 

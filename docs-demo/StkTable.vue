@@ -40,6 +40,7 @@ defineExpose({
         baseStkTableRef.value?.setTreeExpand(...p),
     reloadTreeNode: (...p: Parameters<BaseStkTableType['reloadTreeNode']>) =>
         baseStkTableRef.value?.reloadTreeNode(...p),
+    getRowIndex: (...p: Parameters<BaseStkTableType['getRowIndex']>) => baseStkTableRef.value?.getRowIndex(...p),
 });
 </script>
 <template>

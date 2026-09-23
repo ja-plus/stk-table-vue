@@ -535,8 +535,9 @@ See [Tree - Lazy Load Children](/en/main/table/basic/tree.html#lazy-load-childre
 :::
 
 ::: tip Indent Guide Lines (`showGuide`)
-- When enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation. Default `false`; when disabled the existing padding-only indentation is kept.
-- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`); the dark theme has its own defaults.
+- When enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation; lines only cover the ancestor slots; a row never draws a line through its own control slot. Default `false`; when disabled the existing padding-only indentation is kept.
+- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`), `--tree-guide-mask` (dash mask, default `none` = solid; set a vertical repeating gradient to intersect, e.g. `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`); the dark theme has its own defaults.
+- When swapping in a wider arrow/icon, override `--tree-indent-width` (default `16px`) so the indent cell, the control placeholder and the guide line pitch scale together. Rendering the whole cell through `customCell` on a `tree-node` column (folder open/close example included) is covered in [File Management Tree](/en/demos/file-tree).
 
 See [Tree - Indent Guide Lines](/en/main/table/basic/tree.html#indent-guide-lines).
 :::

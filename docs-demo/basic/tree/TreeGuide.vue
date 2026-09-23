@@ -11,7 +11,6 @@ const dataSource = getDataSource();
             defaultExpandAll: true,
             showGuide: true,
         }"
-        scrollbar
         :columns="columns"
         :data-source="dataSource"
     ></StkTable>

@@ -102,7 +102,7 @@ const treeConfig = {
 
 ## 들여쓰기 가이드 라인  <Badge type="tip" text="^1.2.7" />
 
-`treeConfig.showGuide`(기본 `false`)를 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그려 자식 행이 어떤 단계에 속하는지 직관적으로 파악할 수 있습니다. 비활성화 시 기존 들여쓰기만 유지되며 가이드 라인은 그려지지 않습니다.
+`treeConfig.showGuide`(기본 `false`)를 활성화하면 `tree-node` 열이 각 행의 들여쓰기 영역에 단계별로 세로 가이드 라인을 그려 자식 행이 어떤 단계에 속하는지 직관적으로 파악할 수 있습니다. 조상 슬롯(0..level-1)만 그리며, 행 자신의 컨트롤 칸에는 선을 긋지 않습니다. 비활성화 시 기존 들여쓰기만 유지되며 가이드 라인은 그려지지 않습니다.
 
 ```ts
 const treeConfig = {
@@ -113,11 +113,17 @@ const treeConfig = {
 
 ::: tip 참고
 - 가이드 라인은 “단계당 하나의 세로 선” 스타일이며, 정밀한 last-child 차단 / T자형 트리 커넥터가 **아닙니다**.
-- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`). 다크 테마는 각각의 기본값을 합니다.
+- CSS 변수로 외형을 조정할 수 있습니다: `--tree-guide-color`(색상), `--tree-guide-width`(선 두께, 기본 `1px`), `--tree-guide-mask`(가림 마스크, 기본 `none`는 실선. 세로 repeating 그라디언트로 교차시켜 점선 예: `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`). 다크 테마는 각각의 기본값을 합니다.
+- 더 넓은 화살표/아이콘으로 바꾸면 `--tree-indent-width`(기본 `16px`)를 재정의해 들여쓰기 칸·컨트롤 자리·가이드선 간격이 함께 커지도록 하세요. `tree-node` 열에 `customCell`로 셀 전체를 직접 그리는 방법(폴더 열기/닫기 아이콘 예시 포함)은 [파일 관리 트리](/ko/demos/file-tree)을 참조하세요.
 :::
 
 <demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
 
+### customCell로 트리 셀 커스터마이즈(펼침 아이콘 교체)  <Badge type="tip" text="^1.2.7" />
+
+`tree-node` 열에도 `customCell`을 지정할 수 있습니다. 셀 전체를 직접 렌더링하고, 내장 "레벨 들여쓰기 + 가이드선"과 "화살표 / 지연 로딩"은 각각 `stkTreeIndent`, `stkFoldIcon` 슬롯으로 받아 배치 여부와 위치를 직접 결정합니다(두 슬롯은 **사용자 셀 컴포넌트**의 슬롯이며 StkTable 최상위 슬롯이 아닙니다).
+
+실행 가능한 예시(폴더 열림 / 닫힘 아이콘을 직접 그리는 경우와 내장 화살표를 두고 레이블만 커스텀하는 경우)와 배치 계약, 코드 골격은 [파일 관리 트리](/ko/demos/file-tree)에 있습니다.
 ## 가상 리스트
 
 <demo vue="basic/tree/TreeVirtualList.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeVirtualList.vue"></demo>

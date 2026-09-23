@@ -10,6 +10,10 @@
 * `customCell` 的根元素请**谨慎**设置 `inline`/`inline-block`/`inline-flex` 等行内元素，此布局在**虚拟列表**中可能会撑开行高。
 :::
 
+::: tip 树节点列 / 展开列
+`tree-node` / `expand` 列同样可以配 `customCell`。内置的「按层级缩进 + 引导线」与「箭头 / 懒加载 loading」会经 `stkTreeIndent`、`stkFoldIcon` 插槽交回给你摆放，`CustomCellProps` 另提供 `level` / `expandable` / `treeLoading`。完整配方见[文件管理树](/demos/file-tree)。
+:::
+
 ### 通过vue SFC 使用
 支持传入vue SFC 组件，vue 组件的 props 需要用 `CustomCellProps` 类型特殊定义。
 
@@ -140,6 +144,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** 树节点当前行是否展开 */
     treeExpanded?: boolean;
+    /** 树中层级（根为 0）。仅 `tree-node` 列有值 */
+    level?: number;
+    /** 该行是否可展开（children 已存在，或懒加载标记有子节点）。仅 `tree-node` 列有值 */
+    expandable?: boolean;
+    /** 该行子节点是否正在懒加载。仅 `tree-node` 列有值 */
+    treeLoading?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

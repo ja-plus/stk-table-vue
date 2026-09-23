@@ -101,7 +101,7 @@ Rules:
 
 ## Indent Guide Lines  <Badge type="tip" text="^1.2.7" />
 
-When `treeConfig.showGuide` (default `false`) is enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation, making it easy to tell which level a child row belongs to. When disabled, the existing padding-only indentation is kept with no guide lines.
+When `treeConfig.showGuide` (default `false`) is enabled, the `tree-node` column draws one vertical guide line per level within each row's indentation, making it easy to tell which level a child row belongs to. Lines only cover the ancestor slots (level 0 .. level-1); a row never draws a line through its own control slot. When disabled, the existing padding-only indentation is kept with no guide lines.
 
 ```ts
 const treeConfig = {
@@ -112,10 +112,17 @@ const treeConfig = {
 
 ::: tip Notes
 - Guide lines use a "one continuous vertical line per level" style, **not** precise last-child truncation / T-shaped tree connectors.
-- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`); the dark theme has its own defaults.
+- Style via CSS variables: `--tree-guide-color` (color), `--tree-guide-width` (line width, default `1px`), `--tree-guide-mask` (dash mask, default `none` = solid; set a vertical repeating gradient to intersect, e.g. `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`); the dark theme has its own defaults.
+- When swapping in a wider arrow/icon, override `--tree-indent-width` (default `16px`) so the indent cell, the control placeholder and the guide line pitch scale together. Rendering the whole cell through `customCell` on a `tree-node` column (folder open/close example included) is covered in [File Management Tree](/en/demos/file-tree).
 :::
 
 <demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
+### Custom tree node cell via customCell (replace the expand icon)  <Badge type="tip" text="^1.2.7" />
+
+A `tree-node` column accepts `customCell` as well: you render the whole cell, while the built-in "per-level indent + guide lines" and "arrow / lazy loading" come back through the `stkTreeIndent` and `stkFoldIcon` slots (note these are slots of **your cell component**, not top-level StkTable slots), so you decide whether and where to render them.
+
+Runnable examples (self-drawn folder icons, and keeping the built-in arrow while customizing the label), the placement contract and a code skeleton live in [File Management Tree](/en/demos/file-tree).
 
 ## Virtual List
 

@@ -20,6 +20,29 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: PrivateRowDT['__EXP__'];
     /** if tree expanded */
     treeExpanded?: PrivateRowDT['__T_EXP__'];
+    /**
+     * 该行在树中的层级（根为 0）。仅 `tree-node` 列的自定义单元格有值。
+     * 自定义树单元格可据此换算缩进：`width: calc(var(--tree-indent-width) * level)`。
+     *
+     * en: Tree level of the row (root is 0). Only set for custom cells of a `tree-node` column.
+     * @version 1.2.7
+     */
+    level?: number;
+    /**
+     * 该行是否可展开（口径与内置一致：`children` 已存在或懒加载标记有子节点）。仅 `tree-node` 列有值。
+     * 叶子行应为假，此时内置展开控件位渲染占位格。
+     *
+     * en: Whether the row is expandable (same rule as built-in). Only set for a `tree-node` column.
+     * @version 1.2.7
+     */
+    expandable?: boolean;
+    /**
+     * 该行子节点是否正在懒加载。仅 `tree-node` 列有值；非懒加载模式恒为 `false`。
+     *
+     * en: Whether the row's children are being lazy-loaded. Only set for a `tree-node` column.
+     * @version 1.2.7
+     */
+    treeLoading?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
@@ -381,12 +404,17 @@ export type TreeConfig<T extends Record<string, any> = any> = {
     /**
      * 是否在 `tree-node` 列的缩进区域按层级绘制竖向引导线，帮助识别行所属层级。
      * 默认 `false`；关闭时 tree-node 单元格保持既有纯缩进（padding-left）行为，不渲染任何引导线。
-     * 引导线为“每层级一根贯穿竖线”风格（非精确的 last-child 截断/T 型连接线），
-     * 颜色/线宽可通过 CSS 变量 `--tree-guide-color` / `--tree-guide-width` 覆盖。
+     * 只覆盖祖先格（0..level-1）：行自身的控件格（箭头 / 占位格）一律不画线，故第 0 层无引导线。引导线为“每层级一根贯穿竖线”风格（非精确的 last-child 截断/T 型连接线），
+     * 颜色/线宽可通过 CSS 变量 `--tree-guide-color` / `--tree-guide-width` 覆盖；
+     * 虚线通过 `--tree-guide-mask` 覆盖（默认 `none` 即实线，设为纵向 repeating 渐变取交集，如
+     * `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`）。
      *
      * en: Draw vertical indent guide lines per level in the `tree-node` column. Default `false`; when disabled the
-     * cell keeps its legacy padding-only indentation with no guide lines. Style via `--tree-guide-color` /
-     * `--tree-guide-width` CSS variables.
+     * cell keeps its legacy padding-only indentation with no guide lines. Expandable rows draw ancestor slots
+     * (0..level-1) only: a row never draws a line through its own control slot (arrow / placeholder), so level 0
+     * has no guide line. Style via `--tree-guide-color` /
+     * `--tree-guide-width` CSS variables; dashed lines via `--tree-guide-mask` (default `none` = solid; set a
+     * vertical repeating gradient to intersect, e.g. `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`).
      * @version 1.2.7
      */
     showGuide?: boolean;

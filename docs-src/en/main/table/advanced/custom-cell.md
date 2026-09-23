@@ -10,6 +10,10 @@
 * Be **cautious** when setting root elements of `customCell` as inline elements (inline, inline-block, inline-flex, etc.), as this layout may stretch row heights in **virtual lists**.
 :::
 
+::: tip Tree node / expand columns
+A `tree-node` / `expand` column can also declare `customCell`. The built-in "per-level indent + guide lines" and "arrow / lazy loading" come back to you through the `stkTreeIndent` and `stkFoldIcon` slots, and `CustomCellProps` additionally provides `level` / `expandable` / `treeLoading`. The full recipe lives in [File Management Tree](/en/demos/file-tree).
+:::
+
 ### Using with Vue SFC
 Supports passing Vue SFC components. The props of the Vue component need to be specially defined with the `CustomCellProps` type.
 
@@ -140,6 +144,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** Whether the current tree node row is expanded */
     treeExpanded?: boolean;
+    /** Tree level (root is 0). Only set for a `tree-node` column */
+    level?: number;
+    /** Whether the row is expandable (children loaded, or marked as having children in lazy mode). Only set for a `tree-node` column */
+    expandable?: boolean;
+    /** Whether the row's children are being lazy-loaded. Only set for a `tree-node` column */
+    treeLoading?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

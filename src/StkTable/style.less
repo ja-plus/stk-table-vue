@@ -51,6 +51,8 @@
     /** 树形层级引导线颜色 / 线宽 */
     --tree-guide-color: #d0d1e0;
     --tree-guide-width: 1px;
+    /** 树形缩进的一格宽度：缩进、箭头/占位、引导线步长共用此值，换更宽箭头时整体同步 */
+    --tree-indent-width: 16px;
     /** 列宽拖动指示器颜色 */
     --col-resize-indicator-color: #87879c;
 
@@ -341,13 +343,9 @@
             }
         }
 
-        tbody td {
-            height: var(--row-height);
-
-            .table-cell-wrapper {
-                max-height: var(--row-height);
-                overflow: hidden;
-            }
+        tbody td .table-cell-wrapper {
+            max-height: var(--row-height);
+            overflow: hidden;
         }
 
         .padding-top-tr td {
@@ -491,6 +489,11 @@
 
     tbody tr {
         background-color: var(--td-bgc);
+        height: var(--row-height);
+    }
+
+    /* td 需显式 height，子元素的百分比高度才能解析（tr 撑高的 used height 不满足条件，.stk-tree-cell 的 height:100% 会回退 auto） */
+    tbody td {
         height: var(--row-height);
     }
 
@@ -746,9 +749,24 @@
         }
     }
 
+    /** 缩进格（层级缩进容器）：撑满行高并作为引导线的定位上下文，引导线恰好覆盖本格区域 */
+    .stk-tree-indent {
+        position: relative;
+        align-self: stretch;
+        flex-shrink: 0;
+        width: calc(var(--tree-indent-width) * var(--stk-tree-indent-cells, 0));
+    }
+
+    /** 叶子行的箭头占位格：与箭头同宽，保证标签起始位置对齐 */
+    .stk-fold-holder {
+        display: inline-flex;
+        width: var(--tree-indent-width);
+        flex-shrink: 0;
+    }
+
     .stk-fold-icon {
         display: inline-flex;
-        width: 16px;
+        width: var(--tree-indent-width);
         height: 16px;
         cursor: pointer;
         align-items: center;
@@ -772,7 +790,7 @@
     
     .stk-tree-loading-icon {
         display: inline-flex;
-        width: 16px;
+        width: var(--tree-indent-width);
         height: 16px;
         align-items: center;
         justify-content: center;
@@ -807,6 +825,7 @@
         left: 0;
         top: 0;
         bottom: 0;
+        width: 100%;
         pointer-events: none;
         background-image: repeating-linear-gradient(
             to right,
@@ -815,8 +834,11 @@
             var(--tree-guide-color) 4px,
             var(--tree-guide-color) calc(4px + var(--tree-guide-width)),
             transparent calc(4px + var(--tree-guide-width)),
-            transparent 16px
+            transparent var(--tree-indent-width)
         );
+        /* 虚线：纵向断续遮罩与背景的竖线取交集（多层 background 是并集，做不出虚线），默认 none 即实线 */
+        -webkit-mask-image: var(--tree-guide-mask, none);
+        mask-image: var(--tree-guide-mask, none);
     }
 
     td.cell-hover {

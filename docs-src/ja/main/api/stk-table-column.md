@@ -67,6 +67,10 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.cellValue row[col.dataIndex] の値
      * @param props.rowIndex 行インデックス
      * @param props.colIndex 列インデックス（0から）virtual-xでは、そうでない場合は仮想リスト内のインデックスを表します
+     * @param props.level / props.expandable / props.treeLoading tree-node 列のみ値が入ります：レベル（根は 0）、展開可能か、子ノードが遅延読み込み中か
+     *
+     * 注意：type: 'tree-node' / 'expand' 列に指定するとセル全体をあなたが描画します。組み込みのインデント + ガイド線と矢印はあなたのコンポーネントの
+     * stkTreeIndent / stkFoldIcon スロットとして渡され、完全に自作した展開コントロールには data-stk-fold の付与が必要です。
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**

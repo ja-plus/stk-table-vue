@@ -113,7 +113,7 @@ const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
 | `sortConfig` | `SortConfig<T>` | `{emptyToBottom:false, stringLocaleCompare:false, sortChildren:false}` | `defaultSort`、`multiSort`、`multiSortLimit`(默认 3) |
 | `seqConfig` | `{startIndex}` | `{}` | 序号列起始值，分页用 |
 | `expandConfig` | `{height}` | `{}` | 展开行高（虚拟模式需要） |
-| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel, lazy, loadMethod, hasChildField, onLoadError, showGuide}` | `{}` | 树形初始展开；`lazy`+`loadMethod` 开启子节点懒加载（`hasChildField` 默认 `'hasChildren'`）；`showGuide`（默认 `false`）在 tree-node 列按层级绘制竖向引导线（CSS 变量 `--tree-guide-color`/`--tree-guide-width`） |
+| `treeConfig` | `{defaultExpandAll, defaultExpandKeys, defaultExpandLevel, lazy, loadMethod, hasChildField, onLoadError, showGuide}` | `{}` | 树形初始展开；`lazy`+`loadMethod` 开启子节点懒加载（`hasChildField` 默认 `'hasChildren'`）；`showGuide`（默认 `false`）在 tree-node 列按层级绘制竖向引导线（CSS 变量 `--tree-guide-color`/`--tree-guide-width`，虚线用 `--tree-guide-mask`，默认 `none` 即实线） |
 
 ### 2.6 已废弃（新代码不要写）
 
@@ -146,7 +146,8 @@ const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
 
 ### 3.2 customCell 的 props
 
-- `customCell`: `{ row, col, cellValue, rowIndex, colIndex, expanded?, treeExpanded? }`
+- `customCell`: `{ row, col, cellValue, rowIndex, colIndex, expanded?, treeExpanded?, level?, expandable?, treeLoading? }`
+  - `level` / `expandable` / `treeLoading` 仅 `tree-node` 列有值，供整格自绘时使用（见坑 #15）
 - `customHeaderCell`: `{ col, rowIndex, colIndex }`
 - `customFooterCell`: `{ row, col, cellValue, rowIndex, colIndex }`
 
@@ -200,6 +201,18 @@ areaSelection: {
 | `expand` | `{ row, col }` | 展开行内容 |
 | `empty` | — | 空数据 |
 | `customBottom` | — | 表格下方区域（配合 IntersectionObserver 做无限加载） |
+
+### 5.1 customCell 侧插槽（不是 StkTable 顶层插槽）
+
+列配了 `customCell` 时，内置装饰以**你的单元格组件**的插槽传入：
+
+| slot | 内置内容 | 用途 |
+| --- | --- | --- |
+| `stkFoldIcon` | 箭头 / 懒加载 loading / 叶子占位格 | 渲染即得内置外观与展开态旋转（旋转类在 `<td>` 上：`tree-expanded` / `expanded`） |
+| `stkTreeIndent` | 按层级缩进格 + 层级引导线 | `tree-node` 列用；`showGuide` 关闭时只剩缩进 |
+| `stkDragIcon` | 行拖拽把手 | `type: 'dragRow'` 列用 |
+
+消费这些插槽时单元格根元素需 `height: 100%; display: flex; align-items: center;`：引导线画在缩进格内并撑满整行高，根元素不是撑满行高的 flex 行时线会被截断。
 
 ## 6. Expose（`tableRef.value.xxx()`）
 
@@ -293,6 +306,7 @@ const columns = [
 12. **Vue2.7 注意**：`<template v-for>` 的 `key` 位置与 Vue3 不同；部分写法需 `export default` 而非 `defineOptions`。
 13. **不要手动引样式**，入口已 `import './style.less'`。
 14. **不要用 `deep watch` 包 `dataSource` 来「修」第 2 条**——大数据量下开销极大，正确做法是换引用。
+15. **`tree-node` / `expand` 列配 `customCell` 时整格归你渲染**：自绘的展开控件必须带 `data-stk-fold`（表体按它委托切换，一次点击只切一次），否则点了没反应；不消费 `stkTreeIndent` / `stkFoldIcon` 插槽就没有缩进、引导线与 loading 占位。
 
 ## 9. 何时**不**该用本组件
 
@@ -323,6 +337,6 @@ const columns = [
 | 区域选取 / 高亮 / 列宽拖动 / 表头拖拽 / 行拖拽 / 自定义单元格 / 可变行高虚拟 | `/main/table/advanced/area-selection.md`、`highlight.md`、`column-resize.md`、`header-drag.md`、`row-drag.md`、`custom-cell.md`、`auto-height-virtual.md`、`custom-sort.md`（同目录） |
 | 内置单元格：筛选 / 编辑 / 多选 / 数字 / 涨跌 | `/main/table/advanced/custom-cells/filter-cell.md`、`editable-cell.md`、`checkbox-cell.md`、`number-cell.md`（同目录）；`/main/other/change.md` |
 | 横向滚动条 / 逐行滚动 / 性能优化 / 实验特性 / 右键菜单 / FAQ / Tips | `/main/table/basic/scrollbar.md`、`scroll-row-by-row.md`、`/main/other/optimize.md`、`experimental.md`、`contextmenu.md`、`qa.md`、`tips.md` |
-| Demo 页 | `/demos/virtual-list.md`、`huge-data.md`、`cell-edit.md`、`matrix.md`、`panel-tree.md`、`lazy-load.md`、`realtime-merge-cells.md` |
+| Demo 页 | `/demos/virtual-list.md`、`huge-data.md`、`cell-edit.md`、`matrix.md`、`panel-tree.md`、`lazy-load.md`、`realtime-merge-cells.md`、`file-tree.md`（文件管理树：`tree-node` 列配 `customCell`） |
 
 > 表中标「同目录」的表示沿用上一行的目录前缀。路径 404 时不要猜，回到 `/main/start/start.md` 从导航找入口。

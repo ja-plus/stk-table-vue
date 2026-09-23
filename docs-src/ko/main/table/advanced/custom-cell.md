@@ -10,6 +10,10 @@
 * `customCell`의 루트 요소에는 **신중하게** `inline`/`inline-block`/`inline-flex` 등의 인라인 요소를 설정하지 마세요. 이 레이아웃은 **가상 리스트**에서 행 높이를撑开할 수 있습니다.
 :::
 
+::: tip 트리 노드 열 / 펼침 열
+`tree-node` / `expand` 열에도 `customCell`을 지정할 수 있습니다. 내장 "레벨 들여쓰기 + 가이드선"과 "화살표 / 지연 로딩"은 `stkTreeIndent`, `stkFoldIcon` 슬롯으로 전달되며, `CustomCellProps`에 `level` / `expandable` / `treeLoading`이 추가됩니다. 전체 예시는 [파일 관리 트리](/ko/demos/file-tree)을 참조하세요.
+:::
+
 ### vue SFC를 사용하여
 vue SFC 컴포넌트를 전달하는 것을 지원하며, vue 컴포넌트의 props는 `CustomCellProps` 타입으로 특별히 정의해야 합니다.
 
@@ -141,6 +145,12 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** 트리 노드 현재 행이 전개되었는지 여부 */
     treeExpanded?: boolean;
+    /** 트리 단계(루트는 0). `tree-node` 열에서만 값이 있음 */
+    level?: number;
+    /** 펼침 가능 여부(children 이미 있음, 또는 지연 모드에서 자식 표시). `tree-node` 열만 해당 */
+    expandable?: boolean;
+    /** 자식 노드 지연 로딩 중 여부. `tree-node` 열만 해당 */
+    treeLoading?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

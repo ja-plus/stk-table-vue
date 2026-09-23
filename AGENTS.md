@@ -26,7 +26,7 @@ src/StkTable/                核心源码（唯一的实现）
 └── use*.ts                  按 feature 拆分的组合式逻辑 hook
 lib/                         构建产物（勿手改，由 vite build 生成）
 docs-src/                    文档站源码（vitepress，中/英/日/韩四语言）
-docs-demo/                   文档示例组件（*.vue）
+docs-demo/                   文档示例组件；带附属件的 demo 写成 XxxDemo/index.vue（见「代码约定」）
 test/                        单元测试（vitest）
 llms.txt                     ★面向 AI 的速查手册（随 npm 包发布，版本与本包绑定）
 scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
@@ -55,6 +55,8 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 - **通用类型参数**：`StkTableColumn<T>` / 组件 props 普遍使用泛型 `T extends Record<string, any>`，`T` 代表数据行（dataSource 元素）类型。
 - **列唯一键**：默认取 `dataIndex`，可显式指定 `key`。
 - **虚拟滚动宽度**：列配置中 `min-width = max-width = width`，保证计算宽度稳定（详见 `虚拟滚动表格开发.md`）。
+- **docs-demo 目录归属**：一个 demo 若带私有附属件（自定义单元格组件、mock 数据、工具函数等），demo 本体必须写成同名目录下的 `index.vue`，附属文件与它同目录，不散放到上层目录。例：`docs-demo/demos/FileTree/index.vue` + 同目录的 `NameCell.vue` / `TagNameCell.vue` / `useCellDrag.ts` / `fileTreeStore.ts` / `fileTreeData.ts`。一个页面需要多个变体时，把表格并排进同一个 `index.vue`，而不是拆成互相引用的多个 demo。文档里的 `<demo vue="...">` 与 github 链接需显式写到 `XxxDemo/index.vue`。
+- **示例页优先**：带自定义单元格等附属件的完整示例，放进 `docs-src/demos/*.md`（配套 `docs-demo/demos/XxxDemo/`，并在 `docs-src/.vitepress/src/config/{zh,en,ja,ko}.ts` 的 Demos 导航中登记），功能文档页里只保留一句指向该示例页的链接 + 必要契约说明，不内嵌 `<demo>`；先例见 `merge-cells.md` → `/demos/realtime-merge-cells`。新建示例页时四语言同步。
 
 ## 修改指引（改 API 的完整闭环）
 

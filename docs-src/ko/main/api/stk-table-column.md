@@ -67,6 +67,10 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.cellValue row[col.dataIndex] 값
      * @param props.rowIndex 행 인덱스
      * @param props.colIndex 열 인덱스 (0부터) virtual-x에서는, 그렇지 않으면 가상 리스트 내 인덱스를 나타냄
+     * @param props.level / props.expandable / props.treeLoading tree-node 열에서만 값이 있음: 단계(루트는 0), 펼침 가능 여부, 자식 지연 로딩 중 여부
+     *
+     * 참고: type: 'tree-node' / 'expand' 열에 지정하면 셀 전체를 사용자가 렌더링하며, 내장 들여쓰기+가이드선과 화살표는 사용자 컴포넌트의
+     * stkTreeIndent / stkFoldIcon 슬롯으로 전달됩니다. 완전히 직접 그리는 펼침 컨트롤에는 data-stk-fold를 붙여야 합니다.
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
