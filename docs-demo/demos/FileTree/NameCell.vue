@@ -1,51 +1,31 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed } from 'vue';
 import type { CustomCellProps } from '@/StkTable/types/index';
 import type { FileTreeNode } from './fileTreeData';
-import { cancelEdit, commitEdit, draggingRow, editing } from './fileTreeStore';
+import { draggingRow } from './fileTreeStore';
 import { useCellDrag } from './useCellDrag';
+import { useInlineRename } from './useInlineRename';
 
 const props = defineProps<CustomCellProps<FileTreeNode>>();
 
-const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
-const draft = ref('');
-
-/** 本行是否处于行内重命名 / 新建输入状态 */
-const isEditing = computed(() => editing.value?.row === props.row);
-
 /** 整格拖拽热区 / 放置目标（不用内置 dragRow 把手列） */
-const { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(
+const {
+    dropPos,
+    inDropSubtree,
+    isDropTarget,
+    onDragStart,
+    onDragEnd,
+    onDragOver,
+    onDragLeave,
+    onDrop,
+} = useCellDrag(
     () => props.row,
-    () => Boolean(props.treeExpanded)
+    () => Boolean(props.treeExpanded),
 );
 const isDragging = computed(() => draggingRow.value === props.row);
 
-/** 进入编辑：预填当前名称，聚焦后选中主文件名（不含扩展名），与 VSCode 一致 */
-function enterEdit() {
-    draft.value = String(props.cellValue ?? '');
-    nextTick(() => {
-        const el = inputRef.value;
-        if (!el) return;
-        el.focus();
-        const name = draft.value;
-        const dot = name.lastIndexOf('.');
-        el.setSelectionRange(0, dot > 0 ? dot : name.length);
-    });
-}
-
-// 两种进入编辑的时机：单元格先渲染后再开始编辑（watch），以及新建行渲染时已在编辑态（onMounted）
-watch(isEditing, value => value && enterEdit());
-onMounted(() => isEditing.value && enterEdit());
-
-function commit() {
-    if (!isEditing.value) return;
-    commitEdit(props.row, draft.value);
-}
-
-function cancel() {
-    if (!isEditing.value) return;
-    cancelEdit();
-}
+/** 行内重命名 / 新建输入框（第一张表） */
+const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A');
 </script>
 
 <template>
@@ -72,17 +52,33 @@ function cancel() {
         @drop="onDrop"
     >
         <!-- 内置「按层级缩进 + 引导线」：由本布局决定它摆在最左侧 -->
-        <slot name="stkTreeIndent" />
+        <slot name="stkTreeIndent"></slot>
 
         <!-- 目录：自绘展开控件，必须带 data-stk-fold（表体按该属性委托切换），开合两态由 treeExpanded 决定 -->
         <span v-if="expandable" class="file-tree__icon file-tree__icon--dir" data-stk-fold>
-            <svg v-if="treeExpanded" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+            <svg
+                v-if="treeExpanded"
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="currentColor"
+                aria-hidden="true"
+            >
                 <path
                     d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"
                 />
             </svg>
-            <svg v-else viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
-                <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+            <svg
+                v-else
+                viewBox="0 0 24 24"
+                width="15"
+                height="15"
+                fill="currentColor"
+                aria-hidden="true"
+            >
+                <path
+                    d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                />
             </svg>
         </span>
         <!-- 文件：占据同一格，但不是展开控件（不带 data-stk-fold） -->

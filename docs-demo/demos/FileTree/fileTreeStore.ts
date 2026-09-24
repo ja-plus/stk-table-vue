@@ -10,8 +10,11 @@ import { fileTreeData } from './fileTreeData';
  */
 export const treeData = ref<FileTreeNode[]>(fileTreeData);
 
-/** 行内重命名 / 新建输入框状态：row 为正在编辑的行，isNew 表示这是新建且未提交的行 */
-export const editing = ref<{ row: FileTreeNode; isNew: boolean } | null>(null);
+/**
+ * 行内重命名 / 新建输入框状态：row 为正在编辑的行，isNew 表示这是新建且未提交的行，
+ * table 记录是在哪张表触发的（两张表各有一份编辑态，不会同时出现两个输入框）。
+ */
+export const editing = ref<{ row: FileTreeNode; isNew: boolean; table: 'A' | 'B' } | null>(null);
 
 /** 剪切 / 复制剪贴板 */
 export const clipboard = ref<{ mode: 'cut' | 'copy'; row: FileTreeNode } | null>(null);
@@ -132,13 +135,13 @@ export function expandRow(row: FileTreeNode, expand: boolean) {
 }
 
 /** 进入行内编辑；isNew 为 true 时取消编辑会删除该行（新建未提交） */
-export function startEdit(row: FileTreeNode, isNew = false) {
-    editing.value = { row, isNew };
+export function startEdit(row: FileTreeNode, isNew = false, table: 'A' | 'B' = 'A') {
+    editing.value = { row, isNew, table };
 }
 
 /** 右键「重命名」 */
-export function startRename(row: FileTreeNode) {
-    startEdit(row);
+export function startRename(row: FileTreeNode, table: 'A' | 'B' = 'A') {
+    startEdit(row, false, table);
 }
 
 /**
@@ -184,7 +187,8 @@ export function cancelEdit() {
 }
 
 /** 删除节点（文件夹连带其子树） */
-export function removeNode(row: FileTreeNode) {
+export function removeNode(row?: FileTreeNode) {
+    if (!row) return;
     const parent = findParent(row);
     const list = parent ? parent.children! : treeData.value;
     const index = list.indexOf(row);
@@ -193,16 +197,19 @@ export function removeNode(row: FileTreeNode) {
     bump();
 }
 
-export function cut(row: FileTreeNode) {
+export function cut(row?: FileTreeNode) {
+    if (!row) return;
     clipboard.value = { mode: 'cut', row };
 }
 
-export function copy(row: FileTreeNode) {
+export function copy(row?: FileTreeNode) {
+    if (!row) return;
     clipboard.value = { mode: 'copy', row };
 }
 
 /** 粘贴到目标文件夹：剪切为移动，复制为深拷贝（名字加 copy）；落盘后按名称重排 */
-export function paste(target: FileTreeNode) {
+export function paste(target?: FileTreeNode) {
+    if (!target) return;
     const clip = clipboard.value;
     if (!clip || !isFolder(target)) return;
     const children = (target.children ||= []);

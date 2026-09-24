@@ -5,6 +5,7 @@ import type { CustomCellProps } from '@/StkTable/types/index';
 import type { FileTreeNode } from './fileTreeData';
 import { draggingRow } from './fileTreeStore';
 import { useCellDrag } from './useCellDrag';
+import { useInlineRename } from './useInlineRename';
 
 const props = defineProps<CustomCellProps<FileTreeNode>>();
 const { t } = useI18n();
@@ -15,6 +16,9 @@ const { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver
     () => Boolean(props.treeExpanded)
 );
 const isDragging = computed(() => draggingRow.value === props.row);
+
+/** 行内重命名 / 新建输入框（第二张表）：输入框同样在格子内部 */
+const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'B');
 </script>
 
 <template>
@@ -25,14 +29,15 @@ const isDragging = computed(() => draggingRow.value === props.row);
     <div
         class="tag-tree-cell"
         :class="{
+            'tag-tree-cell--editing': isEditing,
             'tag-tree-cell--dragging': isDragging,
             'tag-tree-cell--subtree': inDropSubtree,
             'tag-tree-cell--into': isDropTarget,
             'tag-tree-cell--before': dropPos === 'before',
             'tag-tree-cell--after': dropPos === 'after',
         }"
-        :title="String(cellValue ?? '')"
-        draggable="true"
+        :draggable="!isEditing"
+        :title="isEditing ? '' : String(cellValue ?? '')"
         @dragstart="onDragStart"
         @dragend="onDragEnd"
         @dragover="onDragOver"
@@ -41,8 +46,20 @@ const isDragging = computed(() => draggingRow.value === props.row);
     >
         <slot name="stkTreeIndent" />
         <slot name="stkFoldIcon" />
-        <span v-if="expandable" class="tag-tree-cell__tag">{{ t('fileTagDir') }}</span>
-        <span>{{ cellValue }}</span>
+        <span v-if="expandable && !isEditing" class="tag-tree-cell__tag">{{ t('fileTagDir') }}</span>
+        <span v-if="!isEditing">{{ cellValue }}</span>
+        <input
+            v-else
+            ref="inputRef"
+            v-model="draft"
+            class="tag-tree-cell__input"
+            type="text"
+            @keydown.enter.prevent="commit"
+            @keydown.esc.prevent="cancel"
+            @blur="commit"
+            @click.stop
+            @contextmenu.stop
+        />
     </div>
 </template>
 
@@ -52,6 +69,11 @@ const isDragging = computed(() => draggingRow.value === props.row);
     display: flex;
     align-items: center;
     user-select: none;
+}
+.tag-tree-cell--editing,
+.tag-tree-cell--editing input {
+    /* 重命名输入框需要正常选字 */
+    user-select: text;
 }
 .tag-tree-cell--dragging {
     opacity: 0.5;
@@ -75,5 +97,19 @@ const isDragging = computed(() => draggingRow.value === props.row);
     font-size: 10px;
     color: var(--fold-icon-color);
     border: 1px solid var(--border-color);
+}
+.tag-tree-cell__input {
+    flex: 1;
+    min-width: 0;
+    margin-left: 2px;
+    padding: 1px 4px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--vp-c-text-1, #333);
+    background: var(--vp-c-bg, #fff);
+    border: 1px solid var(--vp-c-brand, #3b82f6);
+    border-radius: 2px;
+    outline: none;
 }
 </style>

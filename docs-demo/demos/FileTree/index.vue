@@ -3,7 +3,6 @@ import { computed, nextTick, useTemplateRef } from 'vue';
 import { useData } from 'vitepress';
 import ContextMenu from 'ja-contextmenu';
 import { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
-import 'ja-contextmenu/styles/dark.css';
 import StkTable from '../../StkTable.vue';
 import { useI18n } from '../../hooks/useI18n/index';
 import type { StkTableColumn } from '@/StkTable/types/index';
@@ -25,6 +24,8 @@ import {
     startRename,
     treeData,
 } from './fileTreeStore';
+
+import 'ja-contextmenu/styles/dark.css';
 
 const { t } = useI18n();
 const { isDark } = useData();
@@ -110,6 +111,9 @@ registerReveal((expandRow: FileTreeNode, scrollToRow?: FileTreeNode) => {
 registerExpand((row: FileTreeNode, expand: boolean) => setExpand(row, expand, tableARef.value));
 
 // ============ 右键菜单（ja-contextmenu，参考 VSCode 资源管理器） ============
+/** 最近一次在哪张表上右键：菜单动作（重命名 / 新建）据此把编辑态落到对应表 */
+let activeTable: 'A' | 'B' = 'A';
+
 const contextMenu = new ContextMenu({
     theme: () => (isDark.value ? 'dark' : ('' as any)),
 });
@@ -130,29 +134,34 @@ const menuOption: MenuOption<FileTreeNode> = {
         { label: () => t('fileMenuCopy'), onclick: (_e, row) => copy(row) },
         {
             label: () => t('fileMenuPaste'),
-            show: row => isFolder(row) && Boolean(clipboard.value),
+            // 常驻显示：只有文件夹能作粘贴目标，文件行 / 空剪贴板时置灰
+            disabled: row => !isFolder(row) || !clipboard.value,
             onclick: (_e, row) => paste(row),
         },
         { type: 'hr' },
-        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row) },
+        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row, activeTable) },
         { type: 'hr' },
         { label: () => t('fileMenuDelete'), onclick: (_e, row) => removeNode(row) },
     ],
 };
 const menu = contextMenu.create(menuOption);
 
-function onRowMenu(e: MouseEvent, row: FileTreeNode) {
-    // 右键即选中该行，与 VSCode 一致
-    tableARef.value?.setCurrentRow(row);
+/** 两张表共用一套菜单：记录来源表，并选中该行 */
+function onRowMenu(e: MouseEvent, row: FileTreeNode, table: 'A' | 'B') {
+    activeTable = table;
+    (table === 'A' ? tableARef.value : tableBRef.value)?.setCurrentRow(row);
     menu.show(e, row);
 }
+const onRowMenuA = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'A');
+const onRowMenuB = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'B');
 
-/** 新建文件 / 文件夹：追加到目录末尾，展开、滚动可见，并直接进入行内重命名 */
-function onCreate(parent: FileTreeNode, kind: 'file' | 'folder') {
+/** 新建文件 / 文件夹：插入到排序位，展开、滚动可见，并直接进入行内重命名 */
+function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
+    if (!parent) return;
     const defaultName = kind === 'folder' ? t('fileNewFolderDefault') : t('fileNewFileDefault');
     const node = createNode(parent, kind, defaultName);
     if (!node) return;
-    nextTick(() => startEdit(node, true));
+    nextTick(() => startEdit(node, true, activeTable));
 }
 </script>
 
@@ -168,7 +177,7 @@ function onCreate(parent: FileTreeNode, kind: 'file' | 'folder') {
         :columns="folderColumns"
         :data-source="treeData"
         :row-class-name="rowClassName"
-        @row-menu="onRowMenu"
+        @row-menu="onRowMenuA"
         @cell-click="onCellClickA"
         @toggle-tree-expand="onToggleTreeExpand"
     ></StkTable>
@@ -181,6 +190,8 @@ function onCreate(parent: FileTreeNode, kind: 'file' | 'folder') {
         :tree-config="treeConfig"
         :columns="tagColumns"
         :data-source="treeData"
+        :row-class-name="rowClassName"
+        @row-menu="onRowMenuB"
         @cell-click="onCellClickB"
         @toggle-tree-expand="onToggleTreeExpand"
     ></StkTable>

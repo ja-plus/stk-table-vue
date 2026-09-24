@@ -125,6 +125,24 @@ async function clickMenuItem(wrapper: any, tableIndex: number, rowText: string, 
     return menuEl!;
 }
 
+/** 打开指定表某行的右键菜单，返回菜单元素 */
+async function openMenu(wrapper: any, tableIndex: number, rowText: string) {
+    const tr = rowOf(wrapper, tableIndex, rowText);
+    expect(tr, `row "${rowText}" not found`).toBeTruthy();
+    await tr.trigger('contextmenu');
+    const menus = Array.from(document.querySelectorAll('.ja-contextmenu')) as HTMLElement[];
+    const menuEl = menus.reverse().find(m => m.querySelectorAll('li').length > 0);
+    expect(menuEl, 'context menu not shown').toBeTruthy();
+    return menuEl!;
+}
+
+/** 取菜单项元素 */
+function menuItem(menuEl: HTMLElement, itemText: string): HTMLElement {
+    const item = Array.from(menuEl.querySelectorAll('li')).find(li => li.textContent?.trim() === itemText);
+    expect(item, `menu item "${itemText}" not found`).toBeTruthy();
+    return item as HTMLElement;
+}
+
 describe('文件管理树 demo', () => {
     test('单列 + headless：无表头、只有名称列、无内置拖拽把手', async () => {
         const wrapper = mount(FileTreeDemo);
@@ -395,6 +413,51 @@ describe('文件管理树 demo', () => {
         await dragRowOnto(wrapper, 'src', 'StkTable.vue', 'after');
         expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(findParentOf('src')).toBeNull();
+    });
+
+    test('右键菜单：粘贴项常驻显示，只有文件夹行可用', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        // 剪贴板为空时，文件夹行上的粘贴也是置灰
+        let menuEl = await openMenu(wrapper, 0, 'docs-demo');
+        expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(true);
+        // 复制之后：文件夹行可用
+        await clickMenuItem(wrapper, 0, 'README.md', '复制');
+        expect(clipboard.value?.mode).toBe('copy');
+        menuEl = await openMenu(wrapper, 0, 'docs-demo');
+        expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(false);
+        // 文件行：可见但置灰（文件不能作为粘贴目标）
+        menuEl = await openMenu(wrapper, 0, 'package.json');
+        expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(true);
+    });
+
+    test('第二张表也有完整右键菜单：复制 / 粘贴 / 重命名都生效', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        // 在第二张表复制
+        await clickMenuItem(wrapper, 1, 'README.md', '复制');
+        expect(clipboard.value?.mode).toBe('copy');
+        // 在第二张表粘贴到文件夹
+        await clickMenuItem(wrapper, 1, 'docs-demo', '粘贴');
+        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README copy.md']);
+        // 在第二张表重命名：输入框只出现在第二张表
+        await clickMenuItem(wrapper, 1, 'package.json', '重命名');
+        const inputsA = wrapper.findAll('.stk-table')[0].findAll('input.file-tree__rename-input');
+        const inputsB = wrapper.findAll('.stk-table')[1].findAll('input.tag-tree-cell__input');
+        expect(inputsA.length).toBe(0);
+        expect(inputsB.length).toBe(1);
+        await inputsB[0].setValue('pnpm-lock.yaml');
+        await inputsB[0].trigger('keydown.enter');
+        await flush();
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'pnpm-lock.yaml', 'README.md']);
+    });
+
+    test('第一张表重命名时输入框只出现在第一张表', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        await clickMenuItem(wrapper, 0, 'README.md', '重命名');
+        expect(wrapper.findAll('.stk-table')[0].findAll('input.file-tree__rename-input').length).toBe(1);
+        expect(wrapper.findAll('.stk-table')[1].findAll('input.tag-tree-cell__input').length).toBe(0);
     });
 
     test('右键删除文件与文件夹', async () => {

@@ -10,7 +10,7 @@ The first table (self-drawn folder / file icons) assembles a full explorer-style
 
 - **Only the first level expanded by default**: `treeConfig.defaultExpandLevel = 1` instead of `defaultExpandAll`.
 - **Click a row to expand / collapse**: listen to `cell-click` and flip the state with `setTreeExpand(row, { expand })` when a folder row is hit. Clicks that land on the expand control never emit `cell-click`, so nothing toggles twice; clicks on the inline rename input must be excluded yourself.
-- **Context menu**: show [ja-contextmenu](https://github.com/ja-plus/ja-contextmenu) from the `row-menu` event. Folder rows additionally offer "New File / New Folder", and "Paste" only appears on folder rows while the clipboard holds something.
+- **Context menu**: show [ja-contextmenu](https://github.com/ja-plus/ja-contextmenu) from the `row-menu` event. "New File / New Folder" only appear on folder rows; "Paste" is always listed but only enabled on folder rows while the clipboard holds something — it stays greyed out on file rows, so it is always discoverable after a copy or cut.
 - **Inline rename**: picking "Rename" renders an `<input>` right inside the name cell — no popup (like VSCode). The basename (without extension) is selected on focus; Enter or blur commits, Esc cancels; an empty name counts as cancel, a duplicate sibling name blocks commit, and a not-yet-committed new row is removed on cancel.
 - **New file / folder**: inserted at its sorted position and immediately put into inline rename — a placeholder row until committed.
 - **Order comes from sorting only** (like VSCode): each level's `children` is sorted with folders first, then by name with `localeCompare`, so rows inside one folder cannot be reordered by dragging. Creating, renaming, moving and pasting all re-sort, and a renamed row jumps to its new sorted position.
@@ -19,7 +19,7 @@ The first table (self-drawn folder / file icons) assembles a full explorer-style
 - **Drop highlight**: while hovering a folder, the shared `dropTargetFolder` highlights that folder and every row under it (the folder itself one shade deeper), while file-row drops draw an insertion line; the highlight disappears on drop or leave. A row being renamed temporarily drops `draggable` so the input stays selectable.
 - **Cut / copy / paste**: the clipboard only stores a row reference. Cut rows are dimmed; on paste a cut row is moved and a copied row is deep-cloned (name gets ` copy`), both re-sorted afterwards.
 
-The second table reuses the same data for another placement: keep the built-in arrow and guide lines (render the `stkFoldIcon` slot) and only add a label to folder names. It is a rendering comparison only — the file management interactions live in the first table.
+The second table reuses the same data for another placement: keep the built-in arrow and guide lines (render the `stkFoldIcon` slot) and only add a label to folder names. Both tables share one menu and one data set, so the interactions are identical; the inline edit state is scoped per table (`editing.table`), so the input only ever appears in the table you right-clicked.
 
 ## Contract
 

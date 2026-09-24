@@ -194,7 +194,7 @@ describe('fileTreeStore 新建 / 重命名 / 删除', () => {
     test('提交后改名；空名视为取消', () => {
         const row = byName('README.md');
         startRename(row);
-        expect(editing.value).toEqual({ row, isNew: false });
+        expect(editing.value).toEqual({ row, isNew: false, table: 'A' });
         commitEdit(row, ' README.vue ');
         expect(row.name).toBe('README.vue');
         expect(editing.value).toBeNull();
