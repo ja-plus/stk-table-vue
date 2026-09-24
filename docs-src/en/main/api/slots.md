@@ -25,6 +25,10 @@ The table below lists slots of **your customCell component** (not top-level StkT
 When you consume these slots, the cell root element needs `height: 100%; display: flex; align-items: center;`: guide lines are drawn inside the indent cell and stretch over the full row height, so a root that is not a full-height flex row will cut them short.
 :::
 
+::: tip Public tree components
+You can also import `StkTreeCell` as a complete `customCell`, or compose `StkTreeIndent` and `StkTreeFoldIcon` from `stk-table-vue`. The fold control is driven by the public `expandable`, `loading`, and `expanded` states.
+:::
+
 ::: tip Example
 See [File Management Tree](/en/demos/file-tree).
 :::

@@ -14,6 +14,22 @@
 A `tree-node` / `expand` column can also declare `customCell`. The built-in "per-level indent + guide lines" and "arrow / lazy loading" come back to you through the `stkTreeIndent` and `stkFoldIcon` slots, and `CustomCellProps` additionally provides `level` / `expandable` / `treeLoading`. The full recipe lives in [File Management Tree](/en/demos/file-tree).
 :::
 
+### Public tree cell components
+
+The package exports three reusable components:
+
+- `StkTreeCell`: a complete tree cell driven by the `customCell` context, ready to assign to a `tree-node` column.
+- `StkTreeIndent`: renders per-level indentation and optional guide lines from `level`; `offset` (a CSS length) **shifts the guide lines only**, to re-align them with a custom expand icon (custom icons must share one width when used on both sides of `StkTreeIndent`). The built-in arrow centers `4px` inside the cell and the lines align with it by default; a centered icon of the same width centers at half of `--tree-indent-width`, so pass `offset="4px"` (the difference).
+- `StkTreeFoldIcon`: renders the arrow, loading state, or leaf placeholder from `expandable`, `loading`, and `expanded`.
+
+```ts
+import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+
+const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+```
+
+`StkTreeFoldIcon` is a controlled visual component. Inside `StkTable`, expandable states automatically receive `data-stk-fold` for delegated toggling, while loading states do not. Override `--tree-indent-width`, `--tree-guide-color`, `--tree-guide-width`, or `--tree-guide-mask` for styling.
+
 ### Using with Vue SFC
 Supports passing Vue SFC components. The props of the Vue component need to be specially defined with the `CustomCellProps` type.
 
@@ -71,6 +87,8 @@ export type DataType = {
 :::
 
 <demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
+
+<demo vue="advanced/custom-cell/PublicTreeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/PublicTreeCell/index.vue"></demo>
 
 ### Using with Render Function h
 For simple modifications, using the render function directly is more convenient.
@@ -144,12 +162,14 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** Whether the current tree node row is expanded */
     treeExpanded?: boolean;
-    /** Tree level (root is 0). Only set for a `tree-node` column */
+    /** Tree level (root is 0). Always `0` for non-tree data */
     level?: number;
-    /** Whether the row is expandable (children loaded, or marked as having children in lazy mode). Only set for a `tree-node` column */
+    /** Whether the row is expandable (children loaded, or marked as having children in lazy mode). Always `false` for non-tree data */
     expandable?: boolean;
-    /** Whether the row's children are being lazy-loaded. Only set for a `tree-node` column */
+    /** Whether the row's children are being lazy-loaded. Always `false` for non-tree data and non-lazy modes */
     treeLoading?: boolean;
+    /** Whether to draw level guide lines per `treeConfig.showGuide`. Only set for `tree-node` columns */
+    showGuide?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

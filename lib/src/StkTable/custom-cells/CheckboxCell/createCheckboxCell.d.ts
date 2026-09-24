@@ -57,6 +57,10 @@ export declare function createCheckboxCell<T extends Record<string, any> = any>(
         colIndex: number;
         expanded?: import('../..').StkTableColumn<any> | undefined;
         treeExpanded?: boolean | undefined;
+        level?: number | undefined;
+        expandable?: boolean | undefined;
+        treeLoading?: boolean | undefined;
+        showGuide?: boolean | undefined;
     }, () => import('vue').VNode<import('vue').RendererNode, import('vue').RendererElement, {
         [key: string]: any;
     }>, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<{
@@ -67,6 +71,10 @@ export declare function createCheckboxCell<T extends Record<string, any> = any>(
         colIndex: number;
         expanded?: import('../..').StkTableColumn<any> | undefined;
         treeExpanded?: boolean | undefined;
+        level?: number | undefined;
+        expandable?: boolean | undefined;
+        treeLoading?: boolean | undefined;
+        showGuide?: boolean | undefined;
     }> & Readonly<{}>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, true, {}, any>>;
     CheckboxAllCell: () => import('vue').Raw<import('vue').DefineComponent<{
         col?: any;

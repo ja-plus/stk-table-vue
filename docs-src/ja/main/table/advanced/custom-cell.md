@@ -14,6 +14,22 @@
 `tree-node` / `expand` 列にも `customCell` を指定できます。組み込みの「レベル別のインデント + ガイド線」と「矢印 / 遅延ローディング」は `stkTreeIndent`・`stkFoldIcon` スロットとして渡され、`CustomCellProps` には `level` / `expandable` / `treeLoading` も追加されています。完全な例は[ファイル管理ツリー](/ja/demos/file-tree)を参照してください。
 :::
 
+### 公開ツリーセルコンポーネント
+
+パッケージのエントリーポイントから、次の3つの再利用可能なコンポーネントをインポートできます。
+
+- `StkTreeCell`：`customCell` コンテキストで動作する完全なツリーセル。`tree-node` 列にそのまま指定できます。
+- `StkTreeIndent`：`level` に応じたインデントと任意のガイド線を描画します。`offset`（CSS 長さ）は**ガイド線だけを平行移動**し、独自の展開アイコンの中心に合わせるために使います（両側のアイコン幅を揃えてください）。組み込みの矢印の中心はセル内 4px で、ガイド線は既定でそこに揃います。中央寄せの同幅アイコンでは中心が `--tree-indent-width` の半分になるため、`offset="4px"`（差分）を渡します。
+- `StkTreeFoldIcon`：`expandable`、`loading`、`expanded` に応じて矢印、ローディング、末端行のプレースホルダを描画します。
+
+```ts
+import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+
+const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+```
+
+`StkTreeFoldIcon` は状態を外部から与える表示コンポーネントです。`StkTable` 内では展開可能な状態に `data-stk-fold` が付き、委譲処理で展開されます。ローディング中はこの属性を持ちません。スタイルは `--tree-indent-width`、`--tree-guide-color`、`--tree-guide-width`、`--tree-guide-mask` で変更できます。
+
 ### Vue SFC での使用
 Vue SFC コンポーネントの受け渡しをサポートしています。Vueコンポーネントのpropsは `CustomCellProps` 型で特に定義する必要があります。
 
@@ -70,6 +86,8 @@ export type DataType = {
 :::
 
 <demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
+
+<demo vue="advanced/custom-cell/PublicTreeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/PublicTreeCell/index.vue"></demo>
 
 ### Render関数 h での使用
 単純な変更の場合、レンダリング関数を直接使用する方が便利です。
@@ -143,12 +161,14 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** 現在のツリーノード行が展開されているかどうか */
     treeExpanded?: boolean;
-    /** ツリー内のレベル（根は 0）。`tree-node` 列のみ値が入ります */
+    /** ツリー内のレベル（根は 0）。非ツリーデータでは常に 0 */
     level?: number;
-    /** 展開可能かどうか（children 済み、または遅延モードで子ノード付きマーク）。`tree-node` 列のみ */
+    /** 展開可能かどうか（children 済み、または遅延モードで子ノード付きマーク）。非ツリーデータでは常に false */
     expandable?: boolean;
-    /** 子ノードを遅延読み込み中か。`tree-node` 列のみ */
+    /** 子ノードを遅延読み込み中か。非ツリーデータと非遅延モードでは常に false */
     treeLoading?: boolean;
+    /** `treeConfig.showGuide` に従って階層ガイド線を描画するか。`tree-node` 列のみ値が入ります */
+    showGuide?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

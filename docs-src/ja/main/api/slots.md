@@ -25,6 +25,10 @@
 これらのスロットを使う場合、セルのルート要素に `height: 100%; display: flex; align-items: center;` を指定してください。ガイド線はインデントマスの中に描画され、行の高さいっぱいに伸びるため、行高を埋める flex 行でないと線が途中で切れます。
 :::
 
+::: tip 公開ツリーコンポーネント
+`StkTreeCell` を完全な `customCell` として、または `StkTreeIndent` と `StkTreeFoldIcon` を組み合わせて `stk-table-vue` からインポートできます。展開コントロールは公開状態 `expandable`、`loading`、`expanded` で制御します。
+:::
+
 ::: tip 使用例
 [ファイル管理ツリー](/ja/demos/file-tree) を参照してください。
 :::

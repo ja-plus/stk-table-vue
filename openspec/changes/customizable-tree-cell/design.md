@@ -41,7 +41,7 @@
 实现落地形态（实现期确定）：箭头件命名为 `TreeFoldIcon.vue`，三态共用**一个**元素（`stk-fold-icon` / `stk-tree-loading-icon` / `stk-fold-holder`），以便作为单根组件传进 customCell 的插槽（多根模板对 Vue 2.7 目标不安全）。叶子行的占位由「给 label 加 inline `padding-left:16px`」改为「内置件输出一个占位格元素」，使该件自包含可透传；代价是内置树单元格 DOM 多一个空 span，视觉与几何不变（引导线格数计算未变），无测试断言过这段 padding。原 `TriangleIcon.vue` 随之删除（未对外导出，箭头样式仍由 `.stk-fold-icon` 类承载，类名保持兼容）。
 
 **D5 · `CustomCellProps` 增量：`level` / `expandable` / `treeLoading`。**
-命名对齐既有 `treeExpanded`。仅对 `tree-node` 列注入实义值，`expand` 列按既有语义保留 `expanded`，其余列这三个字段无值（MUST NOT 变成必填，避免既有 customCell 类型报错）。用途是给「两块插槽都不渲染、整格自绘」的使用方。
+命名对齐既有 `treeExpanded`。对所有列都注入 `level` / `expandable` / `treeLoading`：非树形数据取中性默认值（`0` / `false` / `false`），避免使用方写 `undefined` 兜底；`expand` 列按既有语义保留 `expanded`（MUST NOT 变成必填，避免既有 customCell 类型报错）。字段只承载公开状态，不回传任何私有行字段。用途是给「两块插槽都不渲染、整格自绘」的使用方。
 
 **D6 · 把 16px 收成 CSS 变量 `--tree-indent-width`（默认 `16px`）。**
 自绘更大箭头的使用方需要能同步缩进与引导线节拍，否则箭头宽度 ≠ 引导线格宽，层级线必然错位。变量同时用于 `repeating-linear-gradient` 的步长与内置件的缩进计算，并入既有「引导线样式可主题覆盖」的主题体系（与 `--tree-guide-color` / `--tree-guide-width` 同族）。

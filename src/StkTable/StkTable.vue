@@ -216,13 +216,18 @@
                                             :cellValue="item.row && item.row[col.dataIndex]"
                                             :expanded="item.row && item.row.__EXP__"
                                             :tree-expanded="item.row && item.row.__T_EXP__"
-                                            :level="col.type === 'tree-node' ? (item.row.__T_LV__ || 0) : undefined"
-                                            :expandable="col.type === 'tree-node' ? isTreeExpandable(item.row) : undefined"
-                                            :tree-loading="col.type === 'tree-node' ? Boolean(item.row.__T_LOADING__) : undefined"
+                                            :level="item.row.__T_LV__ || 0"
+                                            :expandable="isTreeExpandable(item.row)"
+                                            :tree-loading="Boolean(item.row.__T_LOADING__)"
+                                            :show-guide="col.type === 'tree-node' ? props.treeConfig?.showGuide : void 0"
                                         >
                                             <template #stkFoldIcon>
                                                 <!-- 不绑 click：展开切换统一由表体委托处理，避免一次点击触发两次切换 -->
-                                                <TreeFoldIcon :row="item.row" :col="col" :expandable="isTreeExpandable(item.row)"></TreeFoldIcon>
+                                                <TreeFoldIcon
+                                                    :expandable="col.type === 'expand' || isTreeExpandable(item.row)"
+                                                    :loading="col.type === 'tree-node' && Boolean(item.row.__T_LOADING__)"
+                                                    :expanded="col.type === 'tree-node' ? Boolean(item.row.__T_EXP__) : Boolean(item.row.__EXP__)"
+                                                ></TreeFoldIcon>
                                             </template>
                                             <template #stkTreeIndent>
                                                 <TreeIndent :level="item.row.__T_LV__ || 0" :show-guide="props.treeConfig?.showGuide" />
@@ -247,6 +252,12 @@
                                             tabindex="-1"
                                             :col="col"
                                             :row="item.row"
+                                            :cell-value="item.row[col.dataIndex]"
+                                            :row-index="getAbsoluteRowIndex(item.rowIndex)"
+                                            :col-index="(col as PrivateStkTableColumn<DT>).__LF_S__ ?? 0"
+                                            :tree-expanded="Boolean(item.row.__T_EXP__)"
+                                            :tree-loading="Boolean(item.row.__T_LOADING__)"
+                                            :level="item.row.__T_LV__ || 0"
                                             :expandable="isTreeExpandable(item.row)"
                                             :show-guide="props.treeConfig?.showGuide"
                                         ></TreeNodeCell>
@@ -255,7 +266,11 @@
                                                 v-if="col.type === 'dragRow'"
                                                 @dragstart="onTrDragStart($event, getAbsoluteRowIndex(item.rowIndex))"
                                             />
-                                            <TreeFoldIcon v-else-if="col.type === 'expand'" :row="item.row" :col="col" />
+                                            <TreeFoldIcon
+                                                v-else-if="col.type === 'expand'"
+                                                :expandable="true"
+                                                :expanded="Boolean(item.row.__EXP__ && colKeyGen(item.row.__EXP__) === colKeyGen(col))"
+                                            />
                                             <span v-if="item.row[col.dataIndex] != null">{{ item.row[col.dataIndex] }}</span>
                                         </div>
                                     </td>
@@ -1148,7 +1163,13 @@ const [colResizeOn, isColResizing, onThResizeMouseDown] = useColResize(
 
 const [toggleExpandRow, setRowExpand] = useRowExpand(emits, dataSourceCopy, rowKeyGen, onDataSourceChange);
 
-const [toggleTreeNode, setTreeExpand, flatTreeData, isTreeExpandable, reloadTreeNode] = useTree(props, dataSourceCopy, rowKeyGen, emits, onDataSourceChange);
+const [toggleTreeNode, setTreeExpand, flatTreeData, isTreeExpandable, reloadTreeNode] = useTree(
+    props,
+    dataSourceCopy,
+    rowKeyGen,
+    emits,
+    onDataSourceChange,
+);
 
 /** style cache */
 const paddingTopStyle = computed(() => `height:${virtualScroll.value.offsetTop}px`);

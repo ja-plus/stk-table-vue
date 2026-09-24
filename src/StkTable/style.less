@@ -786,6 +786,10 @@
         &:hover::before {
             border-left: 5px solid var(--fold-icon-hover-color);
         }
+
+        &.is-expanded::before {
+            transform: rotate(90deg);
+        }
     }
     
     .stk-tree-loading-icon {
@@ -839,6 +843,8 @@
         /* 虚线：纵向断续遮罩与背景的竖线取交集（多层 background 是并集，做不出虚线），默认 none 即实线 */
         -webkit-mask-image: var(--tree-guide-mask, none);
         mask-image: var(--tree-guide-mask, none);
+        /* 引导线左偏移：校正居中的自定义展开图标，图案整体平移，不改变元素盒与线距 */
+        background-position-x: var(--stk-tree-guide-offset, 0px);
     }
 
     td.cell-hover {

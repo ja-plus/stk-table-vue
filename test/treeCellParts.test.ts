@@ -119,7 +119,7 @@ describe('customCell 的树上下文与内置插槽', () => {
         expect(byId('g1')).toMatchObject({ level: 2, expandable: false, treeLoading: false });
     });
 
-    test('普通列的 customCell 不注入树相关值，既有 props 不变', async () => {
+    test('普通列的 customCell 收到默认树状态（0/false），且无树装饰残留', async () => {
         seen.length = 0;
         const wrapper = mount(StkTable as any, {
             props: {
@@ -130,7 +130,8 @@ describe('customCell 的树上下文与内置插槽', () => {
         });
         await flush();
         const last = seen.pop();
-        expect(last).toMatchObject({ id: 'r', level: undefined, expandable: undefined, treeLoading: undefined });
+        // 非树形数据：level 恒为 0、expandable/treeLoading 恒为 false（不注入私有字段）
+        expect(last).toMatchObject({ id: 'r', level: 0, expandable: false, treeLoading: false });
         expect(wrapper.findAll('tbody tr')[0].find('.stk-tree-indent').exists()).toBe(false);
     });
 

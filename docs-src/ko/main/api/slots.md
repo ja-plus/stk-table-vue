@@ -25,6 +25,10 @@
 이 슬롯을 사용할 때 셀 루트 요소에는 `height: 100%; display: flex; align-items: center;`가 필요합니다. 가이드선은 들여쓰기 칸 안에 그려지고 행 높이 전체로 늘어나므로, 행 높이를 채우는 flex 행이 아니면 선이 도중에 잘립니다.
 :::
 
+::: tip 공개 트리 컴포넌트
+`StkTreeCell`을 완전한 `customCell`로 가져오거나 `stk-table-vue`에서 `StkTreeIndent`와 `StkTreeFoldIcon`을 조합해 사용할 수 있습니다. 펼침 컨트롤은 공개 상태 `expandable`, `loading`, `expanded`로 제어됩니다.
+:::
+
 ::: tip 예시
 [파일 관리 트리](/ko/demos/file-tree)를 참조하세요.
 :::

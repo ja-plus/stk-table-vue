@@ -21,28 +21,35 @@ export type CustomCellProps<T extends Record<string, any>> = {
     /** if tree expanded */
     treeExpanded?: PrivateRowDT['__T_EXP__'];
     /**
-     * 该行在树中的层级（根为 0）。仅 `tree-node` 列的自定义单元格有值。
+     * 该行在树中的层级（根为 0）。非树形数据恒为 `0`。
      * 自定义树单元格可据此换算缩进：`width: calc(var(--tree-indent-width) * level)`。
      *
-     * en: Tree level of the row (root is 0). Only set for custom cells of a `tree-node` column.
+     * en: Tree level of the row (root is 0). Always `0` for non-tree data.
      * @version 1.2.7
      */
     level?: number;
     /**
-     * 该行是否可展开（口径与内置一致：`children` 已存在或懒加载标记有子节点）。仅 `tree-node` 列有值。
+     * 该行是否可展开（口径与内置一致：`children` 已存在或懒加载标记有子节点）。非树形数据恒为 `false`。
      * 叶子行应为假，此时内置展开控件位渲染占位格。
      *
-     * en: Whether the row is expandable (same rule as built-in). Only set for a `tree-node` column.
+     * en: Whether the row is expandable (same rule as built-in). Always `false` for non-tree data.
      * @version 1.2.7
      */
     expandable?: boolean;
     /**
-     * 该行子节点是否正在懒加载。仅 `tree-node` 列有值；非懒加载模式恒为 `false`。
+     * 该行子节点是否正在懒加载。非树形数据与非懒加载模式恒为 `false`。
      *
-     * en: Whether the row's children are being lazy-loaded. Only set for a `tree-node` column.
+     * en: Whether the row's children are being lazy-loaded. Always `false` for non-tree data and non-lazy modes.
      * @version 1.2.7
      */
     treeLoading?: boolean;
+    /**
+     * 是否按 `treeConfig.showGuide` 绘制层级引导线。仅 `tree-node` 列有值。
+     *
+     * en: Whether to draw level guide lines per `treeConfig.showGuide`. Only set for `tree-node` columns.
+     * @version 1.2.7
+     */
+    showGuide?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {

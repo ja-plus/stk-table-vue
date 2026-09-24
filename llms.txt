@@ -146,10 +146,16 @@ const dataSource = [{ id: 1, name: 'John', age: 32, address: 'NY' }];
 
 ### 3.2 customCell 的 props
 
-- `customCell`: `{ row, col, cellValue, rowIndex, colIndex, expanded?, treeExpanded?, level?, expandable?, treeLoading? }`
-  - `level` / `expandable` / `treeLoading` 仅 `tree-node` 列有值，供整格自绘时使用（见坑 #15）
+- `customCell`: `{ row, col, cellValue, rowIndex, colIndex, expanded?, treeExpanded?, level?, expandable?, treeLoading?, showGuide? }`
+  - `level` / `expandable` / `treeLoading` 对所有列都会传入；非树形数据恒为 `0` / `false` / `false`（不注入任何私有字段）。`showGuide` 仅 `tree-node` 列有值。供整格自绘时使用（见坑 #15）
 - `customHeaderCell`: `{ col, rowIndex, colIndex }`
 - `customFooterCell`: `{ row, col, cellValue, rowIndex, colIndex }`
+
+树单元格公共组件：
+
+- `StkTreeCell`：可直接作为 `tree-node` 列的 `customCell`，使用 `level`、`expandable`、`treeLoading`、`treeExpanded` 渲染默认树单元格。
+- `StkTreeIndent`：props `{ level, showGuide?, offset? }`，渲染层级缩进和引导线；`offset` 为 CSS 长度，**只平移引导线**，用于校正自定义展开图标中心（内置箭头中心为格内 `4px`）。
+- `StkTreeFoldIcon`：props `{ expandable?, loading?, expanded? }`，渲染箭头、loading 或叶子占位；可展开状态输出 `data-stk-fold`，供 `StkTable` 委托切换。
 
 推荐函数式组件，避免 `defineComponent` 的 props 声明约束：
 

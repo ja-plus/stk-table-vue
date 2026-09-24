@@ -124,6 +124,8 @@ const treeConfig = {
 
 `tree-node` 列同样可以配 `customCell`：整格由你渲染，内置的「按层级缩进 + 引导线」与「箭头 / 懒加载 loading」分别经 `stkTreeIndent`、`stkFoldIcon` 两个插槽透传回来（注意它们是**你的单元格组件**的插槽，不是 StkTable 顶层插槽），由你决定渲染与否、摆在何处。
 
+如果不需要改变默认布局，可以直接从 `stk-table-vue` 导入 `StkTreeCell` 作为 `customCell`；需要自行组合时可使用 `StkTreeIndent` 和 `StkTreeFoldIcon`。后两者分别接收 `level` / `showGuide` 与 `expandable` / `loading` / `expanded`。
+
 可运行示例（自绘文件夹开 / 合图标、以及保留内置箭头只改标签两种）与摆放契约、代码骨架见 [文件管理树](/demos/file-tree)。
 
 ## 虚拟列表

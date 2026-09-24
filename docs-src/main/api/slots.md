@@ -25,6 +25,10 @@
 消费这些插槽时，单元格根元素需要 `height: 100%; display: flex; align-items: center;`：引导线画在缩进格内并撑满整行高，根元素若不是撑满行高的 flex 行，线会被截断。
 :::
 
+::: tip 公共树组件
+也可以从 `stk-table-vue` 导入 `StkTreeCell` 作为完整的 `customCell`，或组合使用 `StkTreeIndent` 与 `StkTreeFoldIcon`。展开控件由 `expandable`、`loading`、`expanded` 这组公开状态驱动。
+:::
+
 ::: tip 用法示例
 见[文件管理树](/demos/file-tree)。
 :::

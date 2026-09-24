@@ -2,7 +2,7 @@
 
 ### Requirement: 自定义单元格的展开相关上下文
 
-`customCell` 组件接收的 props 中，除既有 `row` / `col` / `cellValue` / `rowIndex` / `colIndex` / `expanded` / `treeExpanded` 外，SHALL 提供树形与展开列所需的上下文：所在层级、该行是否可展开、该行是否处于子节点懒加载加载态。非 `tree-node` / `expand` 列的 `customCell` MUST NOT 因此新增必填项，相关字段缺省即可。
+`customCell` 组件接收的 props 中，除既有 `row` / `col` / `cellValue` / `rowIndex` / `colIndex` / `expanded` / `treeExpanded` 外，SHALL 提供树形与展开列所需的上下文：所在层级、该行是否可展开、该行是否处于子节点懒加载加载态。这三个字段 SHALL 对所有列都传入取值，非树形数据取中性默认值（层级为 `0`、可展开与加载态为 `false`），以避免使用方额外做 `undefined` 兜底；MUST NOT 因此把任何字段变成必填，也 MUST NOT 借这些字段暴露表格私有行字段。
 
 展开/折叠 MUST NOT 要求使用方调用额外实例方法——使用方既可依赖内置装饰，也可自绘控件后由组件接管切换。
 
@@ -16,10 +16,10 @@
 - **WHEN** 某行正在通过懒加载拉取子节点
 - **THEN** 该行的 `customCell` 上下文中加载态为真，行展开态仍按既有约定提供
 
-#### Scenario: 普通列不受影响
+#### Scenario: 普通列收到中性默认值
 
 - **WHEN** 一个 `dataIndex` 普通列（无 `type`）配置 `customCell`
-- **THEN** 其 props 与本能力新增上下文之前一致，树相关字段无值，渲染与交互不变
+- **THEN** 其 `level` / `expandable` / `treeLoading` 分别为 `0` / `false` / `false`，其余 props 与本能力新增上下文之前一致，渲染与交互不变
 
 ### Requirement: 内置装饰以命名插槽提供给自定义单元格
 

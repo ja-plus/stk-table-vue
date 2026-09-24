@@ -14,6 +14,22 @@
 `tree-node` / `expand` 열에도 `customCell`을 지정할 수 있습니다. 내장 "레벨 들여쓰기 + 가이드선"과 "화살표 / 지연 로딩"은 `stkTreeIndent`, `stkFoldIcon` 슬롯으로 전달되며, `CustomCellProps`에 `level` / `expandable` / `treeLoading`이 추가됩니다. 전체 예시는 [파일 관리 트리](/ko/demos/file-tree)을 참조하세요.
 :::
 
+### 공개 트리 셀 컴포넌트
+
+패키지 진입점에서 다음 세 가지 재사용 가능한 컴포넌트를 가져올 수 있습니다.
+
+- `StkTreeCell`: `customCell` 컨텍스트로 동작하는 완전한 트리 셀로, `tree-node` 열에 바로 지정할 수 있습니다.
+- `StkTreeIndent`: `level`에 따른 들여쓰기와 선택적 가이드선을 렌더링합니다. `offset`(CSS 길이)은 **가이드선만 평행 이동**하여 사용자 펼침 아이콘 중심에 맞춥니다(양쪽 아이콘 너비를 동일하게). 기본 화살표 중심은 셀 안 4px이며 가이드선은 기본적으로 여기에 맞춰집니다. 가운데 정렬한 같은 너비 아이콘은 중심이 `--tree-indent-width`의 절반이 되므로 `offset="4px"`(차이)를 전달합니다.
+- `StkTreeFoldIcon`: `expandable`, `loading`, `expanded`에 따라 화살표, 로딩 또는 말단 자리표시자를 렌더링합니다.
+
+```ts
+import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+
+const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+```
+
+`StkTreeFoldIcon`은 외부 상태로 제어되는 시각 컴포넌트입니다. `StkTable` 내부에서는 펼칠 수 있는 상태에 `data-stk-fold`가 자동으로 붙어 위임 방식으로 펼쳐지며, 로딩 상태에는 이 속성이 붙지 않습니다. 스타일은 `--tree-indent-width`, `--tree-guide-color`, `--tree-guide-width`, `--tree-guide-mask`로 덮어쓸 수 있습니다.
+
 ### vue SFC를 사용하여
 vue SFC 컴포넌트를 전달하는 것을 지원하며, vue 컴포넌트의 props는 `CustomCellProps` 타입으로 특별히 정의해야 합니다.
 
@@ -71,6 +87,8 @@ export type DataType = {
 :::
 
 <demo vue="advanced/custom-cell/CustomCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/CustomCell/index.vue"></demo>
+
+<demo vue="advanced/custom-cell/PublicTreeCell/index.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cell/PublicTreeCell/index.vue"></demo>
 
 ### 렌더링 함수 h를 사용하여
 간단한 수정은 직접 렌더링 함수를 사용하는 것이 더 편리합니다.
@@ -145,12 +163,14 @@ export type CustomCellProps<T extends Record<string, any>> = {
     expanded?: StkTableColumn<any>;
     /** 트리 노드 현재 행이 전개되었는지 여부 */
     treeExpanded?: boolean;
-    /** 트리 단계(루트는 0). `tree-node` 열에서만 값이 있음 */
+    /** 트리 단계(루트는 0). 비트리 데이터에서는 항상 0 */
     level?: number;
-    /** 펼침 가능 여부(children 이미 있음, 또는 지연 모드에서 자식 표시). `tree-node` 열만 해당 */
+    /** 펼침 가능 여부(children 이미 있음, 또는 지연 모드에서 자식 표시). 비트리 데이터에서는 항상 false */
     expandable?: boolean;
-    /** 자식 노드 지연 로딩 중 여부. `tree-node` 열만 해당 */
+    /** 자식 노드 지연 로딩 중 여부. 비트리 데이터와 비지연 모드에서는 항상 false */
     treeLoading?: boolean;
+    /** `treeConfig.showGuide`에 따라 단계 가이드선을 그릴지 여부. `tree-node` 열에서만 값이 있음 */
+    showGuide?: boolean;
 };
 
 export type CustomHeaderCellProps<T extends Record<string, any>> = {
