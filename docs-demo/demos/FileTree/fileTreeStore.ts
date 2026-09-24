@@ -83,7 +83,11 @@ export function isDescendant(ancestor: FileTreeNode, node: FileTreeNode): boolea
  * - into：目标文件夹不能是源行当前的父级（同文件夹内不调整顺序）；
  * - before / after：目标行的父级不能是源行当前的父级。
  */
-export function canDrop(source: FileTreeNode, target: FileTreeNode, position: 'into' | 'before' | 'after'): boolean {
+export function canDrop(
+    source: FileTreeNode,
+    target: FileTreeNode,
+    position: 'into' | 'before' | 'after',
+): boolean {
     if (source === target) return false;
     if (isDescendant(source, target)) return false;
     if (position === 'into') {
@@ -146,7 +150,8 @@ export function startEdit(row: FileTreeNode, isNew = false, table: 'A' | 'B' = '
 }
 
 /** 右键「重命名」 */
-export function startRename(row: FileTreeNode, table: 'A' | 'B' = 'A') {
+export function startRename(row: FileTreeNode | undefined, table: 'A' | 'B' = 'A') {
+    if (!row) return;
     startEdit(row, false, table);
 }
 
@@ -154,7 +159,11 @@ export function startRename(row: FileTreeNode, table: 'A' | 'B' = 'A') {
  * 新建文件 / 文件夹（参考 VSCode）：插入后按名称排序，并返回新节点，
  * 由调用方展开目录、滚动可见并进入行内重命名。
  */
-export function createNode(parent: FileTreeNode, kind: 'file' | 'folder', defaultName: string): FileTreeNode | null {
+export function createNode(
+    parent: FileTreeNode,
+    kind: 'file' | 'folder',
+    defaultName: string,
+): FileTreeNode | null {
     if (!isFolder(parent)) return null;
     const children = (parent.children ||= []);
     // 新文件夹必须带 children 数组，否则表格不认为它可展开（isExpandable 的口径是 children 是否存在）
@@ -232,7 +241,8 @@ export function canPaste(target: FileTreeNode): boolean {
 }
 
 /** 粘贴到目标行：文件夹行粘进该文件夹，文件行粘进它所在的目录（根层文件则粘到根） */
-export function paste(target: FileTreeNode) {
+export function paste(target?: FileTreeNode) {
+    if (!target) return;
     if (!canPaste(target)) return;
     const clip = clipboard.value!;
     const destFolder = isFolder(target) ? target : findParent(target);
@@ -271,7 +281,11 @@ export function paste(target: FileTreeNode) {
  * - before / after：插入到目标行之前 / 之后，与目标同级。
  * 只能跨文件夹移动（同文件夹内位置由排序决定），落盘后按名称重排。
  */
-export function moveNode(source: FileTreeNode, target: FileTreeNode, how: 'into' | 'before' | 'after') {
+export function moveNode(
+    source: FileTreeNode,
+    target: FileTreeNode,
+    how: 'into' | 'before' | 'after',
+) {
     if (!canDrop(source, target, how)) return;
     // 先从原位置取出，再按目标位置插入（取出的 index 在取出后计算，避免同表移动时下标偏移）
     const fromList = containerOf(source);

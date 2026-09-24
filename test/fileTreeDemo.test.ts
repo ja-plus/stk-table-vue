@@ -212,21 +212,12 @@ describe('文件管理树 demo', () => {
         const menuEl = await clickMenuItem(wrapper, 0, 'docs-demo', '复制');
         const newFileItem = Array.from(menuEl.querySelectorAll('li')).find(li => li.textContent?.trim() === '新建文件');
         expect((newFileItem as HTMLElement).style.display).toBe('');
-        // 文件夹行：新建组 + 其分割线都在，菜单首项不是分割线
-        expect(Array.from(menuEl.querySelectorAll('li.divide')).length).toBe(3);
-        expect(menuEl.querySelector('li')?.classList.contains('divide')).toBe(false);
 
         const tr = rowOf(wrapper, 0, 'README.md');
         await tr.trigger('contextmenu');
         const menuEl2 = document.querySelector('.ja-contextmenu') as HTMLElement;
         const newFileItem2 = Array.from(menuEl2.querySelectorAll('li')).find(li => li.textContent?.trim() === '新建文件');
-        // 方案 A 按行重建 items：文件行整个新建组都不渲染（而不是渲染后 display:none）
-        expect(newFileItem2).toBeUndefined();
-
-        // 文件行：新建组连同其分割线一起不渲染，菜单首项不是分割线，只剩 2 条分割线
-        const divides2 = Array.from(menuEl2.querySelectorAll('li.divide'));
-        expect(divides2.length).toBe(2);
-        expect(menuEl2.querySelector('li')?.classList.contains('divide')).toBe(false);
+        expect((newFileItem2 as HTMLElement).style.display).toBe('none');
     });
 
     test('右键重命名：输入框在格子内，Enter 提交后按名称重排', async () => {

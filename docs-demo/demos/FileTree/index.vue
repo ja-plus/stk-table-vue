@@ -3,7 +3,6 @@ import { computed, nextTick, toRaw, useTemplateRef } from 'vue';
 import { useData } from 'vitepress';
 import ContextMenu from 'ja-contextmenu';
 import { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
-import { MenuItemOption } from 'ja-contextmenu/lib/types/MenuItemOption';
 import StkTable from '../../StkTable.vue';
 import { useI18n } from '../../hooks/useI18n/index';
 import type { StkTableColumn } from '@/StkTable/types/index';
@@ -146,47 +145,40 @@ let activeTable: 'A' | 'B' = 'A';
 const contextMenu = new ContextMenu({
     theme: () => (isDark.value ? 'dark' : ('' as any)),
 });
-/**
- * ja-contextmenu 对 `type: 'hr'` 的分割线不处理 `show`（MenuItem.init 里直接 `h('li.divide')` 返回），
- * 靠 `show` 隐藏分割线无效。故每次 show 前按行类型重建 items：
- * Menu 持有的是本对象引用，且 show 时会重新 renderMenuItem，直接赋值即可。
- */
-const menuOption: MenuOption<FileTreeNode> = { items: [] };
-
-function buildMenuItems(row: FileTreeNode): MenuItemOption<FileTreeNode>[] {
-    const items: MenuItemOption<FileTreeNode>[] = [];
-    // 新建类只对文件夹行可见，连同上方的分割线一起按行生成
-    if (isFolder(row)) {
-        items.push(
-            { label: () => t('fileMenuNewFile'), onclick: (_e, r) => onCreate(r, 'file') },
-            { label: () => t('fileMenuNewFolder'), onclick: (_e, r) => onCreate(r, 'folder') },
-            { type: 'hr' },
-        );
-    }
-    items.push(
-        { label: () => t('fileMenuCut'), onclick: (_e, r) => cut(r) },
-        { label: () => t('fileMenuCopy'), onclick: (_e, r) => copy(r) },
+const menuOption: MenuOption<FileTreeNode> = {
+    items: [
+        {
+            label: () => t('fileMenuNewFile'),
+            show: row => isFolder(row),
+            onclick: (_e, row) => onCreate(row, 'file'),
+        },
+        {
+            label: () => t('fileMenuNewFolder'),
+            show: row => isFolder(row),
+            onclick: (_e, row) => onCreate(row, 'folder'),
+        },
+        { type: 'hr', show: row => isFolder(row) },
+        { label: () => t('fileMenuCut'), onclick: (_e, row) => cut(row) },
+        { label: () => t('fileMenuCopy'), onclick: (_e, row) => copy(row) },
         {
             label: () => t('fileMenuPaste'),
             // 常驻显示：任意行都可作粘贴落点——文件夹行粘进该文件夹，文件行粘进它所在的目录；
             // 仅剪贴板为空、或剪切源已在目标目录内时置灰
-            disabled: r => !canPaste(r),
-            onclick: (_e, r) => paste(r),
+            disabled: row => !canPaste(row),
+            onclick: (_e, row) => paste(row),
         },
         { type: 'hr' },
-        { label: () => t('fileMenuRename'), onclick: (_e, r) => startRename(r, activeTable) },
+        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row, activeTable) },
         { type: 'hr' },
-        { label: () => t('fileMenuDelete'), onclick: (_e, r) => removeNode(r) },
-    );
-    return items;
-}
+        { label: () => t('fileMenuDelete'), onclick: (_e, row) => removeNode(row) },
+    ],
+};
 const menu = contextMenu.create(menuOption);
 
 /** 两张表共用一套菜单：记录来源表，并选中该行 */
 function onRowMenu(e: MouseEvent, row: FileTreeNode, table: 'A' | 'B') {
     activeTable = table;
     (table === 'A' ? tableARef.value : tableBRef.value)?.setCurrentRow(row);
-    menuOption.items = buildMenuItems(row);
     menu.show(e, row);
 }
 const onRowMenuA = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'A');
@@ -237,6 +229,10 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
 </template>
 
 <style>
+.stk-table {
+    --cell-padding-x: 0;
+    --cell-padding-y: 0;
+}
 .demo-tip {
     margin: 0 0 8px;
     font-size: 13px;

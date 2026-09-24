@@ -1,9 +1,17 @@
 import { computed, ref } from 'vue';
 import type { FileTreeNode } from './fileTreeData';
-import { canDrop, dropOn, dropTargetFolder, draggingRow, expandRow, isDescendant, isFolder } from './fileTreeStore';
+import {
+    canDrop,
+    dropOn,
+    dropTargetFolder,
+    draggingRow,
+    expandRow,
+    isDescendant,
+    isFolder,
+} from './fileTreeStore';
 
 /** 悬浮在未展开的文件夹上多久自动展开（参考 VSCode） */
-const HOVER_EXPAND_DELAY = 1000;
+const HOVER_EXPAND_DELAY = 500;
 
 /** 悬浮自动展开的定时器：只在同一个文件夹上连续悬浮才计时，换行 / 离开即取消 */
 let hoverTimer: ReturnType<typeof setTimeout> | null = null;
@@ -124,5 +132,14 @@ export function useCellDrag(row: () => FileTreeNode, isExpanded: () => boolean) 
         dropOn(target, position);
     }
 
-    return { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop };
+    return {
+        dropPos,
+        inDropSubtree,
+        isDropTarget,
+        onDragStart,
+        onDragEnd,
+        onDragOver,
+        onDragLeave,
+        onDrop,
+    };
 }
