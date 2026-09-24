@@ -6,6 +6,7 @@ import {
     bump,
     cancelEdit,
     canDrop,
+    canPaste,
     clipboard,
     commitEdit,
     copy,
@@ -278,10 +279,54 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
         expect(clipboard.value?.mode).toBe('cut');
     });
 
-    test('粘贴到文件行上无效', () => {
+    test('canPaste：空剪贴板不可用；复制后任意行可用', () => {
+        expect(canPaste(byName('docs-demo'))).toBe(false);
+        expect(canPaste(byName('package.json'))).toBe(false);
+        copy(byName('README.md'));
+        expect(canPaste(byName('docs-demo'))).toBe(true);
+        expect(canPaste(byName('package.json'))).toBe(true);
+    });
+
+    test('canPaste：剪切后粘到源行所在目录内置灰', () => {
+        cut(byName('package.json'));
+        // package.json 在根层：右键根层任意行都算同一目录
+        expect(canPaste(byName('README.md'))).toBe(false);
+        expect(canPaste(byName('src'))).toBe(true);
+        // StkTable.vue 在 StkTable 内：右键同目录行置灰，跨目录可用
+        cut(byName('StkTable.vue'));
+        expect(canPaste(byName('index.ts'))).toBe(false);
+        expect(canPaste(byName('docs-demo'))).toBe(true);
+        // 不能把文件夹粘进自己的子孙
+        cut(byName('src'));
+        expect(canPaste(byName('StkTable.vue'))).toBe(false);
+        expect(canPaste(byName('StkTable'))).toBe(false);
+    });
+
+    test('右键文件行粘贴：粘到该文件所在的目录', () => {
+        copy(byName('README.md'));
+        // 右键 StkTable 内的 index.ts → 粘进 StkTable
+        paste(byName('index.ts'));
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'README copy.md', 'StkTable.vue']);
+        // 右键根层的 package.json → 粘到根
         copy(byName('README.md'));
         paste(byName('package.json'));
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README copy.md', 'README.md']);
+    });
+
+    test('剪切后右键文件行：跨目录时粘到该文件所在目录', () => {
+        cut(byName('README.md'));
+        // 根层 → StkTable 内（右键 index.ts）
+        paste(byName('index.ts'));
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'README.md', 'StkTable.vue']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
+        expect(clipboard.value).toBeNull();
+    });
+
+    test('剪切后右键同目录文件行：不产生变化', () => {
+        cut(byName('package.json'));
+        paste(byName('README.md'));
         expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
+        expect(clipboard.value?.mode).toBe('cut');
     });
 });
 

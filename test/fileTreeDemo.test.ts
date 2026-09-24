@@ -415,20 +415,68 @@ describe('文件管理树 demo', () => {
         expect(findParentOf('src')).toBeNull();
     });
 
-    test('右键菜单：粘贴项常驻显示，只有文件夹行可用', async () => {
+    test('右键菜单：粘贴项常驻显示，复制后任意行都可用', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
-        // 剪贴板为空时，文件夹行上的粘贴也是置灰
+        // 剪贴板为空时置灰
         let menuEl = await openMenu(wrapper, 0, 'docs-demo');
         expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(true);
-        // 复制之后：文件夹行可用
+        menuEl = await openMenu(wrapper, 0, 'package.json');
+        expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(true);
+        // 复制之后：文件夹行与文件行都可用（文件行表示粘到它所在的目录）
         await clickMenuItem(wrapper, 0, 'README.md', '复制');
         expect(clipboard.value?.mode).toBe('copy');
         menuEl = await openMenu(wrapper, 0, 'docs-demo');
         expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(false);
-        // 文件行：可见但置灰（文件不能作为粘贴目标）
         menuEl = await openMenu(wrapper, 0, 'package.json');
+        expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(false);
+    });
+
+    test('右键文件行粘贴：粘到该文件所在的目录', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        await cellOf(wrapper, 0, 'StkTable').trigger('click');
+        await flush();
+        // 复制 README.md，右键 StkTable 内的 index.ts → 粘进 StkTable
+        await clickMenuItem(wrapper, 0, 'README.md', '复制');
+        await clickMenuItem(wrapper, 0, 'index.ts', '粘贴');
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual([
+            'components',
+            'index.ts',
+            'README copy.md',
+            'StkTable.vue',
+        ]);
+        // 复制 README.md，右键根层的 package.json → 粘到根
+        await clickMenuItem(wrapper, 0, 'README.md', '复制');
+        await clickMenuItem(wrapper, 0, 'package.json', '粘贴');
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README copy.md', 'README.md']);
+    });
+
+    test('剪切后右键同目录文件行：粘贴置灰且不产生变化', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        await clickMenuItem(wrapper, 0, 'package.json', '剪切');
+        const menuEl = await openMenu(wrapper, 0, 'README.md');
         expect(menuItem(menuEl, '粘贴').classList.contains('disabled')).toBe(true);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
+        expect(clipboard.value?.mode).toBe('cut');
+    });
+
+    test('剪切后右键其它目录的文件行：粘到该文件所在目录', async () => {
+        const wrapper = mount(FileTreeDemo);
+        await flush();
+        await cellOf(wrapper, 0, 'StkTable').trigger('click');
+        await flush();
+        await clickMenuItem(wrapper, 0, 'README.md', '剪切');
+        await clickMenuItem(wrapper, 0, 'index.ts', '粘贴');
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual([
+            'components',
+            'index.ts',
+            'README.md',
+            'StkTable.vue',
+        ]);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
+        expect(clipboard.value).toBeNull();
     });
 
     test('第二张表也有完整右键菜单：复制 / 粘贴 / 重命名都生效', async () => {

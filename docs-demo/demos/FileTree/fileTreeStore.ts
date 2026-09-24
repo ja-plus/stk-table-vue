@@ -208,23 +208,49 @@ export function copy(row?: FileTreeNode) {
 }
 
 /** 粘贴到目标文件夹：剪切为移动，复制为深拷贝（名字加 copy）；落盘后按名称重排 */
-export function paste(target?: FileTreeNode) {
-    if (!target) return;
+/**
+ * 目标行能否作为粘贴落点：
+ * - 剪贴板为空 → 不可以；
+ * - 复制 → 任意行都可以（文件夹行粘进该文件夹，文件行粘进它所在的目录）；
+ * - 剪切 → 还不能粘进源行当前所在的目录（同目录内不调整顺序），
+ *   也不能把文件夹粘进自己的子孙。
+ */
+export function canPaste(target: FileTreeNode): boolean {
     const clip = clipboard.value;
-    if (!clip || !isFolder(target)) return;
-    const children = (target.children ||= []);
+    if (!clip) return false;
+    const destFolder = isFolder(target) ? target : findParent(target);
+    if (clip.mode === 'copy') return true;
+    if (findParent(clip.row) === destFolder) return false;
+    if (destFolder && (clip.row === destFolder || isDescendant(clip.row, destFolder))) return false;
+    return true;
+}
+
+/** 粘贴到目标行：文件夹行粘进该文件夹，文件行粘进它所在的目录（根层文件则粘到根） */
+export function paste(target: FileTreeNode) {
+    if (!canPaste(target)) return;
+    const clip = clipboard.value!;
+    const destFolder = isFolder(target) ? target : findParent(target);
+    const container = destFolder ? (destFolder.children ||= []) : treeData.value;
+
     if (clip.mode === 'cut') {
-        if (!canDrop(clip.row, target, 'into')) return;
-        moveNode(clip.row, target, 'into');
+        const source = clip.row;
+        // 从原容器取出，放进目标容器末尾
+        const fromList = containerOf(source);
+        const fromIndex = fromList.indexOf(source);
+        if (fromIndex > -1) fromList.splice(fromIndex, 1);
+        container.push(source);
+        sortByName(fromList);
+        sortByName(container);
         clipboard.value = null;
     } else {
         const node = cloneNode(clip.row);
-        node.name = uniqueName(children, copyName(node.name));
-        children.push(node);
-        sortByName(children);
-        bump();
+        node.name = uniqueName(container, copyName(node.name));
+        container.push(node);
+        sortByName(container);
     }
-    revealRow?.(target);
+    bump();
+    // 目标是文件夹时才需要展开揭示；粘到根层无需操作
+    if (destFolder) revealRow?.(destFolder);
 }
 
 /**

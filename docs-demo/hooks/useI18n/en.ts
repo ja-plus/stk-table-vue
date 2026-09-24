@@ -226,7 +226,7 @@ export const en = {
     realtimeMergeTip: 'Drag to select multiple cells, then right-click to merge/split cells',
     mergedRegions: 'Merged regions',
 fileTreeTip:
-        'Right-click a row to rename / cut / copy / delete, right-click a folder to create a file or folder. Drag anywhere on a row to move it across folders, and click a folder row to expand / collapse it.',
+        'Right-click a row to rename / cut / copy / delete, right-click a folder to create a file or folder. After a copy or cut, right-click any row to paste — a file row means "into that file\'s directory". Drag anywhere on a row to move it across folders, and click a folder row to expand / collapse it.',
     fileTreeSelfDrawn: 'Self-drawn expand control (folder icons, data-stk-fold) with full file management interactions',
     fileTreeSlotVariant:
         'Built-in arrow kept, only the folder label customized (rendering variant — file management interactions live in the first table)',

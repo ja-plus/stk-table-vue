@@ -11,6 +11,7 @@ import TagNameCell from './TagNameCell.vue';
 import type { FileTreeNode } from './fileTreeData';
 import {
     bump,
+    canPaste,
     clipboard,
     copy,
     createNode,
@@ -134,8 +135,9 @@ const menuOption: MenuOption<FileTreeNode> = {
         { label: () => t('fileMenuCopy'), onclick: (_e, row) => copy(row) },
         {
             label: () => t('fileMenuPaste'),
-            // 常驻显示：只有文件夹能作粘贴目标，文件行 / 空剪贴板时置灰
-            disabled: row => !isFolder(row) || !clipboard.value,
+            // 常驻显示：任意行都可作粘贴落点——文件夹行粘进该文件夹，文件行粘进它所在的目录；
+            // 仅剪贴板为空、或剪切源已在目标目录内时置灰
+            disabled: row => !canPaste(row),
             onclick: (_e, row) => paste(row),
         },
         { type: 'hr' },
