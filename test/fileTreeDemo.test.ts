@@ -155,21 +155,21 @@ describe('文件管理树 demo', () => {
         expect(text).not.toContain('SortIcon.vue');
     });
 
-    test('初始即按名称字符串排序', async () => {
+    test('初始即按文件夹优先 + 名称排序', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         const names = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text().trim());
-        // 根层：docs-demo < package.json < README.md < src；src 内：StkTable < style.less < VirtualTree.vue
+        // 根层文件夹优先：docs-demo、src 在 package.json、README.md 之前；src 内：StkTable < style.less < VirtualTree.vue
         expect(names).toEqual([
             'docs-demo',
             'advanced',
             'basic',
-            'package.json',
-            'README.md',
             'src',
             'StkTable',
             'style.less',
             'VirtualTree.vue',
+            'package.json',
+            'README.md',
         ]);
     });
 
@@ -211,8 +211,8 @@ describe('文件管理树 demo', () => {
         await inputs[0].setValue('aaa.md');
         await inputs[0].trigger('keydown.enter');
         await flush();
-        // 改名为 aaa.md 后从最后一位排到最前
-        expect(rootNames()).toEqual(['aaa.md', 'docs-demo', 'package.json', 'src']);
+        // 改名为 aaa.md：文件夹仍优先，文件内按名称排到 package.json 之前
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'aaa.md', 'package.json']);
         expect(wrapper.findAll('input.file-tree__rename-input').length).toBe(0);
     });
 
@@ -224,7 +224,7 @@ describe('文件管理树 demo', () => {
         await input.setValue('whatever.md');
         await input.trigger('keydown.esc');
         await flush();
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(wrapper.findAll('input.file-tree__rename-input').length).toBe(0);
     });
 
@@ -237,12 +237,12 @@ describe('文件管理树 demo', () => {
         await clickMenuItem(wrapper, 0, 'StkTable', '新建文件');
         const inputs = wrapper.findAll('input.file-tree__rename-input');
         expect(inputs.length).toBe(1);
-        // '新建文件' 按 localeCompare 排在最前（中文先于拉丁字母）
-        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['新建文件', 'components', 'index.ts', 'StkTable.vue']);
+        // components 是文件夹仍排最前；文件内中文先于拉丁字母
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', '新建文件', 'index.ts', 'StkTable.vue']);
         await inputs[0].setValue('a.vue');
         await inputs[0].trigger('keydown.enter');
         await flush();
-        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['a.vue', 'components', 'index.ts', 'StkTable.vue']);
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'a.vue', 'index.ts', 'StkTable.vue']);
     });
 
     test('剪切后行置灰，粘贴到文件夹为移动并重排', async () => {
@@ -258,7 +258,7 @@ describe('文件管理树 demo', () => {
             'README.md',
         ]);
         expect(clipboard.value).toBeNull();
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
     });
 
     test('整格拖拽：拖到文件夹行上移入该文件夹', async () => {
@@ -270,7 +270,7 @@ describe('文件管理树 demo', () => {
             'basic',
             'package.json',
         ]);
-        expect(rootNames()).toEqual(['docs-demo', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'README.md']);
     });
 
     test('整格拖拽：拖到文件行上跨文件夹插入，并按排序落位', async () => {
@@ -287,7 +287,7 @@ describe('文件管理树 demo', () => {
             'README.md',
             'StkTable.vue',
         ]);
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
     });
 
     test('整格拖拽：同一文件夹内不能调整位置', async () => {
@@ -303,7 +303,7 @@ describe('文件管理树 demo', () => {
         expect(dropTargetFolder.value).toBeNull();
         await fireDrag(to.element, 'drop');
         await fireDrag(from.element, 'dragend');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
 
         // StkTable 内的 index.ts ↔ StkTable.vue 同在 StkTable 下，同样不能调整
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
@@ -367,7 +367,7 @@ describe('文件管理树 demo', () => {
         await fireDrag(to.element, 'dragover', { cellHeight: 28 });
         await fireDrag(to.element, 'drop');
         await fireDrag(from.element, 'dragend');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
         expect(treeData.value.find(it => it.name === 'docs-demo')!.children?.map(it => it.name)).toEqual([
             'advanced',
             'basic',
@@ -383,7 +383,7 @@ describe('文件管理树 demo', () => {
         await fireDrag(cell.element, 'dragover', { cellHeight: 28 });
         await fireDrag(cell.element, 'drop');
         await fireDrag(cell.element, 'dragend');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(draggingRow.value).toBeNull();
     });
 
@@ -393,7 +393,7 @@ describe('文件管理树 demo', () => {
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
         await flush();
         await dragRowOnto(wrapper, 'src', 'StkTable.vue', 'after');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(findParentOf('src')).toBeNull();
     });
 
@@ -401,9 +401,9 @@ describe('文件管理树 demo', () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         await clickMenuItem(wrapper, 0, 'README.md', '删除');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
         await clickMenuItem(wrapper, 0, 'docs-demo', '删除');
-        expect(rootNames()).toEqual(['package.json', 'src']);
+        expect(rootNames()).toEqual(['src', 'package.json']);
     });
 });
 

@@ -34,9 +34,12 @@ export function isFolder(row?: FileTreeNode | null): boolean {
     return Array.isArray(row?.children);
 }
 
-/** 按名称字符串排序（资源管理器默认排序）：位置只由排序决定，同文件夹内不支持手动调序 */
+/** 按名称字符串排序（资源管理器默认排序）：文件夹优先，同类内按名称 localeCompare */
 function sortByName(list?: FileTreeNode[]) {
-    list?.sort((a, b) => a.name.localeCompare(b.name));
+    list?.sort((a, b) => {
+        if (isFolder(a) !== isFolder(b)) return isFolder(a) ? -1 : 1;
+        return a.name.localeCompare(b.name);
+    });
 }
 
 /** 节点所在的容器：父级的 children，根层为 treeData.value */

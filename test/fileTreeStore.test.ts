@@ -69,8 +69,8 @@ describe('fileTreeStore 查询', () => {
         expect(isDescendant(byName('StkTable'), byName('src'))).toBe(false);
     });
 
-    test('初始数据按名称字符串排序', () => {
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+    test('初始数据按文件夹优先 + 名称排序', () => {
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'StkTable.vue']);
     });
 });
@@ -80,14 +80,14 @@ describe('fileTreeStore 排序', () => {
         const row = byName('components');
         startRename(row);
         commitEdit(row, 'zzz');
-        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['index.ts', 'StkTable.vue', 'zzz']);
+        expect(byName('StkTable').children?.map(it => it.name)).toEqual(['zzz', 'index.ts', 'StkTable.vue']);
     });
 
     test('新建后按名称插入到排序位', () => {
         const parent = byName('StkTable');
         const node = createNode(parent, 'file', 'aaa.ts')!;
         expect(node.name).toBe('aaa.ts');
-        expect(parent.children?.map(it => it.name)).toEqual(['aaa.ts', 'components', 'index.ts', 'StkTable.vue']);
+        expect(parent.children?.map(it => it.name)).toEqual(['components', 'aaa.ts', 'index.ts', 'StkTable.vue']);
     });
 
     test('新建同名去重后同样参与排序', () => {
@@ -96,9 +96,18 @@ describe('fileTreeStore 排序', () => {
         expect(parent.children?.map(it => it.name)).toEqual(['components', 'index.ts', 'index.ts 1', 'StkTable.vue']);
     });
 
+    test('文件夹优先于文件，同类内按名称排序', () => {
+        const parent = byName('StkTable');
+        // 名称靠后的文件夹依旧排在所有文件之前
+        createNode(parent, 'folder', 'zzz');
+        expect(parent.children?.map(it => it.name)).toEqual(['components', 'zzz', 'index.ts', 'StkTable.vue']);
+        // 根层同理：docs-demo、src 在 package.json、README.md 之前
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
+    });
+
     test('移动后源容器与目标容器都重排', () => {
         moveNode(byName('README.md'), byName('docs-demo'), 'into');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README.md']);
     });
 
@@ -136,7 +145,7 @@ describe('fileTreeStore 只能跨文件夹拖动', () => {
     test('同文件夹内拖动不产生任何变化', () => {
         draggingRow.value = byName('package.json');
         dropOn(byName('README.md'), 'after');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         expect(draggingRow.value).toBeNull();
         expect(dropTargetFolder.value).toBeNull();
     });
@@ -145,7 +154,7 @@ describe('fileTreeStore 只能跨文件夹拖动', () => {
         draggingRow.value = byName('README.md');
         dropOn(byName('index.ts'), 'before');
         expect(byName('StkTable').children?.map(it => it.name)).toEqual(['components', 'index.ts', 'README.md', 'StkTable.vue']);
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
 
         draggingRow.value = byName('package.json');
         dropOn(byName('docs-demo'), 'into');
@@ -155,7 +164,7 @@ describe('fileTreeStore 只能跨文件夹拖动', () => {
 
     test('moveNode 对非法落点直接返回', () => {
         moveNode(byName('package.json'), byName('README.md'), 'after');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         moveNode(byName('src'), byName('StkTable'), 'into');
         expect(findParent(byName('src'))).toBeNull();
     });
@@ -223,7 +232,7 @@ describe('fileTreeStore 新建 / 重命名 / 删除', () => {
         removeNode(byName('SortIcon.vue'));
         expect(byName('components').children?.map(it => it.name)).toEqual(['TreeFoldIcon.vue', 'TreeIndent.vue']);
         removeNode(byName('docs-demo'));
-        expect(rootNames()).toEqual(['package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['src', 'package.json', 'README.md']);
         removeNode(byName('README.md'));
         expect(clipboard.value).toBeNull();
     });
@@ -235,7 +244,7 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
         paste(byName('docs-demo'));
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README.md']);
         expect(clipboard.value).toBeNull();
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
     });
 
     test('复制后粘贴为深拷贝，名称加 copy，改副本不影响原件', () => {
@@ -249,10 +258,10 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
         // 剪贴板保留，可再次粘贴（名称去重 + 排序）
         paste(byName('docs-demo'));
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual([
-            'advanced',
-            'basic',
             'StkTable copy',
             'StkTable copy 1',
+            'advanced',
+            'basic',
         ]);
     });
 
@@ -272,7 +281,7 @@ describe('fileTreeStore 剪切 / 复制 / 粘贴', () => {
     test('粘贴到文件行上无效', () => {
         copy(byName('README.md'));
         paste(byName('package.json'));
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
     });
 });
 
@@ -294,7 +303,7 @@ describe('fileTreeStore 拖拽状态与展开回调', () => {
 
     test('没有拖拽源 / 落点是自己时不动', () => {
         dropOn(byName('docs-demo'), 'into');
-        expect(rootNames()).toEqual(['docs-demo', 'package.json', 'README.md', 'src']);
+        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json', 'README.md']);
         draggingRow.value = byName('docs-demo');
         dropOn(byName('docs-demo'), 'into');
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic']);
