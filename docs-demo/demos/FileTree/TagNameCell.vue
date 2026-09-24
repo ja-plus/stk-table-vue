@@ -11,9 +11,18 @@ const props = defineProps<CustomCellProps<FileTreeNode>>();
 const { t } = useI18n();
 
 /** 与自绘图标变体同一套整格拖拽 */
-const { dropPos, inDropSubtree, isDropTarget, onDragStart, onDragEnd, onDragOver, onDragLeave, onDrop } = useCellDrag(
+const {
+    dropPos,
+    inDropSubtree,
+    isDropTarget,
+    onDragStart,
+    onDragEnd,
+    onDragOver,
+    onDragLeave,
+    onDrop,
+} = useCellDrag(
     () => props.row,
-    () => Boolean(props.treeExpanded)
+    () => Boolean(props.treeExpanded),
 );
 const isDragging = computed(() => draggingRow.value === props.row);
 
@@ -44,9 +53,11 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'B
         @dragleave="onDragLeave"
         @drop="onDrop"
     >
-        <slot name="stkTreeIndent" />
-        <slot name="stkFoldIcon" />
-        <span v-if="expandable && !isEditing" class="tag-tree-cell__tag">{{ t('fileTagDir') }}</span>
+        <slot name="stkTreeIndent"></slot>
+        <slot name="stkFoldIcon"></slot>
+        <span v-if="expandable && !isEditing" class="tag-tree-cell__tag">{{
+            t('fileTagDir')
+        }}</span>
         <span v-if="!isEditing">{{ cellValue }}</span>
         <input
             v-else

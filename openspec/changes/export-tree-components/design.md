@@ -48,7 +48,7 @@
 
 ```ts
 {
-    level: number;
+    level?: number;
     showGuide?: boolean;
     offset?: string;
 }

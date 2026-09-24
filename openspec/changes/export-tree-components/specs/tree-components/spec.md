@@ -39,12 +39,17 @@
 
 ### Requirement: 树形缩进组件
 
-`StkTreeIndent` SHALL 接收 `level: number`、可选的 `showGuide?: boolean` 与可选的 `offset?: string`。它 SHALL 按层级渲染与内置树单元格一致的缩进宽度；当 `showGuide` 为真时 SHALL 渲染祖先层级引导线，当其为假或未传入时 SHALL 只保留缩进而不渲染引导线。`offset` SHALL 为 CSS 长度，且 SHALL 只平移引导线图案，用于校正自定义展开图标中心；MUST NOT 改变缩进宽度、标签位置或引导线间距，未传入时 SHALL 不产生偏移。组件 SHALL 使用现有 `--tree-indent-width`、`--tree-guide-color`、`--tree-guide-width` 和 `--tree-guide-mask` 样式变量，且默认视觉与内置树单元格一致。
+`StkTreeIndent` SHALL 接收可选的 `level?: number`、可选的 `showGuide?: boolean` 与可选的 `offset?: string`；`level` 未传入 SHALL 等价于根层级（缩进 0 格）。它 SHALL 按层级渲染与内置树单元格一致的缩进宽度；当 `showGuide` 为真时 SHALL 渲染祖先层级引导线，当其为假或未传入时 SHALL 只保留缩进而不渲染引导线。`offset` SHALL 为 CSS 长度，且 SHALL 只平移引导线图案，用于校正自定义展开图标中心；MUST NOT 改变缩进宽度、标签位置或引导线间距，未传入时 SHALL 不产生偏移。组件 SHALL 使用现有 `--tree-indent-width`、`--tree-guide-color`、`--tree-guide-width` 和 `--tree-guide-mask` 样式变量，且默认视觉与内置树单元格一致。
 
 #### Scenario: 根层级只渲染零宽缩进
 
 - **WHEN** `StkTreeIndent` 的 `level` 为 `0`
 - **THEN** 组件不显示引导线，且不会产生可见的层级缩进
+
+#### Scenario: 未传层级时按根层级处理
+
+- **WHEN** 未传入 `level`
+- **THEN** 组件按 0 格缩进渲染（等价于根层级），不报错也不产生引导线
 
 #### Scenario: 深层级显示对应缩进
 

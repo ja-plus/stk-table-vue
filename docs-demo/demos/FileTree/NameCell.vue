@@ -5,6 +5,7 @@ import type { FileTreeNode } from './fileTreeData';
 import { draggingRow } from './fileTreeStore';
 import { useCellDrag } from './useCellDrag';
 import { useInlineRename } from './useInlineRename';
+import { StkTreeIndent } from '../../../src/StkTable/index';
 
 const props = defineProps<CustomCellProps<FileTreeNode>>();
 
@@ -52,7 +53,8 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
         @drop="onDrop"
     >
         <!-- 内置「按层级缩进 + 引导线」：由本布局决定它摆在最左侧 -->
-        <slot name="stkTreeIndent"></slot>
+        <!-- <slot name="stkTreeIndent"></slot> -->
+        <StkTreeIndent :level="props.level" offset="6px" show-guide></StkTreeIndent>
 
         <!-- 目录：自绘展开控件，必须带 data-stk-fold（表体按该属性委托切换），开合两态由 treeExpanded 决定 -->
         <span v-if="expandable" class="file-tree__icon file-tree__icon--dir" data-stk-fold>
