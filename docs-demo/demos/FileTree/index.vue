@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, nextTick, useTemplateRef } from 'vue';
+import { computed, nextTick, toRaw, useTemplateRef } from 'vue';
 import { useData } from 'vitepress';
 import ContextMenu from 'ja-contextmenu';
 import { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
+import { MenuItemOption } from 'ja-contextmenu/lib/types/MenuItemOption';
 import StkTable from '../../StkTable.vue';
 import { useI18n } from '../../hooks/useI18n/index';
 import type { StkTableColumn } from '@/StkTable/types/index';
@@ -19,6 +20,7 @@ import {
     isFolder,
     paste,
     registerExpand,
+    registerHighlight,
     registerReveal,
     removeNode,
     startEdit,
@@ -35,12 +37,29 @@ const { isDark } = useData();
 type FileTreeTableInstance = {
     setTreeExpand: (row: FileTreeNode, option: { expand: boolean }) => void;
     setCurrentRow: (row: FileTreeNode) => void;
+    setHighlightDimRow: (rowKeys: string[]) => void;
     getRowIndex: (row: FileTreeNode) => number;
     scrollTo: (options: { top: { index: number } }) => void;
 };
 
 const tableARef = useTemplateRef<FileTreeTableInstance>('tableARef');
 const tableBRef = useTemplateRef<FileTreeTableInstance>('tableBRef');
+
+/**
+ * 行唯一键：按行对象身份生成稳定 id（不往数据里塞字段）。
+ * 表格默认用行对象自身作 key，但 setHighlightDimRow 只收 key，这里自己发一份。
+ *
+ * 注意 toRaw 归一化：ref() 会把存入树里的对象包一层 reactive 代理，表格渲染的是
+ * 代理对象，而 store 的局部变量持有的是裸对象——不归一化两者会拿到不同的 key。
+ */
+const rowKeyMap = new WeakMap<FileTreeNode, string>();
+let rowKeySeq = 0;
+function rowKey(row: FileTreeNode): string {
+    const raw = toRaw(row) as FileTreeNode;
+    let key = rowKeyMap.get(raw);
+    if (!key) rowKeyMap.set(raw, (key = `node-${++rowKeySeq}`));
+    return key;
+}
 
 /** 单列：名称列整格自绘（图标 + 行内重命名输入框），整格可拖拽 */
 const folderColumns: StkTableColumn<FileTreeNode>[] = [
@@ -111,6 +130,15 @@ registerReveal((expandRow: FileTreeNode, scrollToRow?: FileTreeNode) => {
 /** 悬浮超过 1s 自动展开（拖动中）：同样同步两张表 */
 registerExpand((row: FileTreeNode, expand: boolean) => setExpand(row, expand, tableARef.value));
 
+/** 粘贴后高亮落盘的那一行（背景闪烁） */
+/** 粘贴后高亮落盘的那一行（背景闪烁） */
+registerHighlight((row: FileTreeNode) => {
+    // 等揭示（展开目标目录）引发的重渲染落地后再高亮，否则行可能还没进 DOM
+    nextTick(() => {
+        nextTick(() => tableARef.value?.setHighlightDimRow([rowKey(row)]));
+    });
+});
+
 // ============ 右键菜单（ja-contextmenu，参考 VSCode 资源管理器） ============
 /** 最近一次在哪张表上右键：菜单动作（重命名 / 新建）据此把编辑态落到对应表 */
 let activeTable: 'A' | 'B' = 'A';
@@ -118,40 +146,47 @@ let activeTable: 'A' | 'B' = 'A';
 const contextMenu = new ContextMenu({
     theme: () => (isDark.value ? 'dark' : ('' as any)),
 });
-const menuOption: MenuOption<FileTreeNode> = {
-    items: [
-        {
-            label: () => t('fileMenuNewFile'),
-            show: row => isFolder(row),
-            onclick: (_e, row) => onCreate(row, 'file'),
-        },
-        {
-            label: () => t('fileMenuNewFolder'),
-            show: row => isFolder(row),
-            onclick: (_e, row) => onCreate(row, 'folder'),
-        },
-        { type: 'hr', show: row => isFolder(row) },
-        { label: () => t('fileMenuCut'), onclick: (_e, row) => cut(row) },
-        { label: () => t('fileMenuCopy'), onclick: (_e, row) => copy(row) },
+/**
+ * ja-contextmenu 对 `type: 'hr'` 的分割线不处理 `show`（MenuItem.init 里直接 `h('li.divide')` 返回），
+ * 靠 `show` 隐藏分割线无效。故每次 show 前按行类型重建 items：
+ * Menu 持有的是本对象引用，且 show 时会重新 renderMenuItem，直接赋值即可。
+ */
+const menuOption: MenuOption<FileTreeNode> = { items: [] };
+
+function buildMenuItems(row: FileTreeNode): MenuItemOption<FileTreeNode>[] {
+    const items: MenuItemOption<FileTreeNode>[] = [];
+    // 新建类只对文件夹行可见，连同上方的分割线一起按行生成
+    if (isFolder(row)) {
+        items.push(
+            { label: () => t('fileMenuNewFile'), onclick: (_e, r) => onCreate(r, 'file') },
+            { label: () => t('fileMenuNewFolder'), onclick: (_e, r) => onCreate(r, 'folder') },
+            { type: 'hr' },
+        );
+    }
+    items.push(
+        { label: () => t('fileMenuCut'), onclick: (_e, r) => cut(r) },
+        { label: () => t('fileMenuCopy'), onclick: (_e, r) => copy(r) },
         {
             label: () => t('fileMenuPaste'),
             // 常驻显示：任意行都可作粘贴落点——文件夹行粘进该文件夹，文件行粘进它所在的目录；
             // 仅剪贴板为空、或剪切源已在目标目录内时置灰
-            disabled: row => !canPaste(row),
-            onclick: (_e, row) => paste(row),
+            disabled: r => !canPaste(r),
+            onclick: (_e, r) => paste(r),
         },
         { type: 'hr' },
-        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row, activeTable) },
+        { label: () => t('fileMenuRename'), onclick: (_e, r) => startRename(r, activeTable) },
         { type: 'hr' },
-        { label: () => t('fileMenuDelete'), onclick: (_e, row) => removeNode(row) },
-    ],
-};
+        { label: () => t('fileMenuDelete'), onclick: (_e, r) => removeNode(r) },
+    );
+    return items;
+}
 const menu = contextMenu.create(menuOption);
 
 /** 两张表共用一套菜单：记录来源表，并选中该行 */
 function onRowMenu(e: MouseEvent, row: FileTreeNode, table: 'A' | 'B') {
     activeTable = table;
     (table === 'A' ? tableARef.value : tableBRef.value)?.setCurrentRow(row);
+    menuOption.items = buildMenuItems(row);
     menu.show(e, row);
 }
 const onRowMenuA = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'A');
@@ -176,6 +211,7 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
         bordered="v"
         :style="{ maxHeight: '260px', '--tree-indent-width': '20px' }"
         :tree-config="treeConfig"
+        :row-key="rowKey"
         :columns="folderColumns"
         :data-source="treeData"
         :row-class-name="rowClassName"
@@ -190,6 +226,7 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
         bordered="v"
         style="max-height: 260px"
         :tree-config="treeConfig"
+        :row-key="rowKey"
         :columns="tagColumns"
         :data-source="treeData"
         :row-class-name="rowClassName"

@@ -23,6 +23,7 @@ import {
     moveNode,
     paste,
     registerExpand,
+    registerHighlight,
     registerReveal,
     removeNode,
     startEdit,
@@ -352,6 +353,37 @@ describe('fileTreeStore 拖拽状态与展开回调', () => {
         draggingRow.value = byName('docs-demo');
         dropOn(byName('docs-demo'), 'into');
         expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic']);
+    });
+});
+
+describe('fileTreeStore 粘贴后高亮', () => {
+    test('复制粘贴后高亮深拷贝出来的新行', () => {
+        const highlight = vi.fn();
+        registerHighlight(highlight);
+        copy(byName('README.md'));
+        paste(byName('docs-demo'));
+        expect(highlight).toHaveBeenCalledTimes(1);
+        const highlighted = highlight.mock.calls[0][0] as FileTreeNode;
+        expect(highlighted.name).toBe('README copy.md');
+        expect(findParent(highlighted)?.name).toBe('docs-demo');
+    });
+
+    test('剪切粘贴后高亮被移动的源行', () => {
+        const highlight = vi.fn();
+        registerHighlight(highlight);
+        const source = byName('README.md');
+        cut(source);
+        paste(byName('index.ts'));
+        expect(highlight).toHaveBeenCalledWith(source);
+        expect(findParent(source)?.name).toBe('StkTable');
+    });
+
+    test('粘贴落点无效时不高亮', () => {
+        const highlight = vi.fn();
+        registerHighlight(highlight);
+        cut(byName('package.json'));
+        paste(byName('README.md')); // 同目录，非法落点
+        expect(highlight).not.toHaveBeenCalled();
     });
 });
 

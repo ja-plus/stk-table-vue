@@ -134,6 +134,12 @@ export function expandRow(row: FileTreeNode, expand: boolean) {
     expandRowFn?.(row, expand);
 }
 
+/** index.vue 注册的高亮回调：粘贴后高亮落盘的那一行 */
+let highlightRowFn: ((row: FileTreeNode) => void) | null = null;
+export function registerHighlight(fn: (row: FileTreeNode) => void) {
+    highlightRowFn = fn;
+}
+
 /** 进入行内编辑；isNew 为 true 时取消编辑会删除该行（新建未提交） */
 export function startEdit(row: FileTreeNode, isNew = false, table: 'A' | 'B' = 'A') {
     editing.value = { row, isNew, table };
@@ -231,6 +237,8 @@ export function paste(target: FileTreeNode) {
     const clip = clipboard.value!;
     const destFolder = isFolder(target) ? target : findParent(target);
     const container = destFolder ? (destFolder.children ||= []) : treeData.value;
+    /** 本次落盘的行：剪切为被移动的源行，复制为深拷贝出的新行 */
+    let pasted: FileTreeNode | undefined;
 
     if (clip.mode === 'cut') {
         const source = clip.row;
@@ -242,15 +250,19 @@ export function paste(target: FileTreeNode) {
         sortByName(fromList);
         sortByName(container);
         clipboard.value = null;
+        pasted = source;
     } else {
         const node = cloneNode(clip.row);
         node.name = uniqueName(container, copyName(node.name));
         container.push(node);
         sortByName(container);
+        pasted = node;
     }
     bump();
     // 目标是文件夹时才需要展开揭示；粘到根层无需操作
     if (destFolder) revealRow?.(destFolder);
+    // 高亮落盘的那一行，让用户一眼看到粘到了哪
+    if (pasted) highlightRowFn?.(pasted);
 }
 
 /**

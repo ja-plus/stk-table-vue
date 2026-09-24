@@ -212,12 +212,21 @@ describe('文件管理树 demo', () => {
         const menuEl = await clickMenuItem(wrapper, 0, 'docs-demo', '复制');
         const newFileItem = Array.from(menuEl.querySelectorAll('li')).find(li => li.textContent?.trim() === '新建文件');
         expect((newFileItem as HTMLElement).style.display).toBe('');
+        // 文件夹行：新建组 + 其分割线都在，菜单首项不是分割线
+        expect(Array.from(menuEl.querySelectorAll('li.divide')).length).toBe(3);
+        expect(menuEl.querySelector('li')?.classList.contains('divide')).toBe(false);
 
         const tr = rowOf(wrapper, 0, 'README.md');
         await tr.trigger('contextmenu');
         const menuEl2 = document.querySelector('.ja-contextmenu') as HTMLElement;
         const newFileItem2 = Array.from(menuEl2.querySelectorAll('li')).find(li => li.textContent?.trim() === '新建文件');
-        expect((newFileItem2 as HTMLElement).style.display).toBe('none');
+        // 方案 A 按行重建 items：文件行整个新建组都不渲染（而不是渲染后 display:none）
+        expect(newFileItem2).toBeUndefined();
+
+        // 文件行：新建组连同其分割线一起不渲染，菜单首项不是分割线，只剩 2 条分割线
+        const divides2 = Array.from(menuEl2.querySelectorAll('li.divide'));
+        expect(divides2.length).toBe(2);
+        expect(menuEl2.querySelector('li')?.classList.contains('divide')).toBe(false);
     });
 
     test('右键重命名：输入框在格子内，Enter 提交后按名称重排', async () => {
@@ -506,6 +515,49 @@ describe('文件管理树 demo', () => {
         await clickMenuItem(wrapper, 0, 'README.md', '重命名');
         expect(wrapper.findAll('.stk-table')[0].findAll('input.file-tree__rename-input').length).toBe(1);
         expect(wrapper.findAll('.stk-table')[1].findAll('input.tag-tree-cell__input').length).toBe(0);
+    });
+
+    test('粘贴后高亮落盘的那一行', async () => {
+        // setHighlightDimRow 在非虚拟滚动下走 Element.animate，打桩到原型上验证
+        const original = (HTMLElement.prototype as any).animate;
+        const animateSpy = vi.fn();
+        (HTMLElement.prototype as any).animate = animateSpy;
+        try {
+            // 挂到 document.body：setHighlightDimRow 靠 getElementById 找行元素
+            const wrapper = mount(FileTreeDemo, { attachTo: document.body });
+            await flush();
+            await clickMenuItem(wrapper, 0, 'README.md', '复制');
+            animateSpy.mockClear();
+            await clickMenuItem(wrapper, 0, 'docs-demo', '粘贴');
+            // 高亮恰好作用在新复制出来的行上
+            expect(animateSpy).toHaveBeenCalledTimes(1);
+            const rowEl = animateSpy.mock.instances[0] as HTMLElement;
+            expect(rowEl.textContent).toContain('README copy.md');
+            expect(rowEl.tagName).toBe('TR');
+        } finally {
+            (HTMLElement.prototype as any).animate = original;
+        }
+    });
+
+    test('剪切粘贴后高亮被移动的那一行', async () => {
+        const original = (HTMLElement.prototype as any).animate;
+        const animateSpy = vi.fn();
+        (HTMLElement.prototype as any).animate = animateSpy;
+        try {
+            const wrapper = mount(FileTreeDemo, { attachTo: document.body });
+            await flush();
+            await cellOf(wrapper, 0, 'StkTable').trigger('click');
+            await flush();
+            await clickMenuItem(wrapper, 0, 'README.md', '剪切');
+            animateSpy.mockClear();
+            await clickMenuItem(wrapper, 0, 'index.ts', '粘贴');
+            expect(animateSpy).toHaveBeenCalledTimes(1);
+            const rowEl = animateSpy.mock.instances[0] as HTMLElement;
+            expect(rowEl.textContent).toContain('README.md');
+            expect(rowEl.textContent).not.toContain('README copy');
+        } finally {
+            (HTMLElement.prototype as any).animate = original;
+        }
     });
 
     test('右键删除文件与文件夹', async () => {
