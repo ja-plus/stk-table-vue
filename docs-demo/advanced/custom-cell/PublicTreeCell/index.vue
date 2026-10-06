@@ -38,7 +38,7 @@ const composedColumns: StkTableColumn<Row>[] = [{
         row-key="id"
         :columns="columns"
         :data-source="dataSource"
-        :tree-config="{ showGuide: true }"
+        :tree-config="{ showGuide: true, defaultExpandAll: true }"
         :show-no-data="false"
         style="height: 180px"
     />
@@ -46,7 +46,7 @@ const composedColumns: StkTableColumn<Row>[] = [{
         row-key="id"
         :columns="composedColumns"
         :data-source="dataSource"
-        :tree-config="{ showGuide: true }"
+        :tree-config="{ showGuide: true, defaultExpandAll: true }"
         :show-no-data="false"
         style="height: 180px; margin-top: 12px"
     />

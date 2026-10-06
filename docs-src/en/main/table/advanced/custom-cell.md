@@ -22,11 +22,52 @@ The package exports three reusable components:
 - `StkTreeIndent`: renders per-level indentation and optional guide lines from `level`; `offset` (a CSS length) **shifts the guide lines only**, to re-align them with a custom expand icon (custom icons must share one width when used on both sides of `StkTreeIndent`). The built-in arrow centers `4px` inside the cell and the lines align with it by default; a centered icon of the same width centers at half of `--tree-indent-width`, so pass `offset="4px"` (the difference).
 - `StkTreeFoldIcon`: renders the arrow, loading state, or leaf placeholder from `expandable`, `loading`, and `expanded`.
 
-```ts
-import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+::: code-group
+```ts [columns.ts]
+import { StkTreeCell } from 'stk-table-vue';
+import ComposedTreeCell from './ComposedTreeCell.vue';
 
-const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+export const columns = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: StkTreeCell,
+}];
+
+export const columns2 = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: ComposedTreeCell,
+}];
 ```
+```vue [ComposedTreeCell.vue]
+<script setup lang="ts">
+import { StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+import type { CustomCellProps } from 'stk-table-vue';
+
+const props = defineProps<CustomCellProps<Record<string, any>>>();
+</script>
+
+<template>
+    <div class="composed-tree-cell">
+        <StkTreeIndent :level="props.level ?? 0" />
+        <StkTreeFoldIcon
+            :expandable="props.expandable"
+            :loading="props.treeLoading"
+            :expanded="props.treeExpanded"
+        />
+        <span>{{ props.cellValue }}</span>
+    </div>
+</template>
+
+<style>
+.composed-tree-cell {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+</style>
+```
+:::
 
 `StkTreeFoldIcon` is a controlled visual component. Inside `StkTable`, expandable states automatically receive `data-stk-fold` for delegated toggling, while loading states do not. Override `--tree-indent-width`, `--tree-guide-color`, `--tree-guide-width`, or `--tree-guide-mask` for styling.
 

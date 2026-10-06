@@ -212,6 +212,7 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
     <StkTable
         ref="tableARef"
         virtual
+        scrollbar
         headless
         bordered="v"
         :row-active="{

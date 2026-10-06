@@ -22,11 +22,52 @@
 - `StkTreeIndent`：`level` に応じたインデントと任意のガイド線を描画します。`offset`（CSS 長さ）は**ガイド線だけを平行移動**し、独自の展開アイコンの中心に合わせるために使います（両側のアイコン幅を揃えてください）。組み込みの矢印の中心はセル内 4px で、ガイド線は既定でそこに揃います。中央寄せの同幅アイコンでは中心が `--tree-indent-width` の半分になるため、`offset="4px"`（差分）を渡します。
 - `StkTreeFoldIcon`：`expandable`、`loading`、`expanded` に応じて矢印、ローディング、末端行のプレースホルダを描画します。
 
-```ts
-import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+::: code-group
+```ts [columns.ts]
+import { StkTreeCell } from 'stk-table-vue';
+import ComposedTreeCell from './ComposedTreeCell.vue';
 
-const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+export const columns = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: StkTreeCell,
+}];
+
+export const columns2 = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: ComposedTreeCell,
+}];
 ```
+```vue [ComposedTreeCell.vue]
+<script setup lang="ts">
+import { StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+import type { CustomCellProps } from 'stk-table-vue';
+
+const props = defineProps<CustomCellProps<Record<string, any>>>();
+</script>
+
+<template>
+    <div class="composed-tree-cell">
+        <StkTreeIndent :level="props.level ?? 0" />
+        <StkTreeFoldIcon
+            :expandable="props.expandable"
+            :loading="props.treeLoading"
+            :expanded="props.treeExpanded"
+        />
+        <span>{{ props.cellValue }}</span>
+    </div>
+</template>
+
+<style>
+.composed-tree-cell {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+</style>
+```
+:::
 
 `StkTreeFoldIcon` は状態を外部から与える表示コンポーネントです。`StkTable` 内では展開可能な状態に `data-stk-fold` が付き、委譲処理で展開されます。ローディング中はこの属性を持ちません。スタイルは `--tree-indent-width`、`--tree-guide-color`、`--tree-guide-width`、`--tree-guide-mask` で変更できます。
 

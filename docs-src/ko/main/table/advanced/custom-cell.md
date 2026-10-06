@@ -22,11 +22,52 @@
 - `StkTreeIndent`: `level`에 따른 들여쓰기와 선택적 가이드선을 렌더링합니다. `offset`(CSS 길이)은 **가이드선만 평행 이동**하여 사용자 펼침 아이콘 중심에 맞춥니다(양쪽 아이콘 너비를 동일하게). 기본 화살표 중심은 셀 안 4px이며 가이드선은 기본적으로 여기에 맞춰집니다. 가운데 정렬한 같은 너비 아이콘은 중심이 `--tree-indent-width`의 절반이 되므로 `offset="4px"`(차이)를 전달합니다.
 - `StkTreeFoldIcon`: `expandable`, `loading`, `expanded`에 따라 화살표, 로딩 또는 말단 자리표시자를 렌더링합니다.
 
-```ts
-import { StkTreeCell, StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+::: code-group
+```ts [columns.ts]
+import { StkTreeCell } from 'stk-table-vue';
+import ComposedTreeCell from './ComposedTreeCell.vue';
 
-const columns = [{ type: 'tree-node', dataIndex: 'name', customCell: StkTreeCell }];
+export const columns = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: StkTreeCell,
+}];
+
+export const columns2 = [{
+    type: 'tree-node',
+    dataIndex: 'name',
+    customCell: ComposedTreeCell,
+}];
 ```
+```vue [ComposedTreeCell.vue]
+<script setup lang="ts">
+import { StkTreeFoldIcon, StkTreeIndent } from 'stk-table-vue';
+import type { CustomCellProps } from 'stk-table-vue';
+
+const props = defineProps<CustomCellProps<Record<string, any>>>();
+</script>
+
+<template>
+    <div class="composed-tree-cell">
+        <StkTreeIndent :level="props.level ?? 0" />
+        <StkTreeFoldIcon
+            :expandable="props.expandable"
+            :loading="props.treeLoading"
+            :expanded="props.treeExpanded"
+        />
+        <span>{{ props.cellValue }}</span>
+    </div>
+</template>
+
+<style>
+.composed-tree-cell {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+</style>
+```
+:::
 
 `StkTreeFoldIcon`은 외부 상태로 제어되는 시각 컴포넌트입니다. `StkTable` 내부에서는 펼칠 수 있는 상태에 `data-stk-fold`가 자동으로 붙어 위임 방식으로 펼쳐지며, 로딩 상태에는 이 속성이 붙지 않습니다. 스타일은 `--tree-indent-width`, `--tree-guide-color`, `--tree-guide-width`, `--tree-guide-mask`로 덮어쓸 수 있습니다.
 

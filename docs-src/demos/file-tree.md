@@ -31,13 +31,14 @@
 ```vue
 <script lang="ts" setup>
 import type { CustomCellProps } from 'stk-table-vue/src/StkTable/types/index';
+import { StkTreeIndent } from 'stk-table-vue';
 
 defineProps<CustomCellProps<any>>();
 </script>
 <template>
     <div class="folder-cell">
-        <!-- 内置：按层级缩进 + 引导线 -->
-        <slot name="stkTreeIndent" />
+        <!-- 内置「按层级缩进 + 引导线」：用导出的 StkTreeIndent 组件，offset 把引导线校正到自绘图标中心 -->
+        <StkTreeIndent :level="level ?? 0" offset="6px" show-guide />
         <!-- 自绘展开控件：必须带 data-stk-fold，开合两态由 treeExpanded 决定 -->
         <span v-if="expandable" class="folder-cell__icon" data-stk-fold>{{ treeExpanded ? '▾' : '▸' }}</span>
         <span v-else class="folder-cell__icon" />

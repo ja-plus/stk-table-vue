@@ -31,13 +31,14 @@ The table (self-drawn folder / file icons) assembles a full explorer-style inter
 ```vue
 <script lang="ts" setup>
 import type { CustomCellProps } from 'stk-table-vue/src/StkTable/types/index';
+import { StkTreeIndent } from 'stk-table-vue';
 
 defineProps<CustomCellProps<any>>();
 </script>
 <template>
     <div class="folder-cell">
-        <!-- built-in: per-level indent + guide lines -->
-        <slot name="stkTreeIndent" />
+        <!-- built-in per-level indent + guide lines via the exported StkTreeIndent component; offset re-aligns the lines to the custom icon center -->
+        <StkTreeIndent :level="level ?? 0" offset="6px" show-guide />
         <!-- self-drawn expand control: data-stk-fold is required; open/closed state comes from treeExpanded -->
         <span v-if="expandable" class="folder-cell__icon" data-stk-fold>{{ treeExpanded ? '▾' : '▸' }}</span>
         <span v-else class="folder-cell__icon" />
