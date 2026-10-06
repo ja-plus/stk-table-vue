@@ -60,8 +60,8 @@ function setCurrentRow() {
 }
 </script>
 <template>
-    <button class="btn" @click="deleteARow">{{ t('deleteGuangzhouRow') }}</button>
-    <button class="btn" @click="setCurrentRow">{{ t('setCurrentRowGuangzhou') }}</button>
+    <button type="button" class="btn" @click="deleteARow">{{ t('deleteGuangzhouRow') }}</button>
+    <button type="button" class="btn" @click="setCurrentRow">{{ t('setCurrentRowGuangzhou') }}</button>
     <StkTable
         ref="stkTableRef"
         style="max-height: 300px"

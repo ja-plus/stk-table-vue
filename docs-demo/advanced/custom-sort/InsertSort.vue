@@ -1,6 +1,6 @@
 <template>
-    <button class="btn" @click="addRow">Insert</button>
-    <button class="btn" @click="clear">Clear</button>
+    <button type="button" class="btn" @click="addRow">Insert</button>
+    <button type="button" class="btn" @click="clear">Clear</button>
     <StkTable
         ref="stkTableRef"
         row-key="id"

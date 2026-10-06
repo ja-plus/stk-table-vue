@@ -45,7 +45,7 @@ function addMoreData() {
 }
 </script>
 <template>
-    <button class="btn" @click="addMoreData">{{ t('add1000Row') }}</button>
+    <button type="button" class="btn" @click="addMoreData">{{ t('add1000Row') }}</button>
     <StkTable style="max-height: 300px" virtual cell-hover row-key="id" :columns="columns" :data-source="dataSource">
     </StkTable>
 </template>

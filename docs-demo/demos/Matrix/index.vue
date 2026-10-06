@@ -1,7 +1,7 @@
 <template>
     <div>
-        <button class="btn" @click="updateCell">{{ t('tryUpdate') }}</button>
-        <button class="btn" @click="updateLastColPercent">
+        <button type="button" class="btn" @click="updateCell">{{ t('tryUpdate') }}</button>
+        <button type="button" class="btn" @click="updateLastColPercent">
             {{ updateLastColInterval ? t('stop') : t('start') }} {{ t('updateLastColumn') }}
         </button>
         <StkTable

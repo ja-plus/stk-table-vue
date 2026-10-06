@@ -57,7 +57,7 @@ function togglePosition() {
 <template>
     <div>
         <div>
-            <button class="btn" @click="togglePosition">
+            <button type="button" class="btn" @click="togglePosition">
                 Position: {{ isFooterTop ? 'top' : 'bottom' }}
             </button>
         </div>

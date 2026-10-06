@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="btn" @click="updateRow">Update Row</button>
+        <button type="button" class="btn" @click="updateRow">Update Row</button>
         <StkTable
             ref="stkTableRef"
             v-model:columns="columns"

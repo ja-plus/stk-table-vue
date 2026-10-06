@@ -36,15 +36,15 @@ function handleCollapseZhejiangParents() {
 </script>
 <template>
     <div style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px">
-        <button class="btn" @click="handleToggleAll">Toggle All</button>
-        <button class="btn" @click="handleCollapseAll">Collapse All</button>
-        <button class="btn" @click="handleToggleAsia">Toggle Asia</button>
-        <button class="btn" @click="handleExpandAllAsia">Expand All Asia</button>
-        <button class="btn" @click="handleCollapseAllAsia">Collapse All Asia</button>
-        <button class="btn" @click="handleExpandToLevel2">Expand Asia to Level 2</button>
-        <button class="btn" @click="handleCollapseToLevel1">Collapse Asia to Level 1</button>
-        <button class="btn" @click="handleExpandZhejiangParents">Expand Parents of Zhejiang</button>
-        <button class="btn" @click="handleCollapseZhejiangParents">
+        <button type="button" class="btn" @click="handleToggleAll">Toggle All</button>
+        <button type="button" class="btn" @click="handleCollapseAll">Collapse All</button>
+        <button type="button" class="btn" @click="handleToggleAsia">Toggle Asia</button>
+        <button type="button" class="btn" @click="handleExpandAllAsia">Expand All Asia</button>
+        <button type="button" class="btn" @click="handleCollapseAllAsia">Collapse All Asia</button>
+        <button type="button" class="btn" @click="handleExpandToLevel2">Expand Asia to Level 2</button>
+        <button type="button" class="btn" @click="handleCollapseToLevel1">Collapse Asia to Level 1</button>
+        <button type="button" class="btn" @click="handleExpandZhejiangParents">Expand Parents of Zhejiang</button>
+        <button type="button" class="btn" @click="handleCollapseZhejiangParents">
             Collapse Parents of Zhejiang
         </button>
     </div>

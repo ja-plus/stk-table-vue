@@ -23,12 +23,31 @@
     padding-right: 16px;
 }
 
+/* 文档 demo 按钮统一规范：docs-demo 中的按钮一律写 <button type="button" class="btn">，
+   样式仅此一处全局维护，demo 内禁止再写局部按钮样式 */
+.btn {
+    padding: 4px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--vp-c-text-1, #333);
+    cursor: pointer;
+    background: var(--vp-c-bg-soft, #f6f6f6);
+    border: 1px solid var(--vp-c-divider, #e0e0e0);
+    border-radius: 6px;
+}
+
 .btn:hover {
-    color: #1890ff;
+    color: var(--vp-c-brand-1, #3451b2);
+    border-color: var(--vp-c-brand-1, #3451b2);
 }
 
 .btn+.btn {
-    margin-left: 10px;
+    margin-left: 8px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .input {

@@ -1,7 +1,7 @@
 <template>
     <div class="toolbar">
         <span>按住鼠标左键拖拽可选择连续多行，按住 Ctrl / Command 可追加不连续区间。</span>
-        <button class="btn" @click="clearSelection">clearSelectedRows()</button>
+        <button type="button" class="btn" @click="clearSelection">clearSelectedRows()</button>
     </div>
     <StkTable
         ref="stkTableRef"

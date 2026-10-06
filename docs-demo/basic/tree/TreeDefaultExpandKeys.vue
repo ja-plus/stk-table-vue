@@ -11,7 +11,7 @@ function handleToggleChina() {
 </script>
 <template>
     <div style="margin-bottom: 12px">
-        <button class="btn" @click="handleToggleChina">Toggle China</button>
+        <button type="button" class="btn" @click="handleToggleChina">Toggle China</button>
     </div>
     <StkTable
         ref="tableRef"

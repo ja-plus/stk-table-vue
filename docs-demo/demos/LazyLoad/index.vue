@@ -1,7 +1,7 @@
 <template>
     <div>
         <header>
-            <button class="btn" @click="gcData">GC</button>
+            <button type="button" class="btn" @click="gcData">GC</button>
         </header>
         <StkTable
             row-key="id"

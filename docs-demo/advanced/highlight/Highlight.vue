@@ -48,7 +48,7 @@ function addData() {
 }
 </script>
 <template>
-    <button class="btn" style="margin-right: 20px" @click="addData">Add data</button>
+    <button type="button" class="btn" @click="addData">Add data</button>
     <RangeInput
         v-model="highlightConfig.duration"
         min="0.1"

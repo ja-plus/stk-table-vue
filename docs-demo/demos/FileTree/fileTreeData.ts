@@ -318,11 +318,12 @@ export const fileTreeData: FileTreeNode[] = [
                         name: 'FileTree',
                         children: [
                             { name: 'FileIcon.vue' },
+                            { name: 'fileIcons.ts' },
                             { name: 'fileTreeData.ts' },
                             { name: 'fileTreeStore.ts' },
+                            { name: 'gen-file-tree-data.mjs' },
                             { name: 'index.vue' },
                             { name: 'NameCell.vue' },
-                            { name: 'TagNameCell.vue' },
                             { name: 'useCellDrag.ts' },
                             { name: 'useInlineRename.ts' },
                         ],

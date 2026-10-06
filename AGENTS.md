@@ -57,6 +57,7 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 - **虚拟滚动宽度**：列配置中 `min-width = max-width = width`，保证计算宽度稳定（详见 `虚拟滚动表格开发.md`）。
 - **docs-demo 目录归属**：一个 demo 若带私有附属件（自定义单元格组件、mock 数据、工具函数等），demo 本体必须写成同名目录下的 `index.vue`，附属文件与它同目录，不散放到上层目录。例：`docs-demo/demos/FileTree/index.vue` + 同目录的 `NameCell.vue` / `TagNameCell.vue` / `useCellDrag.ts` / `fileTreeStore.ts` / `fileTreeData.ts`。一个页面需要多个变体时，把表格并排进同一个 `index.vue`，而不是拆成互相引用的多个 demo。文档里的 `<demo vue="...">` 与 github 链接需显式写到 `XxxDemo/index.vue`。
 - **示例页优先**：带自定义单元格等附属件的完整示例，放进 `docs-src/demos/*.md`（配套 `docs-demo/demos/XxxDemo/`，并在 `docs-src/.vitepress/src/config/{zh,en,ja,ko}.ts` 的 Demos 导航中登记），功能文档页里只保留一句指向该示例页的链接 + 必要契约说明，不内嵌 `<demo>`；先例见 `merge-cells.md` → `/demos/realtime-merge-cells`。新建示例页时四语言同步。
+- **文档按钮统一规范**：文档 demo（`docs-demo/`）中的操作按钮一律使用原生 `<button type="button" class="btn">`，不封装 Vue 组件；`.btn` 规则（含 `:hover` / `+ .btn` 间距 / `:disabled`）集中维护在 `docs-src/.vitepress/theme/custom.css`，样式基于 `--vp-c-*` CSS 变量自适应明暗主题，demo 内禁止再写局部按钮样式或用内联 `style` 补间距。
 
 ## 修改指引（改 API 的完整闭环）
 

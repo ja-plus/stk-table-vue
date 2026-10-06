@@ -74,10 +74,10 @@ function updateArea0_1Cell() {
 }
 </script>
 <template>
-    <button class="btn" @click="updateArea0">update Area0</button>
-    <button class="btn" @click="updateArea0_0">update Area0-0</button>
-    <button class="btn" @click="updateArea0_1Cell">update Area0-1 gdp</button>
-    <button class="btn" @click="toggleArea0">Toggle Area0</button>
+    <button type="button" class="btn" @click="updateArea0">update Area0</button>
+    <button type="button" class="btn" @click="updateArea0_0">update Area0-0</button>
+    <button type="button" class="btn" @click="updateArea0_1Cell">update Area0-1 gdp</button>
+    <button type="button" class="btn" @click="toggleArea0">Toggle Area0</button>
     <StkTable
         ref="stkTableRef"
         style="height: 200px"

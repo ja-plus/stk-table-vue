@@ -69,10 +69,10 @@ function resetSort() {
 <template>
     <div class="multi-sort-demo">
         <div class="toolbar">
-            <button class="btn" @click="setMultiSort">Set (Age↓, Dept↑)</button>
-            <button class="btn" @click="setSingleSort">Set (Score↓)</button>
-            <button class="btn" @click="getSortInfo">Get Sort Info</button>
-            <button class="btn" @click="resetSort">Reset</button>
+            <button type="button" class="btn" @click="setMultiSort">Set (Age↓, Dept↑)</button>
+            <button type="button" class="btn" @click="setSingleSort">Set (Score↓)</button>
+            <button type="button" class="btn" @click="getSortInfo">Get Sort Info</button>
+            <button type="button" class="btn" @click="resetSort">Reset</button>
         </div>
 
         <StkTable

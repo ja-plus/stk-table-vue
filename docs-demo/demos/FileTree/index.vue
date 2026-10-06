@@ -204,7 +204,7 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
 <template>
     <p class="demo-tip">{{ t('fileTreeTip') }}</p>
     <div class="demo-toolbar">
-        <button type="button" class="demo-btn" @click="toggleExpandAll">
+        <button type="button" class="btn" @click="toggleExpandAll">
             {{ allExpanded ? t('fileTreeCollapseAll') : t('fileTreeExpandAll') }}
         </button>
     </div>
@@ -243,20 +243,6 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
     display: flex;
     gap: 8px;
     margin: 0 0 8px;
-}
-.demo-btn {
-    padding: 4px 12px;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--vp-c-text-1, #333);
-    cursor: pointer;
-    background: var(--vp-c-bg-soft, #f6f6f6);
-    border: 1px solid var(--vp-c-divider, #e0e0e0);
-    border-radius: 6px;
-}
-.demo-btn:hover {
-    color: var(--vp-c-brand-1, #3451b2);
-    border-color: var(--vp-c-brand-1, #3451b2);
 }
 /* 悬浮行显示手型光标 */
 .stk-table :deep(tbody tr) {

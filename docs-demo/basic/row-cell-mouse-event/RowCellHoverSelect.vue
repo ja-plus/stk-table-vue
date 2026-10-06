@@ -61,11 +61,11 @@ function setSelectedCell(row: any, col: StkTableColumn<any>) {
         :text="'selectedCellRevokable' + '(' + t('cellSelectedStateCancellable') + ')'"
     ></CheckItem>
     <hr />
-    <button class="btn" @click="setCurrentRow('Jack')">setCurrentRow('Jack')</button>
-    <button class="btn" @click="setSelectedCell(dataSource[0], columns[1])">
+    <button type="button" class="btn" @click="setCurrentRow('Jack')">setCurrentRow('Jack')</button>
+    <button type="button" class="btn" @click="setSelectedCell(dataSource[0], columns[1])">
         setSelectedCell('Jack-age')
     </button>
-    <button class="btn" @click="setCurrentRow('Disabled')">setCurrentRow('Disabled')</button>
+    <button type="button" class="btn" @click="setCurrentRow('Disabled')">setCurrentRow('Disabled')</button>
 
     <StkTable
         ref="stkTableRef"

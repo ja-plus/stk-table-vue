@@ -62,7 +62,7 @@ function handleReloadDocs() {
 </script>
 <template>
     <div style="margin-bottom: 12px">
-        <button class="btn" @click="handleReloadDocs">Reload "docs" Children</button>
+        <button type="button" class="btn" @click="handleReloadDocs">Reload "docs" Children</button>
     </div>
     <StkTable
         ref="tableRef"

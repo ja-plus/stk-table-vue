@@ -313,7 +313,7 @@ function handleColSpan(v: boolean) {
         <span style="margin-left: 8px">{{ t('sortDataCost') }}: {{ sortDataCost }}ms</span>
         <span style="margin-left: 8px">{{ t('renderCost') }}: {{ renderCost }}ms</span>
     </div>
-    <button class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
+    <button type="button" class="btn" @click="() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())">
         {{ t('simulateUpdateData') }}({{ timeout ? t('stop') : t('start') }})
     </button>
     <label style="margin-left: 16px">
