@@ -1,5 +1,5 @@
 <template>
-    <span v-bind="foldAttr" :class="stateClass" :aria-expanded="state === 'icon' ? String(Boolean(expanded)) : undefined"></span>
+    <span v-bind="foldAttr" :class="stateClass" :aria-expanded="state === 'icon' ? Boolean(expanded) : undefined"></span>
 </template>
 
 <script setup lang="ts">
