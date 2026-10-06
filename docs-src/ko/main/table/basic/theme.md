@@ -50,6 +50,10 @@ const customVars = ref({
 }
 ```
 
+### 트리 가이드 라인 변수
+
+`treeConfig.showGuide`를 활성화하면([트리 - 계층 가이드 라인](/main/table/basic/tree) 참조), `--tree-guide-color`(색상), `--tree-guide-width`(굵기), `--tree-guide-mask`(점선 마스크), `--tree-indent-width`(들여쓰기 한 칸 너비)로 가이드 라인과 들여쓰기 외관을 조정할 수 있습니다. 위 인터랙티브 데모의 '트리 가이드 라인' 그룹에서 실시간으로 조정하고 효과를 확인할 수 있습니다(다크 테마에는 각각 기본값이 있음).
+
 ::: warning
 `--row-height`는 보이는 행 높이만 결정합니다. 가상 리스트 모드에서는 스크롤 기하(표시 행 수, 총 높이, 자리표시자 높이)가 `row-height` prop 으로 계산되므로, CSS 변수만 바꾸고 `row-height`를 함께 바꾸지 않으면 둘이 어긋나 빈 영역이나 행 정렬 어긋남이 발생합니다.
 

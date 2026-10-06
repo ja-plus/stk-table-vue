@@ -50,6 +50,10 @@ const customVars = ref({
 }
 ```
 
+### 树形引导线变量
+
+开启 `treeConfig.showGuide`（详见[树形 - 层级引导线](/main/table/basic/tree#层级引导线)）后，可通过 `--tree-guide-color`（颜色）、`--tree-guide-width`（线宽）、`--tree-guide-mask`（虚线遮罩）、`--tree-indent-width`（缩进一格宽度）调整引导线与缩进外观，可在上方交互式演示的“树形引导线”分组中实时调整并查看效果（暗色主题有各自默认值）。
+
 ::: warning
 `--row-height` 只决定视觉行高。虚拟列表等场景下，滚动几何（可视行数、总高、占位高度）由 `row-height` prop 计算，只改 CSS 变量而不改 `row-height` 会使二者不一致，出现空白带或行错位。
 

@@ -49,6 +49,10 @@ const customVars = ref({
 }
 ```
 
+### ツリーガイド線の変数
+
+`treeConfig.showGuide` を有効にした場合（[ツリー - 階層ガイド線](/main/table/basic/tree)参照）、`--tree-guide-color`（色）、`--tree-guide-width`（太さ）、`--tree-guide-mask`（破線マスク）、`--tree-indent-width`（インデント 1 段の幅）でガイド線とインデントの外観を調整できます。上のインタラクティブデモの「ツリーガイド線」グループでリアルタイムに調整して効果を確認できます（ダークテーマには各自のデフォルト値があります）。
+
 ::: warning
 `--row-height` は見た目の行の高さのみを決めます。仮想リストモードではスクロールの幾何計算（表示行数・総高さ・スペーサの高さ）が `row-height` prop に基づいて行われるため、CSS 変数だけを変更して `row-height` を変えないと両者が一致せず、空白帯や行のずれが発生します。
 

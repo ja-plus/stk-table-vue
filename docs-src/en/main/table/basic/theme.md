@@ -49,6 +49,10 @@ Or override via CSS:
 }
 ```
 
+### Tree Guide Line Variables
+
+After enabling `treeConfig.showGuide` (see [Tree - Indent Guide Lines](/main/table/basic/tree#indent-guide-lines)), you can tune the guide lines and indent appearance with `--tree-guide-color` (color), `--tree-guide-width` (width), `--tree-guide-mask` (dashed mask), and `--tree-indent-width` (indent step width). Adjust them live in the "Tree Guide Lines" group of the interactive demo above (the dark theme has its own defaults).
+
 ::: warning
 `--row-height` only controls the visual row height. In virtual list mode the scroll geometry (visible row count, total height, spacer heights) is calculated from the `row-height` prop, so changing only the CSS variable without `row-height` makes the two inconsistent and produces blank bands or misaligned rows.
 

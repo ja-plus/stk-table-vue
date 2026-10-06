@@ -41,6 +41,10 @@ const lightDefaults = {
     '--sb-thumb-hover-color': '#a8a8c1',
     '--cs-bgc': '#d3eafd',
     '--cs-bc': '#2196f3',
+    '--tree-guide-color': '#d0d1e0',
+    '--tree-guide-width': '1px',
+    '--tree-guide-mask': 'none',
+    '--tree-indent-width': '16px',
 };
 
 const darkDefaults = {
@@ -75,6 +79,10 @@ const darkDefaults = {
     '--sb-thumb-hover-color': 'rgb(114, 119, 130)',
     '--cs-bgc': '#2a3f6b',
     '--cs-bc': '#386ccc',
+    '--tree-guide-color': '#3a3a48',
+    '--tree-guide-width': '1px',
+    '--tree-guide-mask': 'none',
+    '--tree-indent-width': '16px',
 };
 
 const cssVars = ref({ ...lightDefaults });
@@ -338,6 +346,34 @@ const varList = ref([
             { label: t('cssVars.csBc'), key: '--cs-bc', type: 'color' },
         ],
     },
+    {
+        label: t('cssVars.treeGuide'),
+        key: '13',
+        children: [
+            {
+                label: t('cssVars.treeGuideColor'),
+                key: '--tree-guide-color',
+                type: 'color',
+            },
+            {
+                label: t('cssVars.treeGuideWidth'),
+                key: '--tree-guide-width',
+                type: 'number',
+                unit: 'px',
+            },
+            {
+                label: t('cssVars.treeGuideMask'),
+                key: '--tree-guide-mask',
+                type: 'text',
+            },
+            {
+                label: t('cssVars.treeIndentWidth'),
+                key: '--tree-indent-width',
+                type: 'number',
+                unit: 'px',
+            },
+        ],
+    },
 ]);
 
 const controlColumns: StkTableColumn<any>[] = [
@@ -468,6 +504,7 @@ const controlColumns: StkTableColumn<any>[] = [
             scrollbar
             :tree-config="{
                 defaultExpandAll: true,
+                showGuide: true,
             }"
             :columns="controlColumns"
             :data-source="varList"
