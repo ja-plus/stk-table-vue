@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, toRaw, useTemplateRef } from 'vue';
+import { computed, nextTick, ref, toRaw, useTemplateRef } from 'vue';
 import { useData } from 'vitepress';
 import ContextMenu from 'ja-contextmenu';
 import { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
@@ -7,10 +7,8 @@ import StkTable from '../../StkTable.vue';
 import { useI18n } from '../../hooks/useI18n/index';
 import type { StkTableColumn } from '@/StkTable/types/index';
 import NameCell from './NameCell.vue';
-import TagNameCell from './TagNameCell.vue';
 import type { FileTreeNode } from './fileTreeData';
 import {
-    bump,
     canPaste,
     clipboard,
     copy,
@@ -34,7 +32,10 @@ const { isDark } = useData();
 
 /** demo 里用到的 StkTable 实例方法（expose） */
 type FileTreeTableInstance = {
-    setTreeExpand: (row: FileTreeNode, option: { expand: boolean }) => void;
+    setTreeExpand: (
+        row: FileTreeNode | FileTreeNode[],
+        option: { expand: boolean; all?: boolean },
+    ) => void;
     setCurrentRow: (row: FileTreeNode) => void;
     setHighlightDimRow: (rowKeys: string[]) => void;
     getRowIndex: (row: FileTreeNode) => number;
@@ -42,7 +43,6 @@ type FileTreeTableInstance = {
 };
 
 const tableARef = useTemplateRef<FileTreeTableInstance>('tableARef');
-const tableBRef = useTemplateRef<FileTreeTableInstance>('tableBRef');
 
 /**
  * 行唯一键：按行对象身份生成稳定 id（不往数据里塞字段）。
@@ -64,10 +64,6 @@ function rowKey(row: FileTreeNode): string {
 const folderColumns: StkTableColumn<FileTreeNode>[] = [
     { type: 'tree-node', title: t('fileName'), dataIndex: 'name', customCell: NameCell },
 ];
-/** 变体二：保留内置箭头与引导线，只给目录名加标签 */
-const tagColumns: StkTableColumn<FileTreeNode>[] = [
-    { type: 'tree-node', title: t('fileName'), dataIndex: 'name', customCell: TagNameCell },
-];
 
 /** 默认只展开第一层目录（不使用 defaultExpandAll） */
 const treeConfig = { showGuide: true, defaultExpandLevel: 1 };
@@ -85,32 +81,49 @@ for (const root of treeData.value) {
 const cutRow = computed(() => (clipboard.value?.mode === 'cut' ? clipboard.value.row : null));
 const rowClassName = (row: FileTreeNode) => (row === cutRow.value ? 'file-tree-row--cut' : '');
 
-/**
- * 展开 / 折叠并同步两张表：setTreeExpand 只重建当前表内的展平结果，
- * bump() 换新数据引用后另一张表会按各节点记住的展开态重新展平。
- */
-function setExpand(row: FileTreeNode, expand: boolean, table: typeof tableARef.value) {
+/** 展开 / 折叠一行：setTreeExpand 重建表内展平结果 */
+function setExpand(row: FileTreeNode, expand: boolean) {
     if (expand) expandedRows.add(row);
     else expandedRows.delete(row);
-    table?.setTreeExpand(row, { expand });
-    bump();
+    tableARef.value?.setTreeExpand(row, { expand });
 }
 
 /** 单击行（未命中展开控件时）切换展开，参考资源管理器 */
-function onCellClick(e: MouseEvent, row: FileTreeNode, table: typeof tableARef.value) {
+function onCellClick(e: MouseEvent, row: FileTreeNode) {
     // 行内重命名输入框上的点击不触发展开
     if ((e.target as HTMLElement)?.closest('input')) return;
     if (!isFolder(row)) return;
-    setExpand(row, !expandedRows.has(row), table);
+    setExpand(row, !expandedRows.has(row));
 }
-const onCellClickA = (e: MouseEvent, row: FileTreeNode) => onCellClick(e, row, tableARef.value);
-const onCellClickB = (e: MouseEvent, row: FileTreeNode) => onCellClick(e, row, tableBRef.value);
 
-/** 内置箭头切换后回开展开态，并同步另一张表 */
+/** 内置箭头切换后回写展开态 */
 function onToggleTreeExpand({ expanded, row }: { expanded: boolean; row: FileTreeNode }) {
     if (expanded) expandedRows.add(row);
     else expandedRows.delete(row);
-    bump();
+}
+
+/** 收集树中全部目录节点（含嵌套），用于展开 / 收起全部 */
+function collectFolders(list: FileTreeNode[], acc: FileTreeNode[] = []): FileTreeNode[] {
+    for (const node of list) {
+        if (isFolder(node)) {
+            acc.push(node);
+            collectFolders(node.children!, acc);
+        }
+    }
+    return acc;
+}
+
+/** 展开全部 / 收起全部（性能测试用）：一次性对根节点递归展开/收起整棵树 */
+const allExpanded = ref(false);
+function toggleExpandAll() {
+    const expand = !allExpanded.value;
+    allExpanded.value = expand;
+    // setTreeExpand 为静默模式，不触发 toggle-tree-expand，这里手动同步 demo 自身维护的展开态
+    for (const folder of collectFolders(treeData.value)) {
+        if (expand) expandedRows.add(folder);
+        else expandedRows.delete(folder);
+    }
+    tableARef.value?.setTreeExpand(treeData.value.filter(isFolder), { expand, all: true });
 }
 
 /**
@@ -119,15 +132,15 @@ function onToggleTreeExpand({ expanded, row }: { expanded: boolean; row: FileTre
  */
 registerReveal((expandRow: FileTreeNode, scrollToRow?: FileTreeNode) => {
     nextTick(() => {
-        setExpand(expandRow, true, tableARef.value);
+        setExpand(expandRow, true);
         const row = scrollToRow ?? expandRow;
         const index = tableARef.value?.getRowIndex(row) ?? -1;
         if (index >= 0) tableARef.value?.scrollTo({ top: { index } });
     });
 });
 
-/** 悬浮超过 1s 自动展开（拖动中）：同样同步两张表 */
-registerExpand((row: FileTreeNode, expand: boolean) => setExpand(row, expand, tableARef.value));
+/** 悬浮超过 1s 自动展开（拖动中） */
+registerExpand((row: FileTreeNode, expand: boolean) => setExpand(row, expand));
 
 /** 粘贴后高亮落盘的那一行（背景闪烁） */
 /** 粘贴后高亮落盘的那一行（背景闪烁） */
@@ -139,9 +152,6 @@ registerHighlight((row: FileTreeNode) => {
 });
 
 // ============ 右键菜单（ja-contextmenu，参考 VSCode 资源管理器） ============
-/** 最近一次在哪张表上右键：菜单动作（重命名 / 新建）据此把编辑态落到对应表 */
-let activeTable: 'A' | 'B' = 'A';
-
 const contextMenu = new ContextMenu({
     theme: () => (isDark.value ? 'dark' : ('' as any)),
 });
@@ -168,21 +178,18 @@ const menuOption: MenuOption<FileTreeNode> = {
             onclick: (_e, row) => paste(row),
         },
         { type: 'hr' },
-        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row, activeTable) },
+        { label: () => t('fileMenuRename'), onclick: (_e, row) => startRename(row) },
         { type: 'hr' },
         { label: () => t('fileMenuDelete'), onclick: (_e, row) => removeNode(row) },
     ],
 };
 const menu = contextMenu.create(menuOption);
 
-/** 两张表共用一套菜单：记录来源表，并选中该行 */
-function onRowMenu(e: MouseEvent, row: FileTreeNode, table: 'A' | 'B') {
-    activeTable = table;
-    (table === 'A' ? tableARef.value : tableBRef.value)?.setCurrentRow(row);
+/** 右键菜单：选中该行后弹出 */
+function onRowMenu(e: MouseEvent, row: FileTreeNode) {
+    tableARef.value?.setCurrentRow(row);
     menu.show(e, row);
 }
-const onRowMenuA = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'A');
-const onRowMenuB = (e: MouseEvent, row: FileTreeNode) => onRowMenu(e, row, 'B');
 
 /** 新建文件 / 文件夹：插入到排序位，展开、滚动可见，并直接进入行内重命名 */
 function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
@@ -190,40 +197,34 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
     const defaultName = kind === 'folder' ? t('fileNewFolderDefault') : t('fileNewFileDefault');
     const node = createNode(parent, kind, defaultName);
     if (!node) return;
-    nextTick(() => startEdit(node, true, activeTable));
+    nextTick(() => startEdit(node, true));
 }
 </script>
 
 <template>
     <p class="demo-tip">{{ t('fileTreeTip') }}</p>
-    <p class="file-tree__title">{{ t('fileTreeSelfDrawn') }}</p>
+    <div class="demo-toolbar">
+        <button type="button" class="demo-btn" @click="toggleExpandAll">
+            {{ allExpanded ? t('fileTreeCollapseAll') : t('fileTreeExpandAll') }}
+        </button>
+    </div>
+    <h3>StkTableVue</h3>
     <StkTable
         ref="tableARef"
+        virtual
         headless
         bordered="v"
-        :style="{ maxHeight: '260px', '--tree-indent-width': '20px' }"
+        :row-active="{
+            revokable: false
+        }"
+        :style="{ maxHeight: '600px', '--tree-indent-width': '20px' }"
         :tree-config="treeConfig"
         :row-key="rowKey"
         :columns="folderColumns"
         :data-source="treeData"
         :row-class-name="rowClassName"
-        @row-menu="onRowMenuA"
-        @cell-click="onCellClickA"
-        @toggle-tree-expand="onToggleTreeExpand"
-    ></StkTable>
-    <p class="file-tree__title">{{ t('fileTreeSlotVariant') }}</p>
-    <StkTable
-        ref="tableBRef"
-        headless
-        bordered="v"
-        style="max-height: 260px"
-        :tree-config="treeConfig"
-        :row-key="rowKey"
-        :columns="tagColumns"
-        :data-source="treeData"
-        :row-class-name="rowClassName"
-        @row-menu="onRowMenuB"
-        @cell-click="onCellClickB"
+        @row-menu="onRowMenu"
+        @cell-click="onCellClick"
         @toggle-tree-expand="onToggleTreeExpand"
     ></StkTable>
 </template>
@@ -238,9 +239,28 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
     font-size: 13px;
     color: var(--vp-c-text-2, #888);
 }
-.file-tree__title {
-    margin: 16px 0 4px;
+.demo-toolbar {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 8px;
+}
+.demo-btn {
+    padding: 4px 12px;
     font-size: 13px;
+    line-height: 1.5;
+    color: var(--vp-c-text-1, #333);
+    cursor: pointer;
+    background: var(--vp-c-bg-soft, #f6f6f6);
+    border: 1px solid var(--vp-c-divider, #e0e0e0);
+    border-radius: 6px;
+}
+.demo-btn:hover {
+    color: var(--vp-c-brand-1, #3451b2);
+    border-color: var(--vp-c-brand-1, #3451b2);
+}
+/* 悬浮行显示手型光标 */
+.stk-table :deep(tbody tr) {
+    cursor: pointer;
 }
 /* 剪切中的行：参考 VSCode 置灰 */
 .file-tree-row--cut {

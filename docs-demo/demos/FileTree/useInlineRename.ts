@@ -5,16 +5,13 @@ import { cancelEdit, commitEdit, editing } from './fileTreeStore';
 
 /**
  * 行内重命名 / 新建输入框：输入框直接渲染在单元格内（参考 VSCode），不新开弹窗。
- *
- * 两张表各有一份编辑态（editing.table），因此同一行在两张表里不会同时出现输入框——
- * 在哪张表右键，输入框就只出现在哪张表。
  */
-export function useInlineRename(props: CustomCellProps<FileTreeNode>, table: 'A' | 'B') {
+export function useInlineRename(props: CustomCellProps<FileTreeNode>) {
     const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
     const draft = ref('');
 
     /** 本行是否处于行内重命名 / 新建输入状态 */
-    const isEditing = computed(() => editing.value?.row === props.row && editing.value.table === table);
+    const isEditing = computed(() => editing.value?.row === props.row);
 
     /** 进入编辑：预填当前名称，聚焦后选中主文件名（不含扩展名），与 VSCode 一致 */
     function enterEdit() {

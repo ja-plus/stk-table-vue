@@ -11,10 +11,9 @@ import { fileTreeData } from './fileTreeData';
 export const treeData = ref<FileTreeNode[]>(fileTreeData);
 
 /**
- * 行内重命名 / 新建输入框状态：row 为正在编辑的行，isNew 表示这是新建且未提交的行，
- * table 记录是在哪张表触发的（两张表各有一份编辑态，不会同时出现两个输入框）。
+ * 行内重命名 / 新建输入框状态：row 为正在编辑的行，isNew 表示这是新建且未提交的行。
  */
-export const editing = ref<{ row: FileTreeNode; isNew: boolean; table: 'A' | 'B' } | null>(null);
+export const editing = ref<{ row: FileTreeNode; isNew: boolean } | null>(null);
 
 /** 剪切 / 复制剪贴板 */
 export const clipboard = ref<{ mode: 'cut' | 'copy'; row: FileTreeNode } | null>(null);
@@ -145,14 +144,14 @@ export function registerHighlight(fn: (row: FileTreeNode) => void) {
 }
 
 /** 进入行内编辑；isNew 为 true 时取消编辑会删除该行（新建未提交） */
-export function startEdit(row: FileTreeNode, isNew = false, table: 'A' | 'B' = 'A') {
-    editing.value = { row, isNew, table };
+export function startEdit(row: FileTreeNode, isNew = false) {
+    editing.value = { row, isNew };
 }
 
 /** 右键「重命名」 */
-export function startRename(row: FileTreeNode | undefined, table: 'A' | 'B' = 'A') {
+export function startRename(row: FileTreeNode | undefined) {
     if (!row) return;
-    startEdit(row, false, table);
+    startEdit(row, false);
 }
 
 /**

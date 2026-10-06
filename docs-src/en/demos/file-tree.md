@@ -6,7 +6,7 @@ A `tree-node` column with `customCell` makes a file management tree: a single-co
 
 ## File management capabilities
 
-The first table (self-drawn folder / file icons) assembles a full explorer-style interaction set, all wired by the demo itself:
+The table (self-drawn folder / file icons) assembles a full explorer-style interaction set, all wired by the demo itself:
 
 - **Only the first level expanded by default**: `treeConfig.defaultExpandLevel = 1` instead of `defaultExpandAll`.
 - **Click a row to expand / collapse**: listen to `cell-click` and flip the state with `setTreeExpand(row, { expand })` when a folder row is hit. Clicks that land on the expand control never emit `cell-click`, so nothing toggles twice; clicks on the inline rename input must be excluded yourself.
@@ -18,8 +18,6 @@ The first table (self-drawn folder / file icons) assembles a full explorer-style
 - **Auto-expand after 1s of hovering**: dragging over a collapsed folder expands it once the pointer has stayed for more than 1s; moving to another row or leaving cancels the timer.
 - **Drop highlight**: while hovering a folder, the shared `dropTargetFolder` highlights that folder and every row under it (the folder itself one shade deeper), while file-row drops draw an insertion line; the highlight disappears on drop or leave. A row being renamed temporarily drops `draggable` so the input stays selectable.
 - **Cut / copy / paste**: the clipboard only stores a row reference. Cut rows are dimmed; on paste a cut row is moved and a copied row is deep-cloned (name gets ` copy`), both re-sorted afterwards. Right-clicking a file row means "paste into that file's directory" (a root-level file pastes into the root). Once the paste lands, the pasted row flashes once via `setHighlightDimRow` and is scrolled into view.
-
-The second table reuses the same data for another placement: keep the built-in arrow and guide lines (render the `stkFoldIcon` slot) and only add a label to folder names. Both tables share one menu and one data set, so the interactions are identical; the inline edit state is scoped per table (`editing.table`), so the input only ever appears in the table you right-clicked.
 
 ## Contract
 

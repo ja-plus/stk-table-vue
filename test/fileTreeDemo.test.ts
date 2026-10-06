@@ -68,7 +68,7 @@ function rowOf(wrapper: any, tableIndex: number, text: string) {
 function cellRoot(wrapper: any, tableIndex: number, text: string) {
     const tr = rowOf(wrapper, tableIndex, text);
     expect(tr, `row "${text}" not found`).toBeTruthy();
-    return tableIndex === 0 ? tr.find('.file-tree__name') : tr.find('.tag-tree-cell');
+    return tr.find('.file-tree__name');
 }
 
 /** 取指定表里名称包含 text 的行中的 td（避开展开控件与输入框） */
@@ -148,7 +148,7 @@ describe('文件管理树 demo', () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         const tables = wrapper.findAll('.stk-table');
-        expect(tables.length).toBe(2);
+        expect(tables.length).toBe(1);
         for (const table of tables) {
             expect(table.find('thead').exists()).toBe(false); // headless 隐藏头部
             expect(table.findAll('tbody tr')[0].findAll('td').length).toBe(1); // 只有名称一列
@@ -160,7 +160,6 @@ describe('文件管理树 demo', () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         expect(cellRoot(wrapper, 0, 'README.md').attributes('draggable')).toBe('true');
-        expect(cellRoot(wrapper, 1, 'README.md').attributes('draggable')).toBe('true');
     });
 
     test('默认只展开第一层（defaultExpandLevel: 1）', async () => {
@@ -191,14 +190,12 @@ describe('文件管理树 demo', () => {
         ]);
     });
 
-    test('单击文件夹行展开 / 折叠，且两张表同步', async () => {
+    test('单击文件夹行展开 / 折叠', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
         await flush();
         let text = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
-        expect(text).toContain('components');
-        text = wrapper.findAll('.stk-table')[1].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
         expect(text).toContain('components');
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
         await flush();
@@ -367,30 +364,11 @@ describe('文件管理树 demo', () => {
         expect(cellRoot(wrapper, 0, 'StkTable.vue').classes()).toContain('file-tree__name--subtree');
         // 其它文件夹的行不高亮
         expect(cellRoot(wrapper, 0, 'docs-demo').classes()).not.toContain('file-tree__name--subtree');
-        // 第二张表同步高亮
-        expect(cellRoot(wrapper, 1, 'index.ts').classes()).toContain('tag-tree-cell--subtree');
         // 放下后高亮消失
         await fireDrag(target.element, 'drop');
         expect(target.classes()).not.toContain('file-tree__name--subtree');
         expect(cellRoot(wrapper, 0, 'components').classes()).not.toContain('file-tree__name--subtree');
         expect(dropTargetFolder.value).toBeNull();
-    });
-
-    test('整格拖拽：拖到第二张表上同样生效（两张表共用数据）', async () => {
-        const wrapper = mount(FileTreeDemo);
-        await flush();
-        const from = cellRoot(wrapper, 0, 'README.md');
-        const to = cellRoot(wrapper, 1, 'docs-demo');
-        await fireDrag(from.element, 'dragstart');
-        await fireDrag(to.element, 'dragover', { cellHeight: 28 });
-        await fireDrag(to.element, 'drop');
-        await fireDrag(from.element, 'dragend');
-        expect(rootNames()).toEqual(['docs-demo', 'src', 'package.json']);
-        expect(treeData.value.find(it => it.name === 'docs-demo')!.children?.map(it => it.name)).toEqual([
-            'advanced',
-            'basic',
-            'README.md',
-        ]);
     });
 
     test('整格拖拽：拖到自己身上不生效', async () => {
@@ -479,33 +457,11 @@ describe('文件管理树 demo', () => {
         expect(clipboard.value).toBeNull();
     });
 
-    test('第二张表也有完整右键菜单：复制 / 粘贴 / 重命名都生效', async () => {
-        const wrapper = mount(FileTreeDemo);
-        await flush();
-        // 在第二张表复制
-        await clickMenuItem(wrapper, 1, 'README.md', '复制');
-        expect(clipboard.value?.mode).toBe('copy');
-        // 在第二张表粘贴到文件夹
-        await clickMenuItem(wrapper, 1, 'docs-demo', '粘贴');
-        expect(byName('docs-demo').children?.map(it => it.name)).toEqual(['advanced', 'basic', 'README copy.md']);
-        // 在第二张表重命名：输入框只出现在第二张表
-        await clickMenuItem(wrapper, 1, 'package.json', '重命名');
-        const inputsA = wrapper.findAll('.stk-table')[0].findAll('input.file-tree__rename-input');
-        const inputsB = wrapper.findAll('.stk-table')[1].findAll('input.tag-tree-cell__input');
-        expect(inputsA.length).toBe(0);
-        expect(inputsB.length).toBe(1);
-        await inputsB[0].setValue('pnpm-lock.yaml');
-        await inputsB[0].trigger('keydown.enter');
-        await flush();
-        expect(rootNames()).toEqual(['docs-demo', 'src', 'pnpm-lock.yaml', 'README.md']);
-    });
-
-    test('第一张表重命名时输入框只出现在第一张表', async () => {
+    test('重命名时输入框渲染在单元格内', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
         await clickMenuItem(wrapper, 0, 'README.md', '重命名');
         expect(wrapper.findAll('.stk-table')[0].findAll('input.file-tree__rename-input').length).toBe(1);
-        expect(wrapper.findAll('.stk-table')[1].findAll('input.tag-tree-cell__input').length).toBe(0);
     });
 
     test('粘贴后高亮落盘的那一行', async () => {

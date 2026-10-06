@@ -29,10 +29,11 @@
     "test": "vitest",
     "test:types": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p type-tests",
     "docs:dev": "vitepress dev docs-src",
-    "docs:build": "vitepress build docs-src",
+    "docs:build": "npm run gen:filetree && vitepress build docs-src",
     "docs:preview": "vitepress preview docs-src",
     "docs:update": "cp -rf ./docs-src/.vitepress/dist/* ./docs",
     "perf": "node test/perf/run-perf-benchmark.mjs",
+    "gen:filetree": "node docs-demo/demos/FileTree/gen-file-tree-data.mjs",
     "perf:test": "vitest run test/perf/scrollPerf.test.js"
   },
   "keywords": [
