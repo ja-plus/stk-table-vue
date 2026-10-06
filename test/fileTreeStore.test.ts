@@ -30,8 +30,8 @@ import {
     startRename,
     treeData,
 } from '../docs-demo/demos/FileTree/fileTreeStore';
-import { fileTreeData } from '../docs-demo/demos/FileTree/fileTreeData';
-import type { FileTreeNode } from '../docs-demo/demos/FileTree/fileTreeData';
+// 用固定 fixture 而非生产 fileTreeData（后者由脚本扫描真实目录生成，会随仓库漂移）
+import { fileTreeData, type FileTreeNode } from './fileTreeFixture';
 
 /** 模块级状态是单例，每例前用一份全新的数据重置 */
 beforeEach(() => {

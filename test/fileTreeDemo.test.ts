@@ -6,7 +6,7 @@
  * 剪切 / 粘贴，以及整格拖拽（跨文件夹、悬浮 1s 自动展开、子树高亮）。
  */
 import { mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // demo 内使用了 vitepress 的 useData（语言 / 暗色），单测里打桩
 vi.mock('vitepress', () => ({
@@ -15,7 +15,7 @@ vi.mock('vitepress', () => ({
 
 import FileTreeDemo from '../docs-demo/demos/FileTree/index.vue';
 import { clipboard, draggingRow, dropTargetFolder, editing, treeData } from '../docs-demo/demos/FileTree/fileTreeStore';
-import type { FileTreeNode } from '../docs-demo/demos/FileTree/fileTreeData';
+import type { FileTreeNode } from './fileTreeFixture';
 
 async function flush() {
     for (let i = 0; i < 5; i++) {
@@ -24,9 +24,24 @@ async function flush() {
     }
 }
 
+/**
+ * happy-dom 无布局引擎：容器 clientHeight 恒为 0，会让虚拟滚动 pageSize 退化成
+ * DEFAULT_TABLE_HEIGHT(100)/rowHeight(28)≈4，只渲染前几行，导致依赖完整行列表的断言失败。
+ * 这里在 mount 前把 clientHeight 打桩为 600（>= 9 行 * 28px），让 onMounted 的 initVirtualScroll
+ * 渲染出全部数据行；afterAll 还原，避免影响同环境其它用例。
+ */
+const clientHeightDesc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
+beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: () => 600 });
+});
+afterAll(() => {
+    if (clientHeightDesc) Object.defineProperty(HTMLElement.prototype, 'clientHeight', clientHeightDesc);
+});
+
 beforeEach(async () => {
     // 重置 demo 的模块级状态（store 为单例）
-    const { fileTreeData } = await import('../docs-demo/demos/FileTree/fileTreeData');
+    // 用固定 fixture 而非生产 fileTreeData（后者由脚本扫描真实目录生成，会随仓库漂移）
+    const { fileTreeData } = await import('./fileTreeFixture');
     treeData.value = JSON.parse(JSON.stringify(fileTreeData));
     editing.value = null;
     clipboard.value = null;
@@ -61,7 +76,7 @@ function byName(name: string): FileTreeNode {
 
 /** 取指定表里名称包含 text 的行 */
 function rowOf(wrapper: any, tableIndex: number, text: string) {
-    return wrapper.findAll('.stk-table')[tableIndex].findAll('tbody tr').find((tr: any) => tr.text().includes(text));
+    return wrapper.findAll('.stk-table')[tableIndex].findAll('tbody tr[data-row-key]').find((tr: any) => tr.text().includes(text));
 }
 
 /** 取指定表里名称包含 text 的行的自绘单元格根元素（拖拽事件挂在它上面） */
@@ -151,7 +166,7 @@ describe('文件管理树 demo', () => {
         expect(tables.length).toBe(1);
         for (const table of tables) {
             expect(table.find('thead').exists()).toBe(false); // headless 隐藏头部
-            expect(table.findAll('tbody tr')[0].findAll('td').length).toBe(1); // 只有名称一列
+            expect(table.findAll('tbody tr[data-row-key]')[0].findAll('td').length).toBe(1); // 只有名称一列
         }
         expect(wrapper.findAll('.drag-row-handle').length).toBe(0);
     });
@@ -165,7 +180,7 @@ describe('文件管理树 demo', () => {
     test('默认只展开第一层（defaultExpandLevel: 1）', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
-        const text = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
+        const text = wrapper.findAll('.stk-table')[0].findAll('tbody tr[data-row-key]').map((tr: any) => tr.text()).join('|');
         expect(text).toContain('src');
         expect(text).toContain('StkTable'); // 第一层子节点可见
         expect(text).not.toContain('components'); // 第二层不可见
@@ -175,7 +190,7 @@ describe('文件管理树 demo', () => {
     test('初始即按文件夹优先 + 名称排序', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
-        const names = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text().trim());
+        const names = wrapper.findAll('.stk-table')[0].findAll('tbody tr[data-row-key]').map((tr: any) => tr.text().trim());
         // 根层文件夹优先：docs-demo、src 在 package.json、README.md 之前；src 内：StkTable < style.less < VirtualTree.vue
         expect(names).toEqual([
             'docs-demo',
@@ -195,11 +210,11 @@ describe('文件管理树 demo', () => {
         await flush();
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
         await flush();
-        let text = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
+        let text = wrapper.findAll('.stk-table')[0].findAll('tbody tr[data-row-key]').map((tr: any) => tr.text()).join('|');
         expect(text).toContain('components');
         await cellOf(wrapper, 0, 'StkTable').trigger('click');
         await flush();
-        text = wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
+        text = wrapper.findAll('.stk-table')[0].findAll('tbody tr[data-row-key]').map((tr: any) => tr.text()).join('|');
         expect(text).not.toContain('components');
     });
 
@@ -334,7 +349,7 @@ describe('文件管理树 demo', () => {
     test('整格拖拽：悬浮到未展开的文件夹上超过 1s 自动展开', async () => {
         const wrapper = mount(FileTreeDemo);
         await flush();
-        const visible = () => wrapper.findAll('.stk-table')[0].findAll('tbody tr').map((tr: any) => tr.text()).join('|');
+        const visible = () => wrapper.findAll('.stk-table')[0].findAll('tbody tr[data-row-key]').map((tr: any) => tr.text()).join('|');
         expect(visible()).not.toContain('components'); // StkTable 默认折叠
         const from = cellRoot(wrapper, 0, 'README.md');
         const to = cellRoot(wrapper, 0, 'StkTable');
