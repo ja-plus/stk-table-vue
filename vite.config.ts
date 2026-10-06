@@ -20,6 +20,9 @@ export default defineConfig({
         rollupOptions: {
             external: ['vue'],
             output: {
+                // 产物文件名不带 hash（库产物，缓存/版本由 npm 包版本与消费方脚手架管理）
+                entryFileNames: 'stk-table-vue.js',
+                chunkFileNames: '[name].js',
                 // 指定资产文件（包含 CSS）的命名规则
                 assetFileNames: assetInfo => {
                     if (assetInfo.name && assetInfo.name.endsWith('.css')) {

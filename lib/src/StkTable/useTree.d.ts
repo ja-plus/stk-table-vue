@@ -31,5 +31,5 @@ type SetTreeExpandOption = {
      */
     parents?: boolean;
 };
-export declare function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, emits: any, onDataSourceChange: () => void): readonly [(row: DT, col: any) => void, (row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) => void, (data: DT[]) => DT[]];
+export declare function useTree(props: any, dataSourceCopy: ShallowRef<DT[]>, rowKeyGen: RowKeyGen, emits: any, onDataSourceChange: () => void): readonly [(row: DT, col: any) => Promise<void>, (row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) => void | Promise<void>, (data: DT[]) => DT[], (row: DT) => boolean, (rowKeyOrRow: UniqKey | DT) => Promise<void>];
 export {};

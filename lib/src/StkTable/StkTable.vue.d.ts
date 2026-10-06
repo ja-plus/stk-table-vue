@@ -403,7 +403,16 @@ declare const _default: __VLS_WithTemplateSlots<import('vue').DefineComponent<im
         all?: boolean;
         level?: number;
         parents?: boolean;
-    }) => void;
+    }) => void | Promise<void>;
+    /**
+     * 重新加载树节点子节点（treeConfig.lazy 懒加载）
+     *
+     * en: Force reload children of a tree node (treeConfig.lazy)
+     * @see {@link reloadTreeNode}
+     */
+    reloadTreeNode: (rowKeyOrRow: UniqKey | (PrivateRowDT & {
+        children?: (PrivateRowDT & /*elided*/ any)[];
+    })) => Promise<void>;
     /**
      * 获取拖选选中的单元格信息
      *
