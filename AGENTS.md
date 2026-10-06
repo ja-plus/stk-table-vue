@@ -52,6 +52,7 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 - **按 feature 拆 hook**：新逻辑应拆分为 `useXxx.ts`，避免让 `StkTable.vue` 继续膨胀。
 - **私有字段命名**：内部私有字段统一以双下划线 `__` 开头（如 `__EXP__`、`__R_K__`、`__LF_S__`），并在类型上标注 `@private`，对外不可见。
 - **注释语言**：源码注释与 JSDoc 使用中文。
+- **提交信息语言**：Git commit message 一律使用**英文**，遵循 Conventional Commits（`feat:` / `fix:` / `docs:` / `refactor:` 等 + scope），不使用中文提交说明。
 - **通用类型参数**：`StkTableColumn<T>` / 组件 props 普遍使用泛型 `T extends Record<string, any>`，`T` 代表数据行（dataSource 元素）类型。
 - **列唯一键**：默认取 `dataIndex`，可显式指定 `key`。
 - **虚拟滚动宽度**：列配置中 `min-width = max-width = width`，保证计算宽度稳定（详见 `虚拟滚动表格开发.md`）。
