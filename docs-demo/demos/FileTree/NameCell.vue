@@ -5,6 +5,7 @@ import type { FileTreeNode } from './fileTreeData';
 import { draggingRow } from './fileTreeStore';
 import { useCellDrag } from './useCellDrag';
 import { useInlineRename } from './useInlineRename';
+import FileIcon from './FileIcon.vue';
 import { StkTreeIndent } from '../../../src/StkTable/index';
 
 const props = defineProps<CustomCellProps<FileTreeNode>>();
@@ -61,8 +62,8 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
             <svg
                 v-if="treeExpanded"
                 viewBox="0 0 24 24"
-                width="15"
-                height="15"
+                width="16"
+                height="16"
                 fill="currentColor"
                 aria-hidden="true"
             >
@@ -73,8 +74,8 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
             <svg
                 v-else
                 viewBox="0 0 24 24"
-                width="15"
-                height="15"
+                width="16"
+                height="16"
                 fill="currentColor"
                 aria-hidden="true"
             >
@@ -83,13 +84,9 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
                 />
             </svg>
         </span>
-        <!-- 文件：占据同一格，但不是展开控件（不带 data-stk-fold） -->
+        <!-- 文件：占据同一格，但不是展开控件（不带 data-stk-fold）；图标由 FileIcon 按扩展名分派 -->
         <span v-else class="file-tree__icon file-tree__icon--file">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
-                <path
-                    d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-7V3.5L18.5 9H13z"
-                />
-            </svg>
+            <FileIcon :name="String(props.row.name ?? '')" />
         </span>
 
         <!-- 行内重命名输入框：就在格子内部，不新开弹窗（参考 VSCode） -->

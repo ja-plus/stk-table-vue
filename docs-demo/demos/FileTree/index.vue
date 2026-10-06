@@ -228,7 +228,7 @@ function onCreate(parent: FileTreeNode | undefined, kind: 'file' | 'folder') {
     ></StkTable>
 </template>
 
-<style>
+<style scoped>
 .stk-table {
     --cell-padding-x: 0;
     --cell-padding-y: 0;
