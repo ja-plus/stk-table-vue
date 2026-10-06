@@ -26,8 +26,8 @@ const {
 );
 const isDragging = computed(() => draggingRow.value === props.row);
 
-/** 行内重命名 / 新建输入框（第一张表） */
-const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A');
+/** 行内重命名 / 新建输入框 */
+const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props);
 </script>
 
 <template>
@@ -80,7 +80,7 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
                 aria-hidden="true"
             >
                 <path
-                    d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                    d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2zm10 4v10H4V6h6l2 2h8z"
                 />
             </svg>
         </span>
@@ -145,7 +145,11 @@ const { inputRef, draft, isEditing, commit, cancel } = useInlineRename(props, 'A
 }
 .file-tree__icon--dir {
     cursor: pointer;
-    color: #d8a127;
+    /* VSCode 默认目录图标色（Seti 主题不映射 folder，跟随工作区前景色） */
+    color: #424242;
+}
+html.dark .file-tree__icon--dir {
+    color: #c5c5c5;
 }
 .file-tree__icon--file {
     color: var(--fold-icon-color);
