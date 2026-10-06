@@ -1,6 +1,6 @@
 /**
  * name: stk-table-vue
- * version: v1.2.6
+ * version: v1.2.7
  * description: High performance realtime virtual table for vue3 and vue2.7
  * author: japlus
  * homepage: https://ja-plus.github.io/stk-table-vue/
@@ -209,6 +209,7 @@
   --tree-loading-color:#757699;
   --tree-guide-color:#d0d1e0;
   --tree-guide-width:1px;
+  --tree-indent-width:16px;
   --col-resize-indicator-color:#87879c;
   --fixed-col-shadow-color-from:rgba(0, 0, 0, 0.1);
   --fixed-col-shadow-color-to:rgba(0, 0, 0, 0);
@@ -398,9 +399,6 @@
 .stk-table.virtual .table-header-cell-wrapper .table-header-title{
   max-height:inherit;
 }
-.stk-table.virtual tbody td{
-  height:var(--row-height);
-}
 .stk-table.virtual tbody td .table-cell-wrapper{
   max-height:var(--row-height);
   overflow:hidden;
@@ -506,6 +504,9 @@
 }
 .stk-table tbody tr{
   background-color:var(--td-bgc);
+  height:var(--row-height);
+}
+.stk-table tbody td{
   height:var(--row-height);
 }
 .stk-table .text-l{
@@ -696,9 +697,21 @@
 .stk-table .tree-expanded .stk-fold-icon::before{
   transform:rotate(90deg);
 }
+.stk-table .stk-tree-indent{
+  position:relative;
+  align-self:stretch;
+  flex-shrink:0;
+  width:calc(var(--tree-indent-width) * 0);
+  width:calc(var(--tree-indent-width) * var(--stk-tree-indent-cells, 0));
+}
+.stk-table .stk-fold-holder{
+  display:inline-flex;
+  width:var(--tree-indent-width);
+  flex-shrink:0;
+}
 .stk-table .stk-fold-icon{
   display:inline-flex;
-  width:16px;
+  width:var(--tree-indent-width);
   height:16px;
   cursor:pointer;
   align-items:center;
@@ -717,9 +730,12 @@
 .stk-table .stk-fold-icon:hover::before{
   border-left:5px solid var(--fold-icon-hover-color);
 }
+.stk-table .stk-fold-icon.is-expanded::before{
+  transform:rotate(90deg);
+}
 .stk-table .stk-tree-loading-icon{
   display:inline-flex;
-  width:16px;
+  width:var(--tree-indent-width);
   height:16px;
   align-items:center;
   justify-content:center;
@@ -749,8 +765,15 @@
   left:0;
   top:0;
   bottom:0;
+  width:100%;
   pointer-events:none;
-  background-image:repeating-linear-gradient(to right, transparent 0, transparent 8px, var(--tree-guide-color) 8px, var(--tree-guide-color) calc(8px + var(--tree-guide-width)), transparent calc(8px + var(--tree-guide-width)), transparent 16px);
+  background-image:repeating-linear-gradient(to right, transparent 0, transparent 4px, var(--tree-guide-color) 4px, var(--tree-guide-color) calc(4px + var(--tree-guide-width)), transparent calc(4px + var(--tree-guide-width)), transparent var(--tree-indent-width));
+  -webkit-mask-image:none;
+  -webkit-mask-image:var(--tree-guide-mask, none);
+  mask-image:none;
+  mask-image:var(--tree-guide-mask, none);
+  background-position-x:0px;
+  background-position-x:var(--stk-tree-guide-offset, 0px);
 }
 .stk-table td.cell-hover{
   background-color:var(--tr-hover-bgc);

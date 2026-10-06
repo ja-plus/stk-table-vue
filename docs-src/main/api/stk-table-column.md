@@ -67,6 +67,10 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.cellValue row[col.dataIndex] 的值
      * @param props.rowIndex 行索引
      * @param props.colIndex 列索引 (从0开始) 在virtual-x下 表示虚拟列表中的列索引
+     * @param props.level / props.expandable / props.treeLoading 仅 tree-node 列有值：层级（根为 0）、是否可展开、子节点是否懒加载中
+     *
+     * 注意：配在 type: 'tree-node' / 'expand' 列时，整格由你渲染，内置的缩进+引导线与箭头会经
+     * stkTreeIndent / stkFoldIcon 插槽传入你的组件；完全自绘展开控件时需标记 data-stk-fold。
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**

@@ -55,32 +55,30 @@ describe('tree indent guide lines (treeConfig.showGuide)', () => {
         }
     });
 
-    test('开启后按层级渲染引导线：根层 0 条、第 N 层引导区宽 N*16px', async () => {
+    test('开启后按层级渲染引导线：只画祖先各格 0..level-1，叶子行自身那格不画', async () => {
         const wrapper = mountTable({ defaultExpandAll: true, showGuide: true });
         await flush();
 
-        // 根层无引导线
+        // 根行（第 0 层）：没有祖先格，故无引导线
         expect(trOf(wrapper, 'r').find('.stk-tree-guide').exists()).toBe(false);
 
-        // 第 1 层：引导区宽 16px
-        const c1Guide = trOf(wrapper, 'c1').find('.stk-tree-guide');
-        expect(c1Guide.exists()).toBe(true);
-        expect(c1Guide.attributes('style')).toContain('width: 16px');
+        // 第 1 层：线落在缩进格内（仅祖先第 0 格），可展开行与叶子行同宽
+        const c1Indent = trOf(wrapper, 'c1').find('.stk-tree-indent');
+        expect(c1Indent.attributes('style')).toContain('--stk-tree-indent-cells: 1');
+        expect(c1Indent.find('.stk-tree-guide').exists()).toBe(true);
 
-        // 第 2 层：引导区宽 32px
-        const g1Guide = trOf(wrapper, 'g1').find('.stk-tree-guide');
-        expect(g1Guide.exists()).toBe(true);
-        expect(g1Guide.attributes('style')).toContain('width: 32px');
-
-        // 另一个第 1 层兄弟同样 16px
-        expect(trOf(wrapper, 'c2').find('.stk-tree-guide').attributes('style')).toContain('width: 16px');
+        // 第 2 层：2 格；叶子行自身那格（箭头占位格）不再画线
+        const g1Indent = trOf(wrapper, 'g1').find('.stk-tree-indent');
+        expect(g1Indent.attributes('style')).toContain('--stk-tree-indent-cells: 2');
+        expect(g1Indent.find('.stk-tree-guide').exists()).toBe(true);
+        expect(trOf(wrapper, 'c2').find('.stk-tree-indent').attributes('style')).toContain('--stk-tree-indent-cells: 1');
     });
 
     test('虚拟滚动下随可见行动态渲染引导线', async () => {
         const wrapper = mountTable({ defaultExpandAll: true, showGuide: true }, { virtual: true, height: '120px' });
         await flush();
 
-        // 折叠后再展开，可见子行随行动态创建引导线
+        // 折叠后再展开，可见子行随行动态创建引导线；可展开根行自身格是三角，始终无线
         (wrapper.vm as any).setTreeExpand('r', { expand: false });
         await flush();
         expect(trOf(wrapper, 'r').find('.stk-tree-guide').exists()).toBe(false);

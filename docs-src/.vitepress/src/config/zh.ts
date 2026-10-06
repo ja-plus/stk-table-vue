@@ -166,6 +166,7 @@ export const zhConfig = defineConfig({
                     { text: '面板树', link: '/panel-tree' },
                     { text: '懒加载', link: '/lazy-load' },
                     { text: '实时合并单元格', link: '/realtime-merge-cells' },
+                    { text: '文件管理树', link: '/file-tree' },
                 ]
             }
         },

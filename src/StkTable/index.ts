@@ -1,6 +1,9 @@
 export { useAreaSelection } from './features/index';
 export { registerFeature } from './registerFeature';
 export { default as StkTable } from './StkTable.vue';
+export { default as StkTreeCell } from './components/TreeNodeCell.vue';
+export { default as StkTreeIndent } from './components/TreeIndent.vue';
+export { default as StkTreeFoldIcon } from './components/TreeFoldIcon.vue';
 export type { AreaSelectionRange, Order, ScrollAxisTarget, ScrollToFn, ScrollToOptions, SortConfig, SortOption, SortState, StkTableColumn } from './types/index';
 export { binarySearch, insertToOrderedArray, strCompare, tableSort } from './utils';
 // export custom cells

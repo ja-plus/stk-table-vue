@@ -101,7 +101,7 @@ const treeConfig = {
 
 ## インデントガイドライン  <Badge type="tip" text="^1.2.7" />
 
-`treeConfig.showGuide`（デフォルト `false`）を有効にすると、`tree-node` 列が行のインデント領域に階層ごとに縦のガイドラインを描画し、子行がどの階層に属するかを直感的に判別できます。無効時は従来のインデントのみでガイドラインは描画されません。
+`treeConfig.showGuide`（デフォルト `false`）を有効にすると、`tree-node` 列が行のインデント領域に階層ごとに縦のガイドラインを描画し、子行がどの階層に属するかを直感的に判別できます。祖先のスロット（0..level-1）のみを描画し、行自身のコントロールマスには線を引きません。無効時は従来のインデントのみでガイドラインは描画されません。
 
 ```ts
 const treeConfig = {
@@ -112,10 +112,17 @@ const treeConfig = {
 
 ::: tip 説明
 - ガイドラインは「各階層 1 本の縦線」スタイルで、精密な last-child 切断 / T 字型のツリーコネクタでは**ありません**。
-- CSS 変数で見た目を変更可能：`--tree-guide-color`（色）、`--tree-guide-width`（線幅、デフォルト `1px`）。ダークテーマは個別のデフォルト値を持ちます。
+- CSS 変数で見た目を変更可能：`--tree-guide-color`（色）、`--tree-guide-width`（線幅、デフォルト `1px`）、`--tree-guide-mask`（破線マスク、デフォルト `none` は実線。縦の repeating グラデーションで交差させて破線に、例：`repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`）。ダークテーマは個別のデフォルト値を持ちます。
+- より広い矢印／アイコンに差し替える場合は `--tree-indent-width`（既定 `16px`）を上書きすれば、インデントマス・コントロール枠・ガイド線のピッチが連動します。`tree-node` 列に `customCell` を当ててセル全体を自作する描画（フォルダ開閉アイコンの例付き）は[ファイル管理ツリー](/ja/demos/file-tree)を参照してください。
 :::
 
 <demo vue="basic/tree/TreeGuide.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/tree/TreeGuide.vue"></demo>
+
+### customCell でツリーセルをカスタム（展開アイコンを差し替え）  <Badge type="tip" text="^1.2.7" />
+
+`tree-node` 列にも `customCell` を指定できます。セル全体をあなたが描画し、組み込みの「レベル別のインデント + ガイド線」と「矢印 / 遅延ローディング」はそれぞれ `stkTreeIndent`・`stkFoldIcon` スロットとして渡されます（これらは**あなたのセルコンポーネント**のスロットであり、StkTable のトップレベルスロットではありません）。
+
+実行可能な例（フォルダ開 / 閉アイコンを自作する場合と、組み込み矢印を残してラベルだけ変える場合）、配置の契約とコード骨格は [ファイル管理ツリー](/ja/demos/file-tree) を参照してください。
 
 ## 仮想リスト
 

@@ -529,9 +529,10 @@ treeConfig?: {
 :::
 
 ::: tip 层级引导线（`showGuide`）
-- 开启后，`tree-node` 列在每行缩进区域按层级各绘制一根竖向引导线，帮助识别子行所属层级；默认 `false`，关闭时保持既有纯缩进行为。
+- 开启后，`tree-node` 列在每行缩进区域按层级各绘制一根竖向引导线，帮助识别子行所属层级；只覆盖祖先各格，行自身的控件格不画线；默认 `false`，关闭时保持既有纯缩进行为。
 - 引导线为“每层级一根贯穿竖线”风格，并非精确的 last-child 截断 / T 型树连接线。
-- 外观可用 CSS 变量覆盖：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`），暗色主题有各自默认值。
+- 外观可用 CSS 变量覆盖：`--tree-guide-color`（颜色）、`--tree-guide-width`（线宽，默认 `1px`）、`--tree-guide-mask`（虚线遮罩，默认 `none` 即实线，设为纵向 repeating 渐变取交集画虚线，如 `repeating-linear-gradient(to bottom, #000 0 4px, transparent 4px 8px)`），暗色主题有各自默认值。
+- 换更宽的箭头/图标时覆盖 `--tree-indent-width`（默认 `16px`），缩进格、控件占位格与引导线步长会一起缩放。`tree-node` 列配 `customCell` 整格自绘（含文件夹开合图标示例）见[文件管理树](/demos/file-tree)。
 
 详见[树形 - 层级引导线](/main/table/basic/tree.html#层级引导线)。
 :::

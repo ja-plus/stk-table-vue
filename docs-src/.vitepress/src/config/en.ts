@@ -139,6 +139,7 @@ export const enConfig = defineConfig({
                     { text: 'Panel Tree', link: '/panel-tree' },
                     { text: 'Lazy Load', link: '/lazy-load' },
                     { text: 'Realtime Merge Cells', link: '/realtime-merge-cells' },
+                    { text: 'File Management Tree', link: '/file-tree' },
                 ]
             }
         },

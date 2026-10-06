@@ -1,10 +1,14 @@
 
-## Unreleased
+## 1.2.7
 * Feat (tree)
-  - feat: tree children lazy load via `treeConfig.lazy` + `treeConfig.loadMethod(row, col)`; expanding a node marked with `hasChildren` loads and merges its children, with a built-in loading icon. Successful loads are cached; failures keep the row collapsed and fire `treeConfig.onLoadError`. New method `reloadTreeNode(rowKeyOrRow)` force-reloads a subtree. `lazy` defaults to `false` (backward compatible).
-  - feat: per-level vertical indent guide lines via `treeConfig.showGuide` (default `false`). When enabled, the `tree-node` column draws one vertical guide line per level in each row's indentation; disabled keeps the legacy padding-only behavior. Style via `--tree-guide-color` / `--tree-guide-width` CSS variables.
+  - feat: export `StkTreeCell` / `StkTreeIndent` / `StkTreeFoldIcon` for reusable tree custom cells. Fold icon state comes from `expandable` / `loading` / `expanded` props; `offset` shifts the guide lines to align with a custom expand icon.
+  - feat: lazy load tree children via `treeConfig.lazy` + `treeConfig.loadMethod(row, col)`. Successful loads are cached; a failed load keeps the row collapsed and fires `treeConfig.onLoadError`. New `reloadTreeNode(rowKeyOrRow)`. Defaults to `false`.
+  - feat: per-level indent guide lines via `treeConfig.showGuide` (default `false`); style via `--tree-guide-color` / `--tree-guide-width` / `--tree-guide-mask`.
+  - feat: `customCell` can now fully render tree / expand columns. The built-in indent + guide lines and the fold icon are handed back through the `stkTreeIndent` / `stkFoldIcon` slots, and `CustomCellProps` gains `level` / `expandable` / `treeLoading`; a self-drawn control is recognized by `data-stk-fold`. Indent pitch via `--tree-indent-width` (default `16px`).
+* Bugfix (tree)
+  - fix: a custom cell that rendered the built-in `stkFoldIcon` slot toggled the row twice per click; toggling is now driven solely by delegation.
 * Feat (a11y)
-  - feat: keyboard accessibility for virtual scroll and column sort. Keyboard scrolling shortcuts work by focusing the table (no prior mouse hover needed); the scroll container and sortable `<th>` auto-get `tabindex="0"`, **Enter**/**Space** triggers the sort cycle, with `:focus-visible` outlines.
+  - feat: keyboard accessibility. Keyboard scrolling works by focusing the table; the scroll container and sortable `<th>` get `tabindex="0"`, **Enter**/**Space** sorts, with `:focus-visible` outlines.
 
 ## 1.2.6
 * Bugfix

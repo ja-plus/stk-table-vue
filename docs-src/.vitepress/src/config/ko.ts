@@ -139,6 +139,7 @@ export const koConfig = defineConfig({
                     { text: '패널 트리', link: '/panel-tree' },
                     { text: '지연 로딩', link: '/lazy-load' },
                     { text: '실시간 셀 병합', link: '/realtime-merge-cells' },
+                    { text: '파일 관리 트리', link: '/file-tree' },
                 ]
             }
         },

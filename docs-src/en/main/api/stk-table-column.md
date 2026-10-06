@@ -67,6 +67,10 @@ export type StkTableColumn<T extends Record<string, any>> = {
      * @param props.cellValue The value of row[col.dataIndex]
      * @param props.rowIndex Row index
      * @param props.colIndex Column index (from 0) In virtual-x, otherwise it represents the index in the virtual list
+     * @param props.level / props.expandable / props.treeLoading Only set for a tree-node column: level (root is 0), whether the row is expandable, whether children are lazy-loading
+     *
+     * Note: on a type: 'tree-node' / 'expand' column you render the whole cell; the built-in indent + guide lines and the arrow are passed back through the
+     * stkTreeIndent / stkFoldIcon slots of your component, and a fully self-drawn expand control must be marked with data-stk-fold.
      */
     customCell?: Component<CustomCellProps<T>> | string;
     /**
