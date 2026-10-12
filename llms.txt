@@ -286,7 +286,7 @@ import type { StkTableColumn, SortConfig, SortState, Order, ScrollToOptions, Scr
 const { EditableCell } = createEditableCell({ trigger: 'dblclick', onChange: (v, row, dataIndex) => { /* 落库 */ } });
 const { NumberCell } = createNumberCell({ decimals: 2, thousands: true, prefix: '¥' });
 const { ChangeCell } = createChangeCell({ decimals: 2, showSign: true, arrow: true }); // 默认涨红跌绿（A股）
-const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({ field: '_isChecked', onChange, onSelectAll });
+const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({ field: '_isChecked', cascade, onChange, onSelectAll }); // cascade: 树形数据父子勾选级联（勾父连带子孙、父行半选由子孙推导、表头按叶子行统计），默认 false
 const { FilterComponent } = createFilterCell({ remote: false, onChange }); // BETA，配合 setFilter / filter-change
 const columns = [
   { dataIndex: 'price', align: 'right', customCell: NumberCell() },

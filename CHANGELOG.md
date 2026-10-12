@@ -1,4 +1,8 @@
 
+## 1.2.8
+* Feat (checkbox)
+  - feat: `createCheckboxCell({ cascade: true })` enables tree checkbox cascade. Checking a parent recursively writes all descendants; the parent checked state is derived from descendants (checked only when all descendants are checked, indeterminate when partially checked); the header select-all/indeterminate counts leaf rows only (rows without `children`; lazy-unloaded rows count as leaves). `cascade` defaults to `false`, keeping row states independent (backward compatible).
+
 ## 1.2.7
 * Feat (tree)
   - feat: export `StkTreeCell` / `StkTreeIndent` / `StkTreeFoldIcon` for reusable tree custom cells. Fold icon state comes from `expandable` / `loading` / `expanded` props; `offset` shifts the guide lines to align with a custom expand icon.
