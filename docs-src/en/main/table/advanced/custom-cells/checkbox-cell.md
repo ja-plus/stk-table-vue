@@ -21,6 +21,7 @@ Set `cascade: true` to enable checkbox cascade (parent-child linkage + indetermi
 - Checking a parent recursively checks/unchecks all its descendants;
 - The parent checked state is derived from descendants: checked only when all descendants are checked, otherwise the parent shows an indeterminate state;
 - The header select-all/indeterminate counts leaf rows (rows without `children`) only, so parents are not double-counted; rows not yet lazy-loaded (`treeConfig.lazy`) count as leaves.
+- The checkbox can be embedded in the `type: 'tree-node'` column (see the demo above): the tree column's `customCell` composition cell reuses the `CheckboxCell()` component — check/indeterminate/cascade logic is unchanged — while indent and fold arrow are rendered by the built-in slots (`stkTreeIndent` / `stkFoldIcon`) StkTable provides for tree-column customCells.
 
 <demo vue="advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue"></demo>
 

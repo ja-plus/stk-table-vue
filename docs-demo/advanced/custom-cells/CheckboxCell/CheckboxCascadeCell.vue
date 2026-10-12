@@ -5,7 +5,7 @@
         bordered
         :columns="columns"
         :data-source="dataSource"
-        :tree-config="{ defaultExpandAll: true }"
+        :tree-config="{ defaultExpandAll: true, showGuide: true }"
     />
     <div class="info-box">
         <h3>{{ t('selected') }}:</h3>
@@ -21,9 +21,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+/* eslint-disable vue/one-component-per-file, vue/require-prop-types */
+import { computed, defineComponent, h, ref } from 'vue';
 import StkTable from '../../../StkTable.vue';
-import { createCheckboxCell } from '../../../../src/StkTable/index';
+import { createCheckboxCell, StkTreeIndent, StkTreeFoldIcon } from '../../../../src/StkTable/index';
 import { useI18n } from '../../../hooks/useI18n/index';
 
 const { t } = useI18n();
@@ -40,15 +41,82 @@ const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({
     },
 });
 
+/** 组件定义只创建一次：放 render 里每次新生成组件类型，勾选后会整格重挂（Vue 按组件类型 diff） */
+const checkboxCellComp = CheckboxCell();
+const checkboxAllCellComp = CheckboxAllCell();
+
+/**
+ * 树列组合单元格：内置缩进（含引导线）+ 内置展开箭头 + 级联勾选 + 名称。
+ * checkbox 部分（勾选/半选/级联写）直接复用 CheckboxCell 组件；
+ * 缩进与箭头取 StkTable 为树列 customCell 提供的内置插槽，与默认树形渲染一致
+ * （箭头自带 data-stk-fold，点击展开切换由表体委托，checkbox 自带 click.stop 不触发展开）。
+ */
+const TreeCheckCell = defineComponent({
+    name: 'TreeCheckCell',
+    props: [
+        'row',
+        'col',
+        'cellValue',
+        'rowIndex',
+        'colIndex',
+        'expanded',
+        'treeExpanded',
+        'level',
+        'expandable',
+        'treeLoading',
+        'showGuide',
+    ],
+    setup(props: any, { slots }: any) {
+        return () =>
+            h('div', { class: 'tree-check-cell' }, [
+                slots.stkTreeIndent?.() ??
+                    h(StkTreeIndent, { level: props.level ?? 0, showGuide: props.showGuide }),
+                slots.stkFoldIcon?.() ??
+                    h(StkTreeFoldIcon, {
+                        expandable: props.expandable,
+                        loading: props.treeLoading,
+                        expanded: props.treeExpanded,
+                    }),
+                h(checkboxCellComp, {
+                    row: props.row,
+                    col: props.col,
+                    cellValue: props.cellValue,
+                    rowIndex: props.rowIndex,
+                    colIndex: props.colIndex,
+                    treeExpanded: props.treeExpanded,
+                }),
+                h('span', { class: 'tree-check-cell__label' }, [props.cellValue ?? '']),
+            ]);
+    },
+});
+
+/** 树列表头：全选/半选 checkbox + 标题；占位格与展开箭头等宽，使表头勾选与树列勾选对齐 */
+const TreeCheckHeader = defineComponent({
+    name: 'TreeCheckHeader',
+    props: ['col', 'colIndex', 'rowIndex'],
+    setup(props: any) {
+        return () =>
+            h('div', { class: 'tree-check-header' }, [
+                h('span', { class: 'tree-check-header__spacer' }),
+                h(checkboxAllCellComp, {
+                    col: props.col,
+                    colIndex: props.colIndex,
+                    rowIndex: props.rowIndex,
+                }),
+                h('span', { class: 'tree-check-header__title' }, [props.col?.title ?? '']),
+            ]);
+    },
+});
+
 const columns = [
     {
-        dataIndex: 'checkbox',
-        align: 'center',
-        width: 70,
-        customCell: CheckboxCell(),
-        customHeaderCell: CheckboxAllCell(),
+        type: 'tree-node',
+        title: t('area'),
+        dataIndex: 'name',
+        width: 260,
+        customCell: TreeCheckCell,
+        customHeaderCell: TreeCheckHeader,
     },
-    { type: 'tree-node', title: t('area'), dataIndex: 'name', width: 180 },
     { title: t('population'), dataIndex: 'population', width: 120, align: 'right' },
     { title: t('gdp'), dataIndex: 'gdp', width: 120, align: 'right' },
 ];
@@ -119,5 +187,41 @@ const selectedLeaves = computed(() => {
     background-color: #1890ff;
     color: white;
     border-radius: 16px;
+}
+</style>
+
+<style>
+/* 树列组合单元格由 defineComponent + h() 渲染，scoped 样式无法命中（参考 FileTree/NameCell 先例），类名加前缀防全局冲突 */
+.tree-check-cell {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.tree-check-cell__label {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tree-check-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 与树列展开箭头等宽的占位，让表头全选框与树列 checkbox 视觉对齐 */
+.tree-check-header__spacer {
+    width: var(--tree-indent-width, 16px);
+    flex-shrink: 0;
+}
+
+.tree-check-header__title {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 </style>

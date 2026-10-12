@@ -69,6 +69,7 @@ export const fileTreeData: FileTreeNode[] = [
                             {
                                 name: 'CheckboxCell',
                                 children: [
+                                    { name: 'CheckboxCascadeCell.vue' },
                                     { name: 'CheckboxComponentCell.vue' },
                                     { name: 'index.vue' },
                                 ],
@@ -1284,46 +1285,46 @@ export const fileTreeData: FileTreeNode[] = [
                                     { name: 'tasks.md' },
                                 ],
                             },
-                        ],
-                    },
-                    {
-                        name: 'customizable-tree-cell',
-                        children: [
                             {
-                                name: 'specs',
+                                name: '2026-10-06-customizable-tree-cell',
                                 children: [
                                     {
-                                        name: 'custom-cells',
-                                        children: [{ name: 'spec.md' }],
+                                        name: 'specs',
+                                        children: [
+                                            {
+                                                name: 'custom-cells',
+                                                children: [{ name: 'spec.md' }],
+                                            },
+                                            {
+                                                name: 'tree-table',
+                                                children: [{ name: 'spec.md' }],
+                                            },
+                                        ],
                                     },
-                                    {
-                                        name: 'tree-table',
-                                        children: [{ name: 'spec.md' }],
-                                    },
+                                    { name: '.openspec.yaml' },
+                                    { name: 'design.md' },
+                                    { name: 'proposal.md' },
+                                    { name: 'tasks.md' },
                                 ],
                             },
-                            { name: '.openspec.yaml' },
-                            { name: 'design.md' },
-                            { name: 'proposal.md' },
-                            { name: 'tasks.md' },
-                        ],
-                    },
-                    {
-                        name: 'export-tree-components',
-                        children: [
                             {
-                                name: 'specs',
+                                name: '2026-10-06-export-tree-components',
                                 children: [
                                     {
-                                        name: 'tree-components',
-                                        children: [{ name: 'spec.md' }],
+                                        name: 'specs',
+                                        children: [
+                                            {
+                                                name: 'tree-components',
+                                                children: [{ name: 'spec.md' }],
+                                            },
+                                        ],
                                     },
+                                    { name: '.openspec.yaml' },
+                                    { name: 'design.md' },
+                                    { name: 'proposal.md' },
+                                    { name: 'tasks.md' },
                                 ],
                             },
-                            { name: '.openspec.yaml' },
-                            { name: 'design.md' },
-                            { name: 'proposal.md' },
-                            { name: 'tasks.md' },
                         ],
                     },
                     {
@@ -1395,6 +1396,10 @@ export const fileTreeData: FileTreeNode[] = [
                     },
                     {
                         name: 'sorting',
+                        children: [{ name: 'spec.md' }],
+                    },
+                    {
+                        name: 'tree-components',
                         children: [{ name: 'spec.md' }],
                     },
                     {
@@ -1563,12 +1568,14 @@ export const fileTreeData: FileTreeNode[] = [
             { name: 'autoHeightStripe.repro.test.js' },
             { name: 'AutoRowHeight.vue' },
             { name: 'autoRowHeightVirtualScroll.test.js' },
+            { name: 'checkboxCellCascade.test.ts' },
             { name: 'defaultSort.test.js' },
             { name: 'DocTable.vue' },
             { name: 'DragRow.vue' },
             { name: 'EditableCellDemo.vue' },
             { name: 'ExpandRow.vue' },
             { name: 'fileTreeDemo.test.ts' },
+            { name: 'fileTreeFixture.ts' },
             { name: 'fileTreeStore.test.ts' },
             { name: 'filterSortVirtualScroll.repro.test.js' },
             { name: 'fixedColClass.test.js' },

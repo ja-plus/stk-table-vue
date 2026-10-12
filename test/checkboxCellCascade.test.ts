@@ -8,7 +8,7 @@
  * 4. cascade=false 保持既有行为（互不影响、表头只看顶层）。
  */
 import { mount } from '@vue/test-utils';
-import { reactive } from 'vue';
+import { defineComponent, h, reactive } from 'vue';
 import { StkTable, createCheckboxCell } from '@/StkTable';
 import { describe, expect, test, vi } from 'vitest';
 
@@ -183,5 +183,72 @@ describe('createCheckboxCell cascade', () => {
         await findCheckbox(wrapper, 'p2').setValue(true);
         header = headerCheckbox(wrapper).element as HTMLInputElement;
         expect(header.checked).toBe(true);
+    });
+
+    test('checkbox 内嵌 tree-node 列：customCell 组合单元格复用 CheckboxCell 组件，级联与内置箭头不受影响', async () => {
+        const tree = createTree();
+        const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({ cascade: true, onChange: onChangeSpy });
+        // 组件定义只创建一次：render 内重复生成新组件类型会导致整格重挂（Vue 按组件类型 diff）
+        const checkboxCellComp = CheckboxCell();
+
+        /** 树列组合单元格：内置缩进插槽 + 内置箭头插槽 + checkbox + 名称（与 CheckboxCascadeCell.vue demo 同构） */
+        const TreeCheckCell = defineComponent({
+            name: 'TreeCheckCell',
+            props: ['row', 'col', 'cellValue', 'rowIndex', 'colIndex', 'expanded', 'treeExpanded', 'level', 'expandable', 'treeLoading', 'showGuide'],
+            setup(props: any, { slots }: any) {
+                return () =>
+                    h('div', { class: 'tree-check-cell' }, [
+                        slots.stkTreeIndent?.(),
+                        slots.stkFoldIcon?.(),
+                        h(checkboxCellComp, {
+                            row: props.row,
+                            col: props.col,
+                            cellValue: props.cellValue,
+                            rowIndex: props.rowIndex,
+                            colIndex: props.colIndex,
+                        }),
+                        h('span', { class: 'tree-check-cell__label' }, [props.cellValue ?? '']),
+                    ]);
+            },
+        });
+
+        const wrapper = mount(StkTable as any, {
+            props: {
+                rowKey: 'id',
+                columns: [
+                    {
+                        type: 'tree-node',
+                        dataIndex: 'name',
+                        title: 'Name',
+                        width: 240,
+                        customCell: TreeCheckCell,
+                        customHeaderCell: CheckboxAllCell(),
+                    },
+                ] as any,
+                // reactive 保证级联写入行 field 后，祖先行/表头的 computed 能响应更新
+                dataSource: reactive(tree),
+                treeConfig: { defaultExpandAll: true },
+            },
+        });
+
+        // 树列格内同时存在：名称文本、checkbox；可展开行有内置箭头（data-stk-fold 点击委托），叶子行为占位格
+        const p1Cell = wrapper.find('tbody tr[data-row-key="p1"] .tree-check-cell');
+        expect(p1Cell.exists()).toBe(true);
+        expect(p1Cell.text()).toContain('p1');
+        expect(p1Cell.find('input').exists()).toBe(true);
+        expect(p1Cell.find('[data-stk-fold]').exists()).toBe(true);
+        expect(wrapper.find('tbody tr[data-row-key="g1"] [data-stk-fold]').exists()).toBe(false);
+
+        // 级联链路经组合单元格不变：勾叶子 g1 → c2/p1 逐级半选
+        await findCheckbox(wrapper, 'g1').setValue(true);
+        const c2 = findCheckbox(wrapper, 'c2').element as HTMLInputElement;
+        expect(c2.checked).toBe(false);
+        expect(c2.indeterminate).toBe(true);
+        expect((findCheckbox(wrapper, 'p1').element as HTMLInputElement).indeterminate).toBe(true);
+
+        // 表头全选嵌在树列表头同样工作：4 叶子勾 1 → 半选
+        const header = headerCheckbox(wrapper).element as HTMLInputElement;
+        expect(header.checked).toBe(false);
+        expect(header.indeterminate).toBe(true);
     });
 });

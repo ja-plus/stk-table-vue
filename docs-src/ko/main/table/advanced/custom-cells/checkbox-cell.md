@@ -21,6 +21,7 @@ CheckboxCell 는 셀 수준에서 전체 선택/부분 선택 기능을 지원�
 - 부모 행을 체크하면 모든 자손 행이 재귀적으로 체크/해제됩니다;
 - 부모 행의 체크 상태는 자손에서 도출됩니다: 모든 자손이 체크된 경우에만 체크로 간주되며, 일부만 체크된 경우 부모 행은 반선택 상태로 표시됩니다;
 - 헤더 전체선택/반선택은 리프 행(`children`이 없는 행)만 집계하며 부모 행이 이중 계산되지 않습니다. 지연 로드(`treeConfig.lazy`)되지 않은 행은 리프로 간주됩니다.
+- checkbox는 `type: 'tree-node'` 트리 열에 내장할 수 있습니다(위 demo 참조): 트리 열의 `customCell` 조합 셀은 `CheckboxCell()` 컴포넌트를 재사용하며(체크/반선택/연동 로직 동일) 들여쓰기와 펼침 화살표는 StkTable이 트리 열 customCell에 제공하는 내장 슬롯(`stkTreeIndent` / `stkFoldIcon`)으로 렌더링됩니다.
 
 <demo vue="advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue"></demo>
 

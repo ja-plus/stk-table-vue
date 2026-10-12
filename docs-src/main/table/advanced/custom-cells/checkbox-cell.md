@@ -21,6 +21,7 @@ CheckboxCell 是一个内置的多选框单元格组件，支持单元格级别�
 - 勾选父行会递归勾选/取消其全部子孙行；
 - 父行勾选态由子孙推导：全部子孙勾选才视为勾选，部分勾选时父行显示半选态；
 - 表头全选/半选按叶子行（无 `children` 的行）统计，父行不重复计数；懒加载（`treeConfig.lazy`）下未加载的行天然按叶子计。
+- checkbox 可内嵌在 `type: 'tree-node'` 树列（如上方 demo）：树列 `customCell` 组合单元格中复用 `CheckboxCell()` 组件，勾选/半选/级联逻辑不变；缩进与展开箭头由 StkTable 为树列 customCell 提供的内置插槽（`stkTreeIndent` / `stkFoldIcon`）渲染。
 
 <demo vue="advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue"></demo>
 

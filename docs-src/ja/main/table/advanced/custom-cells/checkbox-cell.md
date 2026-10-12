@@ -21,6 +21,7 @@ CheckboxCell は、セルレベルで全選択/半選択機能をサポートす
 - 親行をチェックすると、すべての子孫行が再帰的にチェック/解除されます；
 - 親行のチェック状態は子孫から導出されます：すべての子孫がチェック済みの場合のみチェック扱いとなり、一部のみの場合は親行が半選択状態で表示されます；
 - ヘッダーの全選択/半選択は葉行（`children` を持たない行）のみを集計し、親行の二重カウントはありません。遅延ロード（`treeConfig.lazy`）未ロードの行は葉として扱われます。
+- checkbox は `type: 'tree-node'` ツリー列に内嵌できます（上の demo 参照）：ツリー列の `customCell` 合成セルは `CheckboxCell()` コンポーネントを再利用し（チェック/半選択/連動ロジックは不変）、インデントと展開矢印は StkTable がツリー列 customCell に提供する内蔵スロット（`stkTreeIndent` / `stkFoldIcon`）で描画されます。
 
 <demo vue="advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxCascadeCell.vue"></demo>
 
