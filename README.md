@@ -12,6 +12,8 @@
     </p>
 </p>
 
+**English** | [简体中文](./README.zh.md)
+
 Stk Table Vue(Sticky Table) is a high-performance virtual scrolling table component based on Vue 3 / Vue 2.7.
 
 Smooth performance with tens of thousands of rows. Designed for real-time data display with built-in highlighting and animation effects.
@@ -42,17 +44,17 @@ Smooth performance with tens of thousands of rows. Designed for real-time data d
 
 ## 🤖 For AI assistants
 
-如果你是通过 AI 编码助手（Claude Code / Cursor / Copilot / Qoder 等）接入本库：
+If you are wiring this library in through an AI coding assistant (Claude Code / Cursor / Copilot / Qoder, etc.):
 
-1. **先读 [`llms.txt`](./llms.txt)**（已随 npm 包发布，位于 `node_modules/stk-table-vue/llms.txt`）—— props / 列配置 / emits / slots / 实例方法速查，外加「约束与坑」与自检清单，其版本号与本包严格一致。
-2. 不要靠阅读 `src/StkTable/StkTable.vue` 或 `lib/*.js` 反推 API。
-3. 需要更细的说明时，抓取[文档站](https://ja-plus.github.io/stk-table-vue/)对应**单页**的 `.md` 镜像（`llms.txt` 末尾有主题 → URL 索引）。请勿抓取 `llms-full.txt`（全站合并，约 590KB）。
-4. 类型权威定义：`lib/src/StkTable/types/index.d.ts`（含中文 JSDoc，hover 即可看到）。
+1. **Read [`llms.txt`](./llms.txt) first** (published with the npm package at `node_modules/stk-table-vue/llms.txt`) — a quick reference for props / column config / emits / slots / instance methods, plus "constraints & pitfalls" and a self-check list. Its version number is kept strictly in sync with this package.
+2. Don't reverse-engineer the API from `src/StkTable/StkTable.vue` or `lib/*.js`.
+3. For more detail, fetch the `.md` mirror of the relevant **single page** on the [docs site](https://ja-plus.github.io/stk-table-vue/) (a topic → URL index is at the end of `llms.txt`). Do not fetch `llms-full.txt` (the whole site merged, ~590KB).
+4. Authoritative type definitions: `lib/src/StkTable/types/index.d.ts` (Chinese JSDoc included, visible on hover).
 
-想让 AI 助手无需提醒就能用上这份速查表，在你项目的 `AGENTS.md`（或 `.cursor/rules/`、`.claude/skills/`）加一行指针即可：
+To let your AI assistant pick up this cheat sheet without being told, add one line to your project's `AGENTS.md` (or `.cursor/rules/`, `.claude/skills/`):
 
 ```markdown
-本项目使用 stk-table-vue。写表格代码前先读 node_modules/stk-table-vue/llms.txt，不要从源码反推 API。
+This project uses stk-table-vue. Before writing table code, read node_modules/stk-table-vue/llms.txt instead of reverse-engineering the API from source.
 ```
 
 

@@ -28,8 +28,7 @@ lib/                         构建产物（勿手改，由 vite build 生成）
 docs-src/                    文档站源码（vitepress，中/英/日/韩四语言）
 docs-demo/                   文档示例组件；带附属件的 demo 写成 XxxDemo/index.vue（见「代码约定」）
 test/                        单元测试（vitest）
-llms.txt                     ★面向 AI 的速查手册（随 npm 包发布，版本与本包绑定）
-scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
+llms.txt                     ★面向 AI 的速查手册（手写维护，已加入 package.json files，随 npm 包发布）
 ```
 
 ## 常用命令
@@ -37,8 +36,7 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 | 命令 | 作用 |
 |------|------|
 | `pnpm dev` | 本地开发（vite） |
-| `pnpm build` | 构建组件库产物到 lib/（`postbuild` 会自动打 llms.txt 版本戳 + 注入 index.d.ts 横幅） |
-| `pnpm ai:gen` | 仅重跑 AI 资产（llms.txt 版本戳 + 横幅） |
+| `pnpm build` | 构建组件库产物到 lib/ |
 | `pnpm test` | 运行单元测试（vitest） |
 | `pnpm docs:dev` | 本地文档站（vitepress） |
 | `pnpm docs:build` | 构建文档站（产出站点级 `dist/llms.txt` / `llms-full.txt`，**与包根 llms.txt 不是同一个东西**） |
@@ -72,13 +70,12 @@ scripts/build-ai-assets.mjs  llms.txt 版本戳 + index.d.ts 入口横幅
 
 ## AI 资产（消费方侧）
 
-三个已发布/可发布的“入口指针”，缺一则 AI 很难发现其余：
-
 | 位置 | 作用 | 维护方式 |
 |------|------|----------|
-| `llms.txt`（包根，已在 `files` 中） | 版本锁定的 API 速查表 + 坑清单 | 手写，版本戳由 `pnpm ai:gen` 写入 |
-| `lib/src/StkTable/index.d.ts` 顶部横幅 | AI 从 `import` 跳定义时的唯一天然落点，引流到 llms.txt | 自动生成（`postbuild`），勿手改 |
-| `README.md` 的 “For AI assistants” | 人/AI 都会先看 README | 手写 |
+| `llms.txt`（包根，已在 `files` 中） | 版本锁定的 API 速查表 + 坑清单 | 手写；**发版时手动把 `Version:` 行改成 package.json 的 version**（目前无自动化脚本） |
+| `README.md` / `README.zh.md` 的 “For AI assistants” | 人/AI 都会先看 README | 手写，两份内容需同步 |
+
+流水线风险：`llms.txt` 由 `files` 白名单决定是否入包，改动 `files` 后务必用 `npm pack --dry-run` 确认它仍在清单里。
 
 注意：`AI-API-REFERENCE.md` 是**仓内开发者向**浓缩手册，与包内 `llms.txt` 定位不同。两者内容重叠，改动 API 后以 `llms.txt` 为准。
 

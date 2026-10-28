@@ -54,7 +54,8 @@
   ],
   "files": [
     "lib",
-    "src"
+    "src",
+    "llms.txt"
   ],
   "devDependencies": {
     "@arco-design/web-vue": "^2.58.0",

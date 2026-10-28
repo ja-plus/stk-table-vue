@@ -1,6 +1,6 @@
 # stk-table-vue — AI 速查手册（llms.txt）
 
-<!-- 下行由 scripts/build-ai-assets.mjs 自动写入，请勿手改（手写必然过期） -->
+<!-- Version 必须与 package.json 的 version 保持一致；发版时手动更新本行 -->
 Version: 1.2.7
 Docs: https://ja-plus.github.io/stk-table-vue/ （中/英/日/韩；每页存在同名 .md，可直接 WebFetch，例：`/main/api/expose.md`）
 Repo: https://github.com/ja-plus/stk-table-vue
