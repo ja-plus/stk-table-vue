@@ -134,6 +134,7 @@ export const enConfig = defineConfig({
                 items: [
                     { text: 'Huge Data', link: '/huge-data' },
                     { text: 'Virtual List', link: '/virtual-list' },
+                    { text: 'Agent Chat(✨New)', link: '/agent-chat' },
                     { text: 'Matrix', link: '/matrix' },
                     { text: 'Cell Edit', link: '/cell-edit' },
                     { text: 'Panel Tree', link: '/panel-tree' },

@@ -134,6 +134,7 @@ export const koConfig = defineConfig({
                 items: [
                     { text: '대량 데이터', link: '/huge-data' },
                     { text: '가상 리스트', link: '/virtual-list' },
+                    { text: 'Agent 대화(✨New)', link: '/agent-chat' },
                     { text: '매트릭스', link: '/matrix' },
                     { text: '셀 편집', link: '/cell-edit' },
                     { text: '패널 트리', link: '/panel-tree' },

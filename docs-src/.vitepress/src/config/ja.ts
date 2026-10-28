@@ -134,6 +134,7 @@ export const jaConfig = defineConfig({
                 items: [
                     { text: '大量データ', link: '/huge-data' },
                     { text: '仮想リスト', link: '/virtual-list' },
+                    { text: 'Agent 会話(✨New)', link: '/agent-chat' },
                     { text: 'マトリックス', link: '/matrix' },
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
