@@ -3,6 +3,13 @@
 * Feat (checkbox)
   - feat: `createCheckboxCell({ cascade: true })` enables tree checkbox cascade. Checking a parent recursively writes all descendants; the parent checked state is derived from descendants (checked only when all descendants are checked, indeterminate when partially checked); the header select-all/indeterminate counts leaf rows only (rows without `children`; lazy-unloaded rows count as leaves). `cascade` defaults to `false`, keeping row states independent (backward compatible).
   - feat: `CheckboxCell` / `CheckboxAllCell` can be embedded in a `type: 'tree-node'` column through a composition `customCell` (check / indeterminate / cascade logic unchanged; indent and fold arrow come from the `stkTreeIndent` / `stkFoldIcon` slots). The `.stk-checkbox-cell` container no longer stretches to `width/height: 100%`, so it sits inline next to the sibling content; centered placement inside a dedicated checkbox column is unaffected.
+* Bugfix (fixed-col)
+  - fix: fixed columns flickered/jumped for a frame during horizontal scroll. `position: sticky` (and the fixed-cell z-index) was gated on the `fixed-cell--active` class, which Vue patched one frame after the native scroll. Fixed cells are now always sticky — always `position: relative` in `cellFixedMode: 'relative'` — so pinning is handled by the browser with no JS-timing gap.
+* Bugfix (tree)
+  - fix: the tree fold arrow (`.stk-fold-icon`) could be squeezed narrower than `--tree-indent-width` by a long cell label, misaligning tree labels. `.stk-tree-cell` is a flex container and the icon lacked `flex-shrink: 0` (the indent and leaf holder already had it); the arrow now keeps its declared width.
+* Bugfix (checkbox)
+  - fix: after a cascade or select-all write changed a row's checked state externally, the next click on that row's checkbox was swallowed by the multi-event dedup (`_lastValue`), leaving the DOM out of sync with the data — e.g. uncheck a parent, then check a child: the child stayed unchecked in data and the parent never became indeterminate. The dedup baseline now re-syncs whenever the `checked` prop changes.
+  - fix: with `cascade`, lazy-loading children under a checked parent left the parent showing checked while the new children were unchecked. A parent's checked state is now derived live from its descendants, and the stored `field` is recalculated when children load (also on append/reload), keeping the "parent checked ⇔ all descendants checked" invariant.
 
 ## 1.2.7
 * Feat (tree)

@@ -11,9 +11,20 @@ export interface createCheckboxCellOptions<T = any> {
      */
     checkboxComponent?: any;
     /**
+     * 树形数据（children）下开启勾选级联：勾选父行会递归勾选/取消全部子孙行；
+     * 父行勾选态由子孙推导（全部子孙勾选才视为勾选，部分勾选时父行显示半选态）；
+     * 表头全选/半选按叶子行（无 children 的行）统计，父行不重复计数。
+     * 关闭时各行勾选状态相互独立（默认，向后兼容）。
+     * en: Enable checkbox cascade for tree data (children): checking a parent cascades to all
+     * descendants, parent state is derived from children (indeterminate when partially checked),
+     * and the header counts leaf rows only. Default false keeps row states independent.
+     * @default false
+     */
+    cascade?: boolean;
+    /**
      * 单元格 checkbox 状态变更回调
      * @param checked 是否选中
-     * @param row 当前行数据
+     * @param row 当前行数据（cascade 模式下为用户实际点击的行，级联写入的行不单独回调）
      */
     onChange?: (checked: boolean, row: T) => void;
     /**
