@@ -24,6 +24,8 @@
 </template>
 
 <script lang="ts" setup>
+import { watch } from 'vue';
+
 const props = defineProps<{
     /** 当前是否选中 */
     checked?: boolean;
@@ -39,6 +41,14 @@ const emit = defineEmits<{
 
 /** 防重保护：部分 UI 库（Element Plus / Arco Design）会同时触发多个事件 */
 let _lastValue: boolean | undefined;
+
+// 级联/全选等外部写入改变 checked 时同步防重基准，否则下一次同值 change 会被吞掉（UI 与数据脱节）
+watch(
+    () => props.checked,
+    v => {
+        _lastValue = v;
+    },
+);
 
 function handleChange(e: any) {
     let checked: boolean;

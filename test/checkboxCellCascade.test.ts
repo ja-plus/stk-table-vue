@@ -8,7 +8,7 @@
  * 4. cascade=false 保持既有行为（互不影响、表头只看顶层）。
  */
 import { mount } from '@vue/test-utils';
-import { defineComponent, h, reactive } from 'vue';
+import { defineComponent, h, nextTick, reactive } from 'vue';
 import { StkTable, createCheckboxCell } from '@/StkTable';
 import { describe, expect, test, vi } from 'vitest';
 
@@ -250,5 +250,85 @@ describe('createCheckboxCell cascade', () => {
         const header = headerCheckbox(wrapper).element as HTMLInputElement;
         expect(header.checked).toBe(false);
         expect(header.indeterminate).toBe(true);
+    });
+
+    test('级联取消后再次勾选子行：change 不被防重吞掉，父行转半选', async () => {
+        const tree = createTree();
+        const wrapper = mountTable(true, tree);
+
+        // 子行经自身点击勾选（建立防重基准）；点半选父行全勾，再点父行级联全取消
+        await findCheckbox(wrapper, 'c1').setValue(true);
+        await findCheckbox(wrapper, 'p1').setValue(true);
+        await findCheckbox(wrapper, 'p1').setValue(false);
+        expect((findCheckbox(wrapper, 'c1').element as HTMLInputElement).checked).toBe(false);
+
+        // 再次勾选 c1：必须生效（回归：曾因 _lastValue 未随外部写入同步而被吞掉）
+        await findCheckbox(wrapper, 'c1').setValue(true);
+        expect((findCheckbox(wrapper, 'c1').element as HTMLInputElement).checked).toBe(true);
+        const p1 = findCheckbox(wrapper, 'p1').element as HTMLInputElement;
+        expect(p1.checked).toBe(false);
+        expect(p1.indeterminate).toBe(true);
+    });
+
+    test('全选取消后再次勾选子行：change 不被防重吞掉', async () => {
+        const tree = createTree();
+        const wrapper = mountTable(true, tree);
+
+        await findCheckbox(wrapper, 'c1').setValue(true);
+        await headerCheckbox(wrapper).setValue(true); // 全选
+        await headerCheckbox(wrapper).setValue(false); // 取消全选，级联写清 c1
+        expect((findCheckbox(wrapper, 'c1').element as HTMLInputElement).checked).toBe(false);
+
+        await findCheckbox(wrapper, 'c1').setValue(true);
+        expect((findCheckbox(wrapper, 'c1').element as HTMLInputElement).checked).toBe(true);
+        expect((findCheckbox(wrapper, 'p1').element as HTMLInputElement).indeterminate).toBe(true);
+    });
+
+    test('懒加载：先勾父行再加载子行，父行存储 field 与显示自动重算为未勾', async () => {
+        const tree = reactive([{ id: 'p1', name: 'p1', hasChildren: true }]);
+        const { CheckboxCell, CheckboxAllCell } = createCheckboxCell({ cascade: true });
+        const wrapper = mount(StkTable as any, {
+            props: {
+                rowKey: 'id',
+                columns: [
+                    { dataIndex: 'checkbox', width: 60, customCell: CheckboxCell(), customHeaderCell: CheckboxAllCell() },
+                    { type: 'tree-node', dataIndex: 'name', title: 'Name', width: 200 },
+                ] as any,
+                dataSource: tree,
+                treeConfig: {
+                    lazy: true,
+                    loadMethod: () => Promise.resolve([{ id: 'c1', name: 'c1' }, { id: 'c2', name: 'c2' }]),
+                },
+            },
+        });
+        /** 让异步链跑完（组件内部含 rAF/setTimeout 等宏任务，需多轮宏任务 + 渲染 tick） */
+        const flush = async () => {
+            for (let i = 0; i < 3; i++) {
+                await new Promise(r => setTimeout(r, 0));
+                await nextTick();
+            }
+        };
+
+        // 未加载时 p1 按叶子计：勾选后表头全选
+        await findCheckbox(wrapper, 'p1').setValue(true);
+        expect((headerCheckbox(wrapper).element as HTMLInputElement).checked).toBe(true);
+
+        // 展开触发懒加载
+        await wrapper.find('tbody tr[data-row-key="p1"] .stk-fold-icon').trigger('click');
+        await flush();
+
+        // 新子行未勾选；父行显示与数据层均重算为未勾（不再保持勾选）
+        expect((findCheckbox(wrapper, 'c1').element as HTMLInputElement).checked).toBe(false);
+        expect((findCheckbox(wrapper, 'c2').element as HTMLInputElement).checked).toBe(false);
+        const p1 = findCheckbox(wrapper, 'p1').element as HTMLInputElement;
+        expect(p1.checked).toBe(false);
+        expect(p1.indeterminate).toBe(false);
+        expect(tree[0]._isChecked).toBe(false);
+        // 表头按新叶子统计：0/2 → 未全选
+        expect((headerCheckbox(wrapper).element as HTMLInputElement).checked).toBe(false);
+
+        // 勾选一个新子行：父行正常转半选
+        await findCheckbox(wrapper, 'c1').setValue(true);
+        expect((findCheckbox(wrapper, 'p1').element as HTMLInputElement).indeterminate).toBe(true);
     });
 });

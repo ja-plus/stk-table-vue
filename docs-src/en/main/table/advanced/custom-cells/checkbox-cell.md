@@ -28,7 +28,8 @@ Set `cascade: true` to enable checkbox cascade (parent-child linkage + indetermi
 ::: tip
 - `cascade` is off by default; row checked states stay independent (backward compatible).
 - `onChange` receives the row the user actually clicked; cascaded writes do not fire separate callbacks.
-- Cascade state is written to row data (the `field`) by the component; mutating `row[field]` directly bypasses ancestor derivation — maintain state through checkbox interactions.
+- Cascade state is written to row data (the `field`) by the component; a parent's display is derived from its descendants live, but mutating `row[field]` directly does not recalc ancestors' stored `field` — maintain data-layer state through checkbox interactions.
+- Children loaded via lazy loading (`treeConfig.lazy`) start unchecked; the parent's checked state is recalculated automatically, keeping display and data consistent.
 :::
 
 ### createCheckboxCell Options

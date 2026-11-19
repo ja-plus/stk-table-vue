@@ -1,6 +1,6 @@
 /* eslint-disable vue/one-component-per-file */
 import type { CustomCellProps } from '../../types';
-import { computed, defineComponent, getCurrentInstance, h, markRaw } from 'vue';
+import { computed, defineComponent, getCurrentInstance, h, markRaw, watch } from 'vue';
 import CheckboxVue from './CheckboxCell.vue';
 
 /** createCheckboxCell 配置选项 */
@@ -102,6 +102,12 @@ export function createCheckboxCell<T extends Record<string, any> = any>(options?
         return false;
     }
 
+    /** 级联读：子树是否全部勾选（分支递归 every，叶子读 field） */
+    function isSubtreeChecked(row: any): boolean {
+        if (row.children?.length) return row.children.every(isSubtreeChecked);
+        return !!row[field];
+    }
+
     /** 级联定位：在原始树中查找 row 的祖先链（根 → 父，不含 row 自身），不在树中返回 null */
     function findAncestorChain(roots: any[], row: any): any[] | null {
         for (const item of roots) {
@@ -146,19 +152,38 @@ export function createCheckboxCell<T extends Record<string, any> = any>(options?
     function CheckboxCellComponent() {
         return markRaw(
             defineComponent({
-                // eslint-disable-next-line vue/require-prop-types
-                props: ['row', 'col', 'cellValue', 'rowIndex', 'colIndex', 'expanded', 'treeExpanded'],
+                // eslint-disable-next-line vue/require-prop-types, prettier/prettier
+                props: ['row', 'col', 'cellValue', 'rowIndex', 'colIndex', 'expanded', 'treeExpanded', 'level', 'expandable', 'treeLoading', 'showGuide'],
                 setup(props: CustomCellProps<any>) {
                     // cascade 下勾选后需从原始树重算祖先推导态，须拿到 StkTable 实例的 dataSource
                     const stkTableInstance = cascade ? findStkTableInstance(getCurrentInstance()) : null;
 
-                    const isChecked = computed(() => !!props.row[field]);
+                    // cascade 下父行勾选态实时由子孙推导：懒加载/外部写入后存储 field 可能滞后，显示以推导为准
+                    const isChecked = computed(() => {
+                        if (cascade && props.row.children?.length) return isSubtreeChecked(props.row);
+                        return !!props.row[field];
+                    });
 
                     /** cascade 下父行半选：未全勾但子孙中存在勾选（短路 DFS） */
                     const isIndeterminate = computed(() => {
                         if (!cascade || !props.row.children?.length) return false;
                         return !isChecked.value && hasCheckedDescendant(props.row);
                     });
+
+                    if (cascade) {
+                        // 懒加载/重载/追加子行（children 数量变化）：新子行未勾选，重算本行存储 field 并向上推导，维持数据层不变量
+                        watch(
+                            () => props.row.children?.length,
+                            len => {
+                                if (!len) return;
+                                // eslint-disable-next-line vue/no-mutating-props
+                                props.row[field] = isSubtreeChecked(props.row);
+                                const roots = stkTableInstance?.props?.dataSource || [];
+                                const chain = findAncestorChain(roots, props.row);
+                                if (chain) recalcAncestors(chain);
+                            },
+                        );
+                    }
 
                     function handleChange(checked: boolean) {
                         if (cascade) {
