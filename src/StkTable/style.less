@@ -377,7 +377,7 @@
             position: relative;
         }
 
-        .fixed-cell--active {
+        .fixed-cell {
             position: relative;
         }
     }
@@ -659,20 +659,17 @@
         background-image: linear-gradient(var(--shadow-rotate), var(--fixed-col-shadow-color-from), var(--fixed-col-shadow-color-to));
     }
 
-    .fixed-cell--active {
+    .fixed-cell {
         position: sticky;
     }
-
-    th.fixed-cell--active {
+    th.fixed-cell {
         z-index: 3;
     }
-
-    td.fixed-cell--active {
+    td.fixed-cell {
         z-index: 1;
     }
-
-    tfoot td.fixed-cell--active,
-    .stk-footer td.fixed-cell--active {
+    tfoot td.fixed-cell,
+    .stk-footer td.fixed-cell {
         z-index: 2;
     }
 
