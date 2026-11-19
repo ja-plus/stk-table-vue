@@ -39,6 +39,7 @@ DOM実装の組み込みスクロールバー、`props.scrollbar` を介して�
 ::: tip 注意
 * 仮想スクロール（`virtual`）を使用している場合にのみ効果的です。
 * モバイル端末では効果ありません。(`^0.11.13`)
+* ドラッグ中のサムはポインタと 1:1 で追従：スクロール換算はドラッグ開始時に固定されるため、ドラッグ中に `autoRowHeight` の実測で総高が変わってもサムはずれません。離すとリアルタイムの総高に自動整合します。
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>

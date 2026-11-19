@@ -4,7 +4,7 @@ Each Agent message is a `StkTable` row. With `virtual` and `autoRowHeight` enabl
 
 The default Qwen endpoint is provided by OVHcloud AI Endpoints. Anonymous requests need no signup or API key but are rate limited by IP. Public routes and model availability can change. In production, proxy requests through your own server instead of exposing an API key in the browser.
 
-The list follows the bottom by default, pauses when you scroll up, and resumes when you return to the bottom. The viewport height is responsive; when its width changes, measured row heights are cleared and the virtual layout is recalculated.
+The list follows the bottom by default, pauses when you scroll up, and resumes when you return to the bottom. The viewport height is responsive; when its width changes, measured row heights are cleared and the virtual layout is recalculated. The list enables the built-in custom scrollbar (`scrollbar`): the native scrollbar's drag mapping breaks when virtual scrolling rewrites placeholder DOM mid-drag (the thumb stops tracking the pointer), while the custom scrollbar freezes its mapping at drag start so the thumb always tracks the pointer 1:1.
 
 The composer can add attachments or images, switch models from an SVG dropdown, configure a new model from the final “Manage models” item, and toggle thinking steps from the thinking menu. While a request is pending, the conversation shows a live wait status, and interface errors are written back as messages.
 

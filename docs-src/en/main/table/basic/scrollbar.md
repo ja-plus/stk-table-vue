@@ -39,6 +39,7 @@ Built-in DOM-implemented scrollbar, enabled via `props.scrollbar`.
 ::: tip Note
 * Only effective when using virtual scrolling (`virtual`).
 * Not effective on mobile devices. (`^0.11.13`)
+* While dragging, the thumb tracks the pointer 1:1: the scroll mapping is frozen at drag start, so the thumb never drifts even if the total height changes mid-drag (e.g. `autoRowHeight` measurements); on release it reconciles with the live total height.
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>

@@ -361,6 +361,7 @@ onBeforeUnmount(() => {
                 row-key="id"
                 virtual
                 headless
+                scrollbar
                 :auto-row-height="{ expectedHeight }"
                 :auto-resize="onTableResize"
                 :row-active="false"

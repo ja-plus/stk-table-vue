@@ -39,6 +39,7 @@
 ::: tip 注意
 * 仅在虚拟列表(virtual)下生效。
 * 移动端不生效。(`^0.11.13`)
+* 拖拽期间滑块与指针 1:1 跟手：滚动换算在拖拽起始时冻结，即使 `autoRowHeight` 实测在拖拽期间改变总高，滑块也不会漂移；松手后自动与实时总高对齐。
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>

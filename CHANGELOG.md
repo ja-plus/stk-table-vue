@@ -1,4 +1,8 @@
 
+## Unreleased
+* Bugfix (scrollbar)
+  - fix: the custom scrollbar thumb drifted away from the pointer when dragging in `autoRowHeight` mode: the drag mapping was recomputed from the live total height on every mousemove, and that total keeps changing while rows are measured mid-drag. The mapping and thumb geometry are now frozen at drag start (thumb tracks the pointer 1:1) and reconciled with the live geometry on release; release also syncs the store scroll position from the DOM first so the thumb does not jump for a frame. The Agent chat demo now enables `scrollbar`: Chromium's native scrollbar drag loses its pointer mapping whenever virtual scrolling rewrites the placeholder DOM mid-drag, which no page-side scroll math can fix.
+
 ## 1.2.8
 * Feat (checkbox)
   - feat: `createCheckboxCell({ cascade: true })` enables tree checkbox cascade. Checking a parent recursively writes all descendants; the parent checked state is derived from descendants (checked only when all descendants are checked, indeterminate when partially checked); the header select-all/indeterminate counts leaf rows only (rows without `children`; lazy-unloaded rows count as leaves). `cascade` defaults to `false`, keeping row states independent (backward compatible).

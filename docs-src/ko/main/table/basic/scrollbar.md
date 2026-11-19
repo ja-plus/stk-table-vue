@@ -40,6 +40,7 @@ DOM 기반의 내장 스크롤바는 `props.scrollbar` 를 통해 활성화할 �
 ::: tip 주의
 * 가상 목록 (virtual) 에서만 유효합니다.
 * 모바일 기기에서는 작동하지 않습니다. (`^0.11.13`)
+* 드래그 중 섬은 포인터와 1:1로 추종: 스크롤 환산은 드래그 시작 시점에 고정되므로, 드래그 중 `autoRowHeight` 실측으로 총 높이가 바뀌어도 섬이 어긋나지 않습니다. 놓으면 실시간 총 높이에 자동 정합됩니다.
 :::
 
 <demo vue="basic/scrollbar-style/CustomScrollbar.vue" github="https://github.com/ja-plus/stk-table-vue/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.vue"></demo>
