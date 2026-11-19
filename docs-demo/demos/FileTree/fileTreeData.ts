@@ -307,6 +307,14 @@ export const fileTreeData: FileTreeNode[] = [
                 name: 'demos',
                 children: [
                     {
+                        name: 'AgentChat',
+                        children: [
+                            { name: 'index.vue' },
+                            { name: 'MessageCell.vue' },
+                            { name: 'types.ts' },
+                        ],
+                    },
+                    {
                         name: 'CellEdit',
                         children: [
                             { name: 'EditCell.vue' },
@@ -445,6 +453,7 @@ export const fileTreeData: FileTreeNode[] = [
             {
                 name: 'demos',
                 children: [
+                    { name: 'agent-chat.md' },
                     { name: 'cell-edit.md' },
                     { name: 'file-tree.md' },
                     { name: 'huge-data.md' },
@@ -461,6 +470,7 @@ export const fileTreeData: FileTreeNode[] = [
                     {
                         name: 'demos',
                         children: [
+                            { name: 'agent-chat.md' },
                             { name: 'cell-edit.md' },
                             { name: 'file-tree.md' },
                             { name: 'huge-data.md' },
@@ -576,6 +586,7 @@ export const fileTreeData: FileTreeNode[] = [
                     {
                         name: 'demos',
                         children: [
+                            { name: 'agent-chat.md' },
                             { name: 'cell-edit.md' },
                             { name: 'file-tree.md' },
                             { name: 'huge-data.md' },
@@ -691,6 +702,7 @@ export const fileTreeData: FileTreeNode[] = [
                     {
                         name: 'demos',
                         children: [
+                            { name: 'agent-chat.md' },
                             { name: 'cell-edit.md' },
                             { name: 'file-tree.md' },
                             { name: 'huge-data.md' },
@@ -1579,6 +1591,7 @@ export const fileTreeData: FileTreeNode[] = [
             { name: 'fileTreeStore.test.ts' },
             { name: 'filterSortVirtualScroll.repro.test.js' },
             { name: 'fixedColClass.test.js' },
+            { name: 'fixedColConstantSticky.repro.test.js' },
             { name: 'FixedMode.vue' },
             { name: 'FlyInAnimation.vue' },
             { name: 'FocusOutIssue.vue' },
@@ -1631,6 +1644,7 @@ export const fileTreeData: FileTreeNode[] = [
     { name: 'pnpm-workspace.yaml' },
     { name: 'postcss.config.js' },
     { name: 'README.md' },
+    { name: 'README.zh.md' },
     { name: 'tsconfig.json' },
     { name: 'vite.config.ts' },
     { name: 'vitest.workspace.ts' },

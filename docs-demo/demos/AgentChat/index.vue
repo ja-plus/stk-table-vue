@@ -21,15 +21,15 @@ type ModelOption = {
 };
 
 const providers: Record<Provider, ProviderConfig> = {
+    deepseek: {
+        label: 'DeepSeek（匿名免费）',
+        endpoint: 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1',
+        models: ['DeepSeek-V4.1-Flash-1017'],
+    },
     qwen: {
         label: 'Qwen（匿名免费）',
         endpoint: 'https://oai.endpoints.kepler.ai.cloud.ovh.net/v1',
-        models: ['Qwen3.6-9B', 'Qwen3.5-9B'],
-    },
-    deepseek: {
-        label: 'DeepSeek（匿名免费）',
-        endpoint: 'https://api.llm7.io/v1',
-        models: ['DeepSeek-V4-Flash-0731'],
+        models: ['Qwen3.6-27B'],
     },
     custom: {
         label: '自定义 OpenAI 兼容端点',
@@ -105,7 +105,7 @@ const messages = ref<AgentMessage[]>(
             time: '09:30',
             status: 'done',
             meta: kind === 'thinking' ? '持续了几秒' : undefined,
-            model: isAssistant ? 'Qwen3.6-9B' : undefined,
+            model: isAssistant ? 'DeepSeek-V4.1-Flash-1017' : undefined,
         };
     }),
 );
@@ -298,7 +298,7 @@ async function send() {
             body: JSON.stringify({
                 model: model.value,
                 messages: conversation,
-                max_tokens: 500,
+                max_tokens: 2048,
                 temperature: 0.7,
             }),
         });
@@ -552,7 +552,7 @@ onBeforeUnmount(() => {
                 </div>
                 <label>
                     模型名称
-                    <input v-model="managerModelName" type="text" placeholder="例如：Qwen3.6-9B" autofocus />
+                    <input v-model="managerModelName" type="text" placeholder="例如：deepseek-chat" autofocus />
                 </label>
                 <label>
                     Provider
