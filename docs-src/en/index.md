@@ -20,14 +20,8 @@ hero:
       text: GitHub⭐
       link: https://github.com/ja-plus/stk-table-vue
     - theme: alt
-      text: React Version
-      link: https://ja-plus.github.io/stk-table-react/
-    - theme: alt
-      text: Svelte Version
-      link: https://ja-plus.github.io/stk-table-svelte/
-    - theme: alt
-      text: Solid Version
-      link: https://ja-plus.github.io/stk-table-solid/
+      text: Vue Table Benchmark
+      link: https://ja-plus.github.io/vue-virtual-table-benchmark/perf-report.html
 
 features:
   - icon: 💡
