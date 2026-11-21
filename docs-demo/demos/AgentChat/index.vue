@@ -3,6 +3,7 @@ import type { StkTableColumn } from '@/StkTable/index';
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import StkTable from '../../StkTable.vue';
 import MessageCell from './MessageCell.vue';
+import { createMockMessages } from './mockMessages';
 import type { AgentMessage } from './types';
 
 type Provider = 'qwen' | 'deepseek' | 'custom';
@@ -81,43 +82,25 @@ function now() {
     );
 }
 
-const messages = ref<AgentMessage[]>(
-    Array.from({ length: 240 }, (_, index) => {
-        const round = Math.floor(index / 6) + 1;
-        const kind = ['user', 'thinking', 'search', 'assistant', 'terminal', 'assistant'][
-            index % 6
-        ] as AgentMessage['kind'];
-        const isUser = kind === 'user';
-        const isAssistant = kind === 'assistant';
-        return {
-            id: index + 1,
-            role: isUser ? 'user' : isAssistant ? 'assistant' : 'tool',
-            kind,
-            content: isUser
-                ? `请分析第 ${round} 个任务，并给出下一步建议。`
-                : kind === 'thinking'
-                  ? ''
-                  : kind === 'search'
-                    ? `${round} 列表，${round} 个文件`
-                    : kind === 'terminal'
-                      ? `df -h /workspace && mkdir -p /tmp/agent-${round}`
-                      : `这是第 ${round} 轮 Agent 回复。长对话仍然只渲染可视区域内的行。`,
-            time: '09:30',
-            status: 'done',
-            meta: kind === 'thinking' ? '持续了几秒' : undefined,
-            model: isAssistant ? 'DeepSeek-V4.1-Flash-1017' : undefined,
-        };
-    }),
-);
+const messages = ref<AgentMessage[]>(createMockMessages(240));
 
 const columns: StkTableColumn<AgentMessage>[] = [
     { dataIndex: 'content', title: '', customCell: MessageCell },
 ];
+
+/** 按每行可容纳的字数估算换行后的行数，用于虚拟滚动的初始行高 */
+function estimateLines(content: string, charsPerLine: number) {
+    if (!content) return 0;
+    return content
+        .split('\n')
+        .reduce((lines, line) => lines + Math.max(1, Math.ceil(line.length / charsPerLine)), 0);
+}
+
 function expectedHeight(row: AgentMessage) {
-    if (row.kind === 'user' || row.kind === 'search') return 76;
-    if (row.kind === 'terminal') return 92;
-    if (row.kind === 'thinking') return row.status === 'running' ? 86 : 48;
-    return 112;
+    if (row.kind === 'user') return 56 + estimateLines(row.content, 42) * 25;
+    if (row.kind === 'terminal') return 82 + estimateLines(row.content, 56) * 20;
+    if (!row.content) return 50;
+    return 65 + estimateLines(row.content, 56) * 28;
 }
 
 function selectModel(option: ModelOption) {

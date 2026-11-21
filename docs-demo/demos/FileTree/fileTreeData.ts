@@ -311,6 +311,7 @@ export const fileTreeData: FileTreeNode[] = [
                         children: [
                             { name: 'index.vue' },
                             { name: 'MessageCell.vue' },
+                            { name: 'mockMessages.ts' },
                             { name: 'types.ts' },
                         ],
                     },
@@ -1600,6 +1601,7 @@ export const fileTreeData: FileTreeNode[] = [
             { name: 'NumberChangeCellDemo.vue' },
             { name: 'rowHeightSync.test.js' },
             { name: 'rowMergeVirtualScroll.repro.test.js' },
+            { name: 'scrollbarDrag.test.js' },
             { name: 'scrollTo.test.js' },
             { name: 'setSorter.test.js' },
             { name: 'setTreeExpandParents.test.js' },
