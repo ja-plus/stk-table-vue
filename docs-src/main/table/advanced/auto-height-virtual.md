@@ -21,6 +21,15 @@ type AutoRowHeightConfig<DT> = {
 `props.autoRowHeight.expectedHeight` > `props.rowHeight`
 :::
 
+::: tip 建议开启内置滚动条（`props.scrollbar`）
+不定高模式下，每一行的高度都需要在运行时实测，内容总高度（scrollHeight）会随滚动不断变化。原生滚动条在拖动时会因此丢失指针映射，出现**鼠标不跟手**（滑块与光标脱节）的现象。建议开启内置滚动条：
+
+```vue
+<StkTable virtual auto-row-height scrollbar></StkTable>
+```
+
+详见[滚动条](/main/table/basic/scrollbar.md)。
+:::
 
 ## 示例
 
@@ -45,6 +54,10 @@ type AutoRowHeightConfig<DT> = {
 1. 开启 `auto-row-height` 和 `virtual`
 2. 使用 `prepare` 和 `layout` 方法计算文本高度
 3. 通过 `setAutoHeight(rowKey, height)` 设置每行的实际高度
+
+::: warning 预计算高度必须与真实渲染一致
+`setAutoHeight` 写入的行高是权威值（组件不会再测量这些行）。因此 `prepare` / `layout` 使用的**字体、行高、可用宽度、单元格上下 padding** 必须与 CSS 实际生效值一致。任何一项不一致，虚拟滚动的总高就会偏离真实内容高度，表现为**拖到底部时最后一行/几行渲染不出来**（滚动条到顶了，但内容没到底）。示例中字体/行高/padding 通过 `getComputedStyle` 读取（样式级计算值，不触发布局）；文本宽度由 `ResizeObserver` 的 `contentRect` 推送——表格是 auto 布局，列配置里的 `width` 只是下限（示例中 200px 的列实际会被拉伸到 450px+），不能按列配置推算，也不能读 `clientWidth` 以免触发同步回流。这些读取只在初始化/尺寸变化时执行一次，不进入滚动帧。
+:::
 
 ### 示例
 

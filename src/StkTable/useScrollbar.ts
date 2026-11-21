@@ -42,16 +42,18 @@ export function useScrollbar(
     let isDraggingHorizontal = false;
     let dragStartY = 0;
     let dragStartX = 0;
-    let dragStartTop = 0;
-    let dragStartLeft = 0;
-    // 拖拽起始时冻结的映射参数：autoRowHeight 等模式下总高会在拖拽期间变化，
-    // 若每帧用实时总高换算，thumb 与内容会相对指针漂移（不跟手）
+    /**
+     * 拖拽起始时拇指位置的浮点锚点。
+     * thumb 以像素 1:1 跟随指针（锚点 + 指针位移），内容位置则按「拇指在轨道上的比例 × 实时总高」推导。
+     * 这样 autoRowHeight 下拖拽期间总高变化时：拇指不漂移，且拖到轨道底部时比例恰为 1，
+     * 一次拖拽即可到达内容底部（不会像冻结像素映射那样被起始总高卡住）。
+     * 用浮点而非取整后的 scrollbar.t，避免比例换算把取整误差放大成内容偏移。
+     */
     let dragStartThumbT = 0;
     let dragStartThumbL = 0;
-    let dragScrollRangeY = 0;
-    let dragTrackRangeY = 0;
-    let dragScrollRangeX = 0;
-    let dragTrackRangeX = 0;
+    /** 最近一次指针位置：松手时用它 + 最新几何再映射一次（touchend 的 touches 为空，不能依赖事件坐标） */
+    let lastClientY = 0;
+    let lastClientX = 0;
 
     let resizeObserver: ResizeObserver | null = null;
     let currentDragHandler: ((e: MouseEvent | TouchEvent) => void) | undefined;
@@ -59,7 +61,11 @@ export function useScrollbar(
 
     const throttledUpdateScrollbar = throttle(() => updateCustomScrollbar(), 200);
     // Use requestAnimationFrame for smoother scrollbar dragging performance
-    const rafUpdateVirtualScrollY = rafThrottle((scrollTop: number) => updateVirtualScrollY(scrollTop));
+    const rafUpdateVirtualScrollY = rafThrottle((scrollTop: number) => {
+        updateVirtualScrollY(scrollTop);
+        // 实验模式 DOM scrollTop 恒为 0、不会触发 scroll 事件，需在此让 thumb 长度跟上实测总高
+        updateCustomScrollbar();
+    });
 
     onMounted(() => {
         isMobileDevice = isTouchPrimaryDevice();
@@ -72,6 +78,9 @@ export function useScrollbar(
 
     onBeforeUnmount(() => {
         // en: Clean up all event listeners to prevent memory leaks
+        // 卸载不是用户松手，置空拖拽标记以避免执行「松手再映射」
+        isDraggingVertical = false;
+        isDraggingHorizontal = false;
         onDragEnd();
         resizeObserver?.disconnect();
         resizeObserver = null;
@@ -86,16 +95,22 @@ export function useScrollbar(
         const needHorizontal = scrollWidth > containerWidth;
         showScrollbar.value = { x: needHorizontal, y: needVertical };
 
-        if (needVertical && !isDraggingVertical) {
+        if (needVertical) {
             const ratio = containerHeight / scrollHeight;
+            // 长度只取决于实时总高，拖拽期间也要更新：轨道范围是比例映射的分母，冻结它会导致拖不到底部
             scrollbar.value.h = Math.max(scrollbarOptions.value.minHeight, ratio * containerHeight);
-            scrollbar.value.t = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
+            // 位置由指针驱动，拖拽期间不能用滚动位置反算，否则 thumb 会相对指针漂移
+            if (!isDraggingVertical) {
+                scrollbar.value.t = Math.round((scrollTop / (scrollHeight - containerHeight)) * (containerHeight - scrollbar.value.h));
+            }
         }
 
-        if (needHorizontal && !isDraggingHorizontal) {
+        if (needHorizontal) {
             const ratio = containerWidth / scrollWidth;
             scrollbar.value.w = Math.max(scrollbarOptions.value.minWidth, ratio * containerWidth);
-            scrollbar.value.l = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
+            if (!isDraggingHorizontal) {
+                scrollbar.value.l = Math.round((scrollLeft / (scrollWidth - containerWidth)) * (containerWidth - scrollbar.value.w));
+            }
         }
     }
 
@@ -103,11 +118,11 @@ export function useScrollbar(
         if (e instanceof MouseEvent) e.preventDefault();
         isDraggingVertical = true;
         const { scrollTop, scrollHeight, containerHeight } = virtualScroll.value;
-        dragStartTop = scrollTop;
         dragStartY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
-        dragStartThumbT = scrollbar.value.t;
-        dragScrollRangeY = Math.max(0, scrollHeight - containerHeight);
-        dragTrackRangeY = Math.max(1, containerHeight - scrollbar.value.h);
+        const scrollRange = Math.max(0, scrollHeight - containerHeight);
+        const trackRange = Math.max(1, containerHeight - scrollbar.value.h);
+        // 浮点锚定起始比例对应的像素位置，保证 delta=0 时内容不跳
+        dragStartThumbT = scrollRange > 0 ? (scrollTop / scrollRange) * trackRange : 0;
         addDragListeners(onVerticalDrag);
     }
 
@@ -115,11 +130,10 @@ export function useScrollbar(
         if (e instanceof MouseEvent) e.preventDefault();
         isDraggingHorizontal = true;
         const { scrollLeft, scrollWidth, containerWidth } = virtualScrollX.value;
-        dragStartLeft = scrollLeft;
         dragStartX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
-        dragStartThumbL = scrollbar.value.l;
-        dragScrollRangeX = Math.max(0, scrollWidth - containerWidth);
-        dragTrackRangeX = Math.max(1, containerWidth - scrollbar.value.w);
+        const scrollRange = Math.max(0, scrollWidth - containerWidth);
+        const trackRange = Math.max(1, containerWidth - scrollbar.value.w);
+        dragStartThumbL = scrollRange > 0 ? (scrollLeft / scrollRange) * trackRange : 0;
         addDragListeners(onHorizontalDrag);
     }
 
@@ -136,44 +150,75 @@ export function useScrollbar(
         if (!isDraggingVertical) return;
         e.preventDefault();
         const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0].clientY;
+        applyVerticalDrag(clientY);
+    }
+
+    /**
+     * 应用纵向拖拽映射
+     * @param clientY 指针 Y
+     * @param sync 松手时同步更新实验模式的虚拟滚动（rAF 排队可能导致松手后 thumb 用旧位置重算）
+     */
+    function applyVerticalDrag(clientY: number, sync = false) {
+        lastClientY = clientY;
         const deltaY = clientY - dragStartY;
-        const scrollDelta = (deltaY / dragTrackRangeY) * dragScrollRangeY;
-        const top = Math.min(dragScrollRangeY, Math.max(0, dragStartTop + scrollDelta));
-        // thumb 与指针 1:1，不随拖拽期间的总高变化重算
-        scrollbar.value.t = Math.min(dragTrackRangeY, Math.max(0, dragStartThumbT + deltaY));
+        const { scrollHeight, containerHeight } = virtualScroll.value;
+        // 实时几何：autoRowHeight 下拖拽期间行高实测会改变总高与 thumb 长度
+        const scrollRange = Math.max(0, scrollHeight - containerHeight);
+        const trackRange = Math.max(1, containerHeight - scrollbar.value.h);
+        // thumb 与指针 1:1（按起始锚点 + 指针位移），不随总高变化重算
+        const thumbT = Math.min(trackRange, Math.max(0, dragStartThumbT + deltaY));
+        scrollbar.value.t = Math.round(thumbT);
+        // 内容按拇指在轨道上的比例映射到实时总高：
+        // 拖到轨道底部时比例为 1 → top = 实时最大滚动距离，一次拖拽即可到底
+        const top = scrollRange > 0 ? Math.min(scrollRange, (thumbT / trackRange) * scrollRange) : 0;
 
         if (isExperimentalScrollY.value) {
-            rafUpdateVirtualScrollY(top);
-        } else {
-            containerRef.value!.scrollTop = top;
+            if (sync) updateVirtualScrollY(top);
+            else rafUpdateVirtualScrollY(top);
+        } else if (containerRef.value) {
+            containerRef.value.scrollTop = top;
         }
     }
 
     function onHorizontalDrag(e: MouseEvent | TouchEvent) {
         if (!isDraggingHorizontal) return;
         e.preventDefault();
-
         const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0].clientX;
+        applyHorizontalDrag(clientX);
+    }
+
+    function applyHorizontalDrag(clientX: number) {
+        lastClientX = clientX;
         const deltaX = clientX - dragStartX;
-        const scrollDelta = (deltaX / dragTrackRangeX) * dragScrollRangeX;
-        const left = Math.min(dragScrollRangeX, Math.max(0, dragStartLeft + scrollDelta));
-        scrollbar.value.l = Math.min(dragTrackRangeX, Math.max(0, dragStartThumbL + deltaX));
-        containerRef.value!.scrollLeft = left;
+        const { scrollWidth, containerWidth } = virtualScrollX.value;
+        const scrollRange = Math.max(0, scrollWidth - containerWidth);
+        const trackRange = Math.max(1, containerWidth - scrollbar.value.w);
+        const thumbL = Math.min(trackRange, Math.max(0, dragStartThumbL + deltaX));
+        scrollbar.value.l = Math.round(thumbL);
+        const left = scrollRange > 0 ? Math.min(scrollRange, (thumbL / trackRange) * scrollRange) : 0;
+        if (containerRef.value) containerRef.value.scrollLeft = left;
     }
 
     function onDragEnd() {
+        const wasVertical = isDraggingVertical;
+        const wasHorizontal = isDraggingHorizontal;
         isDraggingVertical = false;
         isDraggingHorizontal = false;
         removeCurrentDragHandlerListeners();
         document.removeEventListener('mouseup', onDragEnd);
         document.removeEventListener('touchend', onDragEnd);
+        // 松手前用最终指针位置 + 最新几何再映射一次：
+        // 最后一次 mousemove 之后的实测（rAF）可能已改变总高，若此时按内容位置反算 thumb，
+        // 会跳回「按旧总高算出的、未到底」的位置。再映射一次后 thumb 留在指针处，内容贴住其比例。
+        if (wasVertical) applyVerticalDrag(lastClientY, true);
+        else if (wasHorizontal) applyHorizontalDrag(lastClientX);
         // 非 experimental 模式下 store 的滚动位置落后 DOM 一帧（scroll 事件 rAF 节流），
         // 松手对齐前先同步，避免 thumb 用旧位置重算跳一帧
         if (!isExperimentalScrollY.value && containerRef.value) {
             virtualScroll.value.scrollTop = containerRef.value.scrollTop;
             virtualScrollX.value.scrollLeft = containerRef.value.scrollLeft;
         }
-        // 拖拽期间冻结的 thumb 几何与实时总高可能已不一致，松手后对齐
+        // 对齐实时几何（长度 h/w 与实验模式下可能仍滞后的位置）
         updateCustomScrollbar();
     }
 

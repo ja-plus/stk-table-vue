@@ -27,6 +27,7 @@ const data = new Array(50).fill(0).map((_, i) => ({
         style="height: 400px"
         stripe
         virtual
+        scrollbar
         auto-row-height
         :row-height="50"
         :columns="columns"

@@ -21,6 +21,15 @@ type AutoRowHeightConfig<DT> = {
 `props.autoRowHeight.expectedHeight` > `props.rowHeight`
 :::
 
+::: tip 組み込みスクロールバー（`props.scrollbar`）の有効化を推奨
+可変行高モードでは各行の高さを実行時に実測するため、コンテンツの総高さ（scrollHeight）がスクロール中に変化し続けます。そのためネイティブのスクロールバーはドラッグ中にポインタとの対応を失い、**マウスに追従しない**（サムとカーソルがずれる）現象が発生します。組み込みスクロールバーの有効化を推奨します：
+
+```vue
+<StkTable virtual auto-row-height scrollbar></StkTable>
+```
+
+詳細は[スクロールバー](/ja/main/table/basic/scrollbar.md)を参照してください。
+:::
 
 ## 例
 
@@ -45,6 +54,10 @@ type AutoRowHeightConfig<DT> = {
 1. `auto-row-height` と `virtual` を有効にする
 2. `prepare` と `layout` メソッドを使用してテキストの高さを計算
 3. `setAutoHeight(rowKey, height)` で実際の行の高さを設定
+
+::: warning 事前計算した高さは実際の描画と一致させる必要があります
+`setAutoHeight` で設定した行の高さは正として扱われます（コンポーネントはその行を再測定しません）。そのため、`prepare` / `layout` に渡す**フォント、行の高さ、利用可能な幅、セルの上下 padding** は、実際に適用される CSS と一致している必要があります。どれかがずれると仮想スクロールの総高が実際のコンテンツ高さから外れ、**一番下までドラッグしても最後の行（数行）が描画されない**現象が起きます（スクロールバーは端なのにコンテンツが端に達しない）。サンプルではフォント / 行の高さ / padding を `getComputedStyle`（スタイル計算値、レイアウト不要）で取得し、テキスト幅は `ResizeObserver` の `contentRect` から取得しています。テーブルは auto レイアウトのため、列設定の `width` は下限にすぎません（サンプルの 200px 列は実際には 450px 以上に広がります）。列設定からの推測や、同期レイアウト（リフロー）を引き起こす `clientWidth` の読み取りは避けてください。これらの読み取りは初期化/サイズ変更時に一度だけ実行され、スクロールフレームには入りません。
+:::
 
 ### 例
 
